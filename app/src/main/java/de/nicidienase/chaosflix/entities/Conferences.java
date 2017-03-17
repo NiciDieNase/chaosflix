@@ -9,7 +9,7 @@ import java.util.List;
  */
 
 public class Conferences extends SugarRecord{
-	List<Conference> conferences;
+	private List<Conference> conferences;
 
 	public List<Conference> getConferences() {
 		return conferences;

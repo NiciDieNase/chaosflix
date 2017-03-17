@@ -135,7 +135,6 @@ public class MainFragment extends BrowseFragment {
 					mRowsAdapter.add(new ListRow(header,listRowAdapter));
 				}
 
-
 				setAdapter(mRowsAdapter);
 			}
 
@@ -164,9 +163,10 @@ public class MainFragment extends BrowseFragment {
 		setHeadersTransitionOnBackEnabled(true);
 
 		// set fastLane (or headers) background color
-		setBrandColor(getResources().getColor(R.color.fastlane_background));
+		setBrandColor(getResources().getColor(R.color.black_opaque));
 		// set search icon color
 		setSearchAffordanceColor(getResources().getColor(R.color.search_opaque));
+
 	}
 
 	private void setupEventListeners() {
