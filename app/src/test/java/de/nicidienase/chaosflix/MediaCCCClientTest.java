@@ -4,7 +4,6 @@ package de.nicidienase.chaosflix;
 
 import static org.junit.Assert.*;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -56,7 +55,7 @@ public class MediaCCCClientTest{
 	public void getRecordingTest(){
 		try {
 			Recording recording = new MediaCCCClient().getRecording(14142).execute().body();
-			assertEquals(recording.getUpdated_at(), "2016-12-29T03:16:16.105+01:00");
+			assertEquals(recording.getUpdatedAt(), "2016-12-29T03:16:16.105+01:00");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
