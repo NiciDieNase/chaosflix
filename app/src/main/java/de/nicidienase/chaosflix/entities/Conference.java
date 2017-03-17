@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.entities;
 
+import com.google.gson.annotations.SerializedName;
 import com.orm.SugarRecord;
 
 import java.util.HashMap;
@@ -13,15 +14,22 @@ import java.util.Map;
 
 public class Conference extends SugarRecord{
 	String acronym;
+	@SerializedName("aspect_ratio")
 	String aspectRation;
 	String title;
 	String slug;
-	String webgen_location;
+	@SerializedName("webgen_location")
+	String webgenLocation;
+	@SerializedName("schedule_url")
 	String scheduleUrl;
+	@SerializedName("logo_url")
 	String logoUrl;
+	@SerializedName("images_url")
 	String imagesUrl;
+	@SerializedName("recordings_url")
 	String recordingsUrl;
 	String url;
+	@SerializedName("updated_at")
 	String updatedAt;
 
 	List<Event> events;
@@ -30,14 +38,14 @@ public class Conference extends SugarRecord{
 	}
 
 	public Conference(String acronym, String aspectRation, String title, String slug,
-					  String webgen_location, String scheduleUrl, String logoUrl,
+					  String webgenLocation, String scheduleUrl, String logoUrl,
 					  String imagesUrl, String recordingsUrl, String url,
 					  String updatedAt, List<Event> events) {
 		this.acronym = acronym;
 		this.aspectRation = aspectRation;
 		this.title = title;
 		this.slug = slug;
-		this.webgen_location = webgen_location;
+		this.webgenLocation = webgenLocation;
 		this.scheduleUrl = scheduleUrl;
 		this.logoUrl = logoUrl;
 		this.imagesUrl = imagesUrl;
@@ -96,12 +104,12 @@ public class Conference extends SugarRecord{
 		this.slug = slug;
 	}
 
-	public String getWebgen_location() {
-		return webgen_location;
+	public String getWebgenLocation() {
+		return webgenLocation;
 	}
 
-	public void setWebgen_location(String webgen_location) {
-		this.webgen_location = webgen_location;
+	public void setWebgenLocation(String webgenLocation) {
+		this.webgenLocation = webgenLocation;
 	}
 
 	public String getScheduleUrl() {

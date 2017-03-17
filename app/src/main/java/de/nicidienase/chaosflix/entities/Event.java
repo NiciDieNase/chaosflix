@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.entities;
 
+import com.google.gson.annotations.SerializedName;
 import com.orm.SugarRecord;
 
 import java.util.Date;
@@ -16,17 +17,24 @@ public class Event extends SugarRecord {
 	String slug;
 	String link;
 	String description;
+	@SerializedName("original_language")
 	String originalLanguage;
 	List<String> persons;
 	List<String> tags;
 	Date date;
+	@SerializedName("release_date")
 	Date releaseDate;
+	@SerializedName("updated_at")
 	Date updatedAt;
 	long length;
+	@SerializedName("thumb_url")
 	String thumbUrl;
+	@SerializedName("poster_url")
 	String posterUrl;
+	@SerializedName("frontend_link")
 	String frontendLink;
 	String url;
+	@SerializedName("conference_url")
 	String conferenceUrl;
 
 	List<Recording> recordings;
