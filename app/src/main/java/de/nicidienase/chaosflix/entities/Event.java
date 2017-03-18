@@ -14,6 +14,7 @@ import java.util.List;
 
 public class Event extends SugarRecord implements Parcelable, Comparable<Event> {
 
+	long parentConferenceID;
 	String guid;
 	String title;
 	String subtitle;
@@ -100,9 +101,17 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 		parcel.writeString(conferenceUrl);
 	}
 
-	public int getEventID(){
+	public int getApiID(){
 		String[] strings = getUrl().split("/");
 		return Integer.parseInt(strings[strings.length-1]);
+	}
+
+	public long getParentConferenceID() {
+		return parentConferenceID;
+	}
+
+	public void setParentConferenceID(long parentConferenceID) {
+		this.parentConferenceID = parentConferenceID;
 	}
 
 	public String getGuid() {
@@ -260,5 +269,12 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 	@Override
 	public int compareTo(Event event) {
 		return this.date.compareTo(event.getDate());
+	}
+
+	public void update(Event e) {
+		if(!this.updatedAt.equals(e.getUpdatedAt())){
+			// TODO actually update
+			this.save();
+		}
 	}
 }

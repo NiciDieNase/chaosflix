@@ -71,6 +71,10 @@ public class Conference extends SugarRecord{
 		}
 		return result;
 	}
+	public int getApiID(){
+		String[] strings = getUrl().split("/");
+		return Integer.parseInt(strings[strings.length-1]);
+	}
 
 	public String getAcronym() {
 		return acronym;
@@ -161,10 +165,18 @@ public class Conference extends SugarRecord{
 	}
 
 	public List<Event> getEvents() {
+//		return Event.find(Event.class,"parent_conference_id = ? ", String.valueOf(this.getId()));
 		return events;
 	}
 
 	public void setEvents(List<Event> events) {
 		this.events = events;
+	}
+
+	public void update(Conference conf) {
+		if(!this.updatedAt.equals(conf.updatedAt)){
+			// TODO actually update
+			this.save();
+		}
 	}
 }
