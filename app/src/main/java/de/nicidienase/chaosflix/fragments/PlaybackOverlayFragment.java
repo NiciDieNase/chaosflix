@@ -21,6 +21,7 @@ import android.media.MediaMetadataRetriever;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v17.leanback.app.PlaybackFragment;
 import android.support.v17.leanback.widget.AbstractDetailsDescriptionPresenter;
 import android.support.v17.leanback.widget.Action;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
@@ -73,7 +74,7 @@ import retrofit2.Response;
 /*
  * Class for video playback with media control
  */
-public class PlaybackOverlayFragment extends android.support.v17.leanback.app.PlaybackOverlayFragment {
+public class PlaybackOverlayFragment extends PlaybackFragment {
 	private static final String TAG = "PlaybackControlsFragmnt";
 
 	private static final boolean SHOW_DETAIL = true;
@@ -134,21 +135,6 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 		setFadingEnabled(false);
 
 		setupRows();
-
-		setOnItemViewSelectedListener(new OnItemViewSelectedListener() {
-			@Override
-			public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item,
-									   RowPresenter.ViewHolder rowViewHolder, Row row) {
-				Log.i(TAG, "onItemSelected: " + item + " row " + row);
-			}
-		});
-		setOnItemViewClickedListener(new OnItemViewClickedListener() {
-			@Override
-			public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
-									  RowPresenter.ViewHolder rowViewHolder, Row row) {
-				Log.i(TAG, "onItemClicked: " + item + " row " + row);
-			}
-		});
 	}
 
 	@SuppressWarnings("deprecation")
@@ -223,7 +209,6 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 	}
 
 	private int getDuration() {
-
 		MediaMetadataRetriever mmr = new MediaMetadataRetriever();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			mmr.setDataSource(mSelectedRecording.getRecordingUrl(), new HashMap<String, String>());
@@ -252,39 +237,39 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 		mPlaybackControlsRow.setSecondaryActionsAdapter(mSecondaryActionsAdapter);
 
 		mPlayPauseAction = new PlayPauseAction(getActivity());
-		mRepeatAction = new RepeatAction(getActivity());
-		mThumbsUpAction = new ThumbsUpAction(getActivity());
-		mThumbsDownAction = new ThumbsDownAction(getActivity());
-		mShuffleAction = new ShuffleAction(getActivity());
-		mSkipNextAction = new PlaybackControlsRow.SkipNextAction(getActivity());
-		mSkipPreviousAction = new PlaybackControlsRow.SkipPreviousAction(getActivity());
-		mFastForwardAction = new PlaybackControlsRow.FastForwardAction(getActivity());
-		mRewindAction = new PlaybackControlsRow.RewindAction(getActivity());
+//		mRepeatAction = new RepeatAction(getActivity());
+//		mThumbsUpAction = new ThumbsUpAction(getActivity());
+//		mThumbsDownAction = new ThumbsDownAction(getActivity());
+//		mShuffleAction = new ShuffleAction(getActivity());
+//		mSkipNextAction = new PlaybackControlsRow.SkipNextAction(getActivity());
+//		mSkipPreviousAction = new PlaybackControlsRow.SkipPreviousAction(getActivity());
+//		mFastForwardAction = new PlaybackControlsRow.FastForwardAction(getActivity());
+//		mRewindAction = new PlaybackControlsRow.RewindAction(getActivity());
 
-		if (PRIMARY_CONTROLS > 5) {
-			mPrimaryActionsAdapter.add(mThumbsUpAction);
-		} else {
-			mSecondaryActionsAdapter.add(mThumbsUpAction);
-		}
-		mPrimaryActionsAdapter.add(mSkipPreviousAction);
-		if (PRIMARY_CONTROLS > 3) {
-			mPrimaryActionsAdapter.add(new PlaybackControlsRow.RewindAction(getActivity()));
-		}
+//		if (PRIMARY_CONTROLS > 5) {
+//			mPrimaryActionsAdapter.add(mThumbsUpAction);
+//		} else {
+//			mSecondaryActionsAdapter.add(mThumbsUpAction);
+//		}
+//		mPrimaryActionsAdapter.add(mSkipPreviousAction);
+//		if (PRIMARY_CONTROLS > 3) {
+//			mPrimaryActionsAdapter.add(new PlaybackControlsRow.RewindAction(getActivity()));
+//		}
 		mPrimaryActionsAdapter.add(mPlayPauseAction);
-		if (PRIMARY_CONTROLS > 3) {
-			mPrimaryActionsAdapter.add(new PlaybackControlsRow.FastForwardAction(getActivity()));
-		}
-		mPrimaryActionsAdapter.add(mSkipNextAction);
+//		if (PRIMARY_CONTROLS > 3) {
+//			mPrimaryActionsAdapter.add(new PlaybackControlsRow.FastForwardAction(getActivity()));
+//		}
+//		mPrimaryActionsAdapter.add(mSkipNextAction);
 
-		mSecondaryActionsAdapter.add(mRepeatAction);
-		mSecondaryActionsAdapter.add(mShuffleAction);
-		if (PRIMARY_CONTROLS > 5) {
-			mPrimaryActionsAdapter.add(mThumbsDownAction);
-		} else {
-			mSecondaryActionsAdapter.add(mThumbsDownAction);
-		}
-		mSecondaryActionsAdapter.add(new PlaybackControlsRow.HighQualityAction(getActivity()));
-		mSecondaryActionsAdapter.add(new PlaybackControlsRow.ClosedCaptioningAction(getActivity()));
+//		mSecondaryActionsAdapter.add(mRepeatAction);
+//		mSecondaryActionsAdapter.add(mShuffleAction);
+//		if (PRIMARY_CONTROLS > 5) {
+//			mPrimaryActionsAdapter.add(mThumbsDownAction);
+//		} else {
+//			mSecondaryActionsAdapter.add(mThumbsDownAction);
+//		}
+//		mSecondaryActionsAdapter.add(new PlaybackControlsRow.HighQualityAction(getActivity()));
+//		mSecondaryActionsAdapter.add(new PlaybackControlsRow.ClosedCaptioningAction(getActivity()));
 	}
 
 	private void notifyChanged(Action action) {
