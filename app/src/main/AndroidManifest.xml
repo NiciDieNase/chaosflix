@@ -17,9 +17,10 @@
         android:icon="@drawable/chaosflix_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Leanback">
+        android:theme="@style/Theme.Leanback"
+        android:name=".ChaosflixApplication">
         <activity
-            android:name="de.nicidienase.chaosflix.activities.MainActivity"
+            android:name="de.nicidienase.chaosflix.activities.ConferenceActivity"
             android:banner="@drawable/chaosflix_logo"
             android:icon="@drawable/chaosflix_logo"
             android:label="@string/app_name"
@@ -31,12 +32,16 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name="de.nicidienase.chaosflix.activities.DetailsActivity"/>
-        <activity android:name="de.nicidienase.chaosflix.activities.PlaybackOverlayActivity"/>
-        <activity android:name="de.nicidienase.chaosflix.activities.BrowseErrorActivity"/>
+        <!--<activity android:name=".activities.ConferenceActivity"/>-->
+        <activity android:name=".activities.EventDetailsActivity"
+                  android:exported="true"
+                  android:theme="@style/Theme.Leanback"/>
+
+        <activity android:name=".activities.DetailsActivity"/>
+        <activity android:name=".activities.PlaybackOverlayActivity"/>
 
         <meta-data android:name="DATABASE" android:value="mediaccc.db" />
-        <meta-data android:name="VERSION" android:value="1" />
+        <meta-data android:name="VERSION" android:value="2" />
         <meta-data android:name="QUERY_LOG" android:value="false" />
         <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="de.nicidienase.chaosflix" />
     </application>

@@ -32,7 +32,6 @@ dependencies {
 
     compile 'com.squareup.retrofit2:retrofit:2.2.0'
     compile 'com.squareup.retrofit2:converter-gson:2.2.0'
-//    compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
     compile 'com.github.satyan:sugar:1.4'
     compile 'com.jakewharton:butterknife:8.5.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
