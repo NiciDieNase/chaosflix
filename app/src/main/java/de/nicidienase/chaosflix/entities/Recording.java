@@ -1,5 +1,8 @@
 package de.nicidienase.chaosflix.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 import com.orm.SugarRecord;
 
@@ -7,7 +10,7 @@ import com.orm.SugarRecord;
  * Created by felix on 17.03.17.
  */
 
-public class Recording extends SugarRecord {
+public class Recording extends SugarRecord implements Parcelable {
 	private int size;
 	private int length;
 	@SerializedName("mime_type")
@@ -29,6 +32,60 @@ public class Recording extends SugarRecord {
 	private String eventUrl;
 	@SerializedName("conference_url")
 	private String conferenceUrl;
+
+	protected Recording(Parcel in) {
+		size = in.readInt();
+		length = in.readInt();
+		mimeType = in.readString();
+		language = in.readString();
+		filename = in.readString();
+		state = in.readString();
+		folder = in.readString();
+		highQuality = in.readByte() != 0;
+		width = in.readInt();
+		height = in.readInt();
+		updatedAt = in.readString();
+		recordingUrl = in.readString();
+		url = in.readString();
+		eventUrl = in.readString();
+		conferenceUrl = in.readString();
+	}
+
+	public static final Creator<Recording> CREATOR = new Creator<Recording>() {
+		@Override
+		public Recording createFromParcel(Parcel in) {
+			return new Recording(in);
+		}
+
+		@Override
+		public Recording[] newArray(int size) {
+			return new Recording[size];
+		}
+	};
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel parcel, int i) {
+		parcel.writeInt(size);
+		parcel.writeInt(length);
+		parcel.writeString(mimeType);
+		parcel.writeString(language);
+		parcel.writeString(filename);
+		parcel.writeString(state);
+		parcel.writeString(folder);
+		parcel.writeByte((byte) (highQuality ? 1 : 0));
+		parcel.writeInt(width);
+		parcel.writeInt(height);
+		parcel.writeString(updatedAt);
+		parcel.writeString(recordingUrl);
+		parcel.writeString(url);
+		parcel.writeString(eventUrl);
+		parcel.writeString(conferenceUrl);
+	}
 
 	public int getSize() {
 		return size;
