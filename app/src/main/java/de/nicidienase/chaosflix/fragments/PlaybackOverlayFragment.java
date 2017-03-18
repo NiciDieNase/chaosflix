@@ -27,12 +27,9 @@ import android.support.v17.leanback.widget.Action;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.ClassPresenterSelector;
 import android.support.v17.leanback.widget.ControlButtonPresenterSelector;
-import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnActionClickedListener;
-import android.support.v17.leanback.widget.OnItemViewClickedListener;
-import android.support.v17.leanback.widget.OnItemViewSelectedListener;
 import android.support.v17.leanback.widget.PlaybackControlsRow;
 import android.support.v17.leanback.widget.PlaybackControlsRow.FastForwardAction;
 import android.support.v17.leanback.widget.PlaybackControlsRow.PlayPauseAction;
@@ -44,10 +41,6 @@ import android.support.v17.leanback.widget.PlaybackControlsRow.SkipPreviousActio
 import android.support.v17.leanback.widget.PlaybackControlsRow.ThumbsDownAction;
 import android.support.v17.leanback.widget.PlaybackControlsRow.ThumbsUpAction;
 import android.support.v17.leanback.widget.PlaybackControlsRowPresenter;
-import android.support.v17.leanback.widget.Presenter;
-import android.support.v17.leanback.widget.Row;
-import android.support.v17.leanback.widget.RowPresenter;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -55,16 +48,10 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import de.nicidienase.chaosflix.CardPresenter;
-import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.entities.Event;
-import de.nicidienase.chaosflix.entities.Movie;
-import de.nicidienase.chaosflix.entities.MovieList;
 import de.nicidienase.chaosflix.entities.Recording;
 import de.nicidienase.chaosflix.network.MediaCCCClient;
 import retrofit2.Call;
@@ -117,7 +104,7 @@ public class PlaybackOverlayFragment extends PlaybackFragment {
 		mSelectedEvent = intent.getParcelableExtra(DetailsActivity.EVENT);
 		final int mRecordingID = (int) intent.getLongExtra(DetailsActivity.RECORDING, 0);
 
-		new MediaCCCClient().getEvent(mSelectedEvent.getEventID()).enqueue(new Callback<Event>() {
+		new MediaCCCClient().getEvent(mSelectedEvent.getApiID()).enqueue(new Callback<Event>() {
 			@Override
 			public void onResponse(Call<Event> call, Response<Event> response) {
 				mSelectedEvent = response.body();

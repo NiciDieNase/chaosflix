@@ -206,22 +206,18 @@ public class ConferenceBrowseFragment extends BrowseFragment {
 		mBackgroundTimer.schedule(new UpdateBackgroundTask(), BACKGROUND_UPDATE_DELAY);
 	}
 
-	public void setConference(Conference conference) {
-		this.conference = conference;
-	}
-
 	private final class ItemViewClickedListener implements OnItemViewClickedListener {
 		@Override
 		public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
 								  RowPresenter.ViewHolder rowViewHolder, Row row) {
 
 			Event event = (Event) item;
-			Intent i = new Intent(getActivity(), EventDetailsActivity.class);
-			i.putExtra(EventDetailsActivity.EVENT,event);
+			Intent i = new Intent(getActivity(), DetailsActivity.class);
+			i.putExtra(DetailsActivity.EVENT,event);
 			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
 					getActivity(),
 					((ImageCardView) itemViewHolder.view).getMainImageView(),
-					EventDetailsActivity.SHARED_ELEMENT_NAME).toBundle();
+					DetailsActivity.SHARED_ELEMENT_NAME).toBundle();
 			getActivity().startActivity(i, bundle);
 		}
 	}
@@ -237,7 +233,7 @@ public class ConferenceBrowseFragment extends BrowseFragment {
 					e.printStackTrace();
 				}
 				// TODO make configurable (enable/disable)
-				startBackgroundTimer();
+//				startBackgroundTimer();
 			}
 
 		}
