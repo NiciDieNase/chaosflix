@@ -1,16 +1,19 @@
 package de.nicidienase.chaosflix.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 import com.orm.SugarRecord;
 
-import java.util.Date;
 import java.util.List;
 
 /**
  * Created by felix on 11.03.17.
  */
 
-public class Event extends SugarRecord {
+public class Event extends SugarRecord implements Parcelable {
+
 	String guid;
 	String title;
 	String subtitle;
@@ -21,11 +24,11 @@ public class Event extends SugarRecord {
 	String originalLanguage;
 	List<String> persons;
 	List<String> tags;
-	Date date;
+	String date;
 	@SerializedName("release_date")
-	Date releaseDate;
+	String releaseDate;
 	@SerializedName("updated_at")
-	Date updatedAt;
+	String updatedAt;
 	long length;
 	@SerializedName("thumb_url")
 	String thumbUrl;
@@ -36,8 +39,41 @@ public class Event extends SugarRecord {
 	String url;
 	@SerializedName("conference_url")
 	String conferenceUrl;
-
 	List<Recording> recordings;
+
+
+	protected Event(Parcel in) {
+		guid = in.readString();
+		title = in.readString();
+		subtitle = in.readString();
+		slug = in.readString();
+		link = in.readString();
+		description = in.readString();
+		originalLanguage = in.readString();
+		persons = in.createStringArrayList();
+		tags = in.createStringArrayList();
+		date = in.readString();
+		updatedAt = in.readString();
+		length = in.readLong();
+		thumbUrl = in.readString();
+		posterUrl = in.readString();
+		frontendLink = in.readString();
+		url = in.readString();
+		conferenceUrl = in.readString();
+		in.readList(recordings,null);
+	}
+
+	public static final Creator<Event> CREATOR = new Creator<Event>() {
+		@Override
+		public Event createFromParcel(Parcel in) {
+			return new Event(in);
+		}
+
+		@Override
+		public Event[] newArray(int size) {
+			return new Event[size];
+		}
+	};
 
 	public String getGuid() {
 		return guid;
@@ -111,28 +147,12 @@ public class Event extends SugarRecord {
 		this.tags = tags;
 	}
 
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public Date getReleaseDate() {
+	public String getReleaseDate() {
 		return releaseDate;
 	}
 
-	public void setReleaseDate(Date releaseDate) {
+	public void setReleaseDate(String releaseDate) {
 		this.releaseDate = releaseDate;
-	}
-
-	public Date getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
 	}
 
 	public long getLength() {
@@ -189,5 +209,48 @@ public class Event extends SugarRecord {
 
 	public void setRecordings(List<Recording> recordings) {
 		this.recordings = recordings;
+	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public String getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(String updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel parcel, int i) {
+		parcel.writeString(guid);
+		parcel.writeString(title);
+		parcel.writeString(subtitle);
+		parcel.writeString(slug);
+		parcel.writeString(link);
+		parcel.writeString(description);
+		parcel.writeString(originalLanguage);
+		parcel.writeStringList(persons);
+		parcel.writeStringList(tags);
+		parcel.writeString(date);
+		parcel.writeString(updatedAt);
+		parcel.writeLong(length);
+		parcel.writeString(thumbUrl);
+		parcel.writeString(posterUrl);
+		parcel.writeString(frontendLink);
+		parcel.writeString(url);
+		parcel.writeString(conferenceUrl);
+		parcel.writeList(recordings);
 	}
 }
