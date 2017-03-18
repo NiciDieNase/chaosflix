@@ -170,15 +170,6 @@ public class MainFragment extends BrowseFragment {
 	}
 
 	private void setupEventListeners() {
-		setOnSearchClickedListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View view) {
-				Toast.makeText(getActivity(), "Implement your own in-app search", Toast.LENGTH_LONG)
-						.show();
-			}
-		});
-
 		setOnItemViewClickedListener(new ItemViewClickedListener());
 		setOnItemViewSelectedListener(new ItemViewSelectedListener());
 	}
@@ -214,26 +205,14 @@ public class MainFragment extends BrowseFragment {
 		public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
 								  RowPresenter.ViewHolder rowViewHolder, Row row) {
 
-			if (item instanceof Movie) {
-				Movie movie = (Movie) item;
-				Log.d(TAG, "Item: " + item.toString());
-				Intent intent = new Intent(getActivity(), DetailsActivity.class);
-				intent.putExtra(DetailsActivity.MOVIE, movie);
-
-				Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-						getActivity(),
-						((ImageCardView) itemViewHolder.view).getMainImageView(),
-						DetailsActivity.SHARED_ELEMENT_NAME).toBundle();
-				getActivity().startActivity(intent, bundle);
-			} else if (item instanceof String) {
-				if (((String) item).indexOf(getString(R.string.error_fragment)) >= 0) {
-					Intent intent = new Intent(getActivity(), BrowseErrorActivity.class);
-					startActivity(intent);
-				} else {
-					Toast.makeText(getActivity(), ((String) item), Toast.LENGTH_SHORT)
-							.show();
-				}
-			}
+			Event event = (Event) item;
+			Intent i = new Intent(getActivity(), DetailsActivity.class);
+			i.putExtra(DetailsActivity.EVENT,event);
+			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
+					getActivity(),
+					((ImageCardView) itemViewHolder.view).getMainImageView(),
+					DetailsActivity.SHARED_ELEMENT_NAME).toBundle();
+			getActivity().startActivity(i, bundle);
 		}
 	}
 

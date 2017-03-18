@@ -113,7 +113,7 @@ public class Movie implements Serializable {
 
 	public URI getBackgroundImageURI() {
 		try {
-			Log.d("BACK MOVIE: ", bgImageUrl);
+			Log.d("BACK EVENT: ", bgImageUrl);
 			return new URI(getBackgroundImageUrl());
 		} catch (URISyntaxException e) {
 			Log.d("URI exception: ", bgImageUrl);
