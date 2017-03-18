@@ -119,11 +119,13 @@ public class MainFragment extends BrowseFragment {
 
 				List<Event> other = new LinkedList<Event>();
 				for (String tag: eventsByTags.keySet()) {
+					List<Event> items = eventsByTags.get(tag);
+					Collections.sort(items);
 					if(android.text.TextUtils.isDigitsOnly(tag)){
-						other.addAll(eventsByTags.get(tag));
+						other.addAll(items);
 					} else {
 						ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
-						listRowAdapter.addAll(0,eventsByTags.get(tag));
+						listRowAdapter.addAll(0, items);
 						HeaderItem header = new HeaderItem(tag);
 						mRowsAdapter.add(new ListRow(header, listRowAdapter));
 					}

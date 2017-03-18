@@ -12,7 +12,7 @@ import java.util.List;
  * Created by felix on 11.03.17.
  */
 
-public class Event extends SugarRecord implements Parcelable {
+public class Event extends SugarRecord implements Parcelable, Comparable<Event> {
 
 	String guid;
 	String title;
@@ -60,7 +60,6 @@ public class Event extends SugarRecord implements Parcelable {
 		frontendLink = in.readString();
 		url = in.readString();
 		conferenceUrl = in.readString();
-		in.readList(recordings,null);
 	}
 
 	public static final Creator<Event> CREATOR = new Creator<Event>() {
@@ -99,7 +98,6 @@ public class Event extends SugarRecord implements Parcelable {
 		parcel.writeString(frontendLink);
 		parcel.writeString(url);
 		parcel.writeString(conferenceUrl);
-		parcel.writeList(recordings);
 	}
 
 	public int getEventID(){
@@ -259,4 +257,8 @@ public class Event extends SugarRecord implements Parcelable {
 		this.updatedAt = updatedAt;
 	}
 
+	@Override
+	public int compareTo(Event event) {
+		return this.date.compareTo(event.getDate());
+	}
 }
