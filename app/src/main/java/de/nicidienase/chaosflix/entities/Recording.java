@@ -20,14 +20,14 @@ public class Recording extends SugarRecord {
 	boolean highQuality;
 	private int width;
 	private int height;
-	@SerializedName("updatedAt")
+	@SerializedName("updated_at")
 	private String updatedAt;
-	@SerializedName("recordingUrl")
+	@SerializedName("recording_url")
 	private String recordingUrl;
 	private String url;
-	@SerializedName("eventUrl")
+	@SerializedName("event_url")
 	private String eventUrl;
-	@SerializedName("conferenceUrl")
+	@SerializedName("conference_url")
 	private String conferenceUrl;
 
 	public int getSize() {
