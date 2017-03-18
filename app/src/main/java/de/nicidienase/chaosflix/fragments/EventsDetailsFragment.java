@@ -10,6 +10,7 @@ import android.support.v17.leanback.widget.FullWidthDetailsOverviewRowPresenter;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
+import android.support.v17.leanback.widget.SparseArrayObjectAdapter;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 	private Event mSelectedEvent;
 	private ArrayObjectAdapter mRowsAdapter;
 
-	MediaCCCClient client = new MediaCCCClient();
+	private MediaCCCClient client = new MediaCCCClient();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -65,17 +66,19 @@ public class EventsDetailsFragment extends DetailsFragment {
 		mRowsAdapter = new ArrayObjectAdapter(selector);
 
 		// Add playback options
-		DetailsOverviewRow detailsOverviewRow = new DetailsOverviewRow(mSelectedEvent);
+		DetailsOverviewRow row = new DetailsOverviewRow(mSelectedEvent);
 		List<Recording> recordings = mSelectedEvent.getRecordings();
 		ArrayObjectAdapter arrayObjectAdapter = new ArrayObjectAdapter();
 		for(int i = 0; i < recordings.size(); i++){
 			if(recordings.get(i).getMimeType().startsWith("video/") && !recordings.get(i).getLanguage().contains("-")){
 				String quality = recordings.get(i).isHighQuality() ? "HD" : "SD";
-				int id = recordings.get(i).getLanguage().equals(mSelectedEvent.getOriginalLanguage()) ? 0 : 1;
+//				int id = recordings.get(i).getLanguage().equals(mSelectedEvent.getOriginalLanguage()) ? 0 : 1;
 				arrayObjectAdapter.add(new Action(i,quality,recordings.get(i).getLanguage()));
+//				row.addAction(new Action(i,quality,recordings.get(i).getLanguage()));
 			}
 		}
-		detailsOverviewRow.setActionsAdapter(arrayObjectAdapter);
+		row.setActionsAdapter(arrayObjectAdapter);
+		mRowsAdapter.add(row);
 
 		// Add related media
 		client.getConference(mSelectedEvent.getApiID()).enqueue(new Callback<Conference>() {
@@ -98,10 +101,5 @@ public class EventsDetailsFragment extends DetailsFragment {
 		});
 
 		setAdapter(mRowsAdapter);
-	}
-
-	private List<Recording> getRecordings() {
-
-		return null;
 	}
 }
