@@ -30,7 +30,8 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.entities.Movie;
+import de.nicidienase.chaosflix.entities.Event;
+import de.nicidienase.chaosflix.entities.Recording;
 import de.nicidienase.chaosflix.fragments.PlaybackOverlayFragment;
 
 /**
@@ -92,8 +93,8 @@ public class PlaybackOverlayActivity extends Activity implements
 	/**
 	 * Implementation of OnPlayPauseClickedListener
 	 */
-	public void onFragmentPlayPause(Movie movie, int position, Boolean playPause) {
-		mVideoView.setVideoPath(movie.getVideoUrl());
+	public void onFragmentPlayPause(Event event, Recording recording, int position, Boolean playPause) {
+		mVideoView.setVideoPath(recording.getRecordingUrl());
 
 		if (position == 0 || mPlaybackState == LeanbackPlaybackState.IDLE) {
 			setupCallbacks();
@@ -111,7 +112,7 @@ public class PlaybackOverlayActivity extends Activity implements
 			mVideoView.pause();
 		}
 		updatePlaybackState(position);
-		updateMetadata(movie);
+		updateMetadata(event);
 	}
 
 	private void updatePlaybackState(int position) {
@@ -137,23 +138,24 @@ public class PlaybackOverlayActivity extends Activity implements
 		return actions;
 	}
 
-	private void updateMetadata(final Movie movie) {
+	private void updateMetadata(final Event event) {
 		final MediaMetadata.Builder metadataBuilder = new MediaMetadata.Builder();
 
-		String title = movie.getTitle().replace("_", " -");
+		String title = event.getTitle().replace("_", " -");
 
 		metadataBuilder.putString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE, title);
 		metadataBuilder.putString(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE,
-				movie.getDescription());
+				event.getDescription());
 		metadataBuilder.putString(MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI,
-				movie.getCardImageUrl());
+				event.getThumbUrl());
 
 		// And at minimum the title and artist for legacy support
 		metadataBuilder.putString(MediaMetadata.METADATA_KEY_TITLE, title);
-		metadataBuilder.putString(MediaMetadata.METADATA_KEY_ARTIST, movie.getStudio());
+		metadataBuilder.putString(MediaMetadata.METADATA_KEY_ARTIST,
+				android.text.TextUtils.join(", ", event.getPersons()));
 
 		Glide.with(this)
-				.load(Uri.parse(movie.getCardImageUrl()))
+				.load(Uri.parse(event.getThumbUrl()))
 				.asBitmap()
 				.into(new SimpleTarget<Bitmap>(500, 500) {
 					@Override

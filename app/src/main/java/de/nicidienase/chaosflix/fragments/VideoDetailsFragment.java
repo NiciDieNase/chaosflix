@@ -85,7 +85,7 @@ public class VideoDetailsFragment extends DetailsFragment {
 
 		prepareBackgroundManager();
 
-		mSelectedEvent = (Event) getActivity().getIntent()
+		mSelectedEvent = getActivity().getIntent()
 				.getParcelableExtra(DetailsActivity.EVENT);
 		if (mSelectedEvent != null) {
 			setupAdapter();
@@ -195,8 +195,8 @@ public class VideoDetailsFragment extends DetailsFragment {
 			@Override
 			public void onActionClicked(Action action) {
 				Intent intent = new Intent(getActivity(), PlaybackOverlayActivity.class);
-				intent.putExtra(DetailsActivity.RECORDING,
-						mSelectedEvent.getRecordings().get((int) action.getId()));
+				intent.putExtra(DetailsActivity.EVENT, mSelectedEvent);
+				intent.putExtra(DetailsActivity.RECORDING, action.getId());
 				startActivity(intent);
 			}
 		});
