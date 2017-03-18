@@ -53,8 +53,10 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.Utils;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.activities.MainActivity;
+import de.nicidienase.chaosflix.entities.Event;
 import de.nicidienase.chaosflix.entities.Movie;
 import de.nicidienase.chaosflix.entities.MovieList;
+import de.nicidienase.chaosflix.entities.Recording;
 
 /*
  * LeanbackDetailsFragment extends DetailsFragment, a Wrapper fragment for leanback details screens.
@@ -72,7 +74,7 @@ public class VideoDetailsFragment extends DetailsFragment {
 
 	private static final int NUM_COLS = 10;
 
-	private Movie mSelectedMovie;
+	private Event mSelectedEvent;
 
 	private ArrayObjectAdapter mAdapter;
 	private ClassPresenterSelector mPresenterSelector;
@@ -88,15 +90,15 @@ public class VideoDetailsFragment extends DetailsFragment {
 
 		prepareBackgroundManager();
 
-		mSelectedMovie = (Movie) getActivity().getIntent()
-				.getSerializableExtra(DetailsActivity.MOVIE);
-		if (mSelectedMovie != null) {
+		mSelectedEvent = (Event) getActivity().getIntent()
+				.getParcelableExtra(DetailsActivity.EVENT);
+		if (mSelectedEvent != null) {
 			setupAdapter();
 			setupDetailsOverviewRow();
 			setupDetailsOverviewRowPresenter();
 			setupMovieListRow();
 			setupMovieListRowPresenter();
-			updateBackground(mSelectedMovie.getBackgroundImageUrl());
+			updateBackground(mSelectedEvent.getPosterUrl());
 			setOnItemViewClickedListener(new ItemViewClickedListener());
 		} else {
 			Intent intent = new Intent(getActivity(), MainActivity.class);
@@ -138,15 +140,15 @@ public class VideoDetailsFragment extends DetailsFragment {
 	}
 
 	private void setupDetailsOverviewRow() {
-		Log.d(TAG, "doInBackground: " + mSelectedMovie.toString());
-		final DetailsOverviewRow row = new DetailsOverviewRow(mSelectedMovie);
+		Log.d(TAG, "doInBackground: " + mSelectedEvent.toString());
+		final DetailsOverviewRow row = new DetailsOverviewRow(mSelectedEvent);
 		row.setImageDrawable(getResources().getDrawable(R.drawable.default_background));
 		int width = Utils.convertDpToPixel(getActivity()
 				.getApplicationContext(), DETAIL_THUMB_WIDTH);
 		int height = Utils.convertDpToPixel(getActivity()
 				.getApplicationContext(), DETAIL_THUMB_HEIGHT);
 		Glide.with(getActivity())
-				.load(mSelectedMovie.getCardImageUrl())
+				.load(mSelectedEvent.getThumbUrl())
 				.centerCrop()
 				.error(R.drawable.default_background)
 				.into(new SimpleTarget<GlideDrawable>(width, height) {
@@ -160,12 +162,10 @@ public class VideoDetailsFragment extends DetailsFragment {
 					}
 				});
 
-		row.addAction(new Action(ACTION_WATCH_TRAILER, getResources().getString(
-				R.string.watch_trailer_1), getResources().getString(R.string.watch_trailer_2)));
-		row.addAction(new Action(ACTION_RENT, getResources().getString(R.string.rent_1),
-				getResources().getString(R.string.rent_2)));
-		row.addAction(new Action(ACTION_BUY, getResources().getString(R.string.buy_1),
-				getResources().getString(R.string.buy_2)));
+		for(Recording recording: mSelectedEvent.getRecordings()){
+			String quality = recording.isHighQuality() ? "HD" : "SD";
+			row.addAction(new Action(0,quality,recording.getLanguage()));
+		}
 
 		mAdapter.add(row);
 	}
@@ -186,7 +186,7 @@ public class VideoDetailsFragment extends DetailsFragment {
 			public void onActionClicked(Action action) {
 				if (action.getId() == ACTION_WATCH_TRAILER) {
 					Intent intent = new Intent(getActivity(), PlaybackOverlayActivity.class);
-					intent.putExtra(DetailsActivity.MOVIE, mSelectedMovie);
+					intent.putExtra(DetailsActivity.EVENT, mSelectedEvent);
 					startActivity(intent);
 				} else {
 					Toast.makeText(getActivity(), action.toString(), Toast.LENGTH_SHORT).show();
@@ -197,17 +197,17 @@ public class VideoDetailsFragment extends DetailsFragment {
 	}
 
 	private void setupMovieListRow() {
-		String subcategories[] = {getString(R.string.related_movies)};
-		List<Movie> list = MovieList.list;
+//		String subcategories[] = {getString(R.string.related_movies)};
+//		List<Movie> list = MovieList.list;
+//
+//		Collections.shuffle(list);
+//		ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
+//		for (int j = 0; j < NUM_COLS; j++) {
+//			listRowAdapter.add(list.get(j % 5));
+//		}
 
-		Collections.shuffle(list);
-		ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
-		for (int j = 0; j < NUM_COLS; j++) {
-			listRowAdapter.add(list.get(j % 5));
-		}
-
-		HeaderItem header = new HeaderItem(0, subcategories[0]);
-		mAdapter.add(new ListRow(header, listRowAdapter));
+//		HeaderItem header = new HeaderItem(0, subcategories[0]);
+//		mAdapter.add(new ListRow(header, listRowAdapter));
 	}
 
 	private void setupMovieListRowPresenter() {
@@ -223,7 +223,7 @@ public class VideoDetailsFragment extends DetailsFragment {
 				Movie movie = (Movie) item;
 				Log.d(TAG, "Item: " + item.toString());
 				Intent intent = new Intent(getActivity(), DetailsActivity.class);
-				intent.putExtra(getResources().getString(R.string.movie), mSelectedMovie);
+				intent.putExtra(getResources().getString(R.string.movie), mSelectedEvent);
 				intent.putExtra(getResources().getString(R.string.should_start), true);
 				startActivity(intent);
 

@@ -16,18 +16,19 @@ package de.nicidienase.chaosflix;
 
 import android.support.v17.leanback.widget.AbstractDetailsDescriptionPresenter;
 
+import de.nicidienase.chaosflix.entities.Event;
 import de.nicidienase.chaosflix.entities.Movie;
 
 public class DetailsDescriptionPresenter extends AbstractDetailsDescriptionPresenter {
 
 	@Override
 	protected void onBindDescription(ViewHolder viewHolder, Object item) {
-		Movie movie = (Movie) item;
+		Event event = (Event) item;
 
-		if (movie != null) {
-			viewHolder.getTitle().setText(movie.getTitle());
-			viewHolder.getSubtitle().setText(movie.getStudio());
-			viewHolder.getBody().setText(movie.getDescription());
+		if (event != null) {
+			viewHolder.getTitle().setText(event.getTitle());
+			viewHolder.getSubtitle().setText(android.text.TextUtils.join(", ", event.getPersons()));
+			viewHolder.getBody().setText(event.getDescription());
 		}
 	}
 }
