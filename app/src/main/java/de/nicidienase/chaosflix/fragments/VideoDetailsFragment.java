@@ -57,6 +57,10 @@ import de.nicidienase.chaosflix.entities.Event;
 import de.nicidienase.chaosflix.entities.Movie;
 import de.nicidienase.chaosflix.entities.MovieList;
 import de.nicidienase.chaosflix.entities.Recording;
+import de.nicidienase.chaosflix.network.MediaCCCClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /*
  * LeanbackDetailsFragment extends DetailsFragment, a Wrapper fragment for leanback details screens.

@@ -75,6 +75,38 @@ public class Event extends SugarRecord implements Parcelable {
 		}
 	};
 
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel parcel, int i) {
+		parcel.writeString(guid);
+		parcel.writeString(title);
+		parcel.writeString(subtitle);
+		parcel.writeString(slug);
+		parcel.writeString(link);
+		parcel.writeString(description);
+		parcel.writeString(originalLanguage);
+		parcel.writeStringList(persons);
+		parcel.writeStringList(tags);
+		parcel.writeString(date);
+		parcel.writeString(updatedAt);
+		parcel.writeLong(length);
+		parcel.writeString(thumbUrl);
+		parcel.writeString(posterUrl);
+		parcel.writeString(frontendLink);
+		parcel.writeString(url);
+		parcel.writeString(conferenceUrl);
+		parcel.writeList(recordings);
+	}
+
+	public int getEventID(){
+		String[] strings = getUrl().split("/");
+		return Integer.parseInt(strings[strings.length-1]);
+	}
+
 	public String getGuid() {
 		return guid;
 	}
@@ -227,30 +259,4 @@ public class Event extends SugarRecord implements Parcelable {
 		this.updatedAt = updatedAt;
 	}
 
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel parcel, int i) {
-		parcel.writeString(guid);
-		parcel.writeString(title);
-		parcel.writeString(subtitle);
-		parcel.writeString(slug);
-		parcel.writeString(link);
-		parcel.writeString(description);
-		parcel.writeString(originalLanguage);
-		parcel.writeStringList(persons);
-		parcel.writeStringList(tags);
-		parcel.writeString(date);
-		parcel.writeString(updatedAt);
-		parcel.writeLong(length);
-		parcel.writeString(thumbUrl);
-		parcel.writeString(posterUrl);
-		parcel.writeString(frontendLink);
-		parcel.writeString(url);
-		parcel.writeString(conferenceUrl);
-		parcel.writeList(recordings);
-	}
 }
