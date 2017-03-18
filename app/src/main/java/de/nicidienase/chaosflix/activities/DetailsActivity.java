@@ -25,6 +25,7 @@ import de.nicidienase.chaosflix.R;
 public class DetailsActivity extends Activity {
 	public static final String SHARED_ELEMENT_NAME = "hero";
 	public static final String EVENT = "event";
+	public static final String RECORDING = "recording";
 
 	/**
 	 * Called when the activity is first created.

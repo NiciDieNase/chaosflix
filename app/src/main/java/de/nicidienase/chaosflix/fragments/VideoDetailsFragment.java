@@ -24,7 +24,6 @@ import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.ClassPresenterSelector;
 import android.support.v17.leanback.widget.DetailsOverviewRow;
 import android.support.v17.leanback.widget.DetailsOverviewRowPresenter;
-import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
@@ -36,17 +35,14 @@ import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
-import java.util.Collections;
 import java.util.List;
 
-import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.DetailsDescriptionPresenter;
 import de.nicidienase.chaosflix.activities.PlaybackOverlayActivity;
 import de.nicidienase.chaosflix.R;
@@ -55,7 +51,6 @@ import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.activities.MainActivity;
 import de.nicidienase.chaosflix.entities.Event;
 import de.nicidienase.chaosflix.entities.Movie;
-import de.nicidienase.chaosflix.entities.MovieList;
 import de.nicidienase.chaosflix.entities.Recording;
 import de.nicidienase.chaosflix.network.MediaCCCClient;
 import retrofit2.Call;
@@ -68,10 +63,6 @@ import retrofit2.Response;
  */
 public class VideoDetailsFragment extends DetailsFragment {
 	private static final String TAG = "VideoDetailsFragment";
-
-	private static final int ACTION_WATCH_TRAILER = 1;
-	private static final int ACTION_RENT = 2;
-	private static final int ACTION_BUY = 3;
 
 	private static final int DETAIL_THUMB_WIDTH = 274;
 	private static final int DETAIL_THUMB_HEIGHT = 274;
@@ -98,16 +89,27 @@ public class VideoDetailsFragment extends DetailsFragment {
 				.getParcelableExtra(DetailsActivity.EVENT);
 		if (mSelectedEvent != null) {
 			setupAdapter();
-			setupDetailsOverviewRow();
 			setupDetailsOverviewRowPresenter();
-			setupMovieListRow();
-			setupMovieListRowPresenter();
+			mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
 			updateBackground(mSelectedEvent.getPosterUrl());
 			setOnItemViewClickedListener(new ItemViewClickedListener());
 		} else {
 			Intent intent = new Intent(getActivity(), MainActivity.class);
 			startActivity(intent);
 		}
+
+		new MediaCCCClient().getEvent(mSelectedEvent.getEventID()).enqueue(new Callback<Event>() {
+			@Override
+			public void onResponse(Call<Event> call, Response<Event> response) {
+				mSelectedEvent = response.body();
+				setupDetailsOverviewRow();
+			}
+
+			@Override
+			public void onFailure(Call<Event> call, Throwable t) {
+
+			}
+		});
 	}
 
 	@Override
@@ -166,9 +168,13 @@ public class VideoDetailsFragment extends DetailsFragment {
 					}
 				});
 
-		for(Recording recording: mSelectedEvent.getRecordings()){
-			String quality = recording.isHighQuality() ? "HD" : "SD";
-			row.addAction(new Action(0,quality,recording.getLanguage()));
+		List<Recording> recordings = mSelectedEvent.getRecordings();
+		for(int i = 0; i < recordings.size(); i++){
+			if(recordings.get(i).getMimeType().startsWith("video/") && !recordings.get(i).getLanguage().contains("-")){
+				String quality = recordings.get(i).isHighQuality() ? "HD" : "SD";
+				int id = recordings.get(i).getLanguage().equals(mSelectedEvent.getOriginalLanguage()) ? 0 : 1;
+				row.addAction(new Action(i,quality,recordings.get(i).getLanguage()));
+			}
 		}
 
 		mAdapter.add(row);
@@ -188,34 +194,13 @@ public class VideoDetailsFragment extends DetailsFragment {
 		detailsPresenter.setOnActionClickedListener(new OnActionClickedListener() {
 			@Override
 			public void onActionClicked(Action action) {
-				if (action.getId() == ACTION_WATCH_TRAILER) {
-					Intent intent = new Intent(getActivity(), PlaybackOverlayActivity.class);
-					intent.putExtra(DetailsActivity.EVENT, mSelectedEvent);
-					startActivity(intent);
-				} else {
-					Toast.makeText(getActivity(), action.toString(), Toast.LENGTH_SHORT).show();
-				}
+				Intent intent = new Intent(getActivity(), PlaybackOverlayActivity.class);
+				intent.putExtra(DetailsActivity.RECORDING,
+						mSelectedEvent.getRecordings().get((int) action.getId()));
+				startActivity(intent);
 			}
 		});
 		mPresenterSelector.addClassPresenter(DetailsOverviewRow.class, detailsPresenter);
-	}
-
-	private void setupMovieListRow() {
-//		String subcategories[] = {getString(R.string.related_movies)};
-//		List<Movie> list = MovieList.list;
-//
-//		Collections.shuffle(list);
-//		ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
-//		for (int j = 0; j < NUM_COLS; j++) {
-//			listRowAdapter.add(list.get(j % 5));
-//		}
-
-//		HeaderItem header = new HeaderItem(0, subcategories[0]);
-//		mAdapter.add(new ListRow(header, listRowAdapter));
-	}
-
-	private void setupMovieListRowPresenter() {
-		mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
 	}
 
 	private final class ItemViewClickedListener implements OnItemViewClickedListener {
