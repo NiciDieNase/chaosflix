@@ -11,6 +11,7 @@ import com.orm.SugarRecord;
  */
 
 public class Recording extends SugarRecord implements Parcelable {
+	private long parentEventID;
 	private int size;
 	private int length;
 	@SerializedName("mime_type")
@@ -85,6 +86,19 @@ public class Recording extends SugarRecord implements Parcelable {
 		parcel.writeString(url);
 		parcel.writeString(eventUrl);
 		parcel.writeString(conferenceUrl);
+	}
+
+	public int getApiID(){
+		String[] strings = getUrl().split("/");
+		return Integer.parseInt(strings[strings.length-1]);
+	}
+
+	public long getParentEventID() {
+		return parentEventID;
+	}
+
+	public void setParentEventID(long parentEventID) {
+		this.parentEventID = parentEventID;
 	}
 
 	public int getSize() {
@@ -205,5 +219,12 @@ public class Recording extends SugarRecord implements Parcelable {
 
 	public void setConferenceUrl(String conferenceUrl) {
 		this.conferenceUrl = conferenceUrl;
+	}
+
+	public void update(Recording r){
+		if(!this.getUpdatedAt().equals(r.getUpdatedAt())){
+			// TODO actually update
+			this.save();
+		}
 	}
 }
