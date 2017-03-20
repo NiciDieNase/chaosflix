@@ -10,6 +10,7 @@ import android.support.v17.leanback.widget.FullWidthDetailsOverviewRowPresenter;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
+import android.util.Log;
 
 import java.util.List;
 
@@ -38,13 +39,14 @@ public class EventsDetailsFragment extends DetailsFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		Log.d(TAG,"onCreate");
 		mSelectedEvent = getActivity().getIntent()
 				.getParcelableExtra(DetailsActivity.EVENT);
 		client.getEvent(mSelectedEvent.getApiID()).enqueue(new Callback<Event>() {
 			@Override
 			public void onResponse(Call<Event> call, Response<Event> response) {
 				mSelectedEvent = response.body();
+				setAdapter(mRowsAdapter);
 			}
 
 			@Override
@@ -99,6 +101,6 @@ public class EventsDetailsFragment extends DetailsFragment {
 			}
 		});
 
-		setAdapter(mRowsAdapter);
+
 	}
 }
