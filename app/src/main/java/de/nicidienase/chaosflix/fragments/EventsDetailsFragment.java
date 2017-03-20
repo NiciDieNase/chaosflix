@@ -86,13 +86,16 @@ public class EventsDetailsFragment extends DetailsFragment {
 			@Override
 			public void onResponse(Call<Conference> call, Response<Conference> response) {
 				Conference conference = response.body();
-				List<Event> events = conference.getEventsByTags().get(mSelectedEvent.getTags().get(0));
-				CardPresenter cardPresenter = new CardPresenter();
+				if(mSelectedEvent.getTags().size()>0){
 
-				ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
-				listRowAdapter.addAll(0, events);
-				HeaderItem header = new HeaderItem("Related Talks");
-				mRowsAdapter.add(new ListRow(header, listRowAdapter));
+					List<Event> events = conference.getEventsByTags().get(mSelectedEvent.getTags().get(0));
+					CardPresenter cardPresenter = new CardPresenter();
+
+					ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
+					listRowAdapter.addAll(0, events);
+					HeaderItem header = new HeaderItem("Related Talks");
+					mRowsAdapter.add(new ListRow(header, listRowAdapter));
+				} // else add other untagged videos
 			}
 
 			@Override

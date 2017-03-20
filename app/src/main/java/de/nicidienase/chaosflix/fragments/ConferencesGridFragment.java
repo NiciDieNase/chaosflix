@@ -31,7 +31,7 @@ import retrofit2.Response;
  * Created by felix on 20.03.17.
  */
 
-public class ConferencesFragment extends VerticalGridFragment {
+public class ConferencesGridFragment extends VerticalGridFragment {
 
 	private static final int NUM_COLUMNS = 5;
     private final ArrayObjectAdapter mConferenceAdapter =
