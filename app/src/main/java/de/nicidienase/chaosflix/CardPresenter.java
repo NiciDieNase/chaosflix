@@ -48,8 +48,6 @@ public class CardPresenter extends Presenter {
 
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup parent) {
-		Log.d(TAG, "onCreateViewHolder");
-
 		sDefaultBackgroundColor = parent.getResources().getColor(R.color.default_background);
 		sSelectedBackgroundColor = parent.getResources().getColor(R.color.selected_background);
 		mDefaultCardImage = parent.getResources().getDrawable(R.drawable.movie);
@@ -71,7 +69,6 @@ public class CardPresenter extends Presenter {
 	@Override
 	public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
 		ImageCardView cardView = (ImageCardView) viewHolder.view;
-		Log.d(TAG, "onBindViewHolder");
 		cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
 		if(item instanceof Event){
 			Event event = (Event) item;
