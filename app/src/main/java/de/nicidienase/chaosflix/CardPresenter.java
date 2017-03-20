@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 
+import de.nicidienase.chaosflix.entities.Conference;
 import de.nicidienase.chaosflix.entities.Event;
 
 /*
@@ -69,19 +70,34 @@ public class CardPresenter extends Presenter {
 
 	@Override
 	public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
-		Event event = (Event) item;
 		ImageCardView cardView = (ImageCardView) viewHolder.view;
-
 		Log.d(TAG, "onBindViewHolder");
-		if (event.getThumbUrl() != null) {
+		cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
+		if(item instanceof Event){
+			Event event = (Event) item;
 			cardView.setTitleText(event.getTitle());
-			cardView.setContentText(android.text.TextUtils.join(", ",event.getPersons()));
-			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
-			Glide.with(viewHolder.view.getContext())
-					.load(event.getThumbUrl())
-					.centerCrop()
-					.error(mDefaultCardImage)
-					.into(cardView.getMainImageView());
+			cardView.setContentText(event.getSubtitle());
+//			cardView.setContentText(android.text.TextUtils.join(", ",event.getPersons()));
+			if (event.getThumbUrl() != null) {
+				Glide.with(viewHolder.view.getContext())
+						.load(event.getThumbUrl())
+						.centerCrop()
+						.error(mDefaultCardImage)
+						.into(cardView.getMainImageView());
+			}
+		}
+		if(item instanceof Conference){
+			Conference conference = (Conference) item;
+			cardView.setTitleText(conference.getTitle());
+			cardView.setContentText(conference.getAcronym());
+			if(conference.getLogoUrl() != null){
+
+				Glide.with(viewHolder.view.getContext())
+						.load(conference.getLogoUrl())
+						.centerCrop()
+						.error(mDefaultCardImage)
+						.into(cardView.getMainImageView());
+			}
 		}
 	}
 
