@@ -14,7 +14,6 @@
 
 package de.nicidienase.chaosflix.fragments;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
@@ -25,10 +24,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v17.leanback.app.BackgroundManager;
 import android.support.v17.leanback.app.BrowseFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
@@ -44,9 +43,6 @@ import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -56,8 +52,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
-import de.nicidienase.chaosflix.activities.ConferenceActivity;
-import de.nicidienase.chaosflix.activities.EventDetailsActivity;
+import de.nicidienase.chaosflix.activities.EventsActivity;
 import de.nicidienase.chaosflix.entities.Conference;
 import de.nicidienase.chaosflix.entities.Event;
 import de.nicidienase.chaosflix.network.MediaCCCClient;
@@ -65,7 +60,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ConferenceBrowseFragment extends BrowseFragment {
+public class EventsBrowseFragment extends BrowseFragment {
 	private static final String TAG = "MainFragment";
 
 	private static final int BACKGROUND_UPDATE_DELAY = 300;
@@ -87,8 +82,9 @@ public class ConferenceBrowseFragment extends BrowseFragment {
 		Log.i(TAG, "onCreate");
 		super.onActivityCreated(savedInstanceState);
 
-		final int conferenceID = this.getActivity().getIntent().getIntExtra(ConferenceActivity.CONFERENCE_ID, 101);
-		client.getConference(conferenceID).enqueue(new Callback<Conference>() {
+//		final int conferenceID = this.getActivity().getIntent().getIntExtra(EventsActivity.CONFERENCE_ID, 101);
+		conference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.CONFERENCE);
+		client.getConference(conference.getApiID()).enqueue(new Callback<Conference>() {
 			@Override
 			public void onResponse(Call<Conference> call, Response<Conference> response) {
 				conference = response.body();

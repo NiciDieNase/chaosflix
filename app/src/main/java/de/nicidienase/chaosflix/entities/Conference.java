@@ -1,8 +1,12 @@
 package de.nicidienase.chaosflix.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 import com.orm.SugarRecord;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +16,7 @@ import java.util.Map;
  * Created by felix on 11.03.17.
  */
 
-public class Conference extends SugarRecord{
+public class Conference extends SugarRecord implements Parcelable,Comparable<Conference> {
 	String acronym;
 	@SerializedName("aspect_ratio")
 	String aspectRation;
@@ -55,19 +59,54 @@ public class Conference extends SugarRecord{
 		this.events = events;
 	}
 
+	protected Conference(Parcel in) {
+		acronym = in.readString();
+		aspectRation = in.readString();
+		title = in.readString();
+		slug = in.readString();
+		webgenLocation = in.readString();
+		scheduleUrl = in.readString();
+		logoUrl = in.readString();
+		imagesUrl = in.readString();
+		recordingsUrl = in.readString();
+		url = in.readString();
+		updatedAt = in.readString();
+		events = in.createTypedArrayList(Event.CREATOR);
+	}
+
+	public static final Creator<Conference> CREATOR = new Creator<Conference>() {
+		@Override
+		public Conference createFromParcel(Parcel in) {
+			return new Conference(in);
+		}
+
+		@Override
+		public Conference[] newArray(int size) {
+			return new Conference[size];
+		}
+	};
+
 	public HashMap<String, List<Event>> getEventsByTags(){
 		HashMap<String, List<Event>> result = new HashMap<>();
+		List<Event> untagged = new ArrayList<>();
 		for(Event event: this.getEvents()){
-			for(String tag: event.getTags()){
-				List<Event> list;
-				if(result.keySet().contains(tag)){
-					list = result.get(tag);
-				} else {
-					list = new LinkedList<>();
-					result.put(tag,list);
+			if(event.getTags().size()>0){
+				for(String tag: event.getTags()){
+					List<Event> list;
+					if(result.keySet().contains(tag)){
+						list = result.get(tag);
+					} else {
+						list = new LinkedList<>();
+						result.put(tag,list);
+					}
+					list.add(event);
 				}
-				list.add(event);
+			} else {
+				untagged.add(event);
 			}
+		}
+		if(untagged.size() > 0){
+			result.put("untagged",untagged);
 		}
 		return result;
 	}
@@ -178,5 +217,31 @@ public class Conference extends SugarRecord{
 			// TODO actually update
 			this.save();
 		}
+	}
+
+	@Override
+	public int compareTo(Conference conference) {
+		return updatedAt.compareTo(conference.getUpdatedAt());
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel parcel, int i) {
+		parcel.writeString(acronym);
+		parcel.writeString(aspectRation);
+		parcel.writeString(title);
+		parcel.writeString(slug);
+		parcel.writeString(webgenLocation);
+		parcel.writeString(scheduleUrl);
+		parcel.writeString(logoUrl);
+		parcel.writeString(imagesUrl);
+		parcel.writeString(recordingsUrl);
+		parcel.writeString(url);
+		parcel.writeString(updatedAt);
+		parcel.writeTypedList(events);
 	}
 }
