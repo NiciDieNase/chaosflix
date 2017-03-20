@@ -57,7 +57,7 @@ import de.nicidienase.chaosflix.activities.PlaybackOverlayActivity;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.Utils;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
-import de.nicidienase.chaosflix.activities.ConferenceActivity;
+import de.nicidienase.chaosflix.activities.EventsActivity;
 import de.nicidienase.chaosflix.entities.Conference;
 import de.nicidienase.chaosflix.entities.Event;
 import de.nicidienase.chaosflix.entities.Recording;
@@ -102,7 +102,7 @@ public class VideoDetailsFragment extends DetailsFragment {
 			updateBackground(mSelectedEvent.getPosterUrl());
 			setOnItemViewClickedListener(new ItemViewClickedListener());
 		} else {
-			Intent intent = new Intent(getActivity(), ConferenceActivity.class);
+			Intent intent = new Intent(getActivity(), EventsActivity.class);
 			startActivity(intent);
 		}
 
