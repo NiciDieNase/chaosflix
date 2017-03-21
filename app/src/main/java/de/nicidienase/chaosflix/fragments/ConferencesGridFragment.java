@@ -1,25 +1,15 @@
 package de.nicidienase.chaosflix.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v17.leanback.app.VerticalGridFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
-import android.support.v17.leanback.widget.CursorObjectAdapter;
-import android.support.v17.leanback.widget.ImageCardView;
-import android.support.v17.leanback.widget.ObjectAdapter;
-import android.support.v17.leanback.widget.OnItemViewClickedListener;
-import android.support.v17.leanback.widget.Presenter;
-import android.support.v17.leanback.widget.Row;
-import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v17.leanback.widget.VerticalGridPresenter;
-import android.support.v4.app.ActivityOptionsCompat;
 
 import java.util.Collections;
 import java.util.List;
 
 import de.nicidienase.chaosflix.CardPresenter;
-import de.nicidienase.chaosflix.activities.EventsActivity;
 import de.nicidienase.chaosflix.entities.Conference;
 import de.nicidienase.chaosflix.entities.Conferences;
 import de.nicidienase.chaosflix.network.MediaCCCClient;
@@ -72,26 +62,7 @@ public class ConferencesGridFragment extends VerticalGridFragment {
 			}
 		}, 500);
 
-		setOnItemViewClickedListener(new ItemViewClickedListener());
+		setOnItemViewClickedListener(new ItemViewClickedListener(this));
 	}
 
-	private final class ItemViewClickedListener implements OnItemViewClickedListener{
-
-		@Override
-		public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
-								  RowPresenter.ViewHolder rowViewHolder, Row row) {
-			if(item instanceof Conference){
-				Conference conference = (Conference) item;
-				// Start EventsActivity for this conference
-				Intent i = new Intent(getActivity(), EventsActivity.class);
-				i.putExtra(EventsActivity.CONFERENCE,conference);
-				i.putExtra(EventsActivity.CONFERENCE_ID,conference.getApiID());
-//				Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-//						getActivity(),
-//						((ImageCardView) itemViewHolder.view).getMainImageView(),
-//						EventsActivity.SHARED_ELEMENT_NAME).toBundle();
-				startActivity(i);
-			}
-		}
-	}
 }
