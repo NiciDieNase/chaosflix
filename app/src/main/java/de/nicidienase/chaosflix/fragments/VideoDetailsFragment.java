@@ -16,6 +16,7 @@ package de.nicidienase.chaosflix.fragments;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v17.leanback.app.BackgroundManager;
@@ -31,6 +32,7 @@ import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
+import android.support.v17.leanback.widget.ObjectAdapter;
 import android.support.v17.leanback.widget.OnActionClickedListener;
 import android.support.v17.leanback.widget.OnItemViewClickedListener;
 import android.support.v17.leanback.widget.Presenter;
@@ -53,6 +55,7 @@ import java.util.List;
 
 import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.EventDetailsDescriptionPresenter;
+import de.nicidienase.chaosflix.activities.EventDetailsActivity;
 import de.nicidienase.chaosflix.activities.PlaybackOverlayActivity;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.Utils;
@@ -73,33 +76,36 @@ import retrofit2.Response;
 public class VideoDetailsFragment extends DetailsFragment {
 	private static final String TAG = "VideoDetailsFragment";
 
-	private static final int DETAIL_THUMB_WIDTH = 274;
-	private static final int DETAIL_THUMB_HEIGHT = 274;
+	private static final int DETAIL_THUMB_WIDTH = 254;
+	private static final int DETAIL_THUMB_HEIGHT = 254;
 
 	private Event mSelectedEvent;
 
 	private ArrayObjectAdapter mAdapter;
 	private ClassPresenterSelector mPresenterSelector;
 
-	private BackgroundManager mBackgroundManager;
-	private Drawable mDefaultBackground;
-	private DisplayMetrics mMetrics;
+//	private BackgroundManager mBackgroundManager;
+//	private Drawable mDefaultBackground;
+//	private DisplayMetrics mMetrics;
 	private FullWidthDetailsOverviewRowPresenter detailsPresenter;
+	private FullWidthDetailsOverviewSharedElementHelper mHelper;
+	private String mConferenceId;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Log.d(TAG, "onCreate DetailsFragment");
 		super.onCreate(savedInstanceState);
 
-		prepareBackgroundManager();
+//		prepareBackgroundManager();
 
 		mSelectedEvent = getActivity().getIntent()
 				.getParcelableExtra(DetailsActivity.EVENT);
+//		mConferenceId
 		if (mSelectedEvent != null) {
 			setupAdapter();
 			setupDetailsOverviewRowPresenter();
 			mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
-			updateBackground(mSelectedEvent.getPosterUrl());
+//			updateBackground(mSelectedEvent.getPosterUrl());
 			setOnItemViewClickedListener(new ItemViewClickedListener());
 		} else {
 			Intent intent = new Intent(getActivity(), EventsActivity.class);
@@ -126,67 +132,66 @@ public class VideoDetailsFragment extends DetailsFragment {
 		super.onStop();
 	}
 
-	private void prepareBackgroundManager() {
-		mBackgroundManager = BackgroundManager.getInstance(getActivity());
-		mBackgroundManager.attach(getActivity().getWindow());
-		mDefaultBackground = getResources().getDrawable(R.drawable.default_background);
-		mMetrics = new DisplayMetrics();
-		getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
-	}
+//	private void prepareBackgroundManager() {
+//		mBackgroundManager = BackgroundManager.getInstance(getActivity());
+//		mBackgroundManager.attach(getActivity().getWindow());
+//		mDefaultBackground = getResources().getDrawable(R.drawable.default_background);
+//		mMetrics = new DisplayMetrics();
+//		getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
+//	}
 
-	protected void updateBackground(String uri) {
-		Glide.with(getActivity())
-				.load(uri)
-				.centerCrop()
-				.error(mDefaultBackground)
-				.into(new SimpleTarget<GlideDrawable>(mMetrics.widthPixels, mMetrics.heightPixels) {
-					@Override
-					public void onResourceReady(GlideDrawable resource,
-												GlideAnimation<? super GlideDrawable> glideAnimation) {
-						mBackgroundManager.setDrawable(resource);
-					}
-				});
-	}
+//	protected void updateBackground(String uri) {
+//		Glide.with(getActivity())
+//				.load(uri)
+//				.centerCrop()
+//				.error(mDefaultBackground)
+//				.into(new SimpleTarget<GlideDrawable>(mMetrics.widthPixels, mMetrics.heightPixels) {
+//					@Override
+//					public void onResourceReady(GlideDrawable resource,
+//												GlideAnimation<? super GlideDrawable> glideAnimation) {
+//						mBackgroundManager.setDrawable(resource);
+//					}
+//				});
+//	}
 
 	private void setupAdapter() {
-		mPresenterSelector = new ClassPresenterSelector();
-//        mPresenterSelector.addClassPresenter(DetailsOverviewRow.class, detailsPresenter);
-//        mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
-		mAdapter = new ArrayObjectAdapter(mPresenterSelector);
-		setAdapter(mAdapter);
+
 	}
 
 	private void setupDetailsOverviewRow() {
 		Log.d(TAG, "doInBackground: " + mSelectedEvent.toString());
 		final DetailsOverviewRow row = new DetailsOverviewRow(mSelectedEvent);
-		row.setImageDrawable(getResources().getDrawable(R.drawable.default_background));
-		int width = Utils.convertDpToPixel(getActivity()
-				.getApplicationContext(), DETAIL_THUMB_WIDTH);
-		int height = Utils.convertDpToPixel(getActivity()
-				.getApplicationContext(), DETAIL_THUMB_HEIGHT);
+//		row.setImageDrawable(getResources().getDrawable(R.drawable.default_background));
+
+//		int width = Utils.convertDpToPixel(getActivity()
+//				.getApplicationContext(), DETAIL_THUMB_WIDTH);
+//		int height = Utils.convertDpToPixel(getActivity()
+//				.getApplicationContext(), DETAIL_THUMB_HEIGHT);
+
 		Glide.with(getActivity())
 				.load(mSelectedEvent.getThumbUrl())
-				.centerCrop()
+				.asBitmap()
+				.dontAnimate()
 				.error(R.drawable.default_background)
-				.into(new SimpleTarget<GlideDrawable>(width, height) {
+				.into(new SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH,DETAIL_THUMB_HEIGHT) {
 					@Override
-					public void onResourceReady(GlideDrawable resource,
-												GlideAnimation<? super GlideDrawable>
-														glideAnimation) {
-						Log.d(TAG, "details overview card image url ready: " + resource);
-						row.setImageDrawable(resource);
-						mAdapter.notifyArrayItemRangeChanged(0, mAdapter.size());
+					public void onResourceReady(final Bitmap resource,
+										GlideAnimation<? super Bitmap> glideAnimation) {
+						row.setImageBitmap(getActivity(), resource);
+						startEntranceTransition();
 					}
 				});
+		ArrayObjectAdapter actionsAdapter = new ArrayObjectAdapter();
 
 		List<Recording> recordings = mSelectedEvent.getRecordings();
 		for(int i = 0; i < recordings.size(); i++){
 			if(recordings.get(i).getMimeType().startsWith("video/") && !recordings.get(i).getLanguage().contains("-")){
 				String quality = recordings.get(i).isHighQuality() ? "HD" : "SD";
 				int id = recordings.get(i).getLanguage().equals(mSelectedEvent.getOriginalLanguage()) ? 0 : 1;
-				row.addAction(new Action(i,quality,recordings.get(i).getLanguage()));
+				actionsAdapter.add(new Action(i,quality,recordings.get(i).getLanguage()));
 			}
 		}
+		row.setActionsAdapter(actionsAdapter);
 
 		mAdapter.add(row);
 
@@ -197,10 +202,14 @@ public class VideoDetailsFragment extends DetailsFragment {
 		detailsPresenter = new FullWidthDetailsOverviewRowPresenter(
 					new EventDetailsDescriptionPresenter(), new EventDetailsOverviewLogoPresenter());
 		detailsPresenter.setBackgroundColor(getResources().getColor(R.color.selected_background));
-		FullWidthDetailsOverviewSharedElementHelper listener = new FullWidthDetailsOverviewSharedElementHelper();
-		listener.setSharedElementEnterTransition(getActivity(),DetailsActivity.SHARED_ELEMENT_NAME);
-		detailsPresenter.setListener(listener);
-		detailsPresenter.setAlignmentMode(FullWidthDetailsOverviewRowPresenter.ALIGN_MODE_MIDDLE);
+		detailsPresenter.setInitialState(FullWidthDetailsOverviewRowPresenter.STATE_HALF);
+		detailsPresenter.setAlignmentMode(FullWidthDetailsOverviewRowPresenter.ALIGN_MODE_START);
+		mHelper = new FullWidthDetailsOverviewSharedElementHelper();
+		mHelper.setSharedElementEnterTransition(getActivity(),
+				EventDetailsActivity.SHARED_ELEMENT_NAME);
+		detailsPresenter.setListener(mHelper);
+		detailsPresenter.setParticipatingEntranceTransition(false);
+		prepareEntranceTransition();
 
 		detailsPresenter.setOnActionClickedListener(new OnActionClickedListener() {
 			@Override
@@ -211,11 +220,16 @@ public class VideoDetailsFragment extends DetailsFragment {
 				startActivity(intent);
 			}
 		});
+
+		mPresenterSelector = new ClassPresenterSelector();
 		mPresenterSelector.addClassPresenter(DetailsOverviewRow.class, detailsPresenter);
+		mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
+		mAdapter = new ArrayObjectAdapter(mPresenterSelector);
+		setAdapter(mAdapter);
 	}
 
 	private void setupRelatedEvents(){
-		new MediaCCCClient().getConference(101).enqueue(new Callback<Conference>() {
+		new MediaCCCClient().getConference((int) mSelectedEvent.getParentConferenceID()).enqueue(new Callback<Conference>() {
 			@Override
 			public void onResponse(Call<Conference> call, Response<Conference> response) {
 				Conference conference = response.body();
@@ -225,7 +239,11 @@ public class VideoDetailsFragment extends DetailsFragment {
 					CardPresenter cardPresenter = new CardPresenter();
 
 					ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
-					listRowAdapter.addAll(0, events);
+					for(Event e :events){
+						if(!e.getGuid().equals(mSelectedEvent.getGuid())){
+							listRowAdapter.add(e);
+						}
+					}
 					HeaderItem header = new HeaderItem("Related Talks");
 					mAdapter.add(new ListRow(header, listRowAdapter));
 				}
