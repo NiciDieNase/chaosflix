@@ -268,7 +268,11 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 
 	@Override
 	public int compareTo(Event event) {
-		return this.date.compareTo(event.getDate());
+		if(event.getDate()!=null && this.date != null){
+			return this.date.compareTo(event.getDate());
+		} else {
+			return 0;
+		}
 	}
 
 	public void update(Event e) {
