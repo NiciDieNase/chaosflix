@@ -13,6 +13,7 @@ public class ConferencesActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_conferences);
+//		setContentView(R.layout.activity_conferences_grid);
+		setContentView(R.layout.activity_conferences_browse);
 	}
 }

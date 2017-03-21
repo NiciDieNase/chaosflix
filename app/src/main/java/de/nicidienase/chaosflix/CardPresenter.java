@@ -91,7 +91,7 @@ public class CardPresenter extends Presenter {
 
 				Glide.with(viewHolder.view.getContext())
 						.load(conference.getLogoUrl())
-						.centerCrop()
+						.fitCenter()
 						.error(mDefaultCardImage)
 						.into(cardView.getMainImageView());
 			}
@@ -100,7 +100,6 @@ public class CardPresenter extends Presenter {
 
 	@Override
 	public void onUnbindViewHolder(Presenter.ViewHolder viewHolder) {
-		Log.d(TAG, "onUnbindViewHolder");
 		ImageCardView cardView = (ImageCardView) viewHolder.view;
 		// Remove references to images so that the garbage collector can free up memory
 		cardView.setBadgeImage(null);

@@ -172,7 +172,7 @@ public class EventsBrowseFragment extends BrowseFragment {
 	}
 
 	private void setupEventListeners() {
-		setOnItemViewClickedListener(new ItemViewClickedListener());
+		setOnItemViewClickedListener(new ItemViewClickedListener(this));
 		setOnItemViewSelectedListener(new ItemViewSelectedListener());
 	}
 
@@ -200,21 +200,6 @@ public class EventsBrowseFragment extends BrowseFragment {
 		}
 		mBackgroundTimer = new Timer();
 		mBackgroundTimer.schedule(new UpdateBackgroundTask(), BACKGROUND_UPDATE_DELAY);
-	}
-
-	private final class ItemViewClickedListener implements OnItemViewClickedListener {
-		@Override
-		public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
-								  RowPresenter.ViewHolder rowViewHolder, Row row) {
-			Event event = (Event) item;
-			Intent i = new Intent(getActivity(), DetailsActivity.class);
-			i.putExtra(DetailsActivity.EVENT,event);
-			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-					getActivity(),
-					((ImageCardView) itemViewHolder.view).getMainImageView(),
-					DetailsActivity.SHARED_ELEMENT_NAME).toBundle();
-			getActivity().startActivity(i, bundle);
-		}
 	}
 
 	private final class ItemViewSelectedListener implements OnItemViewSelectedListener {

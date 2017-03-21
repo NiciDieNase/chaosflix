@@ -242,7 +242,6 @@ public class VideoDetailsFragment extends DetailsFragment {
 		@Override
 		public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
 								  RowPresenter.ViewHolder rowViewHolder, Row row) {
-
 			if (item instanceof Event) {
 				Event event = (Event) item;
 				Log.d(TAG, "Item: " + event.getTitle());
