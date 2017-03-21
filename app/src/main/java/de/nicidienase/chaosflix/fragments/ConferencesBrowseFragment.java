@@ -60,7 +60,8 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 
 			@Override
 			public void onFailure(Call<Conferences> call, Throwable t) {
-
+				Log.d(TAG,"Error loading conferences",t);
+				t.printStackTrace();
 			}
 		});
 

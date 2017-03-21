@@ -121,7 +121,8 @@ public class VideoDetailsFragment extends DetailsFragment {
 
 			@Override
 			public void onFailure(Call<Event> call, Throwable t) {
-
+				Log.d(TAG,"Error loading conferences",t);
+				t.printStackTrace();
 			}
 		});
 		setupRelatedEvents();
@@ -251,7 +252,8 @@ public class VideoDetailsFragment extends DetailsFragment {
 
 			@Override
 			public void onFailure(Call<Conference> call, Throwable t) {
-
+				Log.d(TAG,"Error loading conferences",t);
+				t.printStackTrace();
 			}
 		});
 	}
