@@ -221,7 +221,7 @@ public class Conference extends SugarRecord implements Parcelable,Comparable<Con
 
 	@Override
 	public int compareTo(Conference conference) {
-		return updatedAt.compareTo(conference.getUpdatedAt());
+		return getSlug().compareTo(conference.getSlug());
 	}
 
 	@Override
