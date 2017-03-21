@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.support.v17.leanback.app.VerticalGridFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.VerticalGridPresenter;
+import android.util.Log;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +25,8 @@ import retrofit2.Response;
 public class ConferencesGridFragment extends VerticalGridFragment {
 
 	private static final int NUM_COLUMNS = 5;
-    private final ArrayObjectAdapter mConferenceAdapter =
+	private static final String TAG = ConferencesGridFragment.class.getSimpleName();
+	private final ArrayObjectAdapter mConferenceAdapter =
             new ArrayObjectAdapter(new CardPresenter());
 	private MediaCCCClient mMediaCCCClient;
 
@@ -46,6 +48,8 @@ public class ConferencesGridFragment extends VerticalGridFragment {
 
 			@Override
 			public void onFailure(Call<Conferences> call, Throwable t) {
+				Log.d(TAG,"Error loading conferences",t);
+				t.printStackTrace();
 
 			}
 		});

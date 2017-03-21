@@ -99,7 +99,8 @@ public class EventsBrowseFragment extends BrowseFragment {
 
 			@Override
 			public void onFailure(Call<Conference> call, Throwable t) {
-				// TODO handle failure
+				Log.d(TAG,"Error loading conferences",t);
+				t.printStackTrace();
 			}
 		});
 		prepareBackgroundManager();
