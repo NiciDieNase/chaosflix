@@ -16,10 +16,13 @@ package de.nicidienase.chaosflix.fragments;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -48,6 +51,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.google.common.collect.Lists;
 
 import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.R;
@@ -76,13 +80,14 @@ public class EventsBrowseFragment extends BrowseFragment {
 	private BackgroundManager mBackgroundManager;
 	private Conference conference;
 	private MediaCCCClient client = new MediaCCCClient();;
+	private int conferenceId;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		Log.i(TAG, "onCreate");
 		super.onActivityCreated(savedInstanceState);
 
-//		final int conferenceID = this.getActivity().getIntent().getIntExtra(EventsActivity.CONFERENCE_ID, 101);
+		conferenceId = this.getActivity().getIntent().getIntExtra(EventsActivity.CONFERENCE_ID, 0);
 		conference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.CONFERENCE);
 		client.getConference(conference.getApiID()).enqueue(new Callback<Conference>() {
 			@Override
@@ -117,7 +122,9 @@ public class EventsBrowseFragment extends BrowseFragment {
 		CardPresenter cardPresenter = new CardPresenter();
 
 		List<Event> other = new LinkedList<Event>();
-		for (String tag: eventsByTags.keySet()) {
+		List<String> keys = Lists.newArrayList(eventsByTags.keySet());
+		Collections.sort(keys);
+		for (String tag: keys) {
 			List<Event> items = eventsByTags.get(tag);
 			Collections.sort(items);
 			if(android.text.TextUtils.isDigitsOnly(tag)){
