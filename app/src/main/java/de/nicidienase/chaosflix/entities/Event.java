@@ -42,7 +42,6 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 	String conferenceUrl;
 	List<Recording> recordings;
 
-
 	protected Event(Parcel in) {
 		guid = in.readString();
 		title = in.readString();
@@ -107,6 +106,10 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 	}
 
 	public long getParentConferenceID() {
+		if(parentConferenceID == 0){
+			String[] split = conferenceUrl.split("/");
+			parentConferenceID = Long.parseLong(split[split.length-1]);
+		}
 		return parentConferenceID;
 	}
 
