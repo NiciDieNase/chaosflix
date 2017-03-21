@@ -27,6 +27,7 @@ public class MediaCCCClientTest{
 			assertEquals(conference.getAcronym(),"33c3");
 		} catch (IOException e) {
 			e.printStackTrace();
+			fail();
 		}
 	}
 
@@ -37,6 +38,7 @@ public class MediaCCCClientTest{
 			assertEquals(event.getGuid(),"bfc2ab1f-8384-4d7d-801a-dde8c81e039c");
 		} catch (IOException e) {
 			e.printStackTrace();
+			fail();
 		}
 	}
 
@@ -47,6 +49,7 @@ public class MediaCCCClientTest{
 			assertEquals(event.getRecordings().size(),9);
 		} catch (IOException e) {
 			e.printStackTrace();
+			fail();
 		}
 	}
 
@@ -58,6 +61,7 @@ public class MediaCCCClientTest{
 			assertEquals(recording.getUpdatedAt(), "2016-12-29T03:16:16.105+01:00");
 		} catch (IOException e) {
 			e.printStackTrace();
+			fail();
 		}
 	}
 
@@ -68,6 +72,7 @@ public class MediaCCCClientTest{
 			assertEquals(99,conferences.getConferences().size());
 		} catch (IOException e) {
 			e.printStackTrace();
+			fail();
 		}
 	}
 
@@ -78,6 +83,7 @@ public class MediaCCCClientTest{
 			assertEquals(12,conference.getEventsByTags().keySet().size());
 		} catch (IOException e) {
 			e.printStackTrace();
+			fail();
 		}
 	}
 }
