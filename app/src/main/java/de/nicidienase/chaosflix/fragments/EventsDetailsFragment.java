@@ -51,7 +51,8 @@ public class EventsDetailsFragment extends DetailsFragment {
 
 			@Override
 			public void onFailure(Call<Event> call, Throwable t) {
-
+				Log.d(TAG,"Error loading conferences",t);
+				t.printStackTrace();
 			}
 		});
 
@@ -100,7 +101,8 @@ public class EventsDetailsFragment extends DetailsFragment {
 
 			@Override
 			public void onFailure(Call<Conference> call, Throwable t) {
-
+				Log.d(TAG,"Error loading conferences",t);
+				t.printStackTrace();
 			}
 		});
 

@@ -41,6 +41,7 @@ import android.support.v17.leanback.widget.PlaybackControlsRow.SkipPreviousActio
 import android.support.v17.leanback.widget.PlaybackControlsRow.ThumbsDownAction;
 import android.support.v17.leanback.widget.PlaybackControlsRow.ThumbsUpAction;
 import android.support.v17.leanback.widget.PlaybackControlsRowPresenter;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -113,7 +114,8 @@ public class PlaybackOverlayFragment extends PlaybackFragment {
 
 			@Override
 			public void onFailure(Call<Event> call, Throwable t) {
-
+				Log.d(TAG,"Error loading conferences",t);
+				t.printStackTrace();
 			}
 		});
 		mHandler = new Handler();
