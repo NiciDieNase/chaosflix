@@ -37,5 +37,6 @@
     <string name="error_fragment_message">An error occurred</string>
     <string name="dismiss_error">Dismiss</string>
     <string name="oops">Oops</string>
-    <string name="related_talks">Related Talks</string>
+    <string name="related_talks">Talks in the same Track</string>
+    <string name="random_talks">Other Talks at this Conference</string>
 </resources>
