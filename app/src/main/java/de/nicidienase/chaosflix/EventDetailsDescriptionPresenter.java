@@ -19,15 +19,11 @@ public class EventDetailsDescriptionPresenter extends AbstractDetailsDescription
 		StringBuilder sb = new StringBuilder();
 		String speaker = TextUtils.join(", ", event.getPersons());
 		sb.append(event.getDescription())
-				.append("\n\n")
-				.append("by: ")
-				.append(speaker)
-				.append("\nreleased at: ")
-				.append(event.getReleaseDate())
-				.append("\nlast updated at: ")
-				.append(event.getUpdatedAt())
-				.append("\nTags: ")
-				.append(event.getTags());
+				.append("\n")
+				.append("by: ").append(speaker)
+				.append("\nreleased at: ").append(event.getReleaseDate())
+				.append("\nlast updated at: ").append(event.getUpdatedAt())
+				.append("\nTags: ").append(android.text.TextUtils.join(", ",event.getTags()));
 		vh.getBody().setText(sb.toString());
 	}
 }
