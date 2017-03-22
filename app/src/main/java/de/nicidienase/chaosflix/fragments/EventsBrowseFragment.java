@@ -70,6 +70,7 @@ public class EventsBrowseFragment extends BrowseFragment {
 	private static final int BACKGROUND_UPDATE_DELAY = 300;
 	private static final int GRID_ITEM_WIDTH = 200;
 	private static final int GRID_ITEM_HEIGHT = 200;
+	private static final int FRAGMENT = R.id.browse_fragment;
 
 	private final Handler mHandler = new Handler();
 	private ArrayObjectAdapter mRowsAdapter;
@@ -86,7 +87,8 @@ public class EventsBrowseFragment extends BrowseFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		Log.i(TAG, "onCreate");
 		super.onActivityCreated(savedInstanceState);
-		final BrowseErrorFragment errorFragment = showErrorFragment();
+		final BrowseErrorFragment errorFragment =
+				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);
 		conferenceId = this.getActivity().getIntent().getIntExtra(EventsActivity.CONFERENCE_ID, 0);
 		conference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.CONFERENCE);
 		client.getConference(conference.getApiID()).enqueue(new Callback<Conference>() {
@@ -116,13 +118,6 @@ public class EventsBrowseFragment extends BrowseFragment {
 			Log.d(TAG, "onDestroy: " + mBackgroundTimer.toString());
 			mBackgroundTimer.cancel();
 		}
-	}
-
-	private BrowseErrorFragment showErrorFragment(){
-		BrowseErrorFragment errorFragment = new BrowseErrorFragment();
-		getFragmentManager().beginTransaction().replace(R.id.browse_fragment, errorFragment)
-				.addToBackStack(null).commit();
-		return errorFragment;
 	}
 
 	private void loadRows() {

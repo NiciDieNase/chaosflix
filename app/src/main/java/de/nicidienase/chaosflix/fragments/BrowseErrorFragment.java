@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix.fragments;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,13 +22,25 @@ import de.nicidienase.chaosflix.R;
 public class BrowseErrorFragment extends ErrorFragment{
 
 	private static final boolean TRANSLUCENT = true;
+	public static final String FRAGMENT = "fragmentId";
 	private SpinnerFragment mSpinnerFragment;
+
+	public static BrowseErrorFragment showErrorFragment(FragmentManager manager,int fragmentId){
+		BrowseErrorFragment errorFragment = new BrowseErrorFragment();
+		Bundle args = new Bundle();
+		args.putInt(BrowseErrorFragment.FRAGMENT,fragmentId);
+		errorFragment.setArguments(args);
+		manager.beginTransaction().replace(fragmentId, errorFragment)
+				.addToBackStack(null).commit();
+		return errorFragment;
+	}
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		int fragmentId = getArguments().getInt(FRAGMENT);
 		mSpinnerFragment = new SpinnerFragment();
-		getFragmentManager().beginTransaction().add(R.id.browse_fragment, mSpinnerFragment).commit();
+		getFragmentManager().beginTransaction().add(fragmentId, mSpinnerFragment).commit();
 	}
 
 	@Override
