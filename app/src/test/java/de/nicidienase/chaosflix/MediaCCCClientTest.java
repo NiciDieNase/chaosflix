@@ -7,12 +7,17 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import de.nicidienase.chaosflix.entities.Conference;
 import de.nicidienase.chaosflix.entities.Conferences;
 import de.nicidienase.chaosflix.entities.Event;
 import de.nicidienase.chaosflix.entities.Recording;
 import de.nicidienase.chaosflix.network.MediaCCCClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by felix on 17.03.17.
@@ -82,6 +87,24 @@ public class MediaCCCClientTest{
 			Conference conference = new MediaCCCClient().getConference(101).execute().body();
 			assertEquals(12,conference.getEventsByTags().keySet().size());
 		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void sortTest(){
+		try {
+
+			final MediaCCCClient client = new MediaCCCClient();
+			Conferences conferences = client.listConferences().execute().body();
+			Collections.sort(conferences.getConferences());
+			for (Conference conf : conferences.getConferences()) {
+				List<Event> events =
+						client.getConference(conf.getApiID()).execute().body().getEvents();
+				Collections.sort(events);
+			}
+		}catch (IOException e){
 			e.printStackTrace();
 			fail();
 		}
