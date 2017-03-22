@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.fragments;
+package de.nicidienase.chaosflix;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -20,7 +20,7 @@ import de.nicidienase.chaosflix.entities.Event;
 /**
  * Created by felix on 21.03.17.
  */
-final class ItemViewClickedListener implements OnItemViewClickedListener {
+public class ItemViewClickedListener implements OnItemViewClickedListener {
 
 	private Fragment fragment;
 
