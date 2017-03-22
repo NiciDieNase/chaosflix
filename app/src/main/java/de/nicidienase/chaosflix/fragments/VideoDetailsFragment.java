@@ -84,31 +84,20 @@ public class VideoDetailsFragment extends DetailsFragment {
 	private ArrayObjectAdapter mAdapter;
 	private ClassPresenterSelector mPresenterSelector;
 
-//	private BackgroundManager mBackgroundManager;
-//	private Drawable mDefaultBackground;
-//	private DisplayMetrics mMetrics;
-	private FullWidthDetailsOverviewRowPresenter detailsPresenter;
-	private FullWidthDetailsOverviewSharedElementHelper mHelper;
-	private String mConferenceId;
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Log.d(TAG, "onCreate DetailsFragment");
 		super.onCreate(savedInstanceState);
 
-//		prepareBackgroundManager();
-
 		mSelectedEvent = getActivity().getIntent()
 				.getParcelableExtra(DetailsActivity.EVENT);
-//		mConferenceId
 		if (mSelectedEvent != null) {
-			setupAdapter();
 			setupDetailsOverviewRowPresenter();
-			mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
-//			updateBackground(mSelectedEvent.getPosterUrl());
+//			mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
 			setOnItemViewClickedListener(new ItemViewClickedListener());
 		} else {
 			Intent intent = new Intent(getActivity(), EventsActivity.class);
+			intent.putExtra(EventsActivity.CONFERENCE_ID,mSelectedEvent.getParentConferenceID());
 			startActivity(intent);
 		}
 
@@ -155,9 +144,6 @@ public class VideoDetailsFragment extends DetailsFragment {
 //				});
 //	}
 
-	private void setupAdapter() {
-
-	}
 
 	private void setupDetailsOverviewRow() {
 		Log.d(TAG, "doInBackground: " + mSelectedEvent.toString());
@@ -200,12 +186,12 @@ public class VideoDetailsFragment extends DetailsFragment {
 
 	private void setupDetailsOverviewRowPresenter() {
 		// Set detail background and style.
-		detailsPresenter = new FullWidthDetailsOverviewRowPresenter(
-					new EventDetailsDescriptionPresenter(), new EventDetailsOverviewLogoPresenter());
+		FullWidthDetailsOverviewRowPresenter detailsPresenter = new FullWidthDetailsOverviewRowPresenter(
+				new EventDetailsDescriptionPresenter(), new EventDetailsOverviewLogoPresenter());
 		detailsPresenter.setBackgroundColor(getResources().getColor(R.color.selected_background));
 		detailsPresenter.setInitialState(FullWidthDetailsOverviewRowPresenter.STATE_HALF);
 		detailsPresenter.setAlignmentMode(FullWidthDetailsOverviewRowPresenter.ALIGN_MODE_START);
-		mHelper = new FullWidthDetailsOverviewSharedElementHelper();
+		FullWidthDetailsOverviewSharedElementHelper mHelper = new FullWidthDetailsOverviewSharedElementHelper();
 		mHelper.setSharedElementEnterTransition(getActivity(),
 				EventDetailsActivity.SHARED_ELEMENT_NAME);
 		detailsPresenter.setListener(mHelper);
