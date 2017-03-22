@@ -274,6 +274,16 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 		return getSlug().compareTo(event.getSlug());
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Event){
+			return getGuid().equals(((Event)obj).getGuid());
+		} else {
+			return super.equals(obj);
+		}
+
+	}
+
 	public void update(Event e) {
 		if(!this.updatedAt.equals(e.getUpdatedAt())){
 			// TODO actually update
