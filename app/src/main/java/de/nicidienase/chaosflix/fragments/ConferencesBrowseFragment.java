@@ -30,6 +30,7 @@ import retrofit2.Response;
 public class ConferencesBrowseFragment extends BrowseFragment {
 
 	private static final String TAG = ConferencesBrowseFragment.class.getSimpleName();
+	public static final int FRAGMENT = R.id.browse_fragment;
 	private MediaCCCClient mMediaCCCClient;
 	private ArrayObjectAdapter mRowsAdapter;
 	private Map<String, List<Conference>> mConferences;
@@ -40,7 +41,8 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 		super.onCreate(savedInstanceState);
 		mMediaCCCClient = new MediaCCCClient();
 
-		final BrowseErrorFragment errorFragment = showErrorFragment();
+		final BrowseErrorFragment errorFragment =
+				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);
 		mMediaCCCClient.listConferences().enqueue(new Callback<Conferences>() {
 			@Override
 			public void onResponse(Call<Conferences> call, Response<Conferences> response) {
@@ -79,13 +81,6 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 		listRowAdapter.addAll(0,conferences.get(tag));
 		HeaderItem header = new HeaderItem(getStringForTag(tag));
 		mRowsAdapter.add(new ListRow(header, listRowAdapter));
-	}
-
-	private BrowseErrorFragment showErrorFragment(){
-		BrowseErrorFragment errorFragment = new BrowseErrorFragment();
-		getFragmentManager().beginTransaction().replace(R.id.browse_fragment, errorFragment)
-				.addToBackStack(null).commit();
-		return errorFragment;
 	}
 
 	private String getStringForTag(String tag) {

@@ -18,6 +18,6 @@ public class EventDetailsActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
 		super.onCreate(savedInstanceState, persistentState);
-		setContentView(R.layout.activity_details);
+		setContentView(R.layout.activity_event_details);
 	}
 }
