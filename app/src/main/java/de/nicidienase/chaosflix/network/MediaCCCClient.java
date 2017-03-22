@@ -44,6 +44,11 @@ public class MediaCCCClient implements  MediaCCCService {
 	}
 
 	@Override
+	public Call<List<Event>> getEvents() {
+		return service.getEvents();
+	}
+
+	@Override
 	public Call<Event> getEvent(@Path("id") int id) {
 		return service.getEvent(id);
 	}
