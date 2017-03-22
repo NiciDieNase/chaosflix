@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.nicidienase.chaosflix.CardPresenter;
+import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.entities.Conference;
 import de.nicidienase.chaosflix.entities.Conferences;

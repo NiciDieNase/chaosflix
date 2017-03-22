@@ -34,6 +34,7 @@ import java.util.List;
 
 import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.EventDetailsDescriptionPresenter;
+import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.activities.EventDetailsActivity;

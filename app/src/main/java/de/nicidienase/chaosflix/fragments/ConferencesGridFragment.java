@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.nicidienase.chaosflix.CardPresenter;
+import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.entities.Conference;
 import de.nicidienase.chaosflix.entities.Conferences;
 import de.nicidienase.chaosflix.network.MediaCCCClient;
