@@ -2,6 +2,7 @@ package de.nicidienase.chaosflix.fragments;
 
 import android.os.Bundle;
 import android.support.v17.leanback.app.BrowseFragment;
+import android.support.v17.leanback.app.ErrorFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.nicidienase.chaosflix.CardPresenter;
+import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.entities.Conference;
 import de.nicidienase.chaosflix.entities.Conferences;
 import de.nicidienase.chaosflix.network.MediaCCCClient;
@@ -31,12 +33,14 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	private MediaCCCClient mMediaCCCClient;
 	private ArrayObjectAdapter mRowsAdapter;
 	private Map<String, List<Conference>> mConferences;
+	private BrowseErrorFragment mErrorFragment;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mMediaCCCClient = new MediaCCCClient();
 
+		final BrowseErrorFragment errorFragment = showErrorFragment();
 		mMediaCCCClient.listConferences().enqueue(new Callback<Conferences>() {
 			@Override
 			public void onResponse(Call<Conferences> call, Response<Conferences> response) {
@@ -55,12 +59,14 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 						addRow(mConferences, cardPresenter, tag);
 					}
 				}
+				errorFragment.dismiss();
 				setAdapter(mRowsAdapter);
 			}
 
 			@Override
 			public void onFailure(Call<Conferences> call, Throwable t) {
 				Log.d(TAG,"Error loading conferences",t);
+				errorFragment.setErrorContent(t.getMessage());
 				t.printStackTrace();
 			}
 		});
@@ -73,6 +79,13 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 		listRowAdapter.addAll(0,conferences.get(tag));
 		HeaderItem header = new HeaderItem(getStringForTag(tag));
 		mRowsAdapter.add(new ListRow(header, listRowAdapter));
+	}
+
+	private BrowseErrorFragment showErrorFragment(){
+		BrowseErrorFragment errorFragment = new BrowseErrorFragment();
+		getFragmentManager().beginTransaction().replace(R.id.browse_fragment, errorFragment)
+				.addToBackStack(null).commit();
+		return errorFragment;
 	}
 
 	private String getStringForTag(String tag) {
