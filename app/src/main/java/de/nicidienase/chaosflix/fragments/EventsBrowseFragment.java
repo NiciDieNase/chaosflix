@@ -86,7 +86,7 @@ public class EventsBrowseFragment extends BrowseFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		Log.i(TAG, "onCreate");
 		super.onActivityCreated(savedInstanceState);
-
+		final BrowseErrorFragment errorFragment = showErrorFragment();
 		conferenceId = this.getActivity().getIntent().getIntExtra(EventsActivity.CONFERENCE_ID, 0);
 		conference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.CONFERENCE);
 		client.getConference(conference.getApiID()).enqueue(new Callback<Conference>() {
@@ -95,11 +95,13 @@ public class EventsBrowseFragment extends BrowseFragment {
 				conference = response.body();
 				setupUIElements();
 				loadRows();
+				errorFragment.dismiss();
 			}
 
 			@Override
 			public void onFailure(Call<Conference> call, Throwable t) {
 				Log.d(TAG,"Error loading conferences",t);
+				errorFragment.setErrorContent(t.getMessage());
 				t.printStackTrace();
 			}
 		});
@@ -114,6 +116,13 @@ public class EventsBrowseFragment extends BrowseFragment {
 			Log.d(TAG, "onDestroy: " + mBackgroundTimer.toString());
 			mBackgroundTimer.cancel();
 		}
+	}
+
+	private BrowseErrorFragment showErrorFragment(){
+		BrowseErrorFragment errorFragment = new BrowseErrorFragment();
+		getFragmentManager().beginTransaction().replace(R.id.browse_fragment, errorFragment)
+				.addToBackStack(null).commit();
+		return errorFragment;
 	}
 
 	private void loadRows() {
