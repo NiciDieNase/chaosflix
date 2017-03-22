@@ -109,7 +109,11 @@ public class PlaybackOverlayFragment extends PlaybackFragment {
 			@Override
 			public void onResponse(Call<Event> call, Response<Event> response) {
 				mSelectedEvent = response.body();
-				mSelectedRecording = mSelectedEvent.getRecordings().get(mRecordingID);
+				for(Recording r : mSelectedEvent.getRecordings()){
+					if(r.getApiID() == mRecordingID){
+						mSelectedRecording = r;
+					}
+				}
 			}
 
 			@Override
