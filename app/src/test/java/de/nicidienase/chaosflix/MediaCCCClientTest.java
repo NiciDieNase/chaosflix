@@ -95,7 +95,6 @@ public class MediaCCCClientTest{
 	@Test
 	public void sortTest(){
 		try {
-
 			final MediaCCCClient client = new MediaCCCClient();
 			Conferences conferences = client.listConferences().execute().body();
 			Collections.sort(conferences.getConferences());
@@ -105,6 +104,17 @@ public class MediaCCCClientTest{
 				Collections.sort(events);
 			}
 		}catch (IOException e){
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void sortAllEvents(){
+		try{
+			MediaCCCClient client = new MediaCCCClient();
+			Collections.sort(client.getEvents().execute().body());
+		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
 		}

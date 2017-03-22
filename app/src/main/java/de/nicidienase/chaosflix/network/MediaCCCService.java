@@ -22,6 +22,9 @@ public interface MediaCCCService {
 	@GET("public/conferences/{id}")
 	Call<Conference> getConference(@Path("id") int id);
 
+	@GET("public/events")
+	Call<List<Event>> getEvents();
+
 	@GET("public/events/{id}")
 	Call<Event> getEvent(@Path("id") int id);
 
