@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v17.leanback.app.DetailsFragment;
 import android.support.v17.leanback.widget.Action;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
@@ -106,27 +107,15 @@ public class EventsDetailsFragment extends DetailsFragment {
 							HeaderItem header = new HeaderItem(getString(R.string.related_talks));
 							adapter.add(new ListRow(header,relatedEventsAdapter));
 						}
-						List<Event> randomEvents = conference.getEvents();
-						Collections.shuffle(randomEvents);
-						List<Event> selectedEvents;
-						if(tag != null){
-							selectedEvents = new ArrayList<Event>();
-							for(Event e : randomEvents){
-								if(!e.getTags().contains(tag)){
-									selectedEvents.add(e);
-								}
-								if(selectedEvents.size()==5){
-									break;
-								}
-							}
-						} else {
-							selectedEvents = randomEvents.subList(0, NUM_RANDOM_TALKS );
+
+						List<Event> selectedEvents = getRandomEvents(conference, tag);
+						if(selectedEvents.size()>0){
+							ArrayObjectAdapter randomEventAdapter
+									= new ArrayObjectAdapter(new CardPresenter());
+							randomEventAdapter.addAll(0,selectedEvents);
+							HeaderItem header = new HeaderItem(getString(R.string.random_talks));
+							adapter.add(new ListRow(header,randomEventAdapter));
 						}
-						ArrayObjectAdapter randomEventAdapter
-								= new ArrayObjectAdapter(new CardPresenter());
-						randomEventAdapter.addAll(0,selectedEvents);
-						HeaderItem header = new HeaderItem(getString(R.string.random_talks));
-						adapter.add(new ListRow(header,randomEventAdapter));
 
 						setAdapter(adapter);
 						setOnItemViewClickedListener(
@@ -153,6 +142,27 @@ public class EventsDetailsFragment extends DetailsFragment {
 
 
 
+	}
+
+	@NonNull
+	private List<Event> getRandomEvents(Conference conference, String tag) {
+		List<Event> randomEvents = conference.getEvents();
+		Collections.shuffle(randomEvents);
+		List<Event> selectedEvents;
+		if(tag != null){
+			selectedEvents = new ArrayList<Event>();
+			for(Event e : randomEvents){
+				if(!e.getTags().contains(tag)){
+					selectedEvents.add(e);
+				}
+				if(selectedEvents.size()==5){
+					break;
+				}
+			}
+		} else {
+			selectedEvents = randomEvents.subList(0, NUM_RANDOM_TALKS );
+		}
+		return selectedEvents;
 	}
 
 	private ArrayObjectAdapter setupDetailsOverviewRowPresenter() {

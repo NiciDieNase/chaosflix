@@ -39,6 +39,9 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		setTitle(getResources().getString(R.string.app_name));
+//		setBadgeDrawable(getResources().getDrawable(R.drawable.chaosflix_logo));
 		mMediaCCCClient = new MediaCCCClient();
 
 		final BrowseErrorFragment errorFragment =

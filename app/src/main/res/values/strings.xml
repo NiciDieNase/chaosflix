@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Chaosflix</string>
-    <string name="browse_title">33c3 - Works for Me</string>
     <string name="related_movies">Related Videos</string>
     <string name="vertical_grid_title"><![CDATA[Vertical Video Grid]]></string>
     <string name="error">Error</string>
@@ -37,6 +36,6 @@
     <string name="error_fragment_message">An error occurred</string>
     <string name="dismiss_error">Dismiss</string>
     <string name="oops">Oops</string>
-    <string name="related_talks">Talks in the same Track</string>
-    <string name="random_talks">Other Talks at this Conference</string>
+    <string name="related_talks">Random Talks in the same Track</string>
+    <string name="random_talks">Other random Talks at this Conference</string>
 </resources>
