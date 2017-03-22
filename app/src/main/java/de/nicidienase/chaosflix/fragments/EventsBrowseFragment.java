@@ -54,8 +54,8 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.common.collect.Lists;
 
 import de.nicidienase.chaosflix.CardPresenter;
+import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.activities.EventsActivity;
 import de.nicidienase.chaosflix.entities.Conference;
 import de.nicidienase.chaosflix.entities.Event;
