@@ -1,9 +1,9 @@
 package de.nicidienase.chaosflix.fragments;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v17.leanback.app.DetailsFragment;
 import android.support.v17.leanback.widget.Action;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
@@ -22,7 +22,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -38,6 +37,7 @@ import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.activities.EventDetailsActivity;
+import de.nicidienase.chaosflix.activities.PlaybackOverlayActivity;
 import de.nicidienase.chaosflix.entities.Conference;
 import de.nicidienase.chaosflix.entities.Event;
 import de.nicidienase.chaosflix.entities.Recording;
@@ -173,8 +173,10 @@ public class EventsDetailsFragment extends DetailsFragment {
 		mDetailsPresenter.setOnActionClickedListener(new OnActionClickedListener() {
 			@Override
 			public void onActionClicked(Action action) {
-				// TODO start video
-				Toast.makeText(getActivity(),"Starting Video",Toast.LENGTH_SHORT);
+				Intent i = new Intent(getActivity(), PlaybackOverlayActivity.class);
+				i.putExtra(DetailsActivity.RECORDING,action.getId());
+				i.putExtra(DetailsActivity.EVENT,mSelectedEvent);
+				getActivity().startActivity(i);
 			}
 		});
 
