@@ -14,7 +14,7 @@ import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.entities.Conference;
 import de.nicidienase.chaosflix.entities.Conferences;
-import de.nicidienase.chaosflix.network.MediaCCCClient;
+import de.nicidienase.chaosflix.network.RecordingClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -29,13 +29,13 @@ public class ConferencesGridFragment extends VerticalGridFragment {
 	private static final String TAG = ConferencesGridFragment.class.getSimpleName();
 	private final ArrayObjectAdapter mConferenceAdapter =
             new ArrayObjectAdapter(new CardPresenter());
-	private MediaCCCClient mMediaCCCClient;
+	private RecordingClient mMediaCCCClient;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mMediaCCCClient = new MediaCCCClient();
+		mMediaCCCClient = new RecordingClient();
 
 		mMediaCCCClient.listConferences().enqueue(new Callback<Conferences>() {
 			@Override

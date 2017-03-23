@@ -14,7 +14,7 @@ import retrofit2.http.Path;
  * Created by felix on 17.03.17.
  */
 
-public interface MediaCCCService {
+public interface RecordingService {
 
 	@GET("public/conferences")
 	Call<Conferences> listConferences();
