@@ -24,9 +24,9 @@ import de.nicidienase.chaosflix.network.RecordingClient;
  * Created by felix on 17.03.17.
  */
 
-public class MediaCCCClientTest{
+public class RecordingClientTest {
 
-	private static final String TAG = MediaCCCClientTest.class.getSimpleName();
+	private static final String TAG = RecordingClientTest.class.getSimpleName();
 	private RecordingClient client;
 
 	@Before

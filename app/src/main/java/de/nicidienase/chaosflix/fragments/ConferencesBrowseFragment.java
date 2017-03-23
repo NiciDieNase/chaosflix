@@ -18,7 +18,7 @@ import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.entities.Conference;
 import de.nicidienase.chaosflix.entities.Conferences;
-import de.nicidienase.chaosflix.network.MediaCCCClient;
+import de.nicidienase.chaosflix.network.RecordingClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,7 +31,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 
 	private static final String TAG = ConferencesBrowseFragment.class.getSimpleName();
 	public static final int FRAGMENT = R.id.browse_fragment;
-	private MediaCCCClient mMediaCCCClient;
+	private RecordingClient mMediaCCCClient;
 	private ArrayObjectAdapter mRowsAdapter;
 	private Map<String, List<Conference>> mConferences;
 	private BrowseErrorFragment mErrorFragment;
@@ -42,7 +42,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 
 		setTitle(getResources().getString(R.string.app_name));
 //		setBadgeDrawable(getResources().getDrawable(R.drawable.chaosflix_logo));
-		mMediaCCCClient = new MediaCCCClient();
+		mMediaCCCClient = new RecordingClient();
 
 		final BrowseErrorFragment errorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);

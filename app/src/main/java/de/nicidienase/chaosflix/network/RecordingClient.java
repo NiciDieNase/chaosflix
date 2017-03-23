@@ -10,7 +10,6 @@ import de.nicidienase.chaosflix.entities.Conferences;
 import de.nicidienase.chaosflix.entities.Event;
 import de.nicidienase.chaosflix.entities.Recording;
 import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Path;
@@ -19,17 +18,21 @@ import retrofit2.http.Path;
  * Created by felix on 17.03.17.
  */
 
-public class MediaCCCClient implements  MediaCCCService {
+public class RecordingClient implements RecordingService {
 
-	private static final String TAG = MediaCCCClient.class.getSimpleName();
-	private final MediaCCCService service;
+	private static final String TAG = RecordingClient.class.getSimpleName();
+	private final RecordingService service;
 
-	public MediaCCCClient() {
+	public RecordingClient(){
+		this("https://api.media.ccc.de");
+	}
+
+	public RecordingClient(String serviceUrl) {
 		Retrofit retrofit = new Retrofit.Builder()
-				.baseUrl("https://api.media.ccc.de")
+				.baseUrl(serviceUrl)
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
-		service = retrofit.create(MediaCCCService.class);
+		service = retrofit.create(RecordingService.class);
 	}
 
 

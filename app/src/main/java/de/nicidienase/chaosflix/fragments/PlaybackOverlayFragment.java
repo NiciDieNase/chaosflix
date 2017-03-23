@@ -54,7 +54,7 @@ import java.util.HashMap;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.entities.Event;
 import de.nicidienase.chaosflix.entities.Recording;
-import de.nicidienase.chaosflix.network.MediaCCCClient;
+import de.nicidienase.chaosflix.network.RecordingClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -105,7 +105,7 @@ public class PlaybackOverlayFragment extends PlaybackFragment {
 		mSelectedEvent = intent.getParcelableExtra(DetailsActivity.EVENT);
 		final int mRecordingID = (int) intent.getLongExtra(DetailsActivity.RECORDING, 0);
 
-		new MediaCCCClient().getEvent(mSelectedEvent.getApiID()).enqueue(new Callback<Event>() {
+		new RecordingClient().getEvent(mSelectedEvent.getApiID()).enqueue(new Callback<Event>() {
 			@Override
 			public void onResponse(Call<Event> call, Response<Event> response) {
 				mSelectedEvent = response.body();

@@ -51,7 +51,7 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.activities.EventsActivity;
 import de.nicidienase.chaosflix.entities.Conference;
 import de.nicidienase.chaosflix.entities.Event;
-import de.nicidienase.chaosflix.network.MediaCCCClient;
+import de.nicidienase.chaosflix.network.RecordingClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -72,7 +72,7 @@ public class EventsBrowseFragment extends BrowseFragment {
 	private URI mBackgroundURI;
 	private BackgroundManager mBackgroundManager;
 	private Conference conference;
-	private MediaCCCClient client = new MediaCCCClient();;
+	private RecordingClient client = new RecordingClient();;
 	private int conferenceId;
 
 	@Override
