@@ -13,6 +13,7 @@ public class EventsActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		// TODO determin if we should use a Browse or a Grid layout
 		setContentView(R.layout.activity_events_browse);
 	}
 }
