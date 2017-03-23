@@ -2,11 +2,14 @@ package de.nicidienase.chaosflix;
 
 
 
+import com.google.common.collect.Lists;
+
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -78,5 +81,13 @@ public class MediaCCCClientTest{
 	public void sortAllEvents() throws IOException {
 			MediaCCCClient client = new MediaCCCClient();
 			Collections.sort(client.getEvents().execute().body());
+	}
+
+	@Test
+	public void mrmcd13() throws IOException {
+		MediaCCCClient client = new MediaCCCClient();
+		Conference conference = client.getConference(38).execute().body();
+		ArrayList<String> keyList = Lists.newArrayList(conference.getEventsByTags().keySet());
+		Collections.sort(keyList);
 	}
 }

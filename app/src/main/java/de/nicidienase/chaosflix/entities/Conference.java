@@ -92,14 +92,19 @@ public class Conference extends SugarRecord implements Parcelable,Comparable<Con
 		for(Event event: this.getEvents()){
 			if(event.getTags().size()>0){
 				for(String tag: event.getTags()){
-					List<Event> list;
-					if(result.keySet().contains(tag)){
-						list = result.get(tag);
+					if(tag != null){
+
+						List<Event> list;
+						if(result.keySet().contains(tag)){
+							list = result.get(tag);
+						} else {
+							list = new LinkedList<>();
+							result.put(tag,list);
+						}
+						list.add(event);
 					} else {
-						list = new LinkedList<>();
-						result.put(tag,list);
+						untagged.add(event);
 					}
-					list.add(event);
 				}
 			} else {
 				untagged.add(event);
