@@ -2,8 +2,6 @@ package de.nicidienase.chaosflix;
 
 
 
-import android.util.Log;
-
 import com.google.common.collect.Lists;
 
 import static org.junit.Assert.*;
@@ -14,17 +12,13 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import de.nicidienase.chaosflix.entities.Conference;
 import de.nicidienase.chaosflix.entities.Conferences;
 import de.nicidienase.chaosflix.entities.Event;
 import de.nicidienase.chaosflix.entities.Recording;
-import de.nicidienase.chaosflix.network.MediaCCCClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import de.nicidienase.chaosflix.network.RecordingClient;
 
 /**
  * Created by felix on 17.03.17.
@@ -33,11 +27,11 @@ import retrofit2.Response;
 public class MediaCCCClientTest{
 
 	private static final String TAG = MediaCCCClientTest.class.getSimpleName();
-	private MediaCCCClient client;
+	private RecordingClient client;
 
 	@Before
 	public void beforeTest(){
-		this.client = new MediaCCCClient();
+		this.client = new RecordingClient();
 	}
 
 	@Test
@@ -79,7 +73,7 @@ public class MediaCCCClientTest{
 
 	@Test
 	public void sortTest() throws IOException {
-		final MediaCCCClient client = this.client;
+		final RecordingClient client = this.client;
 		Conferences conferences = client.listConferences().execute().body();
 		Collections.sort(conferences.getConferences());
 		for (Conference conf : conferences.getConferences()) {
@@ -91,15 +85,33 @@ public class MediaCCCClientTest{
 
 	@Test
 	public void sortAllEvents() throws IOException {
-		MediaCCCClient client = this.client;
+		RecordingClient client = this.client;
 		Collections.sort(client.getEvents().execute().body());
 	}
 
 	@Test
 	public void mrmcd13() throws IOException {
-		MediaCCCClient client = this.client;
+		RecordingClient client = this.client;
 		Conference conference = client.getConference(38).execute().body();
 		ArrayList<String> keyList = Lists.newArrayList(conference.getEventsByTags().keySet());
 		Collections.sort(keyList);
+	}
+
+	@Test
+	public void testTagsToTalksRation() throws IOException {
+		List<Conference> conferences = client.listConferences().execute().body().getConferences();
+		for(Conference conf : conferences){
+			Conference con = client.getConference(conf.getApiID()).execute().body();
+			System.out.print(con.getAcronym() + ": " + con.getEventsByTags().keySet());
+			float sum = 0;
+			for(Event e : con.getEvents()){
+				sum += e.getTags().size();
+			}
+//			System.out.println("\t\t " + sum/con.getEvents().size() + "\n\t" + con.getEventsByTags().keySet());
+//			HashMap<String, List<Event>> events = con.getEventsByTags();
+//			for(String tag: events.keySet()){
+//				System.out.println("Ration: " + events.keySet().size() + "/" + events.get(tag).size());
+//			}
+		}
 	}
 }
