@@ -26,75 +26,44 @@ import retrofit2.Response;
 public class MediaCCCClientTest{
 
 	@Test
-	public void getConferenceTest(){
-		try {
+	public void getConferenceTest() throws IOException {
 			Conference conference = new MediaCCCClient().getConference(101).execute().body();
 			assertEquals(conference.getAcronym(),"33c3");
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		}
 	}
 
 	@Test
-	public void getEventTest(){
-		try {
+	public void getEventTest() throws IOException {
 			Event event = new MediaCCCClient().getEvent(3674).execute().body();
 			assertEquals(event.getGuid(),"bfc2ab1f-8384-4d7d-801a-dde8c81e039c");
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		}
 	}
 
 	@Test
-	public void getEventRecordingsTest(){
-		try {
+	public void getEventRecordingsTest() throws IOException {
 			Event event = new MediaCCCClient().getEvent(3674).execute().body();
 			assertEquals(event.getRecordings().size(),9);
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		}
 	}
 
 
 	@Test
-	public void getRecordingTest(){
-		try {
+	public void getRecordingTest() throws IOException {
 			Recording recording = new MediaCCCClient().getRecording(14142).execute().body();
 			assertEquals(recording.getUpdatedAt(), "2016-12-29T03:16:16.105+01:00");
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		}
 	}
 
 	@Test
-	public void getConferencEventListTest(){
-		try {
+	public void getConferencEventListTest() throws IOException {
 			Conferences conferences = new MediaCCCClient().listConferences().execute().body();
 			assertEquals(99,conferences.getConferences().size());
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		}
 	}
 
 	@Test
-	public void eventTagsTest(){
-		try {
+	public void eventTagsTest() throws IOException {
 			Conference conference = new MediaCCCClient().getConference(101).execute().body();
 			assertEquals(12,conference.getEventsByTags().keySet().size());
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		}
 	}
 
 	@Test
-	public void sortTest(){
-		try {
+	public void sortTest() throws IOException {
 			final MediaCCCClient client = new MediaCCCClient();
 			Conferences conferences = client.listConferences().execute().body();
 			Collections.sort(conferences.getConferences());
@@ -103,20 +72,11 @@ public class MediaCCCClientTest{
 						client.getConference(conf.getApiID()).execute().body().getEvents();
 				Collections.sort(events);
 			}
-		}catch (IOException e){
-			e.printStackTrace();
-			fail();
-		}
 	}
 
 	@Test
-	public void sortAllEvents(){
-		try{
+	public void sortAllEvents() throws IOException {
 			MediaCCCClient client = new MediaCCCClient();
 			Collections.sort(client.getEvents().execute().body());
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		}
 	}
 }
