@@ -8,6 +8,7 @@ import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.recording.Recording;
 import io.reactivex.Observable;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Path;
 
@@ -28,6 +29,7 @@ public class RecordingClient implements RecordingService {
 		Retrofit retrofit = new Retrofit.Builder()
 				.baseUrl(serviceUrl)
 				.addConverterFactory(GsonConverterFactory.create())
+				.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 				.build();
 		service = retrofit.create(RecordingService.class);
 	}
@@ -39,7 +41,7 @@ public class RecordingClient implements RecordingService {
 	}
 
 	@Override
-	public Observable<Conference> getConference(@Path("id") int id) {
+	public Observable<Conference> getConference(@Path("id") long id) {
 		return service.getConference(id);
 	}
 
@@ -49,12 +51,12 @@ public class RecordingClient implements RecordingService {
 	}
 
 	@Override
-	public Observable<Event> getEvent(@Path("id") int id) {
+	public Observable<Event> getEvent(@Path("id") long id) {
 		return service.getEvent(id);
 	}
 
 	@Override
-	public Observable<Recording> getRecording(@Path("id") int id) {
+	public Observable<Recording> getRecording(@Path("id") long id) {
 		return service.getRecording(id);
 	}
 }

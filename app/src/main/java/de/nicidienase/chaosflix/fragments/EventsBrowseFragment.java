@@ -48,10 +48,14 @@ import com.google.common.collect.Lists;
 import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.activities.EventsActivity;
 import de.nicidienase.chaosflix.entities.recording.Conference;
 import de.nicidienase.chaosflix.entities.recording.Event;
+import de.nicidienase.chaosflix.network.MediaApiService;
 import de.nicidienase.chaosflix.network.RecordingClient;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -71,9 +75,10 @@ public class EventsBrowseFragment extends BrowseFragment {
 	private Timer mBackgroundTimer;
 	private URI mBackgroundURI;
 	private BackgroundManager mBackgroundManager;
-	private Conference conference;
+	private Conference mConference;
 	private RecordingClient client = new RecordingClient();;
 	private int conferenceId;
+	private MediaApiService mMediaApiService;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -82,23 +87,21 @@ public class EventsBrowseFragment extends BrowseFragment {
 		final BrowseErrorFragment errorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);
 		conferenceId = this.getActivity().getIntent().getIntExtra(EventsActivity.CONFERENCE_ID, 0);
-		conference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.CONFERENCE);
-		client.getConference(conference.getApiID()).enqueue(new Callback<Conference>() {
-			@Override
-			public void onResponse(Call<Conference> call, Response<Conference> response) {
-				conference = response.body();
-				setupUIElements();
-				loadRows();
-				errorFragment.dismiss();
-			}
+		mConference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.CONFERENCE);
 
-			@Override
-			public void onFailure(Call<Conference> call, Throwable t) {
-				Log.d(TAG,"Error loading conferences",t);
-				errorFragment.setErrorContent(t.getMessage());
-				t.printStackTrace();
-			}
+		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable().subscribe(mediaApiService -> {
+			mMediaApiService = mediaApiService;
+
+			mMediaApiService.getConference(mConference.getApiID())
+					.doOnError(t -> errorFragment.setErrorContent(t.getMessage()))
+					.subscribe(conference -> {
+							mConference = conference;
+							setupUIElements();
+							loadRows();
+							errorFragment.dismiss();
+					});
 		});
+
 		prepareBackgroundManager();
 		setupEventListeners();
 	}
@@ -113,7 +116,7 @@ public class EventsBrowseFragment extends BrowseFragment {
 	}
 
 	private void loadRows() {
-		HashMap<String, List<Event>> eventsByTags = conference.getEventsByTags();
+		HashMap<String, List<Event>> eventsByTags = mConference.getEventsByTags();
 
 		mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 		CardPresenter cardPresenter = new CardPresenter();
@@ -152,7 +155,7 @@ public class EventsBrowseFragment extends BrowseFragment {
 
 	private void setupUIElements() {
 		Glide.with(getActivity())
-				.load(conference.getLogoUrl())
+				.load(mConference.getLogoUrl())
 				.centerCrop()
 				.error(mDefaultBackground)
 				.into(new SimpleTarget<GlideDrawable>(432, 243) {
@@ -163,7 +166,7 @@ public class EventsBrowseFragment extends BrowseFragment {
 						setBadgeDrawable(resource);
 					}
 				});
-		setTitle(conference.getTitle()); // Badge, when set, takes precedent
+		setTitle(mConference.getTitle()); // Badge, when set, takes precedent
 		// over title
 		setHeadersState(HEADERS_ENABLED);
 		setHeadersTransitionOnBackEnabled(true);

@@ -20,11 +20,14 @@ import java.util.Set;
 import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.activities.ConferencesActivity;
 import de.nicidienase.chaosflix.entities.recording.Conference;
 import de.nicidienase.chaosflix.entities.recording.Conferences;
 import de.nicidienase.chaosflix.network.MediaApiService;
 import de.nicidienase.chaosflix.network.RecordingClient;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -48,26 +51,28 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 		setTitle(getResources().getString(R.string.app_name));
 		final BrowseErrorFragment errorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);
-		((ConferencesActivity)getActivity()).getmApiServiceObservable().subscribe(mediaApiService -> {
+		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable().subscribe(mediaApiService -> {
 			mMediaApiService = mediaApiService;
-			mMediaApiService.getConferences().subscribe(conferences -> {
-				mConferences = conferences.getConferencesBySeries();
-				mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
-				CardPresenter cardPresenter = new CardPresenter();
-				Set<String> keySet = mConferences.keySet();
-				for(String tag: getOrderedConferencesList()){
-					if(keySet.contains(tag)){
-						addRow(mConferences, cardPresenter,tag);
+			mMediaApiService.getConferences()
+				.doOnError(t -> {errorFragment.setErrorContent(t.getMessage());})
+				.subscribe(conferences -> {
+					mConferences = conferences.getConferencesBySeries();
+					mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
+					CardPresenter cardPresenter = new CardPresenter();
+					Set<String> keySet = mConferences.keySet();
+					for(String tag: getOrderedConferencesList()){
+						if(keySet.contains(tag)){
+							addRow(mConferences, cardPresenter,tag);
+						}
 					}
-				}
-				for(String tag: keySet){
-					if(!getOrderedConferencesList().contains(tag)){
-						addRow(mConferences, cardPresenter, tag);
+					for(String tag: keySet){
+						if(!getOrderedConferencesList().contains(tag)){
+							addRow(mConferences, cardPresenter, tag);
+						}
 					}
-				}
-				errorFragment.dismiss();
-				setAdapter(mRowsAdapter);
-			});
+					errorFragment.dismiss();
+					setAdapter(mRowsAdapter);
+				});
 		});
 		setOnItemViewClickedListener(new ItemViewClickedListener(this));
 	}

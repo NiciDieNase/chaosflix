@@ -37,8 +37,9 @@ import de.nicidienase.chaosflix.fragments.PlaybackOverlayFragment;
 /**
  * PlaybackOverlayActivity for video playback that loads PlaybackOverlayFragment
  */
-public class PlaybackOverlayActivity extends Activity implements
+public class PlaybackOverlayActivity extends AbstractServiceConnectedAcitivty implements
 		PlaybackOverlayFragment.OnPlayPauseClickedListener {
+
 	private static final String TAG = "PlaybackOverlayActivity";
 
 	private VideoView mVideoView;
