@@ -37,7 +37,7 @@ public class ConferencesGridFragment extends VerticalGridFragment {
 
 		mMediaCCCClient = new RecordingClient();
 
-		mMediaCCCClient.listConferences().enqueue(new Callback<Conferences>() {
+		mMediaCCCClient.getConferences().enqueue(new Callback<Conferences>() {
 			@Override
 			public void onResponse(Call<Conferences> call, Response<Conferences> response) {
 				List<Conference> conferences = response.body().getConferences();

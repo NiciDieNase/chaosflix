@@ -14,9 +14,6 @@ import de.nicidienase.chaosflix.network.StreamingClient;
 import de.nicidienase.chaosflix.network.StreamingService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by felix on 23.03.17.
@@ -33,7 +30,8 @@ public class StreamingClientTest {
 		server = new MockWebServer();
 		server.start();
 		String serverUrl = server.url("/").toString();
-		service = new StreamingClient(serverUrl);
+//		service = new StreamingClient(serverUrl);
+		service = new StreamingClient();
 	}
 
 	@Before
@@ -43,16 +41,13 @@ public class StreamingClientTest {
 
 	@Test
 	public void test1() throws IOException {
-		List<StreamingConference> streamingConferences
-				= service.getStreamingConferences().execute().body();
-		assertEquals(1,streamingConferences.size());
+		service.getStreamingConferences().subscribe((List<LiveConference> liveConferences) -> assertEquals(1, liveConferences.size()));
+
 	}
 
 	@Test
 	public void test2() throws IOException {
-		List<StreamingConference> streamingConferences
-				= service.getStreamingConferences().execute().body();
-		StreamingConference streamingConference = streamingConferences.get(0);
-		assertEquals("FOSSGIS 2017",streamingConference.getConference());
+		service.getStreamingConferences().subscribe(
+				(List<LiveConference> liveConferences) -> assertEquals("FOSSGIS 2017", liveConferences.get(0).getConference()));
 	}
 }
