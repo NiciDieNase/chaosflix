@@ -17,13 +17,12 @@ package de.nicidienase.chaosflix;
 import android.graphics.drawable.Drawable;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
-import android.util.Log;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 
-import de.nicidienase.chaosflix.entities.Conference;
-import de.nicidienase.chaosflix.entities.Event;
+import de.nicidienase.chaosflix.entities.recording.Conference;
+import de.nicidienase.chaosflix.entities.recording.Event;
 
 /*
  * A CardPresenter is used to generate Views and bind Objects to them on demand.

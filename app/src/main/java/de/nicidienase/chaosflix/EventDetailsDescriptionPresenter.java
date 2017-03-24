@@ -3,7 +3,7 @@ package de.nicidienase.chaosflix;
 import android.support.v17.leanback.widget.AbstractDetailsDescriptionPresenter;
 import android.text.TextUtils;
 
-import de.nicidienase.chaosflix.entities.Event;
+import de.nicidienase.chaosflix.entities.recording.Event;
 
 /**
  * Created by felix on 18.03.17.

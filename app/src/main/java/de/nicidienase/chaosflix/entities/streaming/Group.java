@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.entities;
+package de.nicidienase.chaosflix.entities.streaming;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import java.util.List;
  * Created by felix on 23.03.17.
  */
 
-class Group {
+public class Group {
 	String group;
 	List<Room> rooms;
 

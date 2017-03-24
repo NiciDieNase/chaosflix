@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.entities;
+package de.nicidienase.chaosflix.entities.recording;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by felix on 11.03.17.

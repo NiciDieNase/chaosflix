@@ -1,12 +1,14 @@
-package de.nicidienase.chaosflix.entities;
+package de.nicidienase.chaosflix.entities.streaming;
 
 import java.util.List;
+
+import de.nicidienase.chaosflix.entities.streaming.Group;
 
 /**
  * Created by felix on 23.03.17.
  */
 
-public class StreamingConference {
+public class LiveConference {
 	String conference;
 	String slug;
 	String author;
