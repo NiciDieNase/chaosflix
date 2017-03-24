@@ -12,8 +12,10 @@ import java.util.List;
 
 import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
+import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.entities.recording.Conference;
 import de.nicidienase.chaosflix.entities.recording.Conferences;
+import de.nicidienase.chaosflix.network.MediaApiService;
 import de.nicidienase.chaosflix.network.RecordingClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,30 +31,21 @@ public class ConferencesGridFragment extends VerticalGridFragment {
 	private static final String TAG = ConferencesGridFragment.class.getSimpleName();
 	private final ArrayObjectAdapter mConferenceAdapter =
             new ArrayObjectAdapter(new CardPresenter());
-	private RecordingClient mMediaCCCClient;
+	private MediaApiService mMediaApiService;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		mMediaCCCClient = new RecordingClient();
-
-		mMediaCCCClient.getConferences().enqueue(new Callback<Conferences>() {
-			@Override
-			public void onResponse(Call<Conferences> call, Response<Conferences> response) {
-				List<Conference> conferences = response.body().getConferences();
-				Collections.sort(conferences);
-				Collections.reverse(conferences);
-				mConferenceAdapter.addAll(0, conferences);
-				setAdapter(mConferenceAdapter);
-			}
-
-			@Override
-			public void onFailure(Call<Conferences> call, Throwable t) {
-				Log.d(TAG,"Error loading conferences",t);
-				t.printStackTrace();
-
-			}
+		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable().subscribe(mediaApiService -> {
+			mMediaApiService = mediaApiService;
+			mMediaApiService.getConferences()
+				.subscribe(conferences -> {
+					List<Conference> conferenceList = conferences.getConferences();
+					Collections.sort(conferenceList);
+					Collections.reverse(conferenceList);
+					mConferenceAdapter.addAll(0, conferenceList);
+					setAdapter(mConferenceAdapter);
+				});
 		});
 		setTitle("Chaosflix");
 

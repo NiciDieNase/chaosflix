@@ -69,7 +69,7 @@ public class MediaApiService extends Service {
 		return mRecordingApiService.getConferences();
 	};
 
-	public Observable<Conference> getConference(int id){
+	public Observable<Conference> getConference(long id){
 		return mRecordingApiService.getConference(id);
 	}
 
@@ -77,11 +77,11 @@ public class MediaApiService extends Service {
 		return mRecordingApiService.getAllEvents();
 	}
 
-	public Observable<Event> getEvent(int id){
+	public Observable<Event> getEvent(long id){
 		return mRecordingApiService.getEvent(id);
 	}
 
-	public Observable<Recording> getRecording(int id){
+	public Observable<Recording> getRecording(long id){
 		return mRecordingApiService.getRecording(id);
 	}
 
