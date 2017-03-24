@@ -17,4 +17,10 @@ public class ChaosflixApplication extends Application {
 		super.onCreate();
 		SugarContext.init(this);
 	}
+
+	@Override
+	public void onTerminate() {
+		SugarContext.terminate();
+		super.onTerminate();
+	}
 }
