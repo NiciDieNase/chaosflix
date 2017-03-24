@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.network;
 import java.util.List;
 
 import de.nicidienase.chaosflix.entities.streaming.LiveConference;
+import io.reactivex.Observable;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -15,7 +16,7 @@ public class StreamingClient implements StreamingService {
 	private StreamingService service;
 
 	public StreamingClient(){
-		this("https://api.media.ccc.de");
+		this("https://streaming.media.ccc.de");
 	}
 
 	public StreamingClient(String serviceUrl){
@@ -27,7 +28,7 @@ public class StreamingClient implements StreamingService {
 	}
 
 	@Override
-	public Call<List<StreamingConference>> getStreamingConferences() {
+	public Observable<List<LiveConference>> getStreamingConferences() {
 		return service.getStreamingConferences();
 	}
 }

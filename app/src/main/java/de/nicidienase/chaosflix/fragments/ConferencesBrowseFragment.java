@@ -1,6 +1,10 @@
 package de.nicidienase.chaosflix.fragments;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v17.leanback.app.BrowseFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
@@ -33,26 +37,21 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 
 	private static final String TAG = ConferencesBrowseFragment.class.getSimpleName();
 	public static final int FRAGMENT = R.id.browse_fragment;
-	private RecordingClient mMediaCCCClient;
 	private ArrayObjectAdapter mRowsAdapter;
 	private Map<String, List<Conference>> mConferences;
 	private BrowseErrorFragment mErrorFragment;
+	private MediaApiService mMediaApiService;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setTitle(getResources().getString(R.string.app_name));
-//		setBadgeDrawable(getResources().getDrawable(R.drawable.chaosflix_logo));
-		mMediaCCCClient = new RecordingClient();
-
 		final BrowseErrorFragment errorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);
-		mMediaCCCClient.listConferences().enqueue(new Callback<Conferences>() {
-			@Override
-			public void onResponse(Call<Conferences> call, Response<Conferences> response) {
-				Conferences body = response.body();
-				mConferences = body.getConferencesBySeries();
+		((ConferencesActivity)getActivity()).getmApiServiceObservable().subscribe(mediaApiService -> {
+			mMediaApiService = mediaApiService;
+			mMediaApiService.getConferences().subscribe(conferences -> {
+				mConferences = conferences.getConferencesBySeries();
 				mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 				CardPresenter cardPresenter = new CardPresenter();
 				Set<String> keySet = mConferences.keySet();
@@ -68,16 +67,8 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 				}
 				errorFragment.dismiss();
 				setAdapter(mRowsAdapter);
-			}
-
-			@Override
-			public void onFailure(Call<Conferences> call, Throwable t) {
-				Log.d(TAG,"Error loading conferences",t);
-				errorFragment.setErrorContent(t.getMessage());
-				t.printStackTrace();
-			}
+			});
 		});
-
 		setOnItemViewClickedListener(new ItemViewClickedListener(this));
 	}
 
