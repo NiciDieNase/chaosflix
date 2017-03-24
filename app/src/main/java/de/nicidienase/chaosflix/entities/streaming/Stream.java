@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.entities;
+package de.nicidienase.chaosflix.entities.streaming;
 
 import java.util.Map;
 

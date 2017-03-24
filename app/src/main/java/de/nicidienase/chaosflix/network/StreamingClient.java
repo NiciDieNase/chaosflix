@@ -2,8 +2,7 @@ package de.nicidienase.chaosflix.network;
 
 import java.util.List;
 
-import de.nicidienase.chaosflix.entities.StreamingConference;
-import retrofit2.Call;
+import de.nicidienase.chaosflix.entities.streaming.LiveConference;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 

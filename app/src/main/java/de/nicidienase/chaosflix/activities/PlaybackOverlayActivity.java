@@ -30,8 +30,8 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.entities.Event;
-import de.nicidienase.chaosflix.entities.Recording;
+import de.nicidienase.chaosflix.entities.recording.Event;
+import de.nicidienase.chaosflix.entities.recording.Recording;
 import de.nicidienase.chaosflix.fragments.PlaybackOverlayFragment;
 
 /**

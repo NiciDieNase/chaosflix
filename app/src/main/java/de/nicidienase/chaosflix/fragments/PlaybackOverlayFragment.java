@@ -52,8 +52,8 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import java.util.HashMap;
 
 import de.nicidienase.chaosflix.activities.DetailsActivity;
-import de.nicidienase.chaosflix.entities.Event;
-import de.nicidienase.chaosflix.entities.Recording;
+import de.nicidienase.chaosflix.entities.recording.Event;
+import de.nicidienase.chaosflix.entities.recording.Recording;
 import de.nicidienase.chaosflix.network.RecordingClient;
 import retrofit2.Call;
 import retrofit2.Callback;

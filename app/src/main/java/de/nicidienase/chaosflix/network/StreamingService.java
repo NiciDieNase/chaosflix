@@ -2,8 +2,8 @@ package de.nicidienase.chaosflix.network;
 
 import java.util.List;
 
-import de.nicidienase.chaosflix.entities.StreamingConference;
-import retrofit2.Call;
+import de.nicidienase.chaosflix.entities.streaming.LiveConference;
+import io.reactivex.Observable;
 import retrofit2.http.GET;
 
 /**
