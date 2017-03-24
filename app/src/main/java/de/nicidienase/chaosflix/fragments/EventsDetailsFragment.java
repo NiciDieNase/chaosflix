@@ -30,19 +30,24 @@ import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.EventDetailsDescriptionPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.activities.EventDetailsActivity;
 import de.nicidienase.chaosflix.activities.PlaybackOverlayActivity;
 import de.nicidienase.chaosflix.entities.recording.Conference;
 import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.recording.Recording;
+import de.nicidienase.chaosflix.network.MediaApiService;
 import de.nicidienase.chaosflix.network.RecordingClient;
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -64,6 +69,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 
 	private RecordingClient client = new RecordingClient();
 	private ArrayObjectAdapter mAdapter;
+	private MediaApiService mMediaApiService;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -78,70 +84,53 @@ public class EventsDetailsFragment extends DetailsFragment {
 		final ArrayObjectAdapter adapter = setupDetailsOverviewRowPresenter();
 		final DetailsOverviewRow detailsOverviewRow = setupDetailsOverviewRow(mSelectedEvent);
 
+		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable()
+				.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
+				.subscribe(mediaApiService -> {
+					mMediaApiService = mediaApiService;
 
-		client.getEvent(mSelectedEvent.getApiID()).enqueue(new Callback<Event>() {
-			@Override
-			public void onResponse(Call<Event> call, Response<Event> response) {
-				mSelectedEvent = response.body();
-				final ArrayObjectAdapter recordingActionsAdapter =
-						getRecordingActionsAdapter(mSelectedEvent.getRecordings());
-				detailsOverviewRow.setActionsAdapter(recordingActionsAdapter);
-				adapter.add(detailsOverviewRow);
+					mediaApiService.getEvent(mSelectedEvent.getApiID())
+							.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
+							.subscribe(event -> {
+								mSelectedEvent = event;
+								final ArrayObjectAdapter recordingActionsAdapter =
+										getRecordingActionsAdapter(mSelectedEvent.getRecordings());
+								detailsOverviewRow.setActionsAdapter(recordingActionsAdapter);
+								adapter.add(detailsOverviewRow);
+								mediaApiService.getConference(
+										mSelectedEvent.getParentConferenceID()).subscribe(conference -> {
+									String tag = null;
+									if(mSelectedEvent.getTags().size()>0) {
+										tag = mSelectedEvent.getTags().get(0);
+										List<Event> relatedEvents = conference.getEventsByTags().get(tag);
+										relatedEvents.remove(mSelectedEvent);
+										Collections.shuffle(relatedEvents);
+										if (relatedEvents.size() > 5) {
+											relatedEvents = relatedEvents.subList(0, NUM_RELATED_TALKS );
+										}
+										ArrayObjectAdapter relatedEventsAdapter
+												= new ArrayObjectAdapter(new CardPresenter());
+										relatedEventsAdapter.addAll(0,relatedEvents);
+										HeaderItem header = new HeaderItem(getString(R.string.related_talks));
+										adapter.add(new ListRow(header,relatedEventsAdapter));
+									}
 
-				client.getConference((int) mSelectedEvent.getParentConferenceID()).enqueue(new Callback<Conference>() {
-					@Override
-					public void onResponse(Call<Conference> call, Response<Conference> response) {
-						Conference conference = response.body();
-						String tag = null;
-						if(mSelectedEvent.getTags().size()>0) {
-							tag = mSelectedEvent.getTags().get(0);
-							List<Event> relatedEvents = conference.getEventsByTags().get(tag);
-							relatedEvents.remove(mSelectedEvent);
-							Collections.shuffle(relatedEvents);
-							if (relatedEvents.size() > 5) {
-								relatedEvents = relatedEvents.subList(0, NUM_RELATED_TALKS );
-							}
-							ArrayObjectAdapter relatedEventsAdapter
-									= new ArrayObjectAdapter(new CardPresenter());
-							relatedEventsAdapter.addAll(0,relatedEvents);
-							HeaderItem header = new HeaderItem(getString(R.string.related_talks));
-							adapter.add(new ListRow(header,relatedEventsAdapter));
-						}
+									List<Event> selectedEvents = getRandomEvents(conference, tag);
+									if(selectedEvents.size()>0){
+										ArrayObjectAdapter randomEventAdapter
+												= new ArrayObjectAdapter(new CardPresenter());
+										randomEventAdapter.addAll(0,selectedEvents);
+										HeaderItem header = new HeaderItem(getString(R.string.random_talks));
+										adapter.add(new ListRow(header,randomEventAdapter));
+									}
 
-						List<Event> selectedEvents = getRandomEvents(conference, tag);
-						if(selectedEvents.size()>0){
-							ArrayObjectAdapter randomEventAdapter
-									= new ArrayObjectAdapter(new CardPresenter());
-							randomEventAdapter.addAll(0,selectedEvents);
-							HeaderItem header = new HeaderItem(getString(R.string.random_talks));
-							adapter.add(new ListRow(header,randomEventAdapter));
-						}
-
-						setAdapter(adapter);
-						setOnItemViewClickedListener(
-								new ItemViewClickedListener(EventsDetailsFragment.this));
-						browseErrorFragment.dismiss();
-					}
-
-					@Override
-					public void onFailure(Call<Conference> call, Throwable t) {
-						Log.d(TAG,"Error loading conferences",t);
-						browseErrorFragment.setErrorContent(t.getMessage());
-						t.printStackTrace();
-					}
+									setAdapter(adapter);
+									setOnItemViewClickedListener(
+											new ItemViewClickedListener(EventsDetailsFragment.this));
+									browseErrorFragment.dismiss();
+								});
+							});
 				});
-			}
-
-			@Override
-			public void onFailure(Call<Event> call, Throwable t) {
-				Log.d(TAG,"Error loading conferences",t);
-				browseErrorFragment.setErrorContent(t.getMessage());
-				t.printStackTrace();
-			}
-		});
-
-
-
 	}
 
 	@NonNull

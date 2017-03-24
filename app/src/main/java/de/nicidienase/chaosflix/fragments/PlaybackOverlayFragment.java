@@ -51,9 +51,11 @@ import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.HashMap;
 
+import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.recording.Recording;
+import de.nicidienase.chaosflix.network.MediaApiService;
 import de.nicidienase.chaosflix.network.RecordingClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -95,6 +97,7 @@ public class PlaybackOverlayFragment extends PlaybackFragment {
 	private Event mSelectedEvent;
 
 	private OnPlayPauseClickedListener mCallback;
+	private MediaApiService mMediaApiService;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -105,23 +108,20 @@ public class PlaybackOverlayFragment extends PlaybackFragment {
 		mSelectedEvent = intent.getParcelableExtra(DetailsActivity.EVENT);
 		final int mRecordingID = (int) intent.getLongExtra(DetailsActivity.RECORDING, 0);
 
-		new RecordingClient().getEvent(mSelectedEvent.getApiID()).enqueue(new Callback<Event>() {
-			@Override
-			public void onResponse(Call<Event> call, Response<Event> response) {
-				mSelectedEvent = response.body();
-				for(Recording r : mSelectedEvent.getRecordings()){
-					if(r.getApiID() == mRecordingID){
-						mSelectedRecording = r;
-					}
-				}
-			}
+		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable()
+			.subscribe(mediaApiService -> {
+				mMediaApiService = mediaApiService;
 
-			@Override
-			public void onFailure(Call<Event> call, Throwable t) {
-				Log.d(TAG,"Error loading conferences",t);
-				t.printStackTrace();
-			}
-		});
+				mMediaApiService.getEvent(mSelectedEvent.getApiID())
+					.subscribe(event -> {
+						for(Recording r : mSelectedEvent.getRecordings()){
+							if(r.getApiID() == mRecordingID){
+								mSelectedRecording = r;
+							}
+						}
+					});
+			});
+
 		mHandler = new Handler();
 
 		setBackgroundType(BACKGROUND_TYPE);

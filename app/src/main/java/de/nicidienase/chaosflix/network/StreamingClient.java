@@ -5,6 +5,7 @@ import java.util.List;
 import de.nicidienase.chaosflix.entities.streaming.LiveConference;
 import io.reactivex.Observable;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -23,6 +24,7 @@ public class StreamingClient implements StreamingService {
 		Retrofit retrofit = new Retrofit.Builder()
 				.baseUrl(serviceUrl)
 				.addConverterFactory(GsonConverterFactory.create())
+				.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 				.build();
 		service = retrofit.create(StreamingService.class);
 	}

@@ -20,15 +20,15 @@ public interface RecordingService {
 	Observable<Conferences> getConferences();
 
 	@GET("public/conferences/{id}")
-	Observable<Conference> getConference(@Path("id") int id);
+	Observable<Conference> getConference(@Path("id") long id);
 
 	@GET("public/events")
 	Observable<List<Event>> getAllEvents();
 
 	@GET("public/events/{id}")
-	Observable<Event> getEvent(@Path("id") int id);
+	Observable<Event> getEvent(@Path("id") long id);
 
 	@GET("public/recordings/{id}")
-	Observable<Recording> getRecording(@Path("id") int id);
+	Observable<Recording> getRecording(@Path("id") long id);
 
 }
