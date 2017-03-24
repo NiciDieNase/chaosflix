@@ -9,7 +9,7 @@ import de.nicidienase.chaosflix.R;
  * Created by felix on 18.03.17.
  */
 
-public class ConferencesActivity extends Activity {
+public class ConferencesActivity extends AbstractServiceConnectedAcitivty {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

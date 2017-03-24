@@ -17,18 +17,18 @@ import retrofit2.http.Path;
 public interface RecordingService {
 
 	@GET("public/conferences")
-	Call<Conferences> listConferences();
+	Observable<Conferences> getConferences();
 
 	@GET("public/conferences/{id}")
-	Call<Conference> getConference(@Path("id") int id);
+	Observable<Conference> getConference(@Path("id") int id);
 
 	@GET("public/events")
-	Call<List<Event>> getEvents();
+	Observable<List<Event>> getAllEvents();
 
 	@GET("public/events/{id}")
-	Call<Event> getEvent(@Path("id") int id);
+	Observable<Event> getEvent(@Path("id") int id);
 
 	@GET("public/recordings/{id}")
-	Call<Recording> getRecording(@Path("id") int id);
+	Observable<Recording> getRecording(@Path("id") int id);
 
 }

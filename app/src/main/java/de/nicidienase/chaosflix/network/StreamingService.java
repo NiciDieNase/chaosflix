@@ -13,5 +13,5 @@ import retrofit2.http.GET;
 public interface StreamingService {
 
 	@GET("streams/v2.json")
-	Call<List<StreamingConference>> getStreamingConferences();
+	Observable<List<LiveConference>> getStreamingConferences();
 }
