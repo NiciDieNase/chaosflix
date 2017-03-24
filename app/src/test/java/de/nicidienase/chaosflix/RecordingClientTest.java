@@ -10,14 +10,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
-import de.nicidienase.chaosflix.entities.Conference;
-import de.nicidienase.chaosflix.entities.Conferences;
-import de.nicidienase.chaosflix.entities.Event;
-import de.nicidienase.chaosflix.entities.Recording;
+import de.nicidienase.chaosflix.entities.recording.Conference;
+import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.network.RecordingClient;
 
 /**

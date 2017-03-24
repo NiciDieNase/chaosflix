@@ -14,8 +14,8 @@ import android.support.v4.app.ActivityOptionsCompat;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.activities.EventDetailsActivity;
 import de.nicidienase.chaosflix.activities.EventsActivity;
-import de.nicidienase.chaosflix.entities.Conference;
-import de.nicidienase.chaosflix.entities.Event;
+import de.nicidienase.chaosflix.entities.recording.Conference;
+import de.nicidienase.chaosflix.entities.recording.Event;
 
 /**
  * Created by felix on 21.03.17.

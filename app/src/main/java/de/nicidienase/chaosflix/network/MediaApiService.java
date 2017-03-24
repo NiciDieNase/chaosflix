@@ -7,6 +7,11 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.entities.recording.Conference;
+import de.nicidienase.chaosflix.entities.recording.Conferences;
+import de.nicidienase.chaosflix.entities.recording.Event;
+import de.nicidienase.chaosflix.entities.recording.Recording;
+import de.nicidienase.chaosflix.entities.streaming.LiveConference;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;

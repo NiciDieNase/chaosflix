@@ -1,10 +1,10 @@
-package de.nicidienase.chaosflix.entities;
+package de.nicidienase.chaosflix.entities.streaming;
 
 /**
  * Created by felix on 23.03.17.
  */
 
-class StreamUrl {
+public class StreamUrl {
 	String display;
 	String tech;
 	String url;

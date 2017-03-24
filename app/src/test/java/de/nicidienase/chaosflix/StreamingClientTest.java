@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.util.List;
 
-import de.nicidienase.chaosflix.entities.StreamingConference;
+import de.nicidienase.chaosflix.entities.streaming.LiveConference;
 import de.nicidienase.chaosflix.network.StreamingClient;
 import de.nicidienase.chaosflix.network.StreamingService;
 import okhttp3.mockwebserver.MockResponse;
