@@ -46,10 +46,8 @@ public class MediaApiServiceTest {
 	@BeforeClass
 	public static void setup() throws IOException, TimeoutException {
 		server = new MockWebServer();
-//		server.setDispatcher(new MediaCccDispatcher());
 		server.start();
 		serverUrl = server.url("").toString();
-
 
 		Intent s = new Intent(InstrumentationRegistry.getTargetContext(),
 				MediaApiService.class);
@@ -66,8 +64,7 @@ public class MediaApiServiceTest {
 
 	@Test
 	public void getConferenceTest() throws IOException {
-		server.enqueue(new MockResponse().setBody(
-				MediaCccDispatcher.getStringFromRaw(R.raw.conferences_101_33c3_json)));
+		server.enqueue(TestHelper.getResponseForRaw(R.raw.conferences_101_33c3_json));
 
 		service.getConference(101)
 				.doOnError(throwable -> fail())
@@ -77,8 +74,7 @@ public class MediaApiServiceTest {
 
 	@Test
 	public void sortAllEvents() throws IOException {
-		server.enqueue(new MockResponse().setBody(
-				MediaCccDispatcher.getStringFromRaw(R.raw.events_json)));
+		server.enqueue(TestHelper.getResponseForRaw(R.raw.events_json));
 
 		service.getEvents()
 				.doOnError(throwable -> fail())
@@ -88,8 +84,7 @@ public class MediaApiServiceTest {
 
 	@Test
 	public void getEventTest() throws IOException {
-		server.enqueue(new MockResponse().setBody(
-				MediaCccDispatcher.getStringFromRaw(R.raw.events_2837_json)));
+		server.enqueue(TestHelper.getResponseForRaw(R.raw.events_2837_json));
 
 		service.getEvent(2837)
 				.doOnError(throwable -> fail())
@@ -97,75 +92,22 @@ public class MediaApiServiceTest {
 				event -> assertThat(event.getGuid(), is("9f2e9ff0-1555-470b-8743-9f07f54e9097")));
 	}
 
-//	@Test
-//	public void test1() throws IOException {
-//		service.getStreamingConferences().blockingSubscribe(List<LiveConference> liveConferences) -> assertEquals(1, liveConferences.size()));
-//
-//	}
-//
-//	@Test
-//	public void test2() throws IOException {
-//		service.getStreamingConferences().blockingSubscribe
-//				(List<LiveConference> liveConferences) -> assertEquals("FOSSGIS 2017", liveConferences.get(0).getConference()));
-//	}
-//
-//	@Test
-//	public void getEventRecordingsTest() throws IOException {
-//		client.getEvent(3674).blockingSubscribe(event -> assertEquals(9, event.getRecordings().size()));
-//	}
-//
-//
-//	@Test
-//	public void getRecordingTest() throws IOException {
-//		client.getRecording(14142)
-//				.blockingSubscribe(recording -> assertEquals("2016-12-29T03:16:16.105+01:00",
-//						recording.getUpdatedAt()));
-//	}
-//
-//	@Test
-//	public void getConferencEventListTest() throws IOException {
-//		client.getConferences().blockingSubscribe(conferences ->
-//				assertEquals(99, conferences.getConferences().size()));
-//	}
-//
-//	@Test
-//	public void eventTagsTest() throws IOException {
-//		client.getConference(101).blockingSubscribe(
-//				conference -> assertEquals(12, conference.getEventsByTags().keySet().size()));
-//	}
-//
-//	@Test
-//	public void sortTest() throws IOException {
-//		client.getConferences().blockingSubscribe(conferences -> {
-//			Collections.sort(conferences.getConferences());
-//			for (Conference conf : conferences.getConferences()) {
-//				client.getConference(conf.getApiID())
-//						.blockingSubscribe(conference -> Collections.sort(conference.getEvents()));
-//			}
-//		});
-//	}
-//
-//
-//	@Test
-//	public void mrmcd13() throws IOException {
-//		client.getConference(38).blockingSubscribe(conference ->
-//				Collections.sort(Lists.newArrayList(conference.getEventsByTags().keySet())));
-//	}
-//
-//	@Test
-//	public void testTagsToTalksRation() throws IOException {
-//		client.getConferences().blockingSubscribe(conferences -> {
-//			for (Conference conf : conferences.getConferences()) {
-//				client.getConference(conf.getApiID()).blockingSubscribe(conference -> {
-//					System.out.print(conference.getAcronym() + ": " + conference.getEventsByTags().keySet());
-//					float sum = 0;
-//					for (Event e : conference.getEvents()) {
-//						sum += e.getTags().size();
-//					}
-//				});
-//			}
-//		});
-//	}
+	@Test
+	public void test1() throws IOException {
+		server.enqueue(TestHelper.getResponseForRaw(R.raw.streams_v2_json));
 
+		service.getStreamingConferences()
+				.doOnError(throwable -> fail())
+				.blockingSubscribe(liveConferences -> assertThat(1,is(liveConferences.size())));
 
+	}
+
+	@Test
+	public void test2() throws IOException {
+		server.enqueue(TestHelper.getResponseForRaw(R.raw.streams_v2_json));
+
+		service.getStreamingConferences()
+				.doOnError(throwable -> fail())
+				.blockingSubscribe(liveConferences -> assertThat("FOSSGIS 2017",is(liveConferences.get(0).getConference())));
+	}
 }
