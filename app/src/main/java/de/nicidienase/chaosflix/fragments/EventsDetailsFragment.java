@@ -88,7 +88,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable()
 				.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
 				.subscribe(mediaApiService -> {
-					mMediaApiService = mediaApiService;
+//					mMediaApiService = mediaApiService;
 
 					mediaApiService.getEvent(mSelectedEvent.getApiID())
 							.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
