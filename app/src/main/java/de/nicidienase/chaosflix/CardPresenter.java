@@ -23,6 +23,8 @@ import com.bumptech.glide.Glide;
 
 import de.nicidienase.chaosflix.entities.recording.Conference;
 import de.nicidienase.chaosflix.entities.recording.Event;
+import de.nicidienase.chaosflix.entities.streaming.LiveConference;
+import de.nicidienase.chaosflix.entities.streaming.Room;
 
 /*
  * A CardPresenter is used to generate Views and bind Objects to them on demand.
@@ -90,6 +92,24 @@ public class CardPresenter extends Presenter {
 
 				Glide.with(viewHolder.view.getContext())
 						.load(conference.getLogoUrl())
+						.fitCenter()
+						.error(mDefaultCardImage)
+						.into(cardView.getMainImageView());
+			}
+		}
+		if(item instanceof LiveConference){
+			LiveConference con = (LiveConference) item;
+			cardView.setTitleText(con.getConference());
+			cardView.setMainImage(mDefaultCardImage);
+			cardView.setContentText(con.getDescription());
+		}
+		if(item instanceof Room){
+			Room room = (Room) item;
+			cardView.setTitleText(room.getDisplay());
+			cardView.setContentText(room.getShedulename());
+			if(room.getThumb() != null){
+				Glide.with(viewHolder.view.getContext())
+						.load(room.getThumb())
 						.fitCenter()
 						.error(mDefaultCardImage)
 						.into(cardView.getMainImageView());
