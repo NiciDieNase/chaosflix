@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.network;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
@@ -27,9 +28,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MediaApiService extends Service {
 
+	public static final String RECORDING_URL = "recording_url";
+	public static final String STREAMING_URL = "streaming_url";
+
 	private final IBinder mBinder = new LocalBinder();
-	private RecordingService mRecordingApiService;
-	private StreamingService mStreamingApiService;
+	private RecordingService mRecordingApiService = null;
+	private StreamingService mStreamingApiService = null;
 
 	public class LocalBinder extends Binder {
 		public MediaApiService getService() {
@@ -37,18 +41,18 @@ public class MediaApiService extends Service {
 		}
 	}
 
-	public MediaApiService(){
-	}
-
 	@Override
 	public void onCreate() {
 		super.onCreate();
+	}
+
+	private void setupApiServices(String streamingUrl, String recordingUrl) {
 		OkHttpClient client = new OkHttpClient();
 		GsonConverterFactory gsonConverterFactory = GsonConverterFactory.create();
 		RxJava2CallAdapterFactory rxJava2CallAdapterFactory = RxJava2CallAdapterFactory.create();
 
 		Retrofit retrofitRecordings = new Retrofit.Builder()
-				.baseUrl(getString(R.string.api_media_ccc_url))
+				.baseUrl(recordingUrl)
 				.client(client)
 				.addConverterFactory(gsonConverterFactory)
 				.addCallAdapterFactory(rxJava2CallAdapterFactory)
@@ -56,7 +60,7 @@ public class MediaApiService extends Service {
 		mRecordingApiService = retrofitRecordings.create(RecordingService.class);
 
 		Retrofit retrofigStreaming = new Retrofit.Builder()
-				.baseUrl(getString(R.string.streaming_media_ccc_url))
+				.baseUrl(streamingUrl)
 				.client(client)
 				.addConverterFactory(gsonConverterFactory)
 				.addCallAdapterFactory(rxJava2CallAdapterFactory)
@@ -67,6 +71,16 @@ public class MediaApiService extends Service {
 	@Nullable
 	@Override
 	public IBinder onBind(Intent intent) {
+		if(null == mRecordingApiService || null == mStreamingApiService){
+			Bundle extras = intent.getExtras();
+			String recordingUrl = getResources().getString(R.string.api_media_ccc_url);
+			String streamingUrl = getResources().getString(R.string.streaming_media_ccc_url);
+			if(extras != null){
+				recordingUrl = extras.getString(RECORDING_URL);
+				streamingUrl = extras.getString(STREAMING_URL);
+			}
+			setupApiServices(streamingUrl, recordingUrl);
+		}
 		return mBinder;
 	}
 
