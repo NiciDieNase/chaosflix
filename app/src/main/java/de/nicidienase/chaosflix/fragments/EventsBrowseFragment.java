@@ -55,6 +55,7 @@ import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.network.MediaApiService;
 import de.nicidienase.chaosflix.network.RecordingClient;
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -93,6 +94,7 @@ public class EventsBrowseFragment extends BrowseFragment {
 			mMediaApiService = mediaApiService;
 
 			mMediaApiService.getConference(mConference.getApiID())
+					.observeOn(AndroidSchedulers.mainThread())
 					.doOnError(t -> errorFragment.setErrorContent(t.getMessage()))
 					.subscribe(conference -> {
 							mConference = conference;

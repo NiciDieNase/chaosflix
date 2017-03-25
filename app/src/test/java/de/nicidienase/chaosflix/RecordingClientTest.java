@@ -37,62 +37,62 @@ public class RecordingClientTest {
 
 	@Test
 	public void getEventTest() throws IOException {
-		client.getEvent(3674).subscribe(
+		client.getEvent(3674).blockingSubscribe(
 				event -> assertEquals("bfc2ab1f-8384-4d7d-801a-dde8c81e039c", event.getGuid()));
 	}
 
 	@Test
 	public void getEventRecordingsTest() throws IOException {
-		client.getEvent(3674).subscribe(event -> assertEquals(9, event.getRecordings().size()));
+		client.getEvent(3674).blockingSubscribe(event -> assertEquals(9, event.getRecordings().size()));
 	}
 
 
 	@Test
 	public void getRecordingTest() throws IOException {
-		client.getRecording(14142).subscribe(
-				recording -> assertEquals("2016-12-29T03:16:16.105+01:00",
+		client.getRecording(14142)
+				.blockingSubscribe(recording -> assertEquals("2016-12-29T03:16:16.105+01:00",
 						recording.getUpdatedAt()));
 	}
 
 	@Test
 	public void getConferencEventListTest() throws IOException {
-		client.getConferences().subscribe(conferences ->
+		client.getConferences().blockingSubscribe(conferences ->
 				assertEquals(99, conferences.getConferences().size()));
 	}
 
 	@Test
 	public void eventTagsTest() throws IOException {
-		client.getConference(101).subscribe(
+		client.getConference(101).blockingSubscribe(
 				conference -> assertEquals(12, conference.getEventsByTags().keySet().size()));
 	}
 
 	@Test
 	public void sortTest() throws IOException {
-		client.getConferences().subscribe(conferences -> {
+		client.getConferences().blockingSubscribe(conferences -> {
 			Collections.sort(conferences.getConferences());
 			for (Conference conf : conferences.getConferences()) {
 				client.getConference(conf.getApiID())
-						.subscribe(conference -> Collections.sort(conference.getEvents()));
+						.blockingSubscribe(conference -> Collections.sort(conference.getEvents()));
 			}
 		});
 	}
 
 	@Test
 	public void sortAllEvents() throws IOException {
-		client.getAllEvents().subscribe(events -> Collections.sort(events));
+		client.getAllEvents().blockingSubscribe(events -> Collections.sort(events));
 	}
 
 	@Test
 	public void mrmcd13() throws IOException {
-		client.getConference(38).subscribe(conference ->
+		client.getConference(38).blockingSubscribe(conference ->
 				Collections.sort(Lists.newArrayList(conference.getEventsByTags().keySet())));
 	}
 
 	@Test
 	public void testTagsToTalksRation() throws IOException {
-		client.getConferences().subscribe(conferences -> {
+		client.getConferences().blockingSubscribe(conferences -> {
 			for (Conference conf : conferences.getConferences()) {
-				client.getConference(conf.getApiID()).subscribe(conference -> {
+				client.getConference(conf.getApiID()).blockingSubscribe(conference -> {
 					System.out.print(conference.getAcronym() + ": " + conference.getEventsByTags().keySet());
 					float sum = 0;
 					for (Event e : conference.getEvents()) {

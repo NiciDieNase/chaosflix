@@ -20,13 +20,16 @@ import io.reactivex.Single;
 
 public class AbstractServiceConnectedAcitivty extends Activity {
 	private MediaApiService mMediaApiService = null;
-	private Single<MediaApiService> mApiServiceObservable;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
 		super.onCreate(savedInstanceState, persistentState);
+
+	}
+
+	public Single<MediaApiService> getmApiServiceObservable() {
 		Intent s = new Intent(this, MediaApiService.class);
-		mApiServiceObservable = Single.create(e -> {
+		return Single.create(e -> {
 			if(mMediaApiService != null){
 				e.onSuccess(mMediaApiService);
 			} else {
@@ -39,14 +42,10 @@ public class AbstractServiceConnectedAcitivty extends Activity {
 
 					@Override
 					public void onServiceDisconnected(ComponentName name) {
-
+						mMediaApiService = null;
 					}
 				}, Context.BIND_AUTO_CREATE);
 			}
 		});
-	}
-
-	public Single<MediaApiService> getmApiServiceObservable() {
-		return mApiServiceObservable;
 	}
 }
