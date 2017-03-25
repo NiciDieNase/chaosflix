@@ -6,6 +6,10 @@ import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
+import android.support.v17.leanback.widget.OnItemViewSelectedListener;
+import android.support.v17.leanback.widget.Presenter;
+import android.support.v17.leanback.widget.Row;
+import android.support.v17.leanback.widget.RowPresenter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,9 +21,10 @@ import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.entities.recording.Conference;
-import de.nicidienase.chaosflix.network.MediaApiService;
+import de.nicidienase.chaosflix.entities.streaming.Group;
+import de.nicidienase.chaosflix.entities.streaming.LiveConference;
+import de.nicidienase.chaosflix.entities.streaming.Room;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by felix on 21.03.17.
@@ -36,40 +41,70 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setTitle(getResources().getString(R.string.app_name));
+
 		final BrowseErrorFragment errorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);
+		CardPresenter cardPresenter = new CardPresenter();
+		mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable()
 				.subscribe(mediaApiService -> {
-			mediaApiService.getConferences()
-				.doOnError(t -> {errorFragment.setErrorContent(t.getMessage());})
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(conferences -> {
-					mConferences = conferences.getConferencesBySeries();
-					mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
-					CardPresenter cardPresenter = new CardPresenter();
-					Set<String> keySet = mConferences.keySet();
-					for(String tag: getOrderedConferencesList()){
-						if(keySet.contains(tag)){
-							addRow(mConferences, cardPresenter,tag);
+					mediaApiService.getStreamingConferences()
+							.subscribe(liveConferences -> {
+								if(liveConferences.size() > 0){
+									for(LiveConference con : liveConferences){
+										ArrayObjectAdapter listRowAdapter
+												= new ArrayObjectAdapter(cardPresenter);
+										for(Group g: con.getGroups()){
+											listRowAdapter.addAll(0,g.getRooms());
+										}
+										HeaderItem header = new HeaderItem(con.getConference());
+										header.setDescription(con.getDescription());
+										header.setContentDescription(con.getAuthor());
+										mRowsAdapter.add(new ListRow(header,listRowAdapter));
+									}
+								}
+								mediaApiService.getConferences()
+										.doOnError(t -> {errorFragment.setErrorContent(t.getMessage());})
+										.observeOn(AndroidSchedulers.mainThread())
+										.subscribe(conferences -> {
+											mConferences = conferences.getConferencesBySeries();
+											Set<String> keySet = mConferences.keySet();
+											for(String tag: getOrderedConferencesList()){
+												if(keySet.contains(tag)){
+													ListRow row = getRow(mConferences, cardPresenter, tag,"");
+													mRowsAdapter.add(row);
+												}
+											}
+											for(String tag: keySet){
+												if(!getOrderedConferencesList().contains(tag)){
+													mRowsAdapter.add(getRow(mConferences, cardPresenter, tag,""));
+												}
+											}
+											errorFragment.dismiss();
+											setAdapter(mRowsAdapter);
+										});
+							});
+					setOnItemViewClickedListener(new ItemViewClickedListener(this));
+					setOnItemViewSelectedListener(new OnItemViewSelectedListener() {
+						@Override
+						public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
+//				if(item instanceof Conference){
+//					Conference con = (Conference) item;
+//					row.getHeaderItem().setDescription(con.getTitle());
+//				}
+//				if(item instanceof Room)
 						}
-					}
-					for(String tag: keySet){
-						if(!getOrderedConferencesList().contains(tag)){
-							addRow(mConferences, cardPresenter, tag);
-						}
-					}
-					errorFragment.dismiss();
-					setAdapter(mRowsAdapter);
+					});
+
 				});
-		});
-		setOnItemViewClickedListener(new ItemViewClickedListener(this));
 	}
 
-	private void addRow(Map<String, List<Conference>> conferences, CardPresenter cardPresenter, String tag) {
+	private ListRow getRow(Map<String, List<Conference>> conferences, CardPresenter cardPresenter, String tag, String description) {
 		ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
 		listRowAdapter.addAll(0,conferences.get(tag));
 		HeaderItem header = new HeaderItem(getStringForTag(tag));
-		mRowsAdapter.add(new ListRow(header, listRowAdapter));
+		header.setDescription(description);
+		return new ListRow(header, listRowAdapter);
 	}
 
 	private String getStringForTag(String tag) {
@@ -105,7 +140,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 			case "cryptocon":
 				return "CryptoCon";
 			case "other conferences":
-				return "Other ConferencesWrapper";
+				return "Other Conferences";
 			case "denog":
 				return "DENOG";
 			case "vcfb":

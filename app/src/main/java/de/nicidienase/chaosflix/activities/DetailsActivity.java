@@ -26,6 +26,7 @@ public class DetailsActivity extends AbstractServiceConnectedAcitivty {
 
 	public static final String SHARED_ELEMENT_NAME = "hero";
 	public static final String EVENT = "event";
+	public static final String ROOM = "room";
 	public static final String RECORDING = "recording";
 
 	/**
