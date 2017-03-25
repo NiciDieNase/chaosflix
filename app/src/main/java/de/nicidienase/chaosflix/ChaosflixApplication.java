@@ -1,7 +1,9 @@
 package de.nicidienase.chaosflix;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
+import android.support.multidex.MultiDex;
 
 import com.orm.SugarContext;
 
@@ -22,5 +24,11 @@ public class ChaosflixApplication extends Application {
 	public void onTerminate() {
 		SugarContext.terminate();
 		super.onTerminate();
+	}
+
+	@Override
+	protected void attachBaseContext(Context base) {
+		MultiDex.install(base);
+		super.attachBaseContext(base);
 	}
 }
