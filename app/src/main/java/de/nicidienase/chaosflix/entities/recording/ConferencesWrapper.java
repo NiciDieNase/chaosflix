@@ -13,8 +13,8 @@ import java.util.Set;
  * Created by felix on 17.03.17.
  */
 
-public class Conferences{
-	private static final String TAG = Conferences.class.getSimpleName();
+public class ConferencesWrapper {
+	private static final String TAG = ConferencesWrapper.class.getSimpleName();
 	private List<Conference> conferences;
 
 	private final String CONGRESS = "congress";

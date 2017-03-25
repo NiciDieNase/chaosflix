@@ -3,7 +3,7 @@ package de.nicidienase.chaosflix.network;
 import java.util.List;
 
 import de.nicidienase.chaosflix.entities.recording.Conference;
-import de.nicidienase.chaosflix.entities.recording.Conferences;
+import de.nicidienase.chaosflix.entities.recording.ConferencesWrapper;
 import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.recording.Recording;
 import io.reactivex.Observable;
@@ -36,7 +36,7 @@ public class RecordingClient implements RecordingService {
 
 
 	@Override
-	public Observable<Conferences> getConferences() {
+	public Observable<ConferencesWrapper> getConferences() {
 		return service.getConferences();
 	}
 

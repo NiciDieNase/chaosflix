@@ -57,6 +57,7 @@ import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.recording.Recording;
 import de.nicidienase.chaosflix.network.MediaApiService;
 import de.nicidienase.chaosflix.network.RecordingClient;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -114,7 +115,7 @@ public class PlaybackOverlayFragment extends PlaybackFragment {
 
 				mMediaApiService.getEvent(mSelectedEvent.getApiID())
 					.subscribe(event -> {
-						for(Recording r : mSelectedEvent.getRecordings()){
+						for(Recording r : event.getRecordings()){
 							if(r.getApiID() == mRecordingID){
 								mSelectedRecording = r;
 							}

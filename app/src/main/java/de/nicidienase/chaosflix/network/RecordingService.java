@@ -3,7 +3,7 @@ package de.nicidienase.chaosflix.network;
 import java.util.List;
 
 import de.nicidienase.chaosflix.entities.recording.Conference;
-import de.nicidienase.chaosflix.entities.recording.Conferences;
+import de.nicidienase.chaosflix.entities.recording.ConferencesWrapper;
 import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.recording.Recording;
 import io.reactivex.Observable;
@@ -17,7 +17,7 @@ import retrofit2.http.Path;
 public interface RecordingService {
 
 	@GET("public/conferences")
-	Observable<Conferences> getConferences();
+	Observable<ConferencesWrapper> getConferences();
 
 	@GET("public/conferences/{id}")
 	Observable<Conference> getConference(@Path("id") long id);
