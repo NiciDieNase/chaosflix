@@ -98,7 +98,7 @@ public class PlaybackOverlayFragment extends PlaybackFragment {
 	private Event mSelectedEvent;
 
 	private OnPlayPauseClickedListener mCallback;
-	private MediaApiService mMediaApiService;
+//	private MediaApiService mMediaApiService;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -111,9 +111,9 @@ public class PlaybackOverlayFragment extends PlaybackFragment {
 
 		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable()
 			.subscribe(mediaApiService -> {
-				mMediaApiService = mediaApiService;
+//				mMediaApiService = mediaApiService;
 
-				mMediaApiService.getEvent(mSelectedEvent.getApiID())
+				mediaApiService.getEvent(mSelectedEvent.getApiID())
 					.subscribe(event -> {
 						for(Recording r : event.getRecordings()){
 							if(r.getApiID() == mRecordingID){

@@ -77,9 +77,7 @@ public class EventsBrowseFragment extends BrowseFragment {
 	private URI mBackgroundURI;
 	private BackgroundManager mBackgroundManager;
 	private Conference mConference;
-	private RecordingClient client = new RecordingClient();;
 	private int conferenceId;
-	private MediaApiService mMediaApiService;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -90,17 +88,16 @@ public class EventsBrowseFragment extends BrowseFragment {
 		conferenceId = this.getActivity().getIntent().getIntExtra(EventsActivity.CONFERENCE_ID, 0);
 		mConference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.CONFERENCE);
 
-		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable().subscribe(mediaApiService -> {
-			mMediaApiService = mediaApiService;
-
-			mMediaApiService.getConference(mConference.getApiID())
+		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable()
+			.subscribe(mediaApiService -> {
+				mediaApiService.getConference(mConference.getApiID())
 					.observeOn(AndroidSchedulers.mainThread())
 					.doOnError(t -> errorFragment.setErrorContent(t.getMessage()))
 					.subscribe(conference -> {
-							mConference = conference;
-							setupUIElements();
-							loadRows();
-							errorFragment.dismiss();
+						mConference = conference;
+						setupUIElements();
+						loadRows();
+						errorFragment.dismiss();
 					});
 		});
 

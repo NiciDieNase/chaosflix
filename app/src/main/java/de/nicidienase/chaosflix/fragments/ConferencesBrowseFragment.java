@@ -31,8 +31,6 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	public static final int FRAGMENT = R.id.browse_fragment;
 	private ArrayObjectAdapter mRowsAdapter;
 	private Map<String, List<Conference>> mConferences;
-	private BrowseErrorFragment mErrorFragment;
-	private MediaApiService mMediaApiService;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -42,9 +40,9 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);
 		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable()
 				.subscribe(mediaApiService -> {
-			mMediaApiService = mediaApiService;
-			mMediaApiService.getConferences()
+			mediaApiService.getConferences()
 				.doOnError(t -> {errorFragment.setErrorContent(t.getMessage());})
+				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(conferences -> {
 					mConferences = conferences.getConferencesBySeries();
 					mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
