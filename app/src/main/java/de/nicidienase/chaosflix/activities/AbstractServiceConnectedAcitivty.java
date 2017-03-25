@@ -20,12 +20,23 @@ import io.reactivex.Single;
 
 public class AbstractServiceConnectedAcitivty extends Activity {
 	private MediaApiService mMediaApiService = null;
+	private ServiceConnection conn;
+	private boolean mConnected = false;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
 		super.onCreate(savedInstanceState, persistentState);
-
 	}
+
+	@Override
+	protected void onDestroy() {
+		if(mConnected){
+			unbindService(conn);
+			conn = null;
+		}
+		super.onDestroy();
+	}
+
 
 	public Single<MediaApiService> getmApiServiceObservable() {
 		Intent s = new Intent(this, MediaApiService.class);
@@ -33,9 +44,10 @@ public class AbstractServiceConnectedAcitivty extends Activity {
 			if(mMediaApiService != null){
 				e.onSuccess(mMediaApiService);
 			} else {
-				AbstractServiceConnectedAcitivty.this.bindService(s, new ServiceConnection() {
+				conn = new ServiceConnection() {
 					@Override
 					public void onServiceConnected(ComponentName name, IBinder service) {
+						mConnected = true;
 						mMediaApiService = ((MediaApiService.LocalBinder) service).getService();
 						e.onSuccess(mMediaApiService);
 					}
@@ -43,8 +55,10 @@ public class AbstractServiceConnectedAcitivty extends Activity {
 					@Override
 					public void onServiceDisconnected(ComponentName name) {
 						mMediaApiService = null;
+						mConnected = false;
 					}
-				}, Context.BIND_AUTO_CREATE);
+				};
+				AbstractServiceConnectedAcitivty.this.bindService(s, conn, Context.BIND_AUTO_CREATE);
 			}
 		});
 	}
