@@ -41,13 +41,13 @@ public class StreamingClientTest {
 
 	@Test
 	public void test1() throws IOException {
-		service.getStreamingConferences().subscribe((List<LiveConference> liveConferences) -> assertEquals(1, liveConferences.size()));
+		service.getStreamingConferences().blockingSubscribe(List<LiveConference> liveConferences) -> assertEquals(1, liveConferences.size()));
 
 	}
 
 	@Test
 	public void test2() throws IOException {
-		service.getStreamingConferences().subscribe(
+		service.getStreamingConferences().blockingSubscribe
 				(List<LiveConference> liveConferences) -> assertEquals("FOSSGIS 2017", liveConferences.get(0).getConference()));
 	}
 }

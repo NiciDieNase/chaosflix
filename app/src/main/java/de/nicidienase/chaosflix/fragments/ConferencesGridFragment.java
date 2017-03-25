@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.support.v17.leanback.app.VerticalGridFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.VerticalGridPresenter;
-import android.util.Log;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,12 +13,8 @@ import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.entities.recording.Conference;
-import de.nicidienase.chaosflix.entities.recording.Conferences;
 import de.nicidienase.chaosflix.network.MediaApiService;
-import de.nicidienase.chaosflix.network.RecordingClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by felix on 20.03.17.
@@ -39,6 +34,7 @@ public class ConferencesGridFragment extends VerticalGridFragment {
 		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable().subscribe(mediaApiService -> {
 			mMediaApiService = mediaApiService;
 			mMediaApiService.getConferences()
+				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(conferences -> {
 					List<Conference> conferenceList = conferences.getConferences();
 					Collections.sort(conferenceList);

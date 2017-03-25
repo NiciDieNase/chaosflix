@@ -1,16 +1,11 @@
 package de.nicidienase.chaosflix.fragments;
 
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v17.leanback.app.BrowseFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
-import android.util.Log;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,16 +16,10 @@ import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
-import de.nicidienase.chaosflix.activities.ConferencesActivity;
 import de.nicidienase.chaosflix.entities.recording.Conference;
-import de.nicidienase.chaosflix.entities.recording.Conferences;
 import de.nicidienase.chaosflix.network.MediaApiService;
-import de.nicidienase.chaosflix.network.RecordingClient;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by felix on 21.03.17.
@@ -51,7 +40,8 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 		setTitle(getResources().getString(R.string.app_name));
 		final BrowseErrorFragment errorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);
-		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable().subscribe(mediaApiService -> {
+		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable()
+				.subscribe(mediaApiService -> {
 			mMediaApiService = mediaApiService;
 			mMediaApiService.getConferences()
 				.doOnError(t -> {errorFragment.setErrorContent(t.getMessage());})
@@ -109,7 +99,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 			case "fiffkon":
 				return "FifFKon";
 			case "other mConferences":
-				return "other Conferences";
+				return "other ConferencesWrapper";
 			case "blinkenlights":
 				return "Blinkenlights";
 			case "chaoscologne":
@@ -117,7 +107,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 			case "cryptocon":
 				return "CryptoCon";
 			case "other conferences":
-				return "Other Conferences";
+				return "Other ConferencesWrapper";
 			case "denog":
 				return "DENOG";
 			case "vcfb":

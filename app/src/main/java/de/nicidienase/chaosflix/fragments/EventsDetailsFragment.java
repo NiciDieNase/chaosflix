@@ -48,6 +48,7 @@ import de.nicidienase.chaosflix.entities.recording.Recording;
 import de.nicidienase.chaosflix.network.MediaApiService;
 import de.nicidienase.chaosflix.network.RecordingClient;
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -98,7 +99,9 @@ public class EventsDetailsFragment extends DetailsFragment {
 								detailsOverviewRow.setActionsAdapter(recordingActionsAdapter);
 								adapter.add(detailsOverviewRow);
 								mediaApiService.getConference(
-										mSelectedEvent.getParentConferenceID()).subscribe(conference -> {
+										mSelectedEvent.getParentConferenceID())
+										.observeOn(AndroidSchedulers.mainThread())
+										.subscribe(conference -> {
 									String tag = null;
 									if(mSelectedEvent.getTags().size()>0) {
 										tag = mSelectedEvent.getTags().get(0);
