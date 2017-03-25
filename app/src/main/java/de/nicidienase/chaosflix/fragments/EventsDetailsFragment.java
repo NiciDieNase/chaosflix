@@ -48,9 +48,6 @@ import de.nicidienase.chaosflix.entities.streaming.LiveConference;
 import de.nicidienase.chaosflix.entities.streaming.Room;
 import de.nicidienase.chaosflix.entities.streaming.Stream;
 import de.nicidienase.chaosflix.entities.streaming.StreamUrl;
-import de.nicidienase.chaosflix.network.MediaApiService;
-import de.nicidienase.chaosflix.network.RecordingClient;
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
@@ -66,11 +63,6 @@ public class EventsDetailsFragment extends DetailsFragment {
 	private static final String TAG = EventsDetailsFragment.class.getSimpleName();
 	public static final int FRAGMENT = R.id.details_fragment;
 	private Event mSelectedEvent;
-	private ArrayObjectAdapter mRowsAdapter;
-
-	private RecordingClient client = new RecordingClient();
-	private ArrayObjectAdapter mAdapter;
-	private MediaApiService mMediaApiService;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -89,7 +81,6 @@ public class EventsDetailsFragment extends DetailsFragment {
 			((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable()
 					.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
 					.subscribe(mediaApiService -> {
-//					mMediaApiService = mediaApiService;
 						if(mSelectedEvent != null){
 							final DetailsOverviewRow detailsOverviewRow = setupDetailsOverviewRow(mSelectedEvent);
 							mediaApiService.getEvent(mSelectedEvent.getApiID())
@@ -208,6 +199,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 			@Override
 			public void onActionClicked(Action action) {
 				Intent i = new Intent(getActivity(), PlaybackOverlayActivity.class);
+				// TODO put stream
 				i.putExtra(DetailsActivity.RECORDING,action.getId());
 				i.putExtra(DetailsActivity.EVENT,mSelectedEvent);
 				getActivity().startActivity(i);

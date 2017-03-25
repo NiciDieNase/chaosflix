@@ -13,7 +13,6 @@ import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.entities.recording.Conference;
-import de.nicidienase.chaosflix.network.MediaApiService;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**

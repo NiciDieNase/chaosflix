@@ -15,7 +15,6 @@
 package de.nicidienase.chaosflix.fragments;
 
 import android.app.Activity;
-
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.os.Build;
@@ -41,7 +40,6 @@ import android.support.v17.leanback.widget.PlaybackControlsRow.SkipPreviousActio
 import android.support.v17.leanback.widget.PlaybackControlsRow.ThumbsDownAction;
 import android.support.v17.leanback.widget.PlaybackControlsRow.ThumbsUpAction;
 import android.support.v17.leanback.widget.PlaybackControlsRowPresenter;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -55,12 +53,6 @@ import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.recording.Recording;
-import de.nicidienase.chaosflix.network.MediaApiService;
-import de.nicidienase.chaosflix.network.RecordingClient;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /*
  * Class for video playback with media control
@@ -231,39 +223,39 @@ public class PlaybackOverlayFragment extends PlaybackFragment {
 		mPlaybackControlsRow.setSecondaryActionsAdapter(mSecondaryActionsAdapter);
 
 		mPlayPauseAction = new PlayPauseAction(getActivity());
-//		mRepeatAction = new RepeatAction(getActivity());
-//		mThumbsUpAction = new ThumbsUpAction(getActivity());
-//		mThumbsDownAction = new ThumbsDownAction(getActivity());
-//		mShuffleAction = new ShuffleAction(getActivity());
-//		mSkipNextAction = new PlaybackControlsRow.SkipNextAction(getActivity());
-//		mSkipPreviousAction = new PlaybackControlsRow.SkipPreviousAction(getActivity());
-//		mFastForwardAction = new PlaybackControlsRow.FastForwardAction(getActivity());
-//		mRewindAction = new PlaybackControlsRow.RewindAction(getActivity());
+		mRepeatAction = new RepeatAction(getActivity());
+		mThumbsUpAction = new ThumbsUpAction(getActivity());
+		mThumbsDownAction = new ThumbsDownAction(getActivity());
+		mShuffleAction = new ShuffleAction(getActivity());
+		mSkipNextAction = new PlaybackControlsRow.SkipNextAction(getActivity());
+		mSkipPreviousAction = new PlaybackControlsRow.SkipPreviousAction(getActivity());
+		mFastForwardAction = new PlaybackControlsRow.FastForwardAction(getActivity());
+		mRewindAction = new PlaybackControlsRow.RewindAction(getActivity());
 
-//		if (PRIMARY_CONTROLS > 5) {
-//			mPrimaryActionsAdapter.add(mThumbsUpAction);
-//		} else {
-//			mSecondaryActionsAdapter.add(mThumbsUpAction);
-//		}
-//		mPrimaryActionsAdapter.add(mSkipPreviousAction);
-//		if (PRIMARY_CONTROLS > 3) {
-//			mPrimaryActionsAdapter.add(new PlaybackControlsRow.RewindAction(getActivity()));
-//		}
+		if (PRIMARY_CONTROLS > 5) {
+			mPrimaryActionsAdapter.add(mThumbsUpAction);
+		} else {
+			mSecondaryActionsAdapter.add(mThumbsUpAction);
+		}
+		mPrimaryActionsAdapter.add(mSkipPreviousAction);
+		if (PRIMARY_CONTROLS > 3) {
+			mPrimaryActionsAdapter.add(new PlaybackControlsRow.RewindAction(getActivity()));
+		}
 		mPrimaryActionsAdapter.add(mPlayPauseAction);
-//		if (PRIMARY_CONTROLS > 3) {
-//			mPrimaryActionsAdapter.add(new PlaybackControlsRow.FastForwardAction(getActivity()));
-//		}
-//		mPrimaryActionsAdapter.add(mSkipNextAction);
+		if (PRIMARY_CONTROLS > 3) {
+			mPrimaryActionsAdapter.add(new PlaybackControlsRow.FastForwardAction(getActivity()));
+		}
+		mPrimaryActionsAdapter.add(mSkipNextAction);
 
-//		mSecondaryActionsAdapter.add(mRepeatAction);
-//		mSecondaryActionsAdapter.add(mShuffleAction);
-//		if (PRIMARY_CONTROLS > 5) {
-//			mPrimaryActionsAdapter.add(mThumbsDownAction);
-//		} else {
-//			mSecondaryActionsAdapter.add(mThumbsDownAction);
-//		}
-//		mSecondaryActionsAdapter.add(new PlaybackControlsRow.HighQualityAction(getActivity()));
-//		mSecondaryActionsAdapter.add(new PlaybackControlsRow.ClosedCaptioningAction(getActivity()));
+		mSecondaryActionsAdapter.add(mRepeatAction);
+		mSecondaryActionsAdapter.add(mShuffleAction);
+		if (PRIMARY_CONTROLS > 5) {
+			mPrimaryActionsAdapter.add(mThumbsDownAction);
+		} else {
+			mSecondaryActionsAdapter.add(mThumbsDownAction);
+		}
+		mSecondaryActionsAdapter.add(new PlaybackControlsRow.HighQualityAction(getActivity()));
+		mSecondaryActionsAdapter.add(new PlaybackControlsRow.ClosedCaptioningAction(getActivity()));
 	}
 
 	private void notifyChanged(Action action) {

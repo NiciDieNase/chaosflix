@@ -6,10 +6,6 @@ import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
-import android.support.v17.leanback.widget.OnItemViewSelectedListener;
-import android.support.v17.leanback.widget.Presenter;
-import android.support.v17.leanback.widget.Row;
-import android.support.v17.leanback.widget.RowPresenter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +19,6 @@ import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.entities.recording.Conference;
 import de.nicidienase.chaosflix.entities.streaming.Group;
 import de.nicidienase.chaosflix.entities.streaming.LiveConference;
-import de.nicidienase.chaosflix.entities.streaming.Room;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
@@ -85,16 +80,16 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 										});
 							});
 					setOnItemViewClickedListener(new ItemViewClickedListener(this));
-					setOnItemViewSelectedListener(new OnItemViewSelectedListener() {
-						@Override
-						public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
-//				if(item instanceof Conference){
-//					Conference con = (Conference) item;
-//					row.getHeaderItem().setDescription(con.getTitle());
-//				}
-//				if(item instanceof Room)
-						}
-					});
+//					setOnItemViewSelectedListener(new OnItemViewSelectedListener() {
+//						@Override
+//						public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
+//							if(item instanceof Conference){
+//								Conference con = (Conference) item;
+//								row.getHeaderItem().setDescription(con.getTitle());
+//							}
+//							if(item instanceof Room)
+//						}
+//					});
 
 				});
 	}
