@@ -15,6 +15,7 @@ import de.nicidienase.chaosflix.activities.EventDetailsActivity;
 import de.nicidienase.chaosflix.activities.EventsActivity;
 import de.nicidienase.chaosflix.entities.recording.Conference;
 import de.nicidienase.chaosflix.entities.recording.Event;
+import de.nicidienase.chaosflix.entities.streaming.Room;
 
 /**
  * Created by felix on 21.03.17.
@@ -46,6 +47,16 @@ public class ItemViewClickedListener implements OnItemViewClickedListener {
 			Event event = (Event) item;
 			Intent i = new Intent(fragment.getActivity(), DetailsActivity.class);
 			i.putExtra(DetailsActivity.EVENT,event);
+			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
+					fragment.getActivity(),
+					((ImageCardView) itemViewHolder.view).getMainImageView(),
+					EventDetailsActivity.SHARED_ELEMENT_NAME).toBundle();
+			fragment.getActivity().startActivity(i, bundle);
+		}
+		if(item instanceof Room){
+			Room room = (Room) item;
+			Intent i = new Intent(fragment.getActivity(), DetailsActivity.class);
+			i.putExtra(DetailsActivity.ROOM,room);
 			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
 					fragment.getActivity(),
 					((ImageCardView) itemViewHolder.view).getMainImageView(),
