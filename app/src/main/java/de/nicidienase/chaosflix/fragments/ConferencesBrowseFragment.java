@@ -82,12 +82,12 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 												}
 											}
 											errorFragment.dismiss();
+											setOnItemViewClickedListener(new ItemViewClickedListener(this));
 											setAdapter(mRowsAdapter);
 										});
 								mDisposables.add(disposable2);
 							});
 					mDisposables.add(disposable1);
-					setOnItemViewClickedListener(new ItemViewClickedListener(this));
 //					setOnItemViewSelectedListener(new OnItemViewSelectedListener() {
 //						@Override
 //						public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {

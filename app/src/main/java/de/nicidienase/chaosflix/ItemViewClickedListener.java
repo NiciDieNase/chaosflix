@@ -42,7 +42,6 @@ public class ItemViewClickedListener implements OnItemViewClickedListener {
 						((ImageCardView) itemViewHolder.view).getMainImageView(),
 						EventsActivity.SHARED_ELEMENT_NAME).toBundle();
 			fragment.startActivity(i,bundle);
-
 		} else if(item instanceof Event){
 			Event event = (Event) item;
 			Intent i = new Intent(fragment.getActivity(), DetailsActivity.class);

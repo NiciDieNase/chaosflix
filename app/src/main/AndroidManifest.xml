@@ -43,6 +43,8 @@
         <activity android:name=".activities.PlaybackOverlayActivity"
                   android:exported="true"
                   android:theme="@style/Theme.Leanback"/>
+        <activity android:name=".activities.ExoPlayerActivity"
+                  android:theme="@style/Theme.Leanback"/>
         <service android:name=".network.MediaApiService"/>
 
         <meta-data android:name="DATABASE" android:value="mediaccc.db" />
