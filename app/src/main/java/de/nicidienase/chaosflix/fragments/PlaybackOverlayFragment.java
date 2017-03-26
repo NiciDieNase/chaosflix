@@ -70,7 +70,6 @@ public class PlaybackOverlayFragment extends PlaybackFragment {
 	private ArrayObjectAdapter mSecondaryActionsAdapter;
 
 	private PlayPauseAction mPlayPauseAction;
-//	private RepeatAction mRepeatAction;
 	private FastForwardAction mFastForwardAction;
 	private RewindAction mRewindAction;
 
@@ -184,6 +183,7 @@ public class PlaybackOverlayFragment extends PlaybackFragment {
 		mRowsAdapter.add(mPlaybackControlsRow);
 
 //		updatePlaybackRow(mCurrentItem);
+		updateVideoImage(mSelectedEvent.getThumbUrl());
 
 		ControlButtonPresenterSelector presenterSelector = new ControlButtonPresenterSelector();
 		mPrimaryActionsAdapter = new ArrayObjectAdapter(presenterSelector);
@@ -216,7 +216,7 @@ public class PlaybackOverlayFragment extends PlaybackFragment {
 		}
 	}
 
-	private void updatePlaybackRow(int index) {
+	private void updatePlaybackRow(Event event) {
 		if (mPlaybackControlsRow.getItem() != null) {
 			Event item = (Event) mPlaybackControlsRow.getItem();
 			item.setTitle(mSelectedEvent.getTitle());
