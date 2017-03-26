@@ -34,6 +34,9 @@ public class ExoOverlayFragment extends android.support.v17.leanback.app.Playbac
 		void pause();
 		void playPause();
 		void setVideoSource(String source);
+		void skipForward(int sec);
+		void skipBackward(int sec);
+		void seekTo(int sec);
 	}
 
 	@Override
@@ -53,8 +56,6 @@ public class ExoOverlayFragment extends android.support.v17.leanback.app.Playbac
 		ArrayObjectAdapter rowsAdapter = setupRows();
 //		rowsAdapter.add(getRelatedItems());
 		setAdapter(rowsAdapter);
-
-		mCallback.setVideoSource(mSelectedRecording.getUrl());
 	}
 
 	private ArrayObjectAdapter setupRows() {
@@ -80,6 +81,12 @@ public class ExoOverlayFragment extends android.support.v17.leanback.app.Playbac
 
 	public int getCurrentPosition() {
 		return 0;
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		mCallback.setVideoSource(mSelectedRecording.getRecordingUrl());
 	}
 
 	@Override
