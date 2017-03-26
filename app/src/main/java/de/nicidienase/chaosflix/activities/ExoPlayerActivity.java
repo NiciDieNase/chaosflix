@@ -4,9 +4,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v17.leanback.app.PlaybackFragment;
 import android.text.TextUtils;
-import android.view.TextureView;
+import android.util.Log;
+import android.view.SurfaceView;
 import android.view.View;
 
 import com.google.android.exoplayer2.C;
@@ -15,7 +15,6 @@ import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
@@ -32,16 +31,12 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
-import com.google.android.exoplayer2.util.UriUtil;
 import com.google.android.exoplayer2.util.Util;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.entities.recording.Event;
-import de.nicidienase.chaosflix.entities.recording.Recording;
 import de.nicidienase.chaosflix.fragments.ExoOverlayFragment;
-import de.nicidienase.chaosflix.fragments.PlaybackOverlayFragment;
 
 /**
  * Created by felix on 26.03.17.
@@ -50,8 +45,9 @@ import de.nicidienase.chaosflix.fragments.PlaybackOverlayFragment;
 public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 		implements ExoOverlayFragment.PlaybackControlListener{
 
+	private static final String TAG = ExoPlayerActivity.class.getSimpleName();
 	@BindView(R.id.videoView)
-	TextureView mTextureView;
+	SurfaceView mSurfaceView;
 	@BindView(R.id.playback_controls_fragment)
 	View mPlaybackControllFragment;
 	private DefaultBandwidthMeter bandwidthMeter;
@@ -59,6 +55,7 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 	private String mUserAgent;
 
 	private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
+	private Handler mainHandler;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,10 +71,16 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 		}
 	}
 
+	@Override
+	protected void onPause() {
+		super.onPause();
+		pause();
+	}
+
 	private void setupPlayer(){
 		mUserAgent = Util.getUserAgent(this, getResources().getString(R.string.app_name));
 
-		Handler mainHander = new Handler();
+		mainHandler = new Handler();
 		bandwidthMeter = new DefaultBandwidthMeter();
 		TrackSelection.Factory videoTrackSelectionFactory
 				= new AdaptiveTrackSelection.Factory(bandwidthMeter);
@@ -88,11 +91,12 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 
 		player = ExoPlayerFactory.newSimpleInstance(this, trackSelector, loadControl);
 
-		player.setVideoTextureView(mTextureView);
+		player.setVideoSurfaceView(mSurfaceView);
 	}
 
 	@Override
 	public void setVideoSource(String source) {
+		Log.d(TAG,"Source: " + source);
 		synchronized (this){
 			if(player == null){
 				setupPlayer();
@@ -106,16 +110,33 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 
 	@Override
 	public void play() {
+		player.setPlayWhenReady(true);
 	}
 
 	@Override
 	public void pause() {
+		player.setPlayWhenReady(false);
 
 	}
 
 	@Override
 	public void playPause() {
+		player.setPlayWhenReady(!player.getPlayWhenReady());
+	}
 
+	@Override
+	public void seekTo(int sec) {
+		player.seekTo(sec * 1000);
+	}
+
+	@Override
+	public void skipForward(int sec){
+		player.seekTo(player.getCurrentPosition()+(sec*1000));
+	}
+
+	@Override
+	public void skipBackward(int sec){
+		player.seekTo(player.getCurrentPosition()-(sec*1000));
 	}
 
 	private MediaSource buildMediaSource(Uri uri, String overrideExtension) {
@@ -125,15 +146,15 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 		switch (type) {
 			case C.TYPE_SS:
 				return new SsMediaSource(uri, buildDataSourceFactory(false),
-						new DefaultSsChunkSource.Factory(mediaDataSourceFactory), null, null);
+						new DefaultSsChunkSource.Factory(mediaDataSourceFactory), mainHandler, null);
 			case C.TYPE_DASH:
 				return new DashMediaSource(uri, buildDataSourceFactory(false),
-						new DefaultDashChunkSource.Factory(mediaDataSourceFactory), null, null);
+						new DefaultDashChunkSource.Factory(mediaDataSourceFactory), mainHandler, null);
 			case C.TYPE_HLS:
-				return new HlsMediaSource(uri, mediaDataSourceFactory, null, null);
+				return new HlsMediaSource(uri, mediaDataSourceFactory, mainHandler, null);
 			case C.TYPE_OTHER:
 				return new ExtractorMediaSource(uri, mediaDataSourceFactory, new DefaultExtractorsFactory(),
-						null, null);
+						mainHandler, null);
 			default: {
 				throw new IllegalStateException("Unsupported type: " + type);
 			}
