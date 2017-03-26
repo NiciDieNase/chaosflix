@@ -114,6 +114,7 @@ public class PlaybackOverlayActivity extends AbstractServiceConnectedAcitivty im
 		}
 		updatePlaybackState(position);
 		updateMetadata(event);
+
 	}
 
 	private void updatePlaybackState(int position) {
