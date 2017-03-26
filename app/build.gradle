@@ -12,9 +12,16 @@ android {
         versionName "1.0"
     }
     buildTypes {
-        release {
-            minifyEnabled false
+        debug {
+            minifyEnabled true
+            useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro'
         }
     }
     packagingOptions {
@@ -49,6 +56,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.2.0'
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
 
+    compile 'com.google.android.exoplayer:exoplayer:r2.3.1'
     compile 'com.github.satyan:sugar:1.4'
     compile 'com.jakewharton:butterknife:8.5.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
@@ -56,8 +64,6 @@ dependencies {
     debugCompile 'com.facebook.stetho:stetho:1.4.2'
     debugCompile 'com.facebook.stetho:stetho-okhttp:1.4.2'
     debugCompile 'com.facebook.stetho:stetho-okhttp3:1.4.2'
-
-    testCompile 'junit:junit:4.12'
 
     androidTestCompile ('com.android.support.test:rules:0.5') {
         exclude module: 'support-annotations'
