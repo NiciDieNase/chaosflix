@@ -14,7 +14,7 @@ import java.util.List;
 
 public class Event extends SugarRecord implements Parcelable, Comparable<Event> {
 
-	long parentConferenceID;
+	int parentConferenceID;
 	String guid;
 	String title;
 	String subtitle;
@@ -30,7 +30,7 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 	String releaseDate;
 	@SerializedName("updated_at")
 	String updatedAt;
-	long length;
+	int length;
 	@SerializedName("thumb_url")
 	String thumbUrl;
 	@SerializedName("poster_url")
@@ -54,7 +54,7 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 		tags = in.createStringArrayList();
 		date = in.readString();
 		updatedAt = in.readString();
-		length = in.readLong();
+		length = in.readInt();
 		thumbUrl = in.readString();
 		posterUrl = in.readString();
 		frontendLink = in.readString();
@@ -92,7 +92,7 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 		parcel.writeStringList(tags);
 		parcel.writeString(date);
 		parcel.writeString(updatedAt);
-		parcel.writeLong(length);
+		parcel.writeInt(length);
 		parcel.writeString(thumbUrl);
 		parcel.writeString(posterUrl);
 		parcel.writeString(frontendLink);
@@ -130,12 +130,12 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 	public long getParentConferenceID() {
 		if(parentConferenceID == 0){
 			String[] split = conferenceUrl.split("/");
-			parentConferenceID = Long.parseLong(split[split.length-1]);
+			parentConferenceID = Integer.parseInt(split[split.length-1]);
 		}
 		return parentConferenceID;
 	}
 
-	public void setParentConferenceID(long parentConferenceID) {
+	public void setParentConferenceID(int parentConferenceID) {
 		this.parentConferenceID = parentConferenceID;
 	}
 
@@ -219,11 +219,11 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 		this.releaseDate = releaseDate;
 	}
 
-	public long getLength() {
+	public int getLength() {
 		return length;
 	}
 
-	public void setLength(long length) {
+	public void setLength(int length) {
 		this.length = length;
 	}
 
