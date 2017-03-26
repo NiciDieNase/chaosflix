@@ -31,12 +31,12 @@
                                     "webm": {
                                         "display": "WebM",
                                         "tech": "1920x1080, VP8+Vorbis in WebM, 3.5 MBit/s",
-                                        "url": "https://cdn.c3voc.de/s6_native_hd.webm"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     },
                                     "hls": {
                                         "display": "HLS",
                                         "tech": "1920x1080, h264+AAC im MPEG-TS-Container via HTTP, 3 MBit/s",
-                                        "url": "https://cdn.c3voc.de/hls/s6_native_hd.m3u8"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     }
                                 }
                             },
@@ -53,12 +53,12 @@
                                     "webm": {
                                         "display": "WebM",
                                         "tech": "1024x576, VP8+Vorbis in WebM, 1 MBit/s",
-                                        "url": "https://cdn.c3voc.de/s6_native_sd.webm"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     },
                                     "hls": {
                                         "display": "HLS",
                                         "tech": "1024x576, h264+AAC im MPEG-TS-Container via HTTP, 800 kBit/s",
-                                        "url": "https://cdn.c3voc.de/hls/s6_native_sd.m3u8"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     }
                                 }
                             },
@@ -72,12 +72,12 @@
                                     "mp3": {
                                         "display": "MP3",
                                         "tech": "MP3-Audio, 96 kBit/s",
-                                        "url": "https://cdn.c3voc.de/s6_native.mp3"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     },
                                     "opus": {
                                         "display": "Opus",
                                         "tech": "Opus-Audio, 64 kBit/s",
-                                        "url": "https://cdn.c3voc.de/s6_native.opus"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     }
                                 }
                             }
@@ -103,12 +103,12 @@
                                     "webm": {
                                         "display": "WebM",
                                         "tech": "1920x1080, VP8+Vorbis in WebM, 3.5 MBit/s",
-                                        "url": "https://cdn.c3voc.de/s4_native_hd.webm"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     },
                                     "hls": {
                                         "display": "HLS",
                                         "tech": "1920x1080, h264+AAC im MPEG-TS-Container via HTTP, 3 MBit/s",
-                                        "url": "https://cdn.c3voc.de/hls/s4_native_hd.m3u8"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     }
                                 }
                             },
@@ -125,12 +125,12 @@
                                     "webm": {
                                         "display": "WebM",
                                         "tech": "1024x576, VP8+Vorbis in WebM, 1 MBit/s",
-                                        "url": "https://cdn.c3voc.de/s4_native_sd.webm"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     },
                                     "hls": {
                                         "display": "HLS",
                                         "tech": "1024x576, h264+AAC im MPEG-TS-Container via HTTP, 800 kBit/s",
-                                        "url": "https://cdn.c3voc.de/hls/s4_native_sd.m3u8"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     }
                                 }
                             },
@@ -144,12 +144,12 @@
                                     "mp3": {
                                         "display": "MP3",
                                         "tech": "MP3-Audio, 96 kBit/s",
-                                        "url": "https://cdn.c3voc.de/s4_native.mp3"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     },
                                     "opus": {
                                         "display": "Opus",
                                         "tech": "Opus-Audio, 64 kBit/s",
-                                        "url": "https://cdn.c3voc.de/s4_native.opus"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     }
                                 }
                             }
@@ -175,12 +175,12 @@
                                     "webm": {
                                         "display": "WebM",
                                         "tech": "1920x1080, VP8+Vorbis in WebM, 3.5 MBit/s",
-                                        "url": "https://cdn.c3voc.de/s5_native_hd.webm"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     },
                                     "hls": {
                                         "display": "HLS",
                                         "tech": "1920x1080, h264+AAC im MPEG-TS-Container via HTTP, 3 MBit/s",
-                                        "url": "https://cdn.c3voc.de/hls/s5_native_hd.m3u8"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     }
                                 }
                             },
@@ -197,12 +197,12 @@
                                     "webm": {
                                         "display": "WebM",
                                         "tech": "1024x576, VP8+Vorbis in WebM, 1 MBit/s",
-                                        "url": "https://cdn.c3voc.de/s5_native_sd.webm"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     },
                                     "hls": {
                                         "display": "HLS",
                                         "tech": "1024x576, h264+AAC im MPEG-TS-Container via HTTP, 800 kBit/s",
-                                        "url": "https://cdn.c3voc.de/hls/s5_native_sd.m3u8"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     }
                                 }
                             },
@@ -216,12 +216,12 @@
                                     "mp3": {
                                         "display": "MP3",
                                         "tech": "MP3-Audio, 96 kBit/s",
-                                        "url": "https://cdn.c3voc.de/s5_native.mp3"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     },
                                     "opus": {
                                         "display": "Opus",
                                         "tech": "Opus-Audio, 64 kBit/s",
-                                        "url": "https://cdn.c3voc.de/s5_native.opus"
+                                        "url": "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
                                     }
                                 }
                             }
