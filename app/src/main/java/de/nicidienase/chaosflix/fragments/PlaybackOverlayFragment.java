@@ -15,6 +15,7 @@
 package de.nicidienase.chaosflix.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.os.Build;
@@ -113,9 +114,8 @@ public class PlaybackOverlayFragment extends PlaybackFragment {
 		setupRows();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public void onAttach(Activity context) {
+	public void onAttach(Context context) {
 		super.onAttach(context);
 		if (context instanceof OnPlayPauseClickedListener) {
 			mCallback = (OnPlayPauseClickedListener) context;
