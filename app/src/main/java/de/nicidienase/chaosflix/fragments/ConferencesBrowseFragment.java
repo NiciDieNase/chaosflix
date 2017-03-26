@@ -20,6 +20,8 @@ import de.nicidienase.chaosflix.entities.recording.Conference;
 import de.nicidienase.chaosflix.entities.streaming.Group;
 import de.nicidienase.chaosflix.entities.streaming.LiveConference;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by felix on 21.03.17.
@@ -31,6 +33,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	public static final int FRAGMENT = R.id.browse_fragment;
 	private ArrayObjectAdapter mRowsAdapter;
 	private Map<String, List<Conference>> mConferences;
+	CompositeDisposable mDisposables = new CompositeDisposable();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -41,44 +44,49 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);
 		CardPresenter cardPresenter = new CardPresenter();
 		mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
-		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable()
+
+		Disposable disposable = ((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
 				.subscribe(mediaApiService -> {
-					mediaApiService.getStreamingConferences()
+					Disposable disposable1 = mediaApiService.getStreamingConferences()
 							.subscribe(liveConferences -> {
-								if(liveConferences.size() > 0){
-									for(LiveConference con : liveConferences){
+								if (liveConferences.size() > 0) {
+									for (LiveConference con : liveConferences) {
 										ArrayObjectAdapter listRowAdapter
 												= new ArrayObjectAdapter(cardPresenter);
-										for(Group g: con.getGroups()){
-											listRowAdapter.addAll(0,g.getRooms());
+										for (Group g : con.getGroups()) {
+											listRowAdapter.addAll(0, g.getRooms());
 										}
 										HeaderItem header = new HeaderItem(con.getConference());
 										header.setDescription(con.getDescription());
 										header.setContentDescription(con.getAuthor());
-										mRowsAdapter.add(new ListRow(header,listRowAdapter));
+										mRowsAdapter.add(new ListRow(header, listRowAdapter));
 									}
 								}
-								mediaApiService.getConferences()
-										.doOnError(t -> {errorFragment.setErrorContent(t.getMessage());})
+								Disposable disposable2 = mediaApiService.getConferences()
+										.doOnError(t -> {
+											errorFragment.setErrorContent(t.getMessage());
+										})
 										.observeOn(AndroidSchedulers.mainThread())
 										.subscribe(conferences -> {
 											mConferences = conferences.getConferencesBySeries();
 											Set<String> keySet = mConferences.keySet();
-											for(String tag: getOrderedConferencesList()){
-												if(keySet.contains(tag)){
-													ListRow row = getRow(mConferences, cardPresenter, tag,"");
+											for (String tag : getOrderedConferencesList()) {
+												if (keySet.contains(tag)) {
+													ListRow row = getRow(mConferences, cardPresenter, tag, "");
 													mRowsAdapter.add(row);
 												}
 											}
-											for(String tag: keySet){
-												if(!getOrderedConferencesList().contains(tag)){
-													mRowsAdapter.add(getRow(mConferences, cardPresenter, tag,""));
+											for (String tag : keySet) {
+												if (!getOrderedConferencesList().contains(tag)) {
+													mRowsAdapter.add(getRow(mConferences, cardPresenter, tag, ""));
 												}
 											}
 											errorFragment.dismiss();
 											setAdapter(mRowsAdapter);
 										});
+								mDisposables.add(disposable2);
 							});
+					mDisposables.add(disposable1);
 					setOnItemViewClickedListener(new ItemViewClickedListener(this));
 //					setOnItemViewSelectedListener(new OnItemViewSelectedListener() {
 //						@Override
@@ -92,6 +100,13 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 //					});
 
 				});
+		mDisposables.add(disposable);
+	}
+
+	@Override
+	public void onDestroy() {
+		mDisposables.dispose();
+		super.onDestroy();
 	}
 
 	private ListRow getRow(Map<String, List<Conference>> conferences, CardPresenter cardPresenter, String tag, String description) {
@@ -131,7 +146,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 			case "blinkenlights":
 				return "Blinkenlights";
 			case "chaoscologne":
-				return "1c2	Chaos Cologne";
+				return "1c2 Chaos Cologne";
 			case "cryptocon":
 				return "CryptoCon";
 			case "other conferences":
@@ -150,7 +165,9 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	}
 
 	private List<String> getOrderedConferencesList(){
-		return Arrays.asList(new String[]{"congress", "sendezentrum", "camp", "broadcast/chaosradio", "eh", "gpn", "froscon", "mrmcd",
-				"sigint", "datenspuren", "fiffkon", "cryptocon"});
+		return Arrays.asList("congress", "sendezentrum", "camp",
+				"broadcast/chaosradio", "eh", "gpn",
+				"froscon", "mrmcd", "sigint",
+				"datenspuren", "fiffkon", "cryptocon");
 	}
 }
