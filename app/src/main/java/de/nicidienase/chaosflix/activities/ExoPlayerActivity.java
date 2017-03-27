@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.View;
 
@@ -48,8 +49,7 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 	private static final String TAG = ExoPlayerActivity.class.getSimpleName();
 	@BindView(R.id.videoView)
 	SurfaceView mSurfaceView;
-	@BindView(R.id.playback_controls_fragment)
-	View mPlaybackControllFragment;
+	ExoOverlayFragment mPlaybackControllFragment;
 	private DefaultBandwidthMeter bandwidthMeter;
 	private SimpleExoPlayer player;
 	private String mUserAgent;
@@ -63,6 +63,8 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 		setContentView(R.layout.exoplayback_activity);
 		ButterKnife.bind(this);
 
+		mPlaybackControllFragment = (ExoOverlayFragment) getFragmentManager().findFragmentById(R.id.playback_controls_fragment);
+
 		mUserAgent = Util.getUserAgent(this, getResources().getString(R.string.app_name));
 		synchronized (this){
 			if(player == null){
@@ -72,9 +74,16 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 	}
 
 	@Override
+	protected void onStart() {
+		super.onStart();
+		mPlaybackControllFragment.startEntranceTransition();
+	}
+
+	@Override
 	protected void onPause() {
 		super.onPause();
 		pause();
+		// TODO persist playback progress
 	}
 
 	private void setupPlayer(){
@@ -127,6 +136,24 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 	@Override
 	public void seekTo(int sec) {
 		player.seekTo(sec * 1000);
+	}
+
+	@Override
+	public boolean isMediaPlaying() {
+		if(player != null){
+			return player.getPlayWhenReady();
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public long getCurrentPosition() {
+		if(player != null){
+			return player.getCurrentPosition();
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
