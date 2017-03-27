@@ -1,7 +1,6 @@
 package de.nicidienase.chaosflix.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v17.leanback.app.PlaybackFragment;
@@ -28,6 +27,7 @@ public class ExoOverlayFragment extends android.support.v17.leanback.app.Playbac
 	private Event mSelectedEvent;
 	private PlaybackHelper mHelper;
 	private PlaybackControlListener mCallback;
+	private ArrayObjectAdapter mRowsAdapter;
 
 	public interface PlaybackControlListener {
 		void play();
@@ -37,6 +37,8 @@ public class ExoOverlayFragment extends android.support.v17.leanback.app.Playbac
 		void skipForward(int sec);
 		void skipBackward(int sec);
 		void seekTo(int sec);
+		boolean isMediaPlaying();
+		long getCurrentPosition();
 	}
 
 	@Override
@@ -53,18 +55,17 @@ public class ExoOverlayFragment extends android.support.v17.leanback.app.Playbac
 
 		mHelper = new PlaybackHelper(getActivity(),this,mSelectedEvent,mSelectedRecording);
 
-		ArrayObjectAdapter rowsAdapter = setupRows();
-//		rowsAdapter.add(getRelatedItems());
-		setAdapter(rowsAdapter);
-	}
+		PlaybackControlsRowPresenter playbackControlsRowPresenter
+				= mHelper.createControlsRowAndPresenter();
+		PlaybackControlsRow controlsRow = mHelper.getControlsRow();
 
-	private ArrayObjectAdapter setupRows() {
 		ClassPresenterSelector ps = new ClassPresenterSelector();
-		PlaybackControlsRowPresenter playbackControlsRowPresenter;
-		playbackControlsRowPresenter = mHelper.getControlsRowPresenter();
 		ps.addClassPresenter(PlaybackControlsRow.class, playbackControlsRowPresenter);
 		ps.addClassPresenter(ListRow.class, new ListRowPresenter());
-		return new ArrayObjectAdapter(ps);
+		mRowsAdapter = new ArrayObjectAdapter(ps);
+		mRowsAdapter.add(controlsRow);
+//		mRowsAdapter.add(getRelatedItems());
+		setAdapter(mRowsAdapter);
 	}
 
 	private Row getRelatedItems() {
@@ -76,10 +77,16 @@ public class ExoOverlayFragment extends android.support.v17.leanback.app.Playbac
 	}
 
 	public boolean isMediaPlaying() {
+		if(mCallback != null){
+			return mCallback.isMediaPlaying();
+		}
 		return false;
 	}
 
 	public int getCurrentPosition() {
+		if(mCallback != null){
+			return (int) mCallback.getCurrentPosition();
+		}
 		return 0;
 	}
 
