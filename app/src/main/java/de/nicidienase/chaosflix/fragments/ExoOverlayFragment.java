@@ -6,16 +6,21 @@ import android.os.Bundle;
 import android.support.v17.leanback.app.PlaybackFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.ClassPresenterSelector;
+import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.PlaybackControlsRow;
 import android.support.v17.leanback.widget.PlaybackControlsRowPresenter;
 import android.support.v17.leanback.widget.Row;
 
+import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.PlaybackHelper;
+import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.recording.Recording;
+import de.nicidienase.chaosflix.entities.streaming.Room;
+import de.nicidienase.chaosflix.entities.streaming.StreamUrl;
 
 /**
  * Created by felix on 26.03.17.
@@ -25,9 +30,13 @@ public class ExoOverlayFragment extends android.support.v17.leanback.app.Playbac
 
 	private Recording mSelectedRecording;
 	private Event mSelectedEvent;
+	private Room mSelectedRoom;
+
 	private PlaybackHelper mHelper;
 	private PlaybackControlListener mCallback;
 	private ArrayObjectAdapter mRowsAdapter;
+	private int eventType;
+	private StreamUrl mSelectedStream;
 
 	public interface PlaybackControlListener {
 		void play();
@@ -47,17 +56,34 @@ public class ExoOverlayFragment extends android.support.v17.leanback.app.Playbac
 
 		Intent intent = getActivity()
 				.getIntent();
-		mSelectedEvent = intent.getParcelableExtra(DetailsActivity.EVENT);
-		mSelectedRecording = intent.getParcelableExtra(DetailsActivity.RECORDING);
+		eventType = intent.getIntExtra(DetailsActivity.TYPE, -1);
+		if(eventType == DetailsActivity.TYPE_RECORDING){
+			mSelectedEvent = intent.getParcelableExtra(DetailsActivity.EVENT);
+			mSelectedRecording = intent.getParcelableExtra(DetailsActivity.RECORDING);
+			mHelper = new PlaybackHelper(getActivity(),this,mSelectedEvent,mSelectedRecording);
+		} else if(eventType == DetailsActivity.TYPE_STREAM){
+			mSelectedRoom = intent.getParcelableExtra(DetailsActivity.ROOM);
+			mSelectedStream = intent.getParcelableExtra(DetailsActivity.STREAM_URL);
+			mHelper = new PlaybackHelper(getActivity(),this,mSelectedRoom,mSelectedStream);
+		} else {
+			getActivity().finish();
+		}
+		mAudioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+
 
 		setBackgroundType(PlaybackFragment.BG_LIGHT);
 		setFadingEnabled(false);
 
-		mHelper = new PlaybackHelper(getActivity(),this,mSelectedEvent,mSelectedRecording);
 
-		PlaybackControlsRowPresenter playbackControlsRowPresenter
-				= mHelper.createControlsRowAndPresenter();
+		PlaybackControlsRowPresenter playbackControlsRowPresenter = mHelper.getControlsRowPresenter();
+//		playbackControlsRowPresenter.setOnActionClickedListener(mHelper.getOnActionClickedListener());
 		PlaybackControlsRow controlsRow = mHelper.getControlsRow();
+
+
+		mMediaControler = getActivity().getMediaController();
+		if(mMediaControler != null){
+			mMediaControler.registerCallback(mHelper.createMediaControllerCallback());
+		}
 
 		ClassPresenterSelector ps = new ClassPresenterSelector();
 		ps.addClassPresenter(PlaybackControlsRow.class, playbackControlsRowPresenter);
@@ -66,14 +92,14 @@ public class ExoOverlayFragment extends android.support.v17.leanback.app.Playbac
 		mRowsAdapter.add(controlsRow);
 //		mRowsAdapter.add(getRelatedItems());
 		setAdapter(mRowsAdapter);
+
 	}
 
 	private Row getRelatedItems() {
-//		ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
+		ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
 //		TODO Add related items
-//		HeaderItem header = new HeaderItem(0, getString(R.string.related_movies));
-//		return new ListRow(header, listRowAdapter);
-		return null;
+		HeaderItem header = new HeaderItem(0, getString(R.string.related_talks));
+		return new ListRow(header, listRowAdapter);
 	}
 
 	public boolean isMediaPlaying() {
@@ -93,7 +119,11 @@ public class ExoOverlayFragment extends android.support.v17.leanback.app.Playbac
 	@Override
 	public void onStart() {
 		super.onStart();
-		mCallback.setVideoSource(mSelectedRecording.getRecordingUrl());
+		if(eventType == DetailsActivity.TYPE_STREAM){
+			mCallback.setVideoSource(mSelectedStream.getUrl());
+		} else if(eventType == DetailsActivity.TYPE_RECORDING){
+			mCallback.setVideoSource(mSelectedRecording.getRecordingUrl());
+		}
 	}
 
 	@Override

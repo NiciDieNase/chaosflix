@@ -27,7 +27,12 @@ public class DetailsActivity extends AbstractServiceConnectedAcitivty {
 	public static final String SHARED_ELEMENT_NAME = "hero";
 	public static final String EVENT = "event";
 	public static final String ROOM = "room";
+	public static final String STREAM_URL = "stream_url";
 	public static final String RECORDING = "recording";
+	public static final String TYPE = "event_type";
+	public static final int TYPE_RECORDING = 0;
+	public static final int TYPE_STREAM = 1;
+
 
 	/**
 	 * Called when the activity is first created.

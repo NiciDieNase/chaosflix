@@ -45,6 +45,7 @@ public class ItemViewClickedListener implements OnItemViewClickedListener {
 		} else if(item instanceof Event){
 			Event event = (Event) item;
 			Intent i = new Intent(fragment.getActivity(), DetailsActivity.class);
+			i.putExtra(DetailsActivity.TYPE,DetailsActivity.TYPE_RECORDING);
 			i.putExtra(DetailsActivity.EVENT,event);
 			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
 					fragment.getActivity(),
@@ -55,6 +56,7 @@ public class ItemViewClickedListener implements OnItemViewClickedListener {
 		if(item instanceof Room){
 			Room room = (Room) item;
 			Intent i = new Intent(fragment.getActivity(), DetailsActivity.class);
+			i.putExtra(DetailsActivity.TYPE,DetailsActivity.TYPE_STREAM);
 			i.putExtra(DetailsActivity.ROOM,room);
 			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
 					fragment.getActivity(),
