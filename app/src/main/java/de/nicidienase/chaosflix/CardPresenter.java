@@ -18,6 +18,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
@@ -34,7 +35,8 @@ public class CardPresenter extends Presenter {
 	private static final String TAG = "CardPresenter";
 
 	private static final int CARD_WIDTH = 313;
-	private static final int CARD_HEIGHT = 176;
+	private static final int CARD_HEIGHT_4 = 235;
+	private static final int CARD_HEIGHT_16 = 177;
 	private static int sSelectedBackgroundColor;
 	private static int sDefaultBackgroundColor;
 	private Drawable mDefaultCardImage;
@@ -70,21 +72,9 @@ public class CardPresenter extends Presenter {
 	@Override
 	public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
 		ImageCardView cardView = (ImageCardView) viewHolder.view;
-		cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
-		if(item instanceof Event){
-			Event event = (Event) item;
-			cardView.setTitleText(event.getTitle());
-			cardView.setContentText(event.getSubtitle());
-//			cardView.setContentText(android.text.TextUtils.join(", ",event.getPersons()));
-			if (event.getThumbUrl() != null) {
-				Glide.with(viewHolder.view.getContext())
-						.load(event.getThumbUrl())
-						.centerCrop()
-						.error(mDefaultCardImage)
-						.into(cardView.getMainImageView());
-			}
-		}
+			cardView.setMainImageScaleType(ImageView.ScaleType.FIT_CENTER);
 		if(item instanceof Conference){
+			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_4);
 			Conference conference = (Conference) item;
 			cardView.setTitleText(conference.getTitle());
 			cardView.setContentText(conference.getAcronym());
@@ -97,13 +87,29 @@ public class CardPresenter extends Presenter {
 						.into(cardView.getMainImageView());
 			}
 		}
+		if(item instanceof Event){
+			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_16);
+			Event event = (Event) item;
+			cardView.setTitleText(event.getTitle());
+			cardView.setContentText(event.getSubtitle());
+//			cardView.setContentText(android.text.TextUtils.join(", ",event.getPersons()));
+			if (event.getThumbUrl() != null) {
+				Glide.with(viewHolder.view.getContext())
+						.load(event.getThumbUrl())
+						.fitCenter()
+						.error(mDefaultCardImage)
+						.into(cardView.getMainImageView());
+			}
+		}
 		if(item instanceof LiveConference){
+			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_4);
 			LiveConference con = (LiveConference) item;
 			cardView.setTitleText(con.getConference());
 			cardView.setMainImage(mDefaultCardImage);
 			cardView.setContentText(con.getDescription());
 		}
 		if(item instanceof Room){
+			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_16);
 			Room room = (Room) item;
 			cardView.setTitleText(room.getDisplay());
 			cardView.setContentText(room.getShedulename());
