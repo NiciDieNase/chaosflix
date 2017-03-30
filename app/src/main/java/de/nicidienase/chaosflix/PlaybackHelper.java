@@ -15,6 +15,7 @@ import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.recording.Recording;
 import de.nicidienase.chaosflix.entities.streaming.Room;
 import de.nicidienase.chaosflix.entities.streaming.Stream;
+import de.nicidienase.chaosflix.entities.streaming.StreamUrl;
 import de.nicidienase.chaosflix.fragments.ExoOverlayFragment;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -34,7 +35,7 @@ public class PlaybackHelper extends PlaybackControlGlue {
 	private final ExoOverlayFragment mFragment;
 	private BitmapDrawable mDrawable = null;
 	private Room room;
-	private Stream stream;
+	private StreamUrl stream;
 	private Event event;
 	private Recording recording;
 	private Runnable mUpdateProgressRunnable;
@@ -47,22 +48,26 @@ public class PlaybackHelper extends PlaybackControlGlue {
 		this.event = event;
 		this.recording = recording;
 
-		Observable.fromCallable(() ->
-			new BitmapDrawable(
-					mContext.getResources(),
-					Glide.with(getContext())
-							.load(event.getThumbUrl())
-							.asBitmap()
-							.into(-1, -1)
-							.get()))
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.doOnError(Throwable::printStackTrace)
-				.subscribe(bitmapDrawable -> mDrawable = bitmapDrawable);
+		controlListener = (ExoOverlayFragment.PlaybackControlListener) context;
+
+		if(event != null){
+			Observable.fromCallable(() ->
+					new BitmapDrawable(
+							mContext.getResources(),
+							Glide.with(getContext())
+									.load(event.getThumbUrl())
+									.asBitmap()
+									.into(-1, -1)
+									.get()))
+					.subscribeOn(Schedulers.io())
+					.observeOn(AndroidSchedulers.mainThread())
+					.doOnError(Throwable::printStackTrace)
+					.subscribe(bitmapDrawable -> mDrawable = bitmapDrawable);
+		}
 	}
 
-	public PlaybackHelper(Context context, ExoOverlayFragment fragment, Room room, Stream stream ){
-		super(context, fragment,SEEK_SPEEDS);
+	public PlaybackHelper(Context context, ExoOverlayFragment fragment, Room room, StreamUrl stream ){
+		super(context, SEEK_SPEEDS);
 		this.mContext = context;
 		this.mFragment = fragment;
 		this.room = room;
