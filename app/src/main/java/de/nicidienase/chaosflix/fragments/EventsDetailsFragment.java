@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v17.leanback.app.DetailsFragment;
 import android.support.v17.leanback.widget.Action;
@@ -17,7 +16,6 @@ import android.support.v17.leanback.widget.FullWidthDetailsOverviewSharedElement
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
-import android.support.v17.leanback.widget.OnActionClickedListener;
 import android.support.v17.leanback.widget.Presenter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,7 +39,6 @@ import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.activities.EventDetailsActivity;
 import de.nicidienase.chaosflix.activities.ExoPlayerActivity;
-import de.nicidienase.chaosflix.activities.PlaybackOverlayActivity;
 import de.nicidienase.chaosflix.entities.recording.Conference;
 import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.recording.Recording;
@@ -68,6 +65,8 @@ public class EventsDetailsFragment extends DetailsFragment {
 	private Event mSelectedEvent;
 	private MediaApiService mMediaApiService;
 	private Room mRoom;
+	private int eventType;
+	private ArrayList<StreamUrl> streamUrlList;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -76,10 +75,15 @@ public class EventsDetailsFragment extends DetailsFragment {
 
 		final BrowseErrorFragment browseErrorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);
-		mSelectedEvent = getActivity().getIntent()
-				.getParcelableExtra(DetailsActivity.EVENT);
-		mRoom = getActivity().getIntent()
-				.getParcelableExtra(DetailsActivity.ROOM);
+		eventType = getActivity().getIntent().getIntExtra(DetailsActivity.TYPE, -1);
+
+		if(eventType == DetailsActivity.TYPE_RECORDING){
+			mSelectedEvent = getActivity().getIntent()
+					.getParcelableExtra(DetailsActivity.EVENT);
+		} else if(eventType == DetailsActivity.TYPE_STREAM){
+			mRoom = getActivity().getIntent()
+					.getParcelableExtra(DetailsActivity.ROOM);
+		}
 
 		final ArrayObjectAdapter adapter = setupDetailsOverviewRowPresenter();
 
@@ -87,7 +91,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 					.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
 					.subscribe(mediaApiService -> {
 						mMediaApiService = mediaApiService;
-						if(mSelectedEvent != null){
+						if(eventType == DetailsActivity.TYPE_RECORDING){
 							final DetailsOverviewRow detailsOverviewRow = setupDetailsOverviewRow(mSelectedEvent);
 							mediaApiService.getEvent(mSelectedEvent.getApiID())
 									.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
@@ -98,7 +102,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 										detailsOverviewRow.setActionsAdapter(recordingActionsAdapter);
 										adapter.add(detailsOverviewRow);
 										mediaApiService.getConference(
-												mSelectedEvent.getParentConferenceID())
+												mSelectedEvent.getConferenceId())
 												.observeOn(AndroidSchedulers.mainThread())
 												.subscribe(conference -> {
 													String tag = null;
@@ -132,7 +136,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 													browseErrorFragment.dismiss();
 												});
 									});
-						} else if(mRoom != null){
+						} else if(eventType == DetailsActivity.TYPE_STREAM){
 							mediaApiService.getStreamingConferences()
 									.observeOn(AndroidSchedulers.mainThread())
 									.subscribe(liveConferences -> {
@@ -201,21 +205,27 @@ public class EventsDetailsFragment extends DetailsFragment {
 		mDetailsPresenter.setListener(helper);
 		prepareEntranceTransition();
 
-		mDetailsPresenter.setOnActionClickedListener(new OnActionClickedListener() {
-			@Override
-			public void onActionClicked(Action action) {
-//				Intent i = new Intent(getActivity(), PlaybackOverlayActivity.class);
-				Intent i = new Intent(getActivity(), ExoPlayerActivity.class);
-				// TODO put stream
+		mDetailsPresenter.setOnActionClickedListener(action -> {
+			Intent i = new Intent(getActivity(), ExoPlayerActivity.class);
+			i.putExtra(DetailsActivity.TYPE,eventType);
+			if(eventType == DetailsActivity.TYPE_RECORDING){
+				i.putExtra(DetailsActivity.EVENT,mSelectedEvent);
 				for(Recording r : mSelectedEvent.getRecordings()){
 					if(r.getApiID() == action.getId()){
 						i.putExtra(DetailsActivity.RECORDING,r);
 						break;
 					}
 				}
-				i.putExtra(DetailsActivity.EVENT,mSelectedEvent);
-				getActivity().startActivity(i);
+			} else if(eventType == DetailsActivity.TYPE_STREAM){
+				i.putExtra(DetailsActivity.ROOM,mRoom);
+				StreamUrl streamUrl = getStreamUrlForActionId((int) action.getId());
+				if(streamUrl != null){
+					i.putExtra(DetailsActivity.STREAM_URL, streamUrl);
+				} else {
+					// TODO handle missing Stream
+				}
 			}
+			getActivity().startActivity(i);
 		});
 
 		ClassPresenterSelector mPresenterSelector = new ClassPresenterSelector();
@@ -260,12 +270,14 @@ public class EventsDetailsFragment extends DetailsFragment {
 
 	private ArrayObjectAdapter getRecordingActionsAdapter(List<Recording> recordings) {
 		ArrayObjectAdapter actionsAdapter = new ArrayObjectAdapter();
-		for(int i = 0; i < recordings.size(); i++){
-			Recording recording = recordings.get(i);
-			if(recording.getMimeType().startsWith("video/")){
-				String quality = recording.isHighQuality() ? "HD" : "SD";
-				String title = quality + " (" + recording.getLanguage() + ")";
-				actionsAdapter.add(new Action(recording.getApiID(), title, recording.getMimeType().substring(6)));
+		if(recordings != null){
+			for(int i = 0; i < recordings.size(); i++){
+				Recording recording = recordings.get(i);
+				if(recording.getMimeType().startsWith("video/")){
+					String quality = recording.isHighQuality() ? "HD" : "SD";
+					String title = quality + " (" + recording.getLanguage() + ")";
+					actionsAdapter.add(new Action(recording.getApiID(), title, recording.getMimeType().substring(6)));
+				}
 			}
 		}
 		return actionsAdapter;
@@ -273,14 +285,25 @@ public class EventsDetailsFragment extends DetailsFragment {
 
 	private ArrayObjectAdapter getStreamActionsAdapter(List<Stream> streams){
 		ArrayObjectAdapter actionsAdapter = new ArrayObjectAdapter();
+		streamUrlList = new ArrayList<StreamUrl>();
 		for(Stream s: streams){
 			if(s.getType().equals("video"))
 			for(String key :s.getUrls().keySet()){
 				StreamUrl url = s.getUrls().get(key);
-				actionsAdapter.add(new Action(0,s.getDisplay(), url.getDisplay()));
+				int index = streamUrlList.size();
+				streamUrlList.add(url);
+				actionsAdapter.add(new Action(index,s.getDisplay(), url.getDisplay()));
 			}
 		}
 		return actionsAdapter;
+	}
+
+	private StreamUrl getStreamUrlForActionId(int actionId){
+		if(streamUrlList != null && streamUrlList.size() > actionId){
+			return streamUrlList.get(actionId);
+		} else {
+			return null;
+		}
 	}
 
 	static class EventDetailsOverviewLogoPresenter extends DetailsOverviewLogoPresenter {

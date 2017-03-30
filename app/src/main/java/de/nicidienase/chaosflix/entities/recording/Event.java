@@ -14,7 +14,8 @@ import java.util.List;
 
 public class Event extends SugarRecord implements Parcelable, Comparable<Event> {
 
-	int parentConferenceID;
+	@SerializedName("conference_id")
+	int conferenceId;
 	String guid;
 	String title;
 	String subtitle;
@@ -41,6 +42,7 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 	@SerializedName("conference_url")
 	String conferenceUrl;
 	List<Recording> recordings;
+
 
 	protected Event(Parcel in) {
 		guid = in.readString();
@@ -127,16 +129,16 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 		return Integer.parseInt(strings[strings.length-1]);
 	}
 
-	public long getParentConferenceID() {
-		if(parentConferenceID == 0){
+	public long getConferenceId() {
+		if(conferenceId == 0){
 			String[] split = conferenceUrl.split("/");
-			parentConferenceID = Integer.parseInt(split[split.length-1]);
+			conferenceId = Integer.parseInt(split[split.length-1]);
 		}
-		return parentConferenceID;
+		return conferenceId;
 	}
 
-	public void setParentConferenceID(int parentConferenceID) {
-		this.parentConferenceID = parentConferenceID;
+	public void setConferenceId(int conferenceId) {
+		this.conferenceId = conferenceId;
 	}
 
 	public String getGuid() {
