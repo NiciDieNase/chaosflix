@@ -116,7 +116,6 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 			}
 		}
 		MediaSource mediaSource = buildMediaSource(Uri.parse(source), "");
-		player.setPlayWhenReady(true);
 		player.prepare(mediaSource);
 	}
 

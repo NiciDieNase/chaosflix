@@ -11,7 +11,6 @@ import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 
 import de.nicidienase.chaosflix.network.MediaApiService;
-import io.reactivex.Observable;
 import io.reactivex.Single;
 
 /**
