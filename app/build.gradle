@@ -76,5 +76,8 @@ dependencies {
     androidTestCompile 'com.squareup.okhttp3:mockwebserver:3.6.0'
     androidTestCompile group: 'commons-io', name: 'commons-io', version: '2.0.1'
     testCompile 'org.mockito:mockito-core:1.10.19'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
 }
 

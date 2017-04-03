@@ -6,6 +6,7 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class MediaApiService extends Service {
 
 	public static final String RECORDING_URL = "recording_url";
 	public static final String STREAMING_URL = "streaming_url";
+	private static final String TAG = MediaApiService.class.getSimpleName();
 
 	private final IBinder mBinder = new LocalBinder();
 	private RecordingService mRecordingApiService = null;
@@ -79,6 +81,7 @@ public class MediaApiService extends Service {
 				recordingUrl = extras.getString(RECORDING_URL);
 				streamingUrl = extras.getString(STREAMING_URL);
 			}
+			Log.d(TAG,"starting with urls: " + recordingUrl + " " + streamingUrl);
 			setupApiServices(streamingUrl, recordingUrl);
 		}
 		return mBinder;

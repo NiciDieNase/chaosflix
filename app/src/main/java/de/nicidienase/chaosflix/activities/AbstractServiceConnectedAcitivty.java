@@ -22,10 +22,12 @@ public class AbstractServiceConnectedAcitivty extends Activity {
 	private MediaApiService mMediaApiService = null;
 	private ServiceConnection conn;
 	private boolean mConnected = false;
+	private String serverUrl = null;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
 		super.onCreate(savedInstanceState, persistentState);
+		serverUrl = getIntent().getStringExtra("server_url");
 	}
 
 	@Override
@@ -40,6 +42,10 @@ public class AbstractServiceConnectedAcitivty extends Activity {
 
 	public Single<MediaApiService> getmApiServiceObservable() {
 		Intent s = new Intent(this, MediaApiService.class);
+		if(serverUrl != null){
+			s.putExtra(MediaApiService.RECORDING_URL,serverUrl);
+			s.putExtra(MediaApiService.STREAMING_URL,serverUrl);
+		}
 		return Single.create(e -> {
 			if(mMediaApiService != null){
 				e.onSuccess(mMediaApiService);
