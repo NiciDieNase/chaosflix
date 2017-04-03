@@ -34,6 +34,8 @@ public class Recording extends SugarRecord implements Parcelable {
 	@SerializedName("conference_url")
 	private String conferenceUrl;
 
+	public Recording(){}
+
 	protected Recording(Parcel in) {
 		size = in.readInt();
 		length = in.readInt();

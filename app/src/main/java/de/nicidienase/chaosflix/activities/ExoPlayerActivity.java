@@ -1,9 +1,12 @@
 package de.nicidienase.chaosflix.activities;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.os.BuildCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -56,6 +59,7 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 
 	private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 	private Handler mainHandler;
+	private DefaultTrackSelector trackSelector;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,7 +80,7 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 	@Override
 	protected void onStart() {
 		super.onStart();
-		mPlaybackControllFragment.startEntranceTransition();
+//		mPlaybackControllFragment.startEntranceTransition();
 	}
 
 	@Override
@@ -93,7 +97,7 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 		bandwidthMeter = new DefaultBandwidthMeter();
 		TrackSelection.Factory videoTrackSelectionFactory
 				= new AdaptiveTrackSelection.Factory(bandwidthMeter);
-		TrackSelector trackSelector
+		trackSelector
 				= new DefaultTrackSelector(videoTrackSelectionFactory);
 
 		LoadControl loadControl = new DefaultLoadControl();
@@ -111,7 +115,6 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 				setupPlayer();
 			}
 		}
-//		source = "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8";
 		MediaSource mediaSource = buildMediaSource(Uri.parse(source), "");
 		player.setPlayWhenReady(true);
 		player.prepare(mediaSource);
@@ -134,7 +137,7 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 	}
 
 	@Override
-	public void seekTo(int sec) {
+	public void seekTo(long sec) {
 		player.seekTo(sec * 1000);
 	}
 
@@ -154,6 +157,29 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 		} else {
 			return 0;
 		}
+	}
+
+	@Override
+	public void releasePlayer() {
+		if(player != null){
+			player.release();
+		}
+	}
+
+	@Override
+	public long getPosition() {
+		if(player != null){
+			return player.getCurrentPosition();
+		}
+		return 0;
+	}
+
+	@Override
+	public long getBufferedPosition() {
+		if(player != null){
+			return player.getBufferedPosition();
+		}
+		return 0;
 	}
 
 	@Override
@@ -191,12 +217,12 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 		return buildDataSourceFactory(useBandwidthMeter ? BANDWIDTH_METER : null);
 	}
 
-	public DataSource.Factory buildDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
+	private DataSource.Factory buildDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
 		return new DefaultDataSourceFactory(this, bandwidthMeter,
 				buildHttpDataSourceFactory(bandwidthMeter));
 	}
 
-	public HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
+	private HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
 		return new DefaultHttpDataSourceFactory(mUserAgent, bandwidthMeter);
 	}
 }
