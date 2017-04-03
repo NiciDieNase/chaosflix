@@ -28,7 +28,7 @@ import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.recording.Recording;
 import de.nicidienase.chaosflix.entities.streaming.Room;
 import de.nicidienase.chaosflix.entities.streaming.StreamUrl;
-import de.nicidienase.chaosflix.fragments.ExoOverlayFragment;
+import de.nicidienase.chaosflix.fragments.OverlayFragment;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -45,11 +45,11 @@ public class PlaybackHelper extends PlaybackControlGlue {
 	private static final int UPDATE_PERIOD = 16;
 	private static final String TAG = PlaybackHelper.class.getSimpleName();
 	private Disposable thumbDisposable;
-	private ExoOverlayFragment.PlaybackControlListener mControlListener;
+	private OverlayFragment.PlaybackControlListener mControlListener;
 	private BitmapDrawable mDrawable = null;
 	private Room room;
 	private StreamUrl stream;
-	private ExoOverlayFragment fragment;
+	private OverlayFragment fragment;
 	private Event event;
 	private Recording recording;
 	private Runnable mUpdateProgressRunnable;
@@ -60,15 +60,15 @@ public class PlaybackHelper extends PlaybackControlGlue {
 	PlaybackControlsRow.RewindAction mRewindAction;
 	PlaybackControlsRow.SkipNextAction mSkipNextAction;
 	PlaybackControlsRow.SkipPreviousAction mSkipPreviousAction;
-	private ExoOverlayFragment.PlaybackControlListener mCallback;
+	private OverlayFragment.PlaybackControlListener mCallback;
 
 	private MediaController mMediaController;
 	private MediaController.TransportControls mTransportControls;
 	private ArrayObjectAdapter adapter;
 
-	public PlaybackHelper(Context context, ExoOverlayFragment fragment, Event event, Recording recording){
+	public PlaybackHelper(Context context, OverlayFragment fragment, Event event, Recording recording){
 		super(context,SEEK_SPEEDS);
-		mControlListener = (ExoOverlayFragment.PlaybackControlListener) context;
+		mControlListener = (OverlayFragment.PlaybackControlListener) context;
 		this.fragment = fragment;
 		this.event = event;
 		this.recording = recording;
@@ -88,9 +88,9 @@ public class PlaybackHelper extends PlaybackControlGlue {
 		setup();
 	}
 
-	public PlaybackHelper(Context context, ExoOverlayFragment fragment, Room room, StreamUrl stream ){
+	public PlaybackHelper(Context context, OverlayFragment fragment, Room room, StreamUrl stream ){
 		super(context, SEEK_SPEEDS);
-		mControlListener = (ExoOverlayFragment.PlaybackControlListener) context;
+		mControlListener = (OverlayFragment.PlaybackControlListener) context;
 		this.fragment = fragment;
 		this.room = room;
 		this.stream = stream;

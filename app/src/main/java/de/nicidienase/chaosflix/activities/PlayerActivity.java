@@ -1,17 +1,12 @@
 package de.nicidienase.chaosflix.activities;
 
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.os.BuildCompat;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.SurfaceView;
-import android.view.View;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -29,7 +24,6 @@ import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -40,19 +34,19 @@ import com.google.android.exoplayer2.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.fragments.ExoOverlayFragment;
+import de.nicidienase.chaosflix.fragments.OverlayFragment;
 
 /**
  * Created by felix on 26.03.17.
  */
 
-public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
-		implements ExoOverlayFragment.PlaybackControlListener{
+public class PlayerActivity extends AbstractServiceConnectedAcitivty
+		implements OverlayFragment.PlaybackControlListener{
 
-	private static final String TAG = ExoPlayerActivity.class.getSimpleName();
+	private static final String TAG = PlayerActivity.class.getSimpleName();
 	@BindView(R.id.videoView)
 	SurfaceView mSurfaceView;
-	ExoOverlayFragment mPlaybackControllFragment;
+	OverlayFragment mPlaybackControllFragment;
 	private DefaultBandwidthMeter bandwidthMeter;
 	private SimpleExoPlayer player;
 	private String mUserAgent;
@@ -64,10 +58,10 @@ public class ExoPlayerActivity extends AbstractServiceConnectedAcitivty
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.exoplayback_activity);
+		setContentView(R.layout.activity_playback);
 		ButterKnife.bind(this);
 
-		mPlaybackControllFragment = (ExoOverlayFragment) getFragmentManager().findFragmentById(R.id.playback_controls_fragment);
+		mPlaybackControllFragment = (OverlayFragment) getFragmentManager().findFragmentById(R.id.playback_controls_fragment);
 
 		mUserAgent = Util.getUserAgent(this, getResources().getString(R.string.app_name));
 		synchronized (this){
