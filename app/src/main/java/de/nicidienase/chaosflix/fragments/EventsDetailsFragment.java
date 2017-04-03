@@ -38,7 +38,7 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.activities.EventDetailsActivity;
-import de.nicidienase.chaosflix.activities.ExoPlayerActivity;
+import de.nicidienase.chaosflix.activities.PlayerActivity;
 import de.nicidienase.chaosflix.entities.recording.Conference;
 import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.recording.Recording;
@@ -207,7 +207,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 		prepareEntranceTransition();
 
 		mDetailsPresenter.setOnActionClickedListener(action -> {
-			Intent i = new Intent(getActivity(), ExoPlayerActivity.class);
+			Intent i = new Intent(getActivity(), PlayerActivity.class);
 			i.putExtra(DetailsActivity.TYPE,eventType);
 			if(eventType == DetailsActivity.TYPE_RECORDING){
 				i.putExtra(DetailsActivity.EVENT,mSelectedEvent);

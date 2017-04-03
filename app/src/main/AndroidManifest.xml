@@ -40,7 +40,7 @@
         <activity android:name=".activities.DetailsActivity"
                   android:exported="true"
                   android:theme="@style/Theme.Leanback"/>
-        <activity android:name=".activities.ExoPlayerActivity"
+        <activity android:name=".activities.PlayerActivity"
                   android:theme="@style/Theme.Leanback"/>
         <service android:name=".network.MediaApiService"/>
 
