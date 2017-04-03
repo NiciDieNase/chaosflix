@@ -8,8 +8,10 @@ import android.os.Parcelable;
  */
 
 public class StreamUrl implements Parcelable {
+
 	String display;
 	String tech;
+
 	String url;
 
 	protected StreamUrl(Parcel in) {
@@ -29,6 +31,14 @@ public class StreamUrl implements Parcelable {
 			return new StreamUrl[size];
 		}
 	};
+
+	public StreamUrl(){}
+
+	public StreamUrl(String display, String tech, String url){
+		this.display = display;
+		this.tech = tech;
+		this.url = url;
+	}
 
 	public String getDisplay() {
 		return display;
