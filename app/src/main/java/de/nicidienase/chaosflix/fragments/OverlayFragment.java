@@ -35,9 +35,9 @@ import static android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_T
  * Created by felix on 26.03.17.
  */
 
-public class ExoOverlayFragment extends PlaybackFragment{
+public class OverlayFragment extends PlaybackFragment{
 
-	private static final String TAG = ExoOverlayFragment.class.getSimpleName();
+	private static final String TAG = OverlayFragment.class.getSimpleName();
 
 	private Recording mSelectedRecording;
 	private Event mSelectedEvent;
