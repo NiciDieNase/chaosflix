@@ -56,12 +56,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class EventsDetailsFragment extends DetailsFragment {
 	private static final int DETAIL_THUMB_WIDTH = 254;
-	private static final int DETAIL_THUMB_HEIGHT = 254;
+	private static final int DETAIL_THUMB_HEIGHT = 143;
 	private static final int NUM_RELATED_TALKS = 5;
 	private static final int NUM_RANDOM_TALKS = NUM_RELATED_TALKS;
 
 	private static final String TAG = EventsDetailsFragment.class.getSimpleName();
 	public static final int FRAGMENT = R.id.details_fragment;
+	public static final int DUMMY_ID = 1646465164;
 	private Event mSelectedEvent;
 	private MediaApiService mMediaApiService;
 	private Room mRoom;
@@ -210,10 +211,19 @@ public class EventsDetailsFragment extends DetailsFragment {
 			i.putExtra(DetailsActivity.TYPE,eventType);
 			if(eventType == DetailsActivity.TYPE_RECORDING){
 				i.putExtra(DetailsActivity.EVENT,mSelectedEvent);
-				for(Recording r : mSelectedEvent.getRecordings()){
-					if(r.getApiID() == action.getId()){
-						i.putExtra(DetailsActivity.RECORDING,r);
-						break;
+				if(action.getId() == DUMMY_ID){
+					Recording dummy = new Recording();
+					dummy.setRecordingUrl("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8");
+					dummy.setMimeType("video/hls");
+					dummy.setLanguage("eng");
+					dummy.setHighQuality(true);
+					i.putExtra(DetailsActivity.RECORDING,dummy);
+				} else {
+					for(Recording r : mSelectedEvent.getRecordings()){
+						if(r.getApiID() == action.getId()){
+							i.putExtra(DetailsActivity.RECORDING,r);
+							break;
+						}
 					}
 				}
 			} else if(eventType == DetailsActivity.TYPE_STREAM){
@@ -279,6 +289,8 @@ public class EventsDetailsFragment extends DetailsFragment {
 					actionsAdapter.add(new Action(recording.getApiID(), title, recording.getMimeType().substring(6)));
 				}
 			}
+		} else {
+			actionsAdapter.add(new Action(DUMMY_ID, "Dummy", "HLS"));
 		}
 		return actionsAdapter;
 	}
