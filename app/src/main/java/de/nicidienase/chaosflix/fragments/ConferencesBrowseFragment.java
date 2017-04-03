@@ -59,46 +59,35 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 										HeaderItem header = new HeaderItem(con.getConference());
 										header.setDescription(con.getDescription());
 										header.setContentDescription(con.getAuthor());
-										mRowsAdapter.add(new ListRow(header, listRowAdapter));
+										mRowsAdapter.add(0,new ListRow(header, listRowAdapter));
 									}
 								}
-								Disposable disposable2 = mediaApiService.getConferences()
-										.doOnError(t -> {
-											errorFragment.setErrorContent(t.getMessage());
-										})
-										.observeOn(AndroidSchedulers.mainThread())
-										.subscribe(conferences -> {
-											mConferences = conferences.getConferencesBySeries();
-											Set<String> keySet = mConferences.keySet();
-											for (String tag : getOrderedConferencesList()) {
-												if (keySet.contains(tag)) {
-													ListRow row = getRow(mConferences, cardPresenter, tag, "");
-													mRowsAdapter.add(row);
-												}
-											}
-											for (String tag : keySet) {
-												if (!getOrderedConferencesList().contains(tag)) {
-													mRowsAdapter.add(getRow(mConferences, cardPresenter, tag, ""));
-												}
-											}
-											errorFragment.dismiss();
-											setOnItemViewClickedListener(new ItemViewClickedListener(this));
-											setAdapter(mRowsAdapter);
-										});
-								mDisposables.add(disposable2);
 							});
 					mDisposables.add(disposable1);
-//					setOnItemViewSelectedListener(new OnItemViewSelectedListener() {
-//						@Override
-//						public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
-//							if(item instanceof Conference){
-//								Conference con = (Conference) item;
-//								row.getHeaderItem().setDescription(con.getTitle());
-//							}
-//							if(item instanceof Room)
-//						}
-//					});
-
+					Disposable disposable2 = mediaApiService.getConferences()
+							.doOnError(t -> {
+								errorFragment.setErrorContent(t.getMessage());
+							})
+							.observeOn(AndroidSchedulers.mainThread())
+							.subscribe(conferences -> {
+								mConferences = conferences.getConferencesBySeries();
+								Set<String> keySet = mConferences.keySet();
+								for (String tag : getOrderedConferencesList()) {
+									if (keySet.contains(tag)) {
+										ListRow row = getRow(mConferences, cardPresenter, tag, "");
+										mRowsAdapter.add(row);
+									}
+								}
+								for (String tag : keySet) {
+									if (!getOrderedConferencesList().contains(tag)) {
+										mRowsAdapter.add(getRow(mConferences, cardPresenter, tag, ""));
+									}
+								}
+								errorFragment.dismiss();
+								setOnItemViewClickedListener(new ItemViewClickedListener(this));
+								setAdapter(mRowsAdapter);
+							});
+					mDisposables.add(disposable2);
 				});
 		mDisposables.add(disposable);
 	}
@@ -141,8 +130,6 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 				return "Datenspuren";
 			case "fiffkon":
 				return "FifFKon";
-			case "other mConferences":
-				return "other ConferencesWrapper";
 			case "blinkenlights":
 				return "Blinkenlights";
 			case "chaoscologne":
