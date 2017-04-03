@@ -100,7 +100,11 @@ public class PlaybackHelper extends PlaybackControlGlue {
 
 	private void setup() {
 		mMediaController = fragment.getActivity().getMediaController();
-		mTransportControls = mMediaController.getTransportControls();
+		if(mMediaController != null){
+			mTransportControls = mMediaController.getTransportControls();
+		} else {
+			Log.d(TAG,"Could not get MediaController");
+		}
 	}
 
 	@Override
