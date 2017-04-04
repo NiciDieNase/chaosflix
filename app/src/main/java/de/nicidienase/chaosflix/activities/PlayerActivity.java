@@ -176,6 +176,13 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 	}
 
 	@Override
+	public void mute(boolean state) {
+		if(player != null){
+			player.setVolume(state ? 0.0f : 1.0f);
+		}
+	}
+
+	@Override
 	public void skipForward(int sec){
 		player.seekTo(player.getCurrentPosition()+(sec*1000));
 	}
