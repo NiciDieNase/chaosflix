@@ -74,7 +74,7 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 	@Override
 	protected void onStart() {
 		super.onStart();
-//		mPlaybackControllFragment.startEntranceTransition();
+		// TODO get persisted playback progress
 	}
 
 	@Override
@@ -93,11 +93,8 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 				= new AdaptiveTrackSelection.Factory(bandwidthMeter);
 		trackSelector
 				= new DefaultTrackSelector(videoTrackSelectionFactory);
-
 		LoadControl loadControl = new DefaultLoadControl();
-
 		player = ExoPlayerFactory.newSimpleInstance(this, trackSelector, loadControl);
-
 		player.setVideoSurfaceView(mSurfaceView);
 	}
 
@@ -180,6 +177,11 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 		if(player != null){
 			player.setVolume(state ? 0.0f : 1.0f);
 		}
+	}
+
+	@Override
+	public void nextAudioStream() {
+		// TODO cycle through audio streams
 	}
 
 	@Override

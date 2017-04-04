@@ -100,6 +100,7 @@ public class OverlayFragment extends PlaybackFragment{
 		long getPosition();
 		long getBufferedPosition();
 		void mute(boolean state);
+		void nextAudioStream();
 	}
 
 	@Override
