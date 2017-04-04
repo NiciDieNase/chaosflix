@@ -41,7 +41,7 @@ import de.nicidienase.chaosflix.fragments.OverlayFragment;
  */
 
 public class PlayerActivity extends AbstractServiceConnectedAcitivty
-		implements OverlayFragment.PlaybackControlListener{
+		implements OverlayFragment.PlaybackControlListener {
 
 	private static final String TAG = PlayerActivity.class.getSimpleName();
 	@BindView(R.id.videoView)
