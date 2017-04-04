@@ -140,6 +140,9 @@ public class OverlayFragment extends PlaybackFragment{
 		mMediaControler = getActivity().getMediaController();
 		if(mMediaControler != null){
 			mMediaControler.registerCallback(mMediaControllerCallback);
+		} else {
+			Log.d(TAG, "MediaController is null");
+			getActivity().finish();
 		}
 		ClassPresenterSelector ps = new ClassPresenterSelector();
 		ps.addClassPresenter(PlaybackControlsRow.class, playbackControlsRowPresenter);
@@ -214,10 +217,21 @@ public class OverlayFragment extends PlaybackFragment{
 		mHelper.onStop();
 	}
 
-	@SuppressWarnings("WrongConstant")
+
 	@Override
 	public void onAttach(Context context) {
 		super.onAttach(context);
+		setupMediaSession(context);
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		setupMediaSession(activity);
+	}
+
+	@SuppressWarnings("WrongConstant")
+	private void setupMediaSession(Context context) {
 		Log.d(TAG,"OnAttach");
 		if(context instanceof PlaybackControlListener){
 			mCallback = (PlaybackControlListener) context;
@@ -232,7 +246,6 @@ public class OverlayFragment extends PlaybackFragment{
 			mSession.setActive(true);
 
 			setPlaybackState(PlaybackState.STATE_NONE);
-//			mSession.setPlaybackState(state);
 
 			getActivity().setMediaController(
 					new MediaController(getActivity(),mSession.getSessionToken()));
@@ -246,7 +259,9 @@ public class OverlayFragment extends PlaybackFragment{
 				.setActions(getAvailableActions(state))
 				.setState(PlaybackState.STATE_PLAYING, currentPosition, 0);
 
-		mSession.setPlaybackState(stateBuilder.build());
+		if(mSession != null){
+			mSession.setPlaybackState(stateBuilder.build());
+		}
 	}
 
 	private int getPlaybackState() {
@@ -297,29 +312,37 @@ public class OverlayFragment extends PlaybackFragment{
 	}
 
 	private void play() {
-		setPlaybackState(PlaybackState.STATE_PLAYING);
-		setFadingEnabled(true);
-		mCallback.play();
+		if(mCallback != null){
+			setPlaybackState(PlaybackState.STATE_PLAYING);
+			setFadingEnabled(true);
+			mCallback.play();
+		}
 	}
 
 	private void pause() {
-		setPlaybackState(PlaybackState.STATE_PAUSED);
-		setFadingEnabled(false);
-		mCallback.pause();
+		if(mCallback != null){
+			setPlaybackState(PlaybackState.STATE_PAUSED);
+			setFadingEnabled(false);
+			mCallback.pause();
+		}
 	}
 
 	private void rewind() {
-		int prevState = getPlaybackState();
-		setPlaybackState(PlaybackState.STATE_FAST_FORWARDING);
-		mCallback.skipBackward(30);
-		setPlaybackState(prevState);
+		if(mCallback != null){
+			int prevState = getPlaybackState();
+			setPlaybackState(PlaybackState.STATE_FAST_FORWARDING);
+			mCallback.skipBackward(30);
+			setPlaybackState(prevState);
+		}
 	}
 
 	private void fastForward() {
-		int prevState = getPlaybackState();
-		setPlaybackState(PlaybackState.STATE_FAST_FORWARDING);
-		mCallback.skipForward(30);
-		setPlaybackState(prevState);
+		if(mCallback != null){
+			int prevState = getPlaybackState();
+			setPlaybackState(PlaybackState.STATE_FAST_FORWARDING);
+			mCallback.skipForward(30);
+			setPlaybackState(prevState);
+		}
 	}
 
 	private class ChaosflixSessionCallback extends MediaSession.Callback {
