@@ -48,12 +48,43 @@ public class OverlayFragment extends PlaybackFragment{
 	private ArrayObjectAdapter mRowsAdapter;
 	private MediaSession mSession;
 	private boolean mHasAudioFocus;
+	private boolean mPauseTransient;
 	private AudioManager mAudioManager;
 	private MediaController mMediaControler;
 	private int eventType;
 	private StreamUrl mSelectedStream;
 
 	private MediaController.Callback mMediaControllerCallback;
+
+	private final AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener =
+            new AudioManager.OnAudioFocusChangeListener() {
+                @Override
+                public void onAudioFocusChange(int focusChange) {
+                    switch (focusChange) {
+                        case AudioManager.AUDIOFOCUS_LOSS:
+                            abandonAudioFocus();
+                            pause();
+                            break;
+                        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                            if (mHelper.isMediaPlaying()) {
+                                pause();
+                                mPauseTransient = true;
+                            }
+                            break;
+                        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                            mCallback.mute(true);
+                            break;
+                        case AudioManager.AUDIOFOCUS_GAIN:
+                        case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
+                        case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
+                            if (mPauseTransient) {
+                                play();
+                            }
+                            mCallback.mute(false);
+                            break;
+                    }
+                }
+            };
 
 	public interface PlaybackControlListener {
 		void play();
@@ -68,6 +99,7 @@ public class OverlayFragment extends PlaybackFragment{
 		void releasePlayer();
 		long getPosition();
 		long getBufferedPosition();
+		void mute(boolean state);
 	}
 
 	@Override
@@ -105,8 +137,11 @@ public class OverlayFragment extends PlaybackFragment{
 		PlaybackControlsRowPresenter playbackControlsRowPresenter = mHelper.createControlsRowAndPresenter();
 		PlaybackControlsRow controlsRow = mHelper.getControlsRow();
 		mMediaControllerCallback = mHelper.createMediaControllerCallback();
+		requestAudioFocus();
 		mMediaControler = getActivity().getMediaController();
-		mMediaControler.registerCallback(mMediaControllerCallback);
+		if(mMediaControler != null){
+			mMediaControler.registerCallback(mMediaControllerCallback);
+		}
 		ClassPresenterSelector ps = new ClassPresenterSelector();
 		ps.addClassPresenter(PlaybackControlsRow.class, playbackControlsRowPresenter);
 		ps.addClassPresenter(ListRow.class, new ListRowPresenter());
@@ -122,6 +157,7 @@ public class OverlayFragment extends PlaybackFragment{
 		} else {
 			Log.d(TAG,"Callback not set or not event/stream");
 		}
+		requestAudioFocus();
 	}
 
 	private Row getRelatedItems() {
@@ -163,6 +199,7 @@ public class OverlayFragment extends PlaybackFragment{
 	public void onStop() {
 		super.onStop();
 		mSession.release();
+		abandonAudioFocus();
 	}
 
 	@Override
@@ -236,33 +273,67 @@ public class OverlayFragment extends PlaybackFragment{
 		return actions;
 	}
 
+	private void requestAudioFocus() {
+		if (mHasAudioFocus) {
+			return;
+		}
+		int result = mAudioManager.requestAudioFocus(mOnAudioFocusChangeListener,
+				AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+			mHasAudioFocus = true;
+		} else {
+			pause();
+		}
+	}
+
+	private void abandonAudioFocus() {
+		mHasAudioFocus = false;
+		mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener);
+	}
+
+	private void play() {
+		setPlaybackState(PlaybackState.STATE_PLAYING);
+		mCallback.play();
+	}
+
+	private void pause() {
+		setPlaybackState(PlaybackState.STATE_PAUSED);
+		mCallback.pause();
+	}
+
+	private void rewind() {
+		int prevState = getPlaybackState();
+		setPlaybackState(PlaybackState.STATE_FAST_FORWARDING);
+		mCallback.skipBackward(30);
+		setPlaybackState(prevState);
+	}
+
+	private void fastForward() {
+		int prevState = getPlaybackState();
+		setPlaybackState(PlaybackState.STATE_FAST_FORWARDING);
+		mCallback.skipForward(30);
+		setPlaybackState(prevState);
+	}
+
 	private class ChaosflixSessionCallback extends MediaSession.Callback {
 		@Override
 		public void onPlay() {
-			setPlaybackState(PlaybackState.STATE_PLAYING);
-			mCallback.play();
+			play();
 		}
 
 		@Override
 		public void onPause() {
-			setPlaybackState(PlaybackState.STATE_PAUSED);
-			mCallback.pause();
+			pause();
 		}
 
 		@Override
 		public void onFastForward() {
-			int prevState = getPlaybackState();
-			setPlaybackState(PlaybackState.STATE_FAST_FORWARDING);
-			mCallback.skipForward(30);
-			setPlaybackState(prevState);
+			fastForward();
 		}
 
 		@Override
 		public void onRewind() {
-			int prevState = getPlaybackState();
-			setPlaybackState(PlaybackState.STATE_FAST_FORWARDING);
-			mCallback.skipBackward(30);
-			setPlaybackState(prevState);
+			rewind();
 		}
 
 		@Override
