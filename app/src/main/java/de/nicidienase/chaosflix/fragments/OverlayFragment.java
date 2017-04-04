@@ -198,14 +198,18 @@ public class OverlayFragment extends PlaybackFragment{
 	@Override
 	public void onStop() {
 		super.onStop();
-		mSession.release();
+		if(mSession != null){
+			mSession.release();
+		}
 		abandonAudioFocus();
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		mSession.release();
+		if(mSession != null){
+			mSession.release();
+		}
 		mCallback.releasePlayer();
 		mHelper.onStop();
 	}
@@ -235,6 +239,7 @@ public class OverlayFragment extends PlaybackFragment{
 		}
 	}
 
+	@SuppressWarnings("WrongConstant")
 	private void setPlaybackState(int state){
 		long currentPosition = getCurrentPositionLong();
 		PlaybackState.Builder stateBuilder = new PlaybackState.Builder()
