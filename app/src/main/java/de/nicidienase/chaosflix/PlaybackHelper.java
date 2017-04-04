@@ -239,8 +239,8 @@ public class PlaybackHelper extends PlaybackControlGlue {
 		if(getCurrentSpeedId() == speed){
 			return;
 		}
-		setFadingEnabled(true);
-		fragment.setFadingEnabled(true);
+//		setFadingEnabled(true);
+//		fragment.setFadingEnabled(true);
 		if(mTransportControls != null){
 			mTransportControls.play();
 		} else {
@@ -250,8 +250,8 @@ public class PlaybackHelper extends PlaybackControlGlue {
 
 	@Override
 	protected void pausePlayback() {
-		setFadingEnabled(false);
-		fragment.setFadingEnabled(false);
+//		setFadingEnabled(false);
+//		fragment.setFadingEnabled(false);
 		if(mTransportControls != null){
 			mTransportControls.pause();
 		} else {
