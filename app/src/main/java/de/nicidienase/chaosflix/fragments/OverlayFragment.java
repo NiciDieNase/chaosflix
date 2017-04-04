@@ -126,7 +126,6 @@ public class OverlayFragment extends PlaybackFragment{
 
 		setBackgroundType(PlaybackFragment.BG_LIGHT);
 		setFadingEnabled(false);
-		mHelper.setFadingEnabled(true);
 	}
 
 	@Override
@@ -158,6 +157,7 @@ public class OverlayFragment extends PlaybackFragment{
 			Log.d(TAG,"Callback not set or not event/stream");
 		}
 		requestAudioFocus();
+		play();
 	}
 
 	private Row getRelatedItems() {
@@ -298,11 +298,13 @@ public class OverlayFragment extends PlaybackFragment{
 
 	private void play() {
 		setPlaybackState(PlaybackState.STATE_PLAYING);
+		setFadingEnabled(true);
 		mCallback.play();
 	}
 
 	private void pause() {
 		setPlaybackState(PlaybackState.STATE_PAUSED);
+		setFadingEnabled(false);
 		mCallback.pause();
 	}
 
