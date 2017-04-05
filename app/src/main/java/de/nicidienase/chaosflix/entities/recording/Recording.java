@@ -11,7 +11,7 @@ import com.orm.SugarRecord;
  */
 
 public class Recording extends SugarRecord implements Parcelable {
-	private long parentEventID;
+
 	private int size;
 	private int length;
 	@SerializedName("mime_type")
@@ -96,11 +96,8 @@ public class Recording extends SugarRecord implements Parcelable {
 	}
 
 	public long getParentEventID() {
-		return parentEventID;
-	}
-
-	public void setParentEventID(long parentEventID) {
-		this.parentEventID = parentEventID;
+		String[] split = getEventUrl().split("/");
+		return Long.parseLong(split[split.length-1]);
 	}
 
 	public int getSize() {

@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -19,11 +20,14 @@ import android.support.v17.leanback.widget.PlaybackControlsRowPresenter;
 import android.support.v17.leanback.widget.Row;
 import android.util.Log;
 
+import java.util.List;
+
 import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.PlaybackHelper;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.entities.recording.Event;
+import de.nicidienase.chaosflix.entities.recording.PlaybackProgress;
 import de.nicidienase.chaosflix.entities.recording.Recording;
 import de.nicidienase.chaosflix.entities.streaming.Room;
 import de.nicidienase.chaosflix.entities.streaming.StreamUrl;
@@ -38,9 +42,11 @@ import static android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_T
 public class OverlayFragment extends PlaybackFragment{
 
 	private static final String TAG = OverlayFragment.class.getSimpleName();
+	private static final long RESUME_SKIP = 5; // seconds to skip back on resume
 
 	private Recording mSelectedRecording;
 	private Event mSelectedEvent;
+	private PlaybackProgress mPlaybackProgress;
 
 	private Room mSelectedRoom;
 	private PlaybackHelper mHelper;
@@ -52,10 +58,10 @@ public class OverlayFragment extends PlaybackFragment{
 	private AudioManager mAudioManager;
 	private MediaController mMediaControler;
 	private int eventType;
+
 	private StreamUrl mSelectedStream;
 
 	private MediaController.Callback mMediaControllerCallback;
-
 	private final AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener =
             new AudioManager.OnAudioFocusChangeListener() {
                 @Override
@@ -115,6 +121,11 @@ public class OverlayFragment extends PlaybackFragment{
 			mSelectedEvent = intent.getParcelableExtra(DetailsActivity.EVENT);
 			mSelectedRecording = intent.getParcelableExtra(DetailsActivity.RECORDING);
 			mHelper = new PlaybackHelper(getActivity(),this,mSelectedEvent,mSelectedRecording);
+
+			List<PlaybackProgress> progressList = PlaybackProgress.find(PlaybackProgress.class, "event_guid = ?", mSelectedEvent.getGuid());
+			if(progressList.size() > 0){
+				mPlaybackProgress = progressList.get(0);
+			}
 		} else if(eventType == DetailsActivity.TYPE_STREAM){
 			mSelectedRoom = intent.getParcelableExtra(DetailsActivity.ROOM);
 			mSelectedStream = intent.getParcelableExtra(DetailsActivity.STREAM_URL);
@@ -161,7 +172,32 @@ public class OverlayFragment extends PlaybackFragment{
 			Log.d(TAG,"Callback not set or not event/stream");
 		}
 		requestAudioFocus();
-		play();
+		if(mPlaybackProgress != null){
+			showContinueOrRestartDialog();
+		} else {
+			play();
+		}
+	}
+
+	private void showContinueOrRestartDialog() {
+		AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+				.setMessage("Resume previous position or start from beginning")
+				.setPositiveButton("Beginning", (dialog, which) -> play())
+				.setNegativeButton("Resume",(dialog, which) -> {
+					mCallback.seekTo(getProgress());
+					play();
+				})
+				.create();
+		alertDialog.show();
+	}
+
+	private long getProgress() {
+		long progress = mPlaybackProgress.getProgress() / 1000;
+		if(progress >= mSelectedEvent.getLength()){
+			return 0;
+		} else {
+			return Math.max(0,progress - RESUME_SKIP);
+		}
 	}
 
 	private Row getRelatedItems() {
@@ -206,6 +242,20 @@ public class OverlayFragment extends PlaybackFragment{
 			mSession.release();
 		}
 		abandonAudioFocus();
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		if(mSelectedEvent != null){
+			if(mPlaybackProgress == null){
+				mPlaybackProgress = new PlaybackProgress(mSelectedEvent.getGuid(),
+						mCallback.getPosition(), mSelectedRecording.getApiID());
+			} else {
+				mPlaybackProgress.setProgress(mCallback.getPosition());
+			}
+			mPlaybackProgress.save();
+		}
 	}
 
 	@Override
