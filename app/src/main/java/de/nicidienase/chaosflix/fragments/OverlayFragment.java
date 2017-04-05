@@ -181,9 +181,9 @@ public class OverlayFragment extends PlaybackFragment{
 
 	private void showContinueOrRestartDialog() {
 		AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-				.setMessage("Resume previous position or start from beginning")
-				.setPositiveButton("Beginning", (dialog, which) -> play())
-				.setNegativeButton("Resume",(dialog, which) -> {
+				.setMessage(R.string.resume_question)
+				.setPositiveButton(R.string.start_again, (dialog, which) -> play())
+				.setNegativeButton(R.string.resume,(dialog, which) -> {
 					mCallback.seekTo(getProgress());
 					play();
 				})
@@ -256,6 +256,7 @@ public class OverlayFragment extends PlaybackFragment{
 			}
 			mPlaybackProgress.save();
 		}
+		// TODO delete Progress if we reached the end (or got close enough to it)
 	}
 
 	@Override
