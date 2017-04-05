@@ -40,4 +40,7 @@
     <string name="random_talks">Other random Talks at this Conference</string>
     <string name="api_media_ccc_url">https://api.media.ccc.de</string>
     <string name="streaming_media_ccc_url">https://streaming.media.ccc.de</string>
+    <string name="resume_question">Resume previous position or start from beginning</string>
+    <string name="start_again">Start again</string>
+    <string name="resume">Resume</string>
 </resources>
