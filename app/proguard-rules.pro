@@ -23,3 +23,6 @@
 -keepattributes Signature
 # Retain declared checked exceptions for use by a Proxy instance.
 -keepattributes Exceptions
+-dontwarn javax.annotation.**
+-dontwarn sun.misc.Unsafe
+-dontwarn okio.**
