@@ -118,7 +118,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 														ArrayObjectAdapter relatedEventsAdapter
 																= new ArrayObjectAdapter(new CardPresenter());
 														relatedEventsAdapter.addAll(0,relatedEvents);
-														HeaderItem header = new HeaderItem(getString(R.string.related_talks));
+														HeaderItem header = new HeaderItem(getString(R.string.random_talks_on_this_track));
 														adapter.add(new ListRow(header,relatedEventsAdapter));
 													}
 
