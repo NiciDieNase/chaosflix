@@ -47,6 +47,7 @@ public class OverlayFragment extends PlaybackFragment{
 
 	private static final String TAG = OverlayFragment.class.getSimpleName();
 	private static final long RESUME_SKIP = 5; // seconds to skip back on resume
+	public static final int MAX_REMAINING = 30;
 
 	private Recording mSelectedRecording;
 	private Event mSelectedEvent;
@@ -270,15 +271,19 @@ public class OverlayFragment extends PlaybackFragment{
 	public void onPause() {
 		super.onPause();
 		if(mSelectedEvent != null){
-			if(mPlaybackProgress == null){
+			if (mPlaybackProgress != null) {
+				if ((mSelectedEvent.getLength() - mCallback.getCurrentPosition() / 1000) > MAX_REMAINING) {
+					mPlaybackProgress.setProgress(mCallback.getPosition());
+					mPlaybackProgress.save();
+				} else {
+					mPlaybackProgress.delete();
+				}
+			} else if((mSelectedEvent.getLength() - mCallback.getCurrentPosition() / 1000) > MAX_REMAINING) {
 				mPlaybackProgress = new PlaybackProgress(mSelectedEvent.getGuid(),
 						mCallback.getPosition(), mSelectedRecording.getApiID());
-			} else {
-				mPlaybackProgress.setProgress(mCallback.getPosition());
+				mPlaybackProgress.save();
 			}
-			mPlaybackProgress.save();
 		}
-		// TODO delete Progress if we reached the end (or got close enough to it)
 	}
 
 	@Override
