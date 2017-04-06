@@ -42,9 +42,11 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 	@SerializedName("conference_url")
 	String conferenceUrl;
 	List<Recording> recordings;
+	Metadata metadata;
 
 
 	protected Event(Parcel in) {
+		conferenceId = in.readInt();
 		guid = in.readString();
 		title = in.readString();
 		subtitle = in.readString();
@@ -55,6 +57,7 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 		persons = in.createStringArrayList();
 		tags = in.createStringArrayList();
 		date = in.readString();
+		releaseDate = in.readString();
 		updatedAt = in.readString();
 		length = in.readInt();
 		thumbUrl = in.readString();
@@ -62,6 +65,38 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 		frontendLink = in.readString();
 		url = in.readString();
 		conferenceUrl = in.readString();
+		recordings = in.createTypedArrayList(Recording.CREATOR);
+		metadata = in.readParcelable(Metadata.class.getClassLoader());
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(conferenceId);
+		dest.writeString(guid);
+		dest.writeString(title);
+		dest.writeString(subtitle);
+		dest.writeString(slug);
+		dest.writeString(link);
+		dest.writeString(description);
+		dest.writeString(originalLanguage);
+		dest.writeStringList(persons);
+		dest.writeStringList(tags);
+		dest.writeString(date);
+		dest.writeString(releaseDate);
+		dest.writeString(updatedAt);
+		dest.writeInt(length);
+		dest.writeString(thumbUrl);
+		dest.writeString(posterUrl);
+		dest.writeString(frontendLink);
+		dest.writeString(url);
+		dest.writeString(conferenceUrl);
+		dest.writeTypedList(recordings);
+		dest.writeParcelable(metadata, flags);
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
 	}
 
 	public static final Creator<Event> CREATOR = new Creator<Event>() {
@@ -75,32 +110,6 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 			return new Event[size];
 		}
 	};
-
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel parcel, int i) {
-		parcel.writeString(guid);
-		parcel.writeString(title);
-		parcel.writeString(subtitle);
-		parcel.writeString(slug);
-		parcel.writeString(link);
-		parcel.writeString(description);
-		parcel.writeString(originalLanguage);
-		parcel.writeStringList(persons);
-		parcel.writeStringList(tags);
-		parcel.writeString(date);
-		parcel.writeString(updatedAt);
-		parcel.writeInt(length);
-		parcel.writeString(thumbUrl);
-		parcel.writeString(posterUrl);
-		parcel.writeString(frontendLink);
-		parcel.writeString(url);
-		parcel.writeString(conferenceUrl);
-	}
 
 	@Override
 	public int compareTo(Event event) {
@@ -291,5 +300,13 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 
 	public void setUpdatedAt(String updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public Metadata getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(Metadata metadata) {
+		this.metadata = metadata;
 	}
 }
