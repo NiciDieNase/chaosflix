@@ -23,14 +23,18 @@ import android.util.Log;
 import java.util.List;
 
 import de.nicidienase.chaosflix.CardPresenter;
+import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.PlaybackHelper;
 import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.recording.PlaybackProgress;
 import de.nicidienase.chaosflix.entities.recording.Recording;
 import de.nicidienase.chaosflix.entities.streaming.Room;
 import de.nicidienase.chaosflix.entities.streaming.StreamUrl;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 
 import static android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS;
 import static android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS;
@@ -62,6 +66,7 @@ public class OverlayFragment extends PlaybackFragment{
 	private StreamUrl mSelectedStream;
 
 	private MediaController.Callback mMediaControllerCallback;
+	private CompositeDisposable mDisposables = new CompositeDisposable();
 	private final AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener =
             new AudioManager.OnAudioFocusChangeListener() {
                 @Override
@@ -161,7 +166,10 @@ public class OverlayFragment extends PlaybackFragment{
 		ps.addClassPresenter(ListRow.class, new ListRowPresenter());
 		mRowsAdapter = new ArrayObjectAdapter(ps);
 		mRowsAdapter.add(controlsRow);
-//		mRowsAdapter.add(getRelatedItems());
+		if(mSelectedEvent.getMetadata() != null && mSelectedEvent.getMetadata().getRelated() != null){
+			mRowsAdapter.add(getRelatedItems());
+			setOnItemViewClickedListener(new ItemViewClickedListener(this));
+		}
 		setAdapter(mRowsAdapter);
 
 		if(mCallback != null && eventType == DetailsActivity.TYPE_STREAM){
@@ -202,7 +210,20 @@ public class OverlayFragment extends PlaybackFragment{
 
 	private Row getRelatedItems() {
 		ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
-//		TODO Add related items
+		final long[] related = mSelectedEvent.getMetadata().getRelated();
+		mDisposables.add(((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(
+						mediaApiService -> {
+							for (long id : related) {
+								mDisposables.add(mediaApiService.getEvent(id)
+										.observeOn(AndroidSchedulers.mainThread())
+										.subscribe(event -> listRowAdapter.add(event)));
+							}
+							listRowAdapter.notifyArrayItemRangeChanged(0, listRowAdapter.size());
+						}
+				)
+		);
 		HeaderItem header = new HeaderItem(0, getString(R.string.related_talks));
 		return new ListRow(header, listRowAdapter);
 	}
@@ -241,6 +262,7 @@ public class OverlayFragment extends PlaybackFragment{
 		if(mSession != null){
 			mSession.release();
 		}
+		mDisposables.dispose();
 		abandonAudioFocus();
 	}
 
