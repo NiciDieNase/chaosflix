@@ -93,7 +93,7 @@ public class MediaApiServiceTest {
 	}
 
 	@Test
-	public void test1() throws IOException {
+	public void testStreamingConferences() throws IOException {
 		server.enqueue(TestHelper.getResponseForRaw(R.raw.streams_v2_json));
 
 		service.getStreamingConferences()
