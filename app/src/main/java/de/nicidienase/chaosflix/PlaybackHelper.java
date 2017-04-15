@@ -72,18 +72,18 @@ public class PlaybackHelper extends PlaybackControlGlue {
 		this.fragment = fragment;
 		this.event = event;
 		this.recording = recording;
-		thumbDisposable = Observable.fromCallable(() ->
-				new BitmapDrawable(
-						fragment.getResources(),
-						Glide.with(getContext())
-								.load(event.getThumbUrl())
-								.asBitmap()
-								.into(-1, -1)
-								.get()))
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.doOnError(Throwable::printStackTrace)
-				.subscribe(bitmapDrawable -> mDrawable = bitmapDrawable);
+//		thumbDisposable = Observable.fromCallable(() ->
+//				new BitmapDrawable(
+//						fragment.getResources(),
+//						Glide.with(getContext())
+//								.load(event.getThumbUrl())
+//								.asBitmap()
+//								.into(-1, -1)
+//								.get()))
+//				.subscribeOn(Schedulers.io())
+//				.observeOn(AndroidSchedulers.mainThread())
+//				.doOnError(Throwable::printStackTrace)
+//				.subscribe(bitmapDrawable -> mDrawable = bitmapDrawable);
 
 		setup();
 	}
