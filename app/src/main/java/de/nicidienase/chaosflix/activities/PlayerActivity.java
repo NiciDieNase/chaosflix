@@ -60,6 +60,7 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_playback);
 		ButterKnife.bind(this);
+		mSurfaceView.setKeepScreenOn(true);
 
 		mPlaybackControllFragment = (OverlayFragment) getFragmentManager().findFragmentById(R.id.playback_controls_fragment);
 
