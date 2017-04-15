@@ -167,9 +167,13 @@ public class OverlayFragment extends PlaybackFragment{
 		ps.addClassPresenter(ListRow.class, new ListRowPresenter());
 		mRowsAdapter = new ArrayObjectAdapter(ps);
 		mRowsAdapter.add(controlsRow);
-		if(mSelectedEvent.getMetadata() != null && mSelectedEvent.getMetadata().getRelated() != null){
-			mRowsAdapter.add(getRelatedItems());
-			setOnItemViewClickedListener(new ItemViewClickedListener(this));
+		if(eventType == DetailsActivity.TYPE_RECORDING){
+			if(mSelectedEvent.getMetadata() != null && mSelectedEvent.getMetadata().getRelated() != null){
+				mRowsAdapter.add(getRelatedItems());
+				setOnItemViewClickedListener(new ItemViewClickedListener(this));
+			}
+		} else if(eventType == DetailsActivity.TYPE_STREAM){
+			// TODO add other streams as related events
 		}
 		setAdapter(mRowsAdapter);
 
@@ -237,15 +241,19 @@ public class OverlayFragment extends PlaybackFragment{
 	}
 
 	public int getCurrentPosition() {
-		if(mCallback != null){
-			return (int) mCallback.getCurrentPosition();
+		if(eventType == DetailsActivity.TYPE_RECORDING){
+			if(mCallback != null){
+				return (int) mCallback.getCurrentPosition();
+			}
 		}
 		return 0;
 	}
 
 	private long getCurrentPositionLong(){
-		if(mCallback != null){
-			return mCallback.getCurrentPosition();
+		if(eventType == DetailsActivity.TYPE_RECORDING){
+			if(mCallback != null){
+				return mCallback.getCurrentPosition();
+			}
 		}
 		return 0;
 	}
