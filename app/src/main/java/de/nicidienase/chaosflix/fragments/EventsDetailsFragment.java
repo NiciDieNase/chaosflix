@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.fragments;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v17.leanback.app.DetailsFragment;
@@ -24,8 +25,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -249,12 +253,20 @@ public class EventsDetailsFragment extends DetailsFragment {
 		Glide.with(getActivity())
 				.load(event.getThumbUrl())
 				.asBitmap()
-				.error(R.drawable.default_background)
+				.fallback(R.drawable.movie)
+				.error(R.drawable.movie)
 				.into(new SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH,DETAIL_THUMB_HEIGHT) {
 					@Override
 					public void onResourceReady(Bitmap resource,
 												GlideAnimation<? super Bitmap> glideAnimation) {
 						row.setImageBitmap(getActivity(),resource);
+						startEntranceTransition();
+					}
+
+					@Override
+					public void onLoadFailed(Exception e, Drawable errorDrawable) {
+						super.onLoadFailed(e, errorDrawable);
+						row.setImageDrawable(getResources().getDrawable(R.drawable.movie));
 						startEntranceTransition();
 					}
 				});
@@ -266,12 +278,21 @@ public class EventsDetailsFragment extends DetailsFragment {
 		Glide.with(getActivity())
 				.load(room.getThumb())
 				.asBitmap()
-				.error(R.drawable.default_background)
+				.fallback(R.drawable.movie)
+				.error(R.drawable.movie)
 				.into(new SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH,DETAIL_THUMB_HEIGHT) {
 					@Override
 					public void onResourceReady(Bitmap resource,
 												GlideAnimation<? super Bitmap> glideAnimation) {
 						row.setImageBitmap(getActivity(),resource);
+						startEntranceTransition();
+						Log.d(TAG,"Start entrance transition");
+					}
+
+					@Override
+					public void onLoadFailed(Exception e, Drawable errorDrawable) {
+						super.onLoadFailed(e, errorDrawable);
+						row.setImageDrawable(getResources().getDrawable(R.drawable.movie));
 						startEntranceTransition();
 					}
 				});
@@ -299,7 +320,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 		ArrayObjectAdapter actionsAdapter = new ArrayObjectAdapter();
 		streamUrlList = new ArrayList<StreamUrl>();
 		for(Stream s: streams){
-			if(s.getType().equals("video"))
+			if(s.getType().equals("video") || true)
 			for(String key :s.getUrls().keySet()){
 				StreamUrl url = s.getUrls().get(key);
 				int index = streamUrlList.size();
