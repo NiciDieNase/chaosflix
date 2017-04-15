@@ -54,7 +54,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 										ArrayObjectAdapter listRowAdapter
 												= new ArrayObjectAdapter(cardPresenter);
 										for (Group g : con.getGroups()) {
-											listRowAdapter.addAll(0, g.getRooms());
+											listRowAdapter.addAll(listRowAdapter.size(), g.getRooms());
 										}
 										HeaderItem header = new HeaderItem(con.getConference());
 										header.setDescription(con.getDescription());
