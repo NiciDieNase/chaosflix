@@ -67,6 +67,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 	private static final String TAG = EventsDetailsFragment.class.getSimpleName();
 	public static final int FRAGMENT = R.id.details_fragment;
 	public static final int DUMMY_ID = 1646465164;
+	public static final int DEFAULT_DRAWABLE = R.drawable.default_background;
 	private Event mSelectedEvent;
 	private MediaApiService mMediaApiService;
 	private Room mRoom;
@@ -253,8 +254,8 @@ public class EventsDetailsFragment extends DetailsFragment {
 		Glide.with(getActivity())
 				.load(event.getThumbUrl())
 				.asBitmap()
-				.fallback(R.drawable.movie)
-				.error(R.drawable.movie)
+				.fallback(DEFAULT_DRAWABLE)
+				.error(DEFAULT_DRAWABLE)
 				.into(new SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH,DETAIL_THUMB_HEIGHT) {
 					@Override
 					public void onResourceReady(Bitmap resource,
@@ -266,7 +267,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 					@Override
 					public void onLoadFailed(Exception e, Drawable errorDrawable) {
 						super.onLoadFailed(e, errorDrawable);
-						row.setImageDrawable(getResources().getDrawable(R.drawable.movie));
+						row.setImageDrawable(getResources().getDrawable(DEFAULT_DRAWABLE));
 						startEntranceTransition();
 					}
 				});
@@ -278,8 +279,8 @@ public class EventsDetailsFragment extends DetailsFragment {
 		Glide.with(getActivity())
 				.load(room.getThumb())
 				.asBitmap()
-				.fallback(R.drawable.movie)
-				.error(R.drawable.movie)
+				.fallback(DEFAULT_DRAWABLE)
+				.error(DEFAULT_DRAWABLE)
 				.into(new SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH,DETAIL_THUMB_HEIGHT) {
 					@Override
 					public void onResourceReady(Bitmap resource,
@@ -292,7 +293,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 					@Override
 					public void onLoadFailed(Exception e, Drawable errorDrawable) {
 						super.onLoadFailed(e, errorDrawable);
-						row.setImageDrawable(getResources().getDrawable(R.drawable.movie));
+						row.setImageDrawable(getResources().getDrawable(DEFAULT_DRAWABLE));
 						startEntranceTransition();
 					}
 				});
