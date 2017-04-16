@@ -285,11 +285,17 @@ public class PlaybackHelper extends PlaybackControlGlue {
 
 	@Override
 	public int getCurrentPosition() {
-		return (int) mControlListener.getCurrentPosition();
+		if(mControlListener != null){
+			return (int) mControlListener.getCurrentPosition();
+		}
+		return 0;
 	}
 
 	public long getCurrentPositionLong(){
-		return mControlListener.getCurrentPosition();
+		if(mControlListener != null){
+			return mControlListener.getCurrentPosition();
+		}
+		return 0;
 	}
 
 	private boolean mediaIsStream() {
