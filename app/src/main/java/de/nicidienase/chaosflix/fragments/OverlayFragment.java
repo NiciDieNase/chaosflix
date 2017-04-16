@@ -107,10 +107,10 @@ public class OverlayFragment extends PlaybackFragment{
 		void skipBackward(int sec);
 		void seekTo(long sec);
 		boolean isMediaPlaying();
+		long getLength();
 		long getCurrentPosition();
-		void releasePlayer();
-		long getPosition();
 		long getBufferedPosition();
+		void releasePlayer();
 		void mute(boolean state);
 		void nextAudioStream();
 	}
@@ -281,14 +281,14 @@ public class OverlayFragment extends PlaybackFragment{
 		if(mSelectedEvent != null){
 			if (mPlaybackProgress != null) {
 				if ((mSelectedEvent.getLength() - mCallback.getCurrentPosition() / 1000) > MAX_REMAINING) {
-					mPlaybackProgress.setProgress(mCallback.getPosition());
+					mPlaybackProgress.setProgress(mCallback.getCurrentPosition());
 					mPlaybackProgress.save();
 				} else {
 					mPlaybackProgress.delete();
 				}
 			} else if((mSelectedEvent.getLength() - mCallback.getCurrentPosition() / 1000) > MAX_REMAINING) {
 				mPlaybackProgress = new PlaybackProgress(mSelectedEvent.getGuid(),
-						mCallback.getPosition(), mSelectedRecording.getApiID());
+						mCallback.getCurrentPosition(), mSelectedRecording.getApiID());
 				mPlaybackProgress.save();
 			}
 		}

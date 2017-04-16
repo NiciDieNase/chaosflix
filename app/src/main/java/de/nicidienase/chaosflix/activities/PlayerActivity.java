@@ -158,14 +158,6 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 	}
 
 	@Override
-	public long getPosition() {
-		if(player != null){
-			return player.getCurrentPosition();
-		}
-		return 0;
-	}
-
-	@Override
 	public long getBufferedPosition() {
 		if(player != null){
 			return player.getBufferedPosition();
@@ -178,6 +170,14 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 		if(player != null){
 			player.setVolume(state ? 0.0f : 1.0f);
 		}
+	}
+
+	@Override
+	public long getLength(){
+		if(player != null){
+			return player.getDuration();
+		}
+		return 0;
 	}
 
 	@Override
