@@ -53,7 +53,7 @@ public class CardPresenter extends Presenter {
 	public ViewHolder onCreateViewHolder(ViewGroup parent) {
 		sDefaultBackgroundColor = parent.getResources().getColor(R.color.default_background);
 		sSelectedBackgroundColor = parent.getResources().getColor(R.color.selected_background);
-		mDefaultCardImage = parent.getResources().getDrawable(R.drawable.movie);
+		mDefaultCardImage = parent.getResources().getDrawable(R.drawable.default_background);
 
 		ImageCardView cardView = new ImageCardView(parent.getContext()) {
 			@Override
