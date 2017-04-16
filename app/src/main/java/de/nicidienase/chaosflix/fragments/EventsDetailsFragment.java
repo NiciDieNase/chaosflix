@@ -157,6 +157,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 											new ItemViewClickedListener(EventsDetailsFragment.this));
 									browseErrorFragment.dismiss();
 								}
+								// TODO add other streams
 							});
 						}
 		});
@@ -249,52 +250,28 @@ public class EventsDetailsFragment extends DetailsFragment {
 		return new ArrayObjectAdapter(mPresenterSelector);
 	}
 
-	private DetailsOverviewRow setupDetailsOverviewRow(Event event) {
+	private DetailsOverviewRow setupDetailsOverviewRow(Object event) {
 		final DetailsOverviewRow row = new DetailsOverviewRow(event);
+		String thumbUrl;
+		if(event instanceof Event){
+			thumbUrl = ((Event) event).getThumbUrl();
+		} else {
+			thumbUrl = ((Room) event).getThumb();
+		}
 		Glide.with(getActivity())
-				.load(event.getThumbUrl())
+				.load(thumbUrl)
 				.asBitmap()
-				.fallback(DEFAULT_DRAWABLE)
-				.error(DEFAULT_DRAWABLE)
 				.into(new SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH,DETAIL_THUMB_HEIGHT) {
 					@Override
 					public void onResourceReady(Bitmap resource,
 												GlideAnimation<? super Bitmap> glideAnimation) {
 						row.setImageBitmap(getActivity(),resource);
-						startEntranceTransition();
 					}
 
 					@Override
 					public void onLoadFailed(Exception e, Drawable errorDrawable) {
-						super.onLoadFailed(e, errorDrawable);
+//						super.onLoadFailed(e, errorDrawable);
 						row.setImageDrawable(getResources().getDrawable(DEFAULT_DRAWABLE));
-						startEntranceTransition();
-					}
-				});
-		return row;
-	}
-
-	private DetailsOverviewRow setupDetailsOverviewRow(Room room) {
-		final DetailsOverviewRow row = new DetailsOverviewRow(room);
-		Glide.with(getActivity())
-				.load(room.getThumb())
-				.asBitmap()
-				.fallback(DEFAULT_DRAWABLE)
-				.error(DEFAULT_DRAWABLE)
-				.into(new SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH,DETAIL_THUMB_HEIGHT) {
-					@Override
-					public void onResourceReady(Bitmap resource,
-												GlideAnimation<? super Bitmap> glideAnimation) {
-						row.setImageBitmap(getActivity(),resource);
-						startEntranceTransition();
-						Log.d(TAG,"Start entrance transition");
-					}
-
-					@Override
-					public void onLoadFailed(Exception e, Drawable errorDrawable) {
-						super.onLoadFailed(e, errorDrawable);
-						row.setImageDrawable(getResources().getDrawable(DEFAULT_DRAWABLE));
-						startEntranceTransition();
 					}
 				});
 		return row;
