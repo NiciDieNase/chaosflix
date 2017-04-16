@@ -8,6 +8,7 @@ import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.PresenterSelector;
+import android.support.v17.leanback.widget.SectionRow;
 
 import java.util.Arrays;
 import java.util.List;
@@ -62,16 +63,23 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 							.subscribe(liveConferences -> {
 								if (liveConferences.size() > 0) {
 									for (LiveConference con : liveConferences) {
-										ArrayObjectAdapter listRowAdapter
-												= new ArrayObjectAdapter(cardPresenter);
-										for (Group g : con.getGroups()) {
-											listRowAdapter.addAll(listRowAdapter.size(), g.getRooms());
+										HeaderItem streamingHeader = new HeaderItem(con.getConference());
+										streamingHeader.setContentDescription(con.getDescription());
+										mRowsAdapter.add(0,new SectionRow(streamingHeader));
+										int i = -1;
+										for(i = 0; i < con.getGroups().size(); i++){
+											Group g = con.getGroups().get(i);
+											ArrayObjectAdapter listRowAdapter
+													= new ArrayObjectAdapter(cardPresenter);
+												listRowAdapter.addAll(listRowAdapter.size(), g.getRooms());
+											HeaderItem header = new HeaderItem(g.getGroup());
+	//										HeaderItem header = new HeaderItem(STREAM_PREFIX + con.getConference());
+											header.setDescription(con.getConference() +" - "+ con.getDescription());
+											header.setContentDescription(g.getGroup());
+											mRowsAdapter.add(i+1,new ListRow(header, listRowAdapter));
 										}
-										HeaderItem header = new HeaderItem(con.getConference());
-//										HeaderItem header = new HeaderItem(STREAM_PREFIX + con.getConference());
-										header.setDescription(con.getDescription());
-										header.setContentDescription(con.getAuthor());
-										mRowsAdapter.add(0,new ListRow(header, listRowAdapter));
+										mRowsAdapter.add(i+1,new SectionRow("Recordings"));
+
 									}
 								}
 							});
