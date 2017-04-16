@@ -6,6 +6,8 @@ import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
+import android.support.v17.leanback.widget.Presenter;
+import android.support.v17.leanback.widget.PresenterSelector;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.nicidienase.chaosflix.CardPresenter;
+import de.nicidienase.chaosflix.HeaderItemPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
@@ -31,6 +34,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 
 	private static final String TAG = ConferencesBrowseFragment.class.getSimpleName();
 	public static final int FRAGMENT = R.id.browse_fragment;
+	public static final String STREAM_PREFIX = "[live]";
 	private ArrayObjectAdapter mRowsAdapter;
 	private Map<String, List<Conference>> mConferences;
 	CompositeDisposable mDisposables = new CompositeDisposable();
@@ -39,6 +43,13 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setTitle(getResources().getString(R.string.app_name));
+
+		setHeaderPresenterSelector(new PresenterSelector() {
+			@Override
+			public Presenter getPresenter(Object item) {
+				return new HeaderItemPresenter();
+			}
+		});
 
 		final BrowseErrorFragment errorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);
@@ -57,6 +68,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 											listRowAdapter.addAll(listRowAdapter.size(), g.getRooms());
 										}
 										HeaderItem header = new HeaderItem(con.getConference());
+//										HeaderItem header = new HeaderItem(STREAM_PREFIX + con.getConference());
 										header.setDescription(con.getDescription());
 										header.setContentDescription(con.getAuthor());
 										mRowsAdapter.add(0,new ListRow(header, listRowAdapter));
