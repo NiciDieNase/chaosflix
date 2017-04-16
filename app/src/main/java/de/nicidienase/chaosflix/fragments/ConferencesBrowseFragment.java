@@ -44,12 +44,12 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 		super.onCreate(savedInstanceState);
 		setTitle(getResources().getString(R.string.app_name));
 
-		setHeaderPresenterSelector(new PresenterSelector() {
-			@Override
-			public Presenter getPresenter(Object item) {
-				return new HeaderItemPresenter();
-			}
-		});
+//		setHeaderPresenterSelector(new PresenterSelector() {
+//			@Override
+//			public Presenter getPresenter(Object item) {
+//				return new HeaderItemPresenter();
+//			}
+//		});
 
 		final BrowseErrorFragment errorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);
