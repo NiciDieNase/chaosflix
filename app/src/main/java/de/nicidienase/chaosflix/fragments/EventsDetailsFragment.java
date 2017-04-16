@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v17.leanback.app.BackgroundManager;
 import android.support.v17.leanback.app.DetailsFragment;
 import android.support.v17.leanback.widget.Action;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
@@ -18,6 +19,7 @@ import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.Presenter;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,12 +75,15 @@ public class EventsDetailsFragment extends DetailsFragment {
 	private Room mRoom;
 	private int eventType;
 	private ArrayList<StreamUrl> streamUrlList;
+	private BackgroundManager mBackgroundmanager;
+	private DisplayMetrics mMetrics;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Log.d(TAG,"onCreate");
 		super.onCreate(savedInstanceState);
 
+		prepareBackgroundManager();
 		final BrowseErrorFragment browseErrorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);
 		eventType = getActivity().getIntent().getIntExtra(DetailsActivity.TYPE, -1);
@@ -161,6 +166,32 @@ public class EventsDetailsFragment extends DetailsFragment {
 							});
 						}
 		});
+	}
+
+	@Override
+	public void onStop() {
+		mBackgroundmanager.release();
+		super.onStop();
+	}
+
+	private void prepareBackgroundManager() {
+		mBackgroundmanager = BackgroundManager.getInstance(getActivity());
+		mBackgroundmanager.attach(getActivity().getWindow());
+		mMetrics = new DisplayMetrics();
+		getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
+	}
+
+	private void updateBackground(String uri){
+		Glide.with(this)
+				.load(uri)
+				.asBitmap()
+				.centerCrop()
+				.into(new SimpleTarget<Bitmap>() {
+					@Override
+					public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+						mBackgroundmanager.setBitmap(resource);
+					}
+				});
 	}
 
 	private Room getRoom(Room room, List<LiveConference> liveConferences) {
