@@ -1,24 +1,24 @@
 package de.nicidienase.chaosflix;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.Presenter;
+import android.support.v17.leanback.widget.RowHeaderPresenter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import butterknife.BindView;
-import de.nicidienase.chaosflix.entities.recording.Conference;
-import de.nicidienase.chaosflix.entities.streaming.LiveConference;
+import de.nicidienase.chaosflix.fragments.ConferencesBrowseFragment;
 
 /**
  * Created by felix on 16.04.17.
  */
 
-public class HeaderItemPresenter extends Presenter {
+public class HeaderItemPresenter extends RowHeaderPresenter {
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) parent.getContext()
@@ -29,25 +29,26 @@ public class HeaderItemPresenter extends Presenter {
 	}
 
 	@Override
-	public void onBindViewHolder(ViewHolder viewHolder, Object item) {
+	public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
 		HeaderItem headerItem = ((ListRow) item).getHeaderItem();
 		View view = viewHolder.view;
 		ImageView headerIcon = (ImageView) view.findViewById(R.id.header_icon);
 		TextView headerLabel = (TextView) view.findViewById(R.id.header_label);
 
-		if(item instanceof Conference){
-			Conference con = (Conference) item;
-
-			headerLabel.setText(con.getTitle());
-		} else if(item instanceof LiveConference){
-			LiveConference con = (LiveConference) item;
-
-			headerLabel.setText(con.getConference());
+		if(headerItem.getName().startsWith(ConferencesBrowseFragment.STREAM_PREFIX)){
+			Drawable camIcon = view.getContext().getResources().getDrawable(R.drawable.ic_videocam_white_24dp);
+			headerIcon.setImageDrawable(camIcon);
+			((ListRow) item).setHeaderItem(new HeaderItem(headerItem.getName()
+					.substring(ConferencesBrowseFragment.STREAM_PREFIX.length())));
+		} else {
+			Drawable movieIcon = view.getContext().getResources().getDrawable(R.drawable.ic_local_movies_white_24dp);
+			headerIcon.setImageDrawable(movieIcon);
+			headerLabel.setText(headerItem.getName());
 		}
 	}
 
 	@Override
-	public void onUnbindViewHolder(ViewHolder viewHolder) {
+	public void onUnbindViewHolder(Presenter.ViewHolder viewHolder) {
 
 	}
 }
