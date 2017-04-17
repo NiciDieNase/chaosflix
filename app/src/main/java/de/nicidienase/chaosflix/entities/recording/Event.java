@@ -43,6 +43,26 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 	String conferenceUrl;
 	List<Recording> recordings;
 	Metadata metadata;
+	boolean promoted;
+
+	public boolean isPromoted() {
+		return promoted;
+	}
+
+	public void setPromoted(boolean promoted) {
+		this.promoted = promoted;
+	}
+
+	public int getViewCount() {
+		return viewCount;
+	}
+
+	public void setViewCount(int viewCount) {
+		this.viewCount = viewCount;
+	}
+
+	@SerializedName("view_count")
+	int viewCount;
 
 
 	protected Event(Parcel in) {

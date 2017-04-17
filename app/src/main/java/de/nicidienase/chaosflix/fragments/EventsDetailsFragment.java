@@ -230,7 +230,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 
 	private ArrayObjectAdapter setupDetailsOverviewRowPresenter() {
 		FullWidthDetailsOverviewRowPresenter mDetailsPresenter = new FullWidthDetailsOverviewRowPresenter(
-				new EventDetailsDescriptionPresenter(),
+				new EventDetailsDescriptionPresenter(getActivity()),
 				new EventDetailsOverviewLogoPresenter());
 		mDetailsPresenter.setBackgroundColor(getResources().getColor(R.color.selected_background));
 		mDetailsPresenter.setInitialState(FullWidthDetailsOverviewRowPresenter.STATE_HALF);
