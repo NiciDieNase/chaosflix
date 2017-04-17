@@ -10,7 +10,7 @@ import java.util.List;
  * Created by felix on 23.03.17.
  */
 
-public class Room implements Parcelable{
+public class Room implements Parcelable {
 	String slug;
 	String shedulename;
 	String thumb;

@@ -77,22 +77,22 @@ public class EventsBrowseFragment extends BrowseFragment {
 		Log.i(TAG, "onCreate");
 		super.onActivityCreated(savedInstanceState);
 		final BrowseErrorFragment errorFragment =
-				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);
+				BrowseErrorFragment.showErrorFragment(getFragmentManager(), FRAGMENT);
 		conferenceId = this.getActivity().getIntent().getIntExtra(EventsActivity.CONFERENCE_ID, 0);
 		mConference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.CONFERENCE);
 
-		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable()
-			.subscribe(mediaApiService -> {
-				mediaApiService.getConference(mConference.getApiID())
-					.observeOn(AndroidSchedulers.mainThread())
-					.doOnError(t -> errorFragment.setErrorContent(t.getMessage()))
-					.subscribe(conference -> {
-						mConference = conference;
-						setupUIElements();
-						loadRows();
-						errorFragment.dismiss();
-					});
-		});
+		((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
+				.subscribe(mediaApiService -> {
+					mediaApiService.getConference(mConference.getApiID())
+							.observeOn(AndroidSchedulers.mainThread())
+							.doOnError(t -> errorFragment.setErrorContent(t.getMessage()))
+							.subscribe(conference -> {
+								mConference = conference;
+								setupUIElements();
+								loadRows();
+								errorFragment.dismiss();
+							});
+				});
 
 		prepareBackgroundManager();
 		setupEventListeners();
@@ -116,10 +116,10 @@ public class EventsBrowseFragment extends BrowseFragment {
 		List<Event> other = new LinkedList<Event>();
 		List<String> keys = Lists.newArrayList(eventsByTags.keySet());
 		Collections.sort(keys);
-		for (String tag: keys) {
+		for (String tag : keys) {
 			List<Event> items = eventsByTags.get(tag);
 			Collections.sort(items);
-			if(android.text.TextUtils.isDigitsOnly(tag)){
+			if (android.text.TextUtils.isDigitsOnly(tag)) {
 				other.addAll(items);
 			} else {
 				ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
@@ -128,11 +128,11 @@ public class EventsBrowseFragment extends BrowseFragment {
 				mRowsAdapter.add(new ListRow(header, listRowAdapter));
 			}
 		}
-		if(other.size() > 0){
+		if (other.size() > 0) {
 			ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
-			listRowAdapter.addAll(0,other);
+			listRowAdapter.addAll(0, other);
 			HeaderItem header = new HeaderItem("other");
-			mRowsAdapter.add(new ListRow(header,listRowAdapter));
+			mRowsAdapter.add(new ListRow(header, listRowAdapter));
 		}
 		setAdapter(mRowsAdapter);
 	}

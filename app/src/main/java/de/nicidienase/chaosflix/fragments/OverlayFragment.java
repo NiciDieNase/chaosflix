@@ -43,7 +43,7 @@ import static android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_T
  * Created by felix on 26.03.17.
  */
 
-public class OverlayFragment extends PlaybackFragment{
+public class OverlayFragment extends PlaybackFragment {
 
 	private static final String TAG = OverlayFragment.class.getSimpleName();
 	private static final long RESUME_SKIP = 5; // seconds to skip back on resume
@@ -69,75 +69,88 @@ public class OverlayFragment extends PlaybackFragment{
 	private MediaController.Callback mMediaControllerCallback;
 	private CompositeDisposable mDisposables = new CompositeDisposable();
 	private final AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener =
-            new AudioManager.OnAudioFocusChangeListener() {
-                @Override
-                public void onAudioFocusChange(int focusChange) {
-                    switch (focusChange) {
-                        case AudioManager.AUDIOFOCUS_LOSS:
-                            abandonAudioFocus();
-                            pause();
-                            break;
-                        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                            if (mHelper.isMediaPlaying()) {
-                                pause();
-                                mPauseTransient = true;
-                            }
-                            break;
-                        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                            mCallback.mute(true);
-                            break;
-                        case AudioManager.AUDIOFOCUS_GAIN:
-                        case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
-                        case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
-                            if (mPauseTransient) {
-                                play();
-                            }
-                            mCallback.mute(false);
-                            break;
-                    }
-                }
-            };
+			new AudioManager.OnAudioFocusChangeListener() {
+				@Override
+				public void onAudioFocusChange(int focusChange) {
+					switch (focusChange) {
+						case AudioManager.AUDIOFOCUS_LOSS:
+							abandonAudioFocus();
+							pause();
+							break;
+						case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+							if (mHelper.isMediaPlaying()) {
+								pause();
+								mPauseTransient = true;
+							}
+							break;
+						case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+							mCallback.mute(true);
+							break;
+						case AudioManager.AUDIOFOCUS_GAIN:
+						case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
+						case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
+							if (mPauseTransient) {
+								play();
+							}
+							mCallback.mute(false);
+							break;
+					}
+				}
+			};
 
 	public interface PlaybackControlListener {
 		void play();
+
 		void pause();
+
 		void playPause();
+
 		void setVideoSource(String source);
+
 		void skipForward(int sec);
+
 		void skipBackward(int sec);
+
 		void seekTo(long sec);
+
 		boolean isMediaPlaying();
+
 		long getLength();
+
 		long getCurrentPosition();
+
 		long getBufferedPosition();
+
 		void releasePlayer();
+
 		void mute(boolean state);
+
 		void nextAudioStream();
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.d(TAG,"OnCreate");
+		Log.d(TAG, "OnCreate");
 
 		Intent intent = getActivity()
 				.getIntent();
 		eventType = intent.getIntExtra(DetailsActivity.TYPE, -1);
-		if(eventType == DetailsActivity.TYPE_RECORDING){
+		if (eventType == DetailsActivity.TYPE_RECORDING) {
 			mSelectedEvent = intent.getParcelableExtra(DetailsActivity.EVENT);
 			mSelectedRecording = intent.getParcelableExtra(DetailsActivity.RECORDING);
-			mHelper = new PlaybackHelper(getActivity(),this,mSelectedEvent,mSelectedRecording);
+			mHelper = new PlaybackHelper(getActivity(), this, mSelectedEvent, mSelectedRecording);
 
 			List<PlaybackProgress> progressList = PlaybackProgress.find(PlaybackProgress.class, "event_guid = ?", mSelectedEvent.getGuid());
-			if(progressList.size() > 0){
+			if (progressList.size() > 0) {
 				mPlaybackProgress = progressList.get(0);
 			}
-		} else if(eventType == DetailsActivity.TYPE_STREAM){
+		} else if (eventType == DetailsActivity.TYPE_STREAM) {
 			mSelectedRoom = intent.getParcelableExtra(DetailsActivity.ROOM);
 			mSelectedStream = intent.getParcelableExtra(DetailsActivity.STREAM_URL);
-			mHelper = new PlaybackHelper(getActivity(),this,mSelectedRoom,mSelectedStream);
+			mHelper = new PlaybackHelper(getActivity(), this, mSelectedRoom, mSelectedStream);
 		} else {
-			Log.d(TAG,"No Media found, finishing");
+			Log.d(TAG, "No Media found, finishing");
 			getActivity().finish();
 		}
 		mAudioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
@@ -149,14 +162,14 @@ public class OverlayFragment extends PlaybackFragment{
 	@Override
 	public synchronized void onStart() {
 		super.onStart();
-		Log.d(TAG,"OnStart");
+		Log.d(TAG, "OnStart");
 
 		PlaybackControlsRowPresenter playbackControlsRowPresenter = mHelper.createControlsRowAndPresenter();
 		PlaybackControlsRow controlsRow = mHelper.getControlsRow();
 		mMediaControllerCallback = mHelper.createMediaControllerCallback();
 		requestAudioFocus();
 		mMediaControler = getActivity().getMediaController();
-		if(mMediaControler != null){
+		if (mMediaControler != null) {
 			mMediaControler.registerCallback(mMediaControllerCallback);
 		} else {
 			Log.d(TAG, "MediaController is null");
@@ -167,25 +180,25 @@ public class OverlayFragment extends PlaybackFragment{
 		ps.addClassPresenter(ListRow.class, new ListRowPresenter());
 		mRowsAdapter = new ArrayObjectAdapter(ps);
 		mRowsAdapter.add(controlsRow);
-		if(eventType == DetailsActivity.TYPE_RECORDING){
-			if(mSelectedEvent.getMetadata() != null && mSelectedEvent.getMetadata().getRelated() != null){
+		if (eventType == DetailsActivity.TYPE_RECORDING) {
+			if (mSelectedEvent.getMetadata() != null && mSelectedEvent.getMetadata().getRelated() != null) {
 				mRowsAdapter.add(getRelatedItems());
 				setOnItemViewClickedListener(new ItemViewClickedListener(this));
 			}
-		} else if(eventType == DetailsActivity.TYPE_STREAM){
+		} else if (eventType == DetailsActivity.TYPE_STREAM) {
 			// TODO add other streams as related events
 		}
 		setAdapter(mRowsAdapter);
 
-		if(mCallback != null && eventType == DetailsActivity.TYPE_STREAM){
+		if (mCallback != null && eventType == DetailsActivity.TYPE_STREAM) {
 			mCallback.setVideoSource(mSelectedStream.getUrl());
-		} else if(mCallback != null && eventType == DetailsActivity.TYPE_RECORDING){
+		} else if (mCallback != null && eventType == DetailsActivity.TYPE_RECORDING) {
 			mCallback.setVideoSource(mSelectedRecording.getRecordingUrl());
 		} else {
-			Log.d(TAG,"Callback not set or not event/stream");
+			Log.d(TAG, "Callback not set or not event/stream");
 		}
 		requestAudioFocus();
-		if(mPlaybackProgress != null){
+		if (mPlaybackProgress != null) {
 			showContinueOrRestartDialog();
 		} else {
 			play();
@@ -196,7 +209,7 @@ public class OverlayFragment extends PlaybackFragment{
 		AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
 				.setMessage(R.string.resume_question)
 				.setPositiveButton(R.string.start_again, (dialog, which) -> play())
-				.setNegativeButton(R.string.resume,(dialog, which) -> {
+				.setNegativeButton(R.string.resume, (dialog, which) -> {
 					mCallback.seekTo(getProgress());
 					play();
 				})
@@ -206,10 +219,10 @@ public class OverlayFragment extends PlaybackFragment{
 
 	private long getProgress() {
 		long progress = mPlaybackProgress.getProgress() / 1000;
-		if(progress >= mSelectedEvent.getLength()){
+		if (progress >= mSelectedEvent.getLength()) {
 			return 0;
 		} else {
-			return Math.max(0,progress - RESUME_SKIP);
+			return Math.max(0, progress - RESUME_SKIP);
 		}
 	}
 
@@ -234,32 +247,32 @@ public class OverlayFragment extends PlaybackFragment{
 	}
 
 	public boolean isMediaPlaying() {
-		if(mCallback != null){
+		if (mCallback != null) {
 			return mCallback.isMediaPlaying();
 		}
 		return false;
 	}
 
 	public int getCurrentPosition() {
-		if(eventType == DetailsActivity.TYPE_RECORDING){
-			if(mCallback != null){
+		if (eventType == DetailsActivity.TYPE_RECORDING) {
+			if (mCallback != null) {
 				return (int) mCallback.getCurrentPosition();
 			}
 		}
 		return 0;
 	}
 
-	private long getCurrentPositionLong(){
-		if(eventType == DetailsActivity.TYPE_RECORDING){
-			if(mCallback != null){
+	private long getCurrentPositionLong() {
+		if (eventType == DetailsActivity.TYPE_RECORDING) {
+			if (mCallback != null) {
 				return mCallback.getCurrentPosition();
 			}
 		}
 		return 0;
 	}
 
-	public long getCurrentBufferedPosition(){
-		if(mCallback != null){
+	public long getCurrentBufferedPosition() {
+		if (mCallback != null) {
 			return mCallback.getBufferedPosition();
 		}
 		return 0;
@@ -268,7 +281,7 @@ public class OverlayFragment extends PlaybackFragment{
 	@Override
 	public void onStop() {
 		super.onStop();
-		if(mSession != null){
+		if (mSession != null) {
 			mSession.release();
 		}
 		mDisposables.dispose();
@@ -278,7 +291,7 @@ public class OverlayFragment extends PlaybackFragment{
 	@Override
 	public void onPause() {
 		super.onPause();
-		if(mSelectedEvent != null){
+		if (mSelectedEvent != null) {
 			if (mPlaybackProgress != null) {
 				if ((mSelectedEvent.getLength() - mCallback.getCurrentPosition() / 1000) > MAX_REMAINING) {
 					mPlaybackProgress.setProgress(mCallback.getCurrentPosition());
@@ -286,7 +299,7 @@ public class OverlayFragment extends PlaybackFragment{
 				} else {
 					mPlaybackProgress.delete();
 				}
-			} else if((mSelectedEvent.getLength() - mCallback.getCurrentPosition() / 1000) > MAX_REMAINING) {
+			} else if ((mSelectedEvent.getLength() - mCallback.getCurrentPosition() / 1000) > MAX_REMAINING) {
 				mPlaybackProgress = new PlaybackProgress(mSelectedEvent.getGuid(),
 						mCallback.getCurrentPosition(), mSelectedRecording.getApiID());
 				mPlaybackProgress.save();
@@ -297,7 +310,7 @@ public class OverlayFragment extends PlaybackFragment{
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		if(mSession != null){
+		if (mSession != null) {
 			mSession.release();
 		}
 		mCallback.releasePlayer();
@@ -319,34 +332,34 @@ public class OverlayFragment extends PlaybackFragment{
 
 	@SuppressWarnings("WrongConstant")
 	private void setupMediaSession(Context context) {
-		Log.d(TAG,"OnAttach");
-		if(context instanceof PlaybackControlListener){
+		Log.d(TAG, "OnAttach");
+		if (context instanceof PlaybackControlListener) {
 			mCallback = (PlaybackControlListener) context;
 		} else {
-			throw(new RuntimeException("Activity must implement PlaybackControlListener"));
+			throw (new RuntimeException("Activity must implement PlaybackControlListener"));
 		}
 
-		if(mSession == null){
-			mSession = new MediaSession(getActivity(),"chaosflix");
+		if (mSession == null) {
+			mSession = new MediaSession(getActivity(), "chaosflix");
 			mSession.setCallback(new ChaosflixSessionCallback());
-			mSession.setFlags(FLAG_HANDLES_MEDIA_BUTTONS| FLAG_HANDLES_TRANSPORT_CONTROLS);
+			mSession.setFlags(FLAG_HANDLES_MEDIA_BUTTONS | FLAG_HANDLES_TRANSPORT_CONTROLS);
 			mSession.setActive(true);
 
 			setPlaybackState(PlaybackState.STATE_NONE);
 
 			getActivity().setMediaController(
-					new MediaController(getActivity(),mSession.getSessionToken()));
+					new MediaController(getActivity(), mSession.getSessionToken()));
 		}
 	}
 
 	@SuppressWarnings("WrongConstant")
-	private void setPlaybackState(int state){
+	private void setPlaybackState(int state) {
 		long currentPosition = getCurrentPositionLong();
 		PlaybackState.Builder stateBuilder = new PlaybackState.Builder()
 				.setActions(getAvailableActions(state))
 				.setState(PlaybackState.STATE_PLAYING, currentPosition, 0);
 
-		if(mSession != null){
+		if (mSession != null) {
 			mSession.setPlaybackState(stateBuilder.build());
 		}
 	}
@@ -399,7 +412,7 @@ public class OverlayFragment extends PlaybackFragment{
 	}
 
 	private void play() {
-		if(mCallback != null){
+		if (mCallback != null) {
 			setPlaybackState(PlaybackState.STATE_PLAYING);
 			setFadingEnabled(true);
 			mCallback.play();
@@ -407,7 +420,7 @@ public class OverlayFragment extends PlaybackFragment{
 	}
 
 	private void pause() {
-		if(mCallback != null){
+		if (mCallback != null) {
 			setPlaybackState(PlaybackState.STATE_PAUSED);
 			setFadingEnabled(false);
 			mCallback.pause();
@@ -415,7 +428,7 @@ public class OverlayFragment extends PlaybackFragment{
 	}
 
 	private void rewind() {
-		if(mCallback != null){
+		if (mCallback != null) {
 			int prevState = getPlaybackState();
 			setPlaybackState(PlaybackState.STATE_FAST_FORWARDING);
 			mCallback.skipBackward(30);
@@ -424,7 +437,7 @@ public class OverlayFragment extends PlaybackFragment{
 	}
 
 	private void fastForward() {
-		if(mCallback != null){
+		if (mCallback != null) {
 			int prevState = getPlaybackState();
 			setPlaybackState(PlaybackState.STATE_FAST_FORWARDING);
 			mCallback.skipForward(30);
@@ -455,12 +468,12 @@ public class OverlayFragment extends PlaybackFragment{
 
 		@Override
 		public void onSkipToNext() {
-			mCallback.skipForward(5*60);
+			mCallback.skipForward(5 * 60);
 		}
 
 		@Override
 		public void onSkipToPrevious() {
-			mCallback.skipBackward(5*60);
+			mCallback.skipBackward(5 * 60);
 		}
 
 		@Override

@@ -34,7 +34,8 @@ public class Recording extends SugarRecord implements Parcelable {
 	@SerializedName("conference_url")
 	private String conferenceUrl;
 
-	public Recording(){}
+	public Recording() {
+	}
 
 	protected Recording(Parcel in) {
 		size = in.readInt();
@@ -90,14 +91,14 @@ public class Recording extends SugarRecord implements Parcelable {
 		parcel.writeString(conferenceUrl);
 	}
 
-	public int getApiID(){
+	public int getApiID() {
 		String[] strings = getUrl().split("/");
-		return Integer.parseInt(strings[strings.length-1]);
+		return Integer.parseInt(strings[strings.length - 1]);
 	}
 
 	public long getParentEventID() {
 		String[] split = getEventUrl().split("/");
-		return Long.parseLong(split[split.length-1]);
+		return Long.parseLong(split[split.length - 1]);
 	}
 
 	public int getSize() {
@@ -220,8 +221,8 @@ public class Recording extends SugarRecord implements Parcelable {
 		this.conferenceUrl = conferenceUrl;
 	}
 
-	public void update(Recording r){
-		if(!this.getUpdatedAt().equals(r.getUpdatedAt())){
+	public void update(Recording r) {
+		if (!this.getUpdatedAt().equals(r.getUpdatedAt())) {
 			// TODO actually update
 			this.save();
 		}

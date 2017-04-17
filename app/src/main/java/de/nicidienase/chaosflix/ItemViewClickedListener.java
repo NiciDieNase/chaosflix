@@ -37,27 +37,27 @@ public class ItemViewClickedListener implements OnItemViewClickedListener {
 			Intent i = new Intent(fragment.getActivity(), EventsActivity.class);
 			i.putExtra(EventsActivity.CONFERENCE, conference);
 			i.putExtra(EventsActivity.CONFERENCE_ID, conference.getApiID());
-				Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-						fragment.getActivity(),
-						((ImageCardView) itemViewHolder.view).getMainImageView(),
-						EventsActivity.SHARED_ELEMENT_NAME).toBundle();
-			fragment.startActivity(i,bundle);
-		} else if(item instanceof Event){
+			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
+					fragment.getActivity(),
+					((ImageCardView) itemViewHolder.view).getMainImageView(),
+					EventsActivity.SHARED_ELEMENT_NAME).toBundle();
+			fragment.startActivity(i, bundle);
+		} else if (item instanceof Event) {
 			Event event = (Event) item;
 			Intent i = new Intent(fragment.getActivity(), DetailsActivity.class);
-			i.putExtra(DetailsActivity.TYPE,DetailsActivity.TYPE_RECORDING);
-			i.putExtra(DetailsActivity.EVENT,event);
+			i.putExtra(DetailsActivity.TYPE, DetailsActivity.TYPE_RECORDING);
+			i.putExtra(DetailsActivity.EVENT, event);
 			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
 					fragment.getActivity(),
 					((ImageCardView) itemViewHolder.view).getMainImageView(),
 					EventDetailsActivity.SHARED_ELEMENT_NAME).toBundle();
 			fragment.getActivity().startActivity(i, bundle);
 		}
-		if(item instanceof Room){
+		if (item instanceof Room) {
 			Room room = (Room) item;
 			Intent i = new Intent(fragment.getActivity(), DetailsActivity.class);
-			i.putExtra(DetailsActivity.TYPE,DetailsActivity.TYPE_STREAM);
-			i.putExtra(DetailsActivity.ROOM,room);
+			i.putExtra(DetailsActivity.TYPE, DetailsActivity.TYPE_STREAM);
+			i.putExtra(DetailsActivity.ROOM, room);
 			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
 					fragment.getActivity(),
 					((ImageCardView) itemViewHolder.view).getMainImageView(),

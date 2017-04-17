@@ -15,7 +15,7 @@ import java.util.List;
  * Created by felix on 11.03.17.
  */
 
-public class Conference extends SugarRecord implements Parcelable,Comparable<Conference> {
+public class Conference extends SugarRecord implements Parcelable, Comparable<Conference> {
 	String acronym;
 	@SerializedName("aspect_ratio")
 	String aspectRation;
@@ -85,20 +85,20 @@ public class Conference extends SugarRecord implements Parcelable,Comparable<Con
 		}
 	};
 
-	public HashMap<String, List<Event>> getEventsByTags(){
+	public HashMap<String, List<Event>> getEventsByTags() {
 		HashMap<String, List<Event>> result = new HashMap<>();
 		List<Event> untagged = new ArrayList<>();
-		for(Event event: this.getEvents()){
-			if(event.getTags().size()>0){
-				for(String tag: event.getTags()){
-					if(tag != null){
+		for (Event event : this.getEvents()) {
+			if (event.getTags().size() > 0) {
+				for (String tag : event.getTags()) {
+					if (tag != null) {
 
 						List<Event> list;
-						if(result.keySet().contains(tag)){
+						if (result.keySet().contains(tag)) {
 							list = result.get(tag);
 						} else {
 							list = new LinkedList<>();
-							result.put(tag,list);
+							result.put(tag, list);
 						}
 						list.add(event);
 					} else {
@@ -109,14 +109,15 @@ public class Conference extends SugarRecord implements Parcelable,Comparable<Con
 				untagged.add(event);
 			}
 		}
-		if(untagged.size() > 0){
-			result.put("untagged",untagged);
+		if (untagged.size() > 0) {
+			result.put("untagged", untagged);
 		}
 		return result;
 	}
-	public int getApiID(){
+
+	public int getApiID() {
 		String[] strings = getUrl().split("/");
-		return Integer.parseInt(strings[strings.length-1]);
+		return Integer.parseInt(strings[strings.length - 1]);
 	}
 
 	public String getAcronym() {
@@ -217,7 +218,7 @@ public class Conference extends SugarRecord implements Parcelable,Comparable<Con
 	}
 
 	public void update(Conference conf) {
-		if(!this.updatedAt.equals(conf.updatedAt)){
+		if (!this.updatedAt.equals(conf.updatedAt)) {
 			// TODO actually update
 			this.save();
 		}

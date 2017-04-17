@@ -66,8 +66,8 @@ public class PlaybackHelper extends PlaybackControlGlue {
 	private MediaController.TransportControls mTransportControls;
 	private ArrayObjectAdapter adapter;
 
-	public PlaybackHelper(Context context, OverlayFragment fragment, Event event, Recording recording){
-		super(context,SEEK_SPEEDS);
+	public PlaybackHelper(Context context, OverlayFragment fragment, Event event, Recording recording) {
+		super(context, SEEK_SPEEDS);
 		mControlListener = (OverlayFragment.PlaybackControlListener) context;
 		this.fragment = fragment;
 		this.event = event;
@@ -88,7 +88,7 @@ public class PlaybackHelper extends PlaybackControlGlue {
 		setup();
 	}
 
-	public PlaybackHelper(Context context, OverlayFragment fragment, Room room, StreamUrl stream ){
+	public PlaybackHelper(Context context, OverlayFragment fragment, Room room, StreamUrl stream) {
 		super(context, SEEK_SPEEDS);
 		mControlListener = (OverlayFragment.PlaybackControlListener) context;
 		this.fragment = fragment;
@@ -100,10 +100,10 @@ public class PlaybackHelper extends PlaybackControlGlue {
 
 	private void setup() {
 		mMediaController = fragment.getActivity().getMediaController();
-		if(mMediaController != null){
+		if (mMediaController != null) {
 			mTransportControls = mMediaController.getTransportControls();
 		} else {
-			Log.d(TAG,"Could not get MediaController");
+			Log.d(TAG, "Could not get MediaController");
 		}
 	}
 
@@ -130,7 +130,7 @@ public class PlaybackHelper extends PlaybackControlGlue {
 
 	@TargetApi(Build.VERSION_CODES.N)
 	public void dispatchAction(Action action) {
-		if(action instanceof PlaybackControlsRow.MultiAction){
+		if (action instanceof PlaybackControlsRow.MultiAction) {
 			PlaybackControlsRow.MultiAction multiAction = (PlaybackControlsRow.MultiAction) action;
 			multiAction.nextIndex();
 			notifyActionChanged(multiAction);
@@ -160,14 +160,14 @@ public class PlaybackHelper extends PlaybackControlGlue {
 	@Override
 	public void enableProgressUpdating(boolean enable) {
 		mHandler.removeCallbacks(mUpdateProgressRunnable);
-		if(enable){
+		if (enable) {
 			mHandler.post(mUpdateProgressRunnable);
 		}
 	}
 
 	@Override
 	public void updateProgress() {
-		if(mUpdateProgressRunnable == null){
+		if (mUpdateProgressRunnable == null) {
 			mUpdateProgressRunnable = new Runnable() {
 				@Override
 				public void run() {
@@ -191,7 +191,7 @@ public class PlaybackHelper extends PlaybackControlGlue {
 
 	@Override
 	public boolean hasValidMedia() {
-		return mediaIsRecording()||mediaIsStream();
+		return mediaIsRecording() || mediaIsStream();
 	}
 
 	@Override
@@ -201,10 +201,10 @@ public class PlaybackHelper extends PlaybackControlGlue {
 
 	@Override
 	public CharSequence getMediaTitle() {
-		if(mediaIsRecording()){
+		if (mediaIsRecording()) {
 			return event.getTitle();
 		}
-		if(mediaIsStream()){
+		if (mediaIsStream()) {
 			return room.getDisplay();
 		}
 		return null;
@@ -212,10 +212,10 @@ public class PlaybackHelper extends PlaybackControlGlue {
 
 	@Override
 	public CharSequence getMediaSubtitle() {
-		if(mediaIsRecording()){
+		if (mediaIsRecording()) {
 			return event.getSubtitle();
 		}
-		if(mediaIsStream()){
+		if (mediaIsStream()) {
 			return stream.getDisplay();
 		}
 		return null;
@@ -223,7 +223,7 @@ public class PlaybackHelper extends PlaybackControlGlue {
 
 	@Override
 	public int getMediaDuration() {
-		if(mediaIsRecording()){
+		if (mediaIsRecording()) {
 			return event.getLength() * 1000;
 		}
 		return 0;
@@ -236,10 +236,10 @@ public class PlaybackHelper extends PlaybackControlGlue {
 
 	@Override
 	protected void startPlayback(int speed) {
-		if(getCurrentSpeedId() == speed){
+		if (getCurrentSpeedId() == speed) {
 			return;
 		}
-		if(mTransportControls != null){
+		if (mTransportControls != null) {
 			mTransportControls.play();
 		} else {
 			mControlListener.play();
@@ -248,7 +248,7 @@ public class PlaybackHelper extends PlaybackControlGlue {
 
 	@Override
 	protected void pausePlayback() {
-		if(mTransportControls != null){
+		if (mTransportControls != null) {
 			mTransportControls.pause();
 		} else {
 			mControlListener.pause();
@@ -285,14 +285,14 @@ public class PlaybackHelper extends PlaybackControlGlue {
 
 	@Override
 	public int getCurrentPosition() {
-		if(mControlListener != null){
+		if (mControlListener != null) {
 			return (int) mControlListener.getCurrentPosition();
 		}
 		return 0;
 	}
 
-	public long getCurrentPositionLong(){
-		if(mControlListener != null){
+	public long getCurrentPositionLong() {
+		if (mControlListener != null) {
 			return mControlListener.getCurrentPosition();
 		}
 		return 0;
@@ -301,7 +301,8 @@ public class PlaybackHelper extends PlaybackControlGlue {
 	private boolean mediaIsStream() {
 		return (room != null && stream != null);
 	}
-	private boolean mediaIsRecording(){
+
+	private boolean mediaIsRecording() {
 		return (event != null && recording != null);
 	}
 
@@ -313,7 +314,7 @@ public class PlaybackHelper extends PlaybackControlGlue {
 		return (SparseArrayObjectAdapter) getControlsRow().getPrimaryActionsAdapter();
 	}
 
-	private ArrayObjectAdapter getSecondaryActionsAdapter(){
+	private ArrayObjectAdapter getSecondaryActionsAdapter() {
 		return (ArrayObjectAdapter) getControlsRow().getSecondaryActionsAdapter();
 	}
 
@@ -321,7 +322,7 @@ public class PlaybackHelper extends PlaybackControlGlue {
 
 		@Override
 		public void onPlaybackStateChanged(@NonNull PlaybackState state) {
-			if(state.getState() != PlaybackState.STATE_NONE){
+			if (state.getState() != PlaybackState.STATE_NONE) {
 				updateProgress();
 			}
 			onStateChanged();
@@ -330,12 +331,12 @@ public class PlaybackHelper extends PlaybackControlGlue {
 		@Override
 		public void onMetadataChanged(@Nullable MediaMetadata metadata) {
 			PlaybackHelper.this.onMetadataChanged();
-			PlaybackHelper.this.adapter.notifyArrayItemRangeChanged(0,1);
+			PlaybackHelper.this.adapter.notifyArrayItemRangeChanged(0, 1);
 		}
 	}
 
-	public void onStop(){
-		if(thumbDisposable != null){
+	public void onStop() {
+		if (thumbDisposable != null) {
 			thumbDisposable.dispose();
 		}
 	}
