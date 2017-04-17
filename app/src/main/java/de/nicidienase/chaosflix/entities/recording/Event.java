@@ -138,8 +138,8 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof Event){
-			return getGuid().equals(((Event)obj).getGuid());
+		if (obj instanceof Event) {
+			return getGuid().equals(((Event) obj).getGuid());
 		} else {
 			return super.equals(obj);
 		}
@@ -147,21 +147,21 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 	}
 
 	public void update(Event e) {
-		if(!this.updatedAt.equals(e.getUpdatedAt())){
+		if (!this.updatedAt.equals(e.getUpdatedAt())) {
 			// TODO actually update
 			this.save();
 		}
 	}
 
-	public int getApiID(){
+	public int getApiID() {
 		String[] strings = getUrl().split("/");
-		return Integer.parseInt(strings[strings.length-1]);
+		return Integer.parseInt(strings[strings.length - 1]);
 	}
 
 	public long getConferenceId() {
-		if(conferenceId == 0){
+		if (conferenceId == 0) {
 			String[] split = conferenceUrl.split("/");
-			conferenceId = Integer.parseInt(split[split.length-1]);
+			conferenceId = Integer.parseInt(split[split.length - 1]);
 		}
 		return conferenceId;
 	}

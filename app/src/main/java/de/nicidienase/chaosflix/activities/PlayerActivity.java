@@ -65,8 +65,8 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 		mPlaybackControllFragment = (OverlayFragment) getFragmentManager().findFragmentById(R.id.playback_controls_fragment);
 
 		mUserAgent = Util.getUserAgent(this, getResources().getString(R.string.app_name));
-		synchronized (this){
-			if(player == null){
+		synchronized (this) {
+			if (player == null) {
 				setupPlayer();
 			}
 		}
@@ -85,7 +85,7 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 		// TODO persist playback progress
 	}
 
-	private void setupPlayer(){
+	private void setupPlayer() {
 		mUserAgent = Util.getUserAgent(this, getResources().getString(R.string.app_name));
 
 		mainHandler = new Handler();
@@ -101,9 +101,9 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 
 	@Override
 	public void setVideoSource(String source) {
-		Log.d(TAG,"Source: " + source);
-		synchronized (this){
-			if(player == null){
+		Log.d(TAG, "Source: " + source);
+		synchronized (this) {
+			if (player == null) {
 				setupPlayer();
 			}
 		}
@@ -134,7 +134,7 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 
 	@Override
 	public boolean isMediaPlaying() {
-		if(player != null){
+		if (player != null) {
 			return player.getPlayWhenReady();
 		} else {
 			return false;
@@ -143,7 +143,7 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 
 	@Override
 	public long getCurrentPosition() {
-		if(player != null){
+		if (player != null) {
 			return player.getCurrentPosition();
 		} else {
 			return 0;
@@ -152,14 +152,14 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 
 	@Override
 	public void releasePlayer() {
-		if(player != null){
+		if (player != null) {
 			player.release();
 		}
 	}
 
 	@Override
 	public long getBufferedPosition() {
-		if(player != null){
+		if (player != null) {
 			return player.getBufferedPosition();
 		}
 		return 0;
@@ -167,14 +167,14 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 
 	@Override
 	public void mute(boolean state) {
-		if(player != null){
+		if (player != null) {
 			player.setVolume(state ? 0.0f : 1.0f);
 		}
 	}
 
 	@Override
-	public long getLength(){
-		if(player != null){
+	public long getLength() {
+		if (player != null) {
 			return player.getDuration();
 		}
 		return 0;
@@ -186,13 +186,13 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 	}
 
 	@Override
-	public void skipForward(int sec){
-		player.seekTo(player.getCurrentPosition()+(sec*1000));
+	public void skipForward(int sec) {
+		player.seekTo(player.getCurrentPosition() + (sec * 1000));
 	}
 
 	@Override
-	public void skipBackward(int sec){
-		player.seekTo(player.getCurrentPosition()-(sec*1000));
+	public void skipBackward(int sec) {
+		player.seekTo(player.getCurrentPosition() - (sec * 1000));
 	}
 
 	private MediaSource buildMediaSource(Uri uri, String overrideExtension) {
@@ -216,6 +216,7 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 			}
 		}
 	}
+
 	private DataSource.Factory buildDataSourceFactory(boolean useBandwidthMeter) {
 		return buildDataSourceFactory(useBandwidthMeter ? BANDWIDTH_METER : null);
 	}

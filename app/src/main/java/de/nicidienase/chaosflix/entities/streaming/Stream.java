@@ -9,13 +9,13 @@ import java.util.Map;
  * Created by felix on 23.03.17.
  */
 
-public class Stream implements Parcelable{
+public class Stream implements Parcelable {
 	String slug;
 	String display;
 	String type;
 	boolean isTranslated;
 	int[] videoSize;
-	Map<String,StreamUrl> urls;
+	Map<String, StreamUrl> urls;
 
 	protected Stream(Parcel in) {
 		slug = in.readString();

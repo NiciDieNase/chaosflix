@@ -73,46 +73,48 @@ public class MediaApiService extends Service {
 	@Nullable
 	@Override
 	public IBinder onBind(Intent intent) {
-		if(null == mRecordingApiService || null == mStreamingApiService){
+		if (null == mRecordingApiService || null == mStreamingApiService) {
 			Bundle extras = intent.getExtras();
 			String recordingUrl = getResources().getString(R.string.api_media_ccc_url);
 			String streamingUrl = getResources().getString(R.string.streaming_media_ccc_url);
-			if(extras != null){
+			if (extras != null) {
 				recordingUrl = extras.getString(RECORDING_URL);
 				streamingUrl = extras.getString(STREAMING_URL);
 			}
-			Log.d(TAG,"starting with urls: " + recordingUrl + " " + streamingUrl);
+			Log.d(TAG, "starting with urls: " + recordingUrl + " " + streamingUrl);
 			setupApiServices(streamingUrl, recordingUrl);
 		}
 		return mBinder;
 	}
 
-	public Observable<ConferencesWrapper> getConferences(){
+	public Observable<ConferencesWrapper> getConferences() {
 		return mRecordingApiService.getConferences()
 				.subscribeOn(Schedulers.io());
-	};
+	}
 
-	public Observable<Conference> getConference(long id){
+	;
+
+	public Observable<Conference> getConference(long id) {
 		return mRecordingApiService.getConference(id)
 				.subscribeOn(Schedulers.io());
 	}
 
-	public Observable<List<Event>> getEvents(){
+	public Observable<List<Event>> getEvents() {
 		return mRecordingApiService.getAllEvents()
 				.subscribeOn(Schedulers.io());
 	}
 
-	public Observable<Event> getEvent(long id){
+	public Observable<Event> getEvent(long id) {
 		return mRecordingApiService.getEvent(id)
 				.subscribeOn(Schedulers.io());
 	}
 
-	public Observable<Recording> getRecording(long id){
+	public Observable<Recording> getRecording(long id) {
 		return mRecordingApiService.getRecording(id)
 				.subscribeOn(Schedulers.io());
 	}
 
-	public Observable<List<LiveConference>> getStreamingConferences(){
+	public Observable<List<LiveConference>> getStreamingConferences() {
 		return mStreamingApiService.getStreamingConferences()
 				.subscribeOn(Schedulers.io());
 	}

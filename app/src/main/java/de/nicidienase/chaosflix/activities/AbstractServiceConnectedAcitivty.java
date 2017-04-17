@@ -31,7 +31,7 @@ public class AbstractServiceConnectedAcitivty extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		if(mConnected){
+		if (mConnected) {
 			unbindService(conn);
 			conn = null;
 		}
@@ -41,12 +41,12 @@ public class AbstractServiceConnectedAcitivty extends Activity {
 
 	public Single<MediaApiService> getmApiServiceObservable() {
 		Intent s = new Intent(this, MediaApiService.class);
-		if(serverUrl != null){
-			s.putExtra(MediaApiService.RECORDING_URL,serverUrl);
-			s.putExtra(MediaApiService.STREAMING_URL,serverUrl);
+		if (serverUrl != null) {
+			s.putExtra(MediaApiService.RECORDING_URL, serverUrl);
+			s.putExtra(MediaApiService.STREAMING_URL, serverUrl);
 		}
 		return Single.create(e -> {
-			if(mMediaApiService != null){
+			if (mMediaApiService != null) {
 				e.onSuccess(mMediaApiService);
 			} else {
 				conn = new ServiceConnection() {

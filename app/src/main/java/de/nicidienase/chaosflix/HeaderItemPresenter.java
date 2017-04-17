@@ -35,7 +35,7 @@ public class HeaderItemPresenter extends RowHeaderPresenter {
 		ImageView headerIcon = (ImageView) view.findViewById(R.id.header_icon);
 		TextView headerLabel = (TextView) view.findViewById(R.id.header_label);
 
-		if(headerItem.getName().startsWith(ConferencesBrowseFragment.STREAM_PREFIX)){
+		if (headerItem.getName().startsWith(ConferencesBrowseFragment.STREAM_PREFIX)) {
 			Drawable camIcon = view.getContext().getResources().getDrawable(R.drawable.ic_videocam_white_24dp);
 			headerIcon.setImageDrawable(camIcon);
 			((ListRow) item).setHeaderItem(new HeaderItem(headerItem.getName()

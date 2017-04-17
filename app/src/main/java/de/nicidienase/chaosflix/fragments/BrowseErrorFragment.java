@@ -19,16 +19,16 @@ import de.nicidienase.chaosflix.R;
  * Created by felix on 22.03.17.
  */
 
-public class BrowseErrorFragment extends ErrorFragment{
+public class BrowseErrorFragment extends ErrorFragment {
 
 	private static final boolean TRANSLUCENT = true;
 	public static final String FRAGMENT = "fragmentId";
 	private SpinnerFragment mSpinnerFragment;
 
-	public static BrowseErrorFragment showErrorFragment(FragmentManager manager,int fragmentId){
+	public static BrowseErrorFragment showErrorFragment(FragmentManager manager, int fragmentId) {
 		BrowseErrorFragment errorFragment = new BrowseErrorFragment();
 		Bundle args = new Bundle();
-		args.putInt(BrowseErrorFragment.FRAGMENT,fragmentId);
+		args.putInt(BrowseErrorFragment.FRAGMENT, fragmentId);
 		errorFragment.setArguments(args);
 		manager.beginTransaction().replace(fragmentId, errorFragment)
 				.addToBackStack(null).commit();
@@ -49,7 +49,7 @@ public class BrowseErrorFragment extends ErrorFragment{
 		getFragmentManager().beginTransaction().remove(mSpinnerFragment).commit();
 	}
 
-	public void setErrorContent(int resourceId){
+	public void setErrorContent(int resourceId) {
 		setErrorContent(getResources().getString(resourceId));
 	}
 
@@ -69,7 +69,7 @@ public class BrowseErrorFragment extends ErrorFragment{
 
 	public void dismiss() {
 		FragmentManager fragmentManager = getFragmentManager();
-		if(fragmentManager != null){
+		if (fragmentManager != null) {
 			fragmentManager.beginTransaction().remove(BrowseErrorFragment.this).commit();
 			fragmentManager.popBackStack();
 		}
