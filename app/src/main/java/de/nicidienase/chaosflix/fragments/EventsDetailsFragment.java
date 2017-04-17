@@ -169,6 +169,12 @@ public class EventsDetailsFragment extends DetailsFragment {
 	}
 
 	@Override
+	public void onStart() {
+		super.onStart();
+		startEntranceTransition();
+	}
+
+	@Override
 	public void onStop() {
 		mBackgroundmanager.release();
 		super.onStop();
