@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.fragments;
 import android.os.Bundle;
 import android.support.v17.leanback.app.BrowseFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
+import android.support.v17.leanback.widget.DividerRow;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
@@ -35,7 +36,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 
 	private static final String TAG = ConferencesBrowseFragment.class.getSimpleName();
 	public static final int FRAGMENT = R.id.browse_fragment;
-	public static final String STREAM_PREFIX = "[live]";
+	public static final String STREAM_PREFIX = "[streaming]";
 	private ArrayObjectAdapter mRowsAdapter;
 	private Map<String, List<Conference>> mConferences;
 	CompositeDisposable mDisposables = new CompositeDisposable();
@@ -63,7 +64,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 							.subscribe(liveConferences -> {
 								if (liveConferences.size() > 0) {
 									for (LiveConference con : liveConferences) {
-										HeaderItem streamingHeader = new HeaderItem(con.getConference());
+										HeaderItem streamingHeader = new HeaderItem(con.getConference() + " " + STREAM_PREFIX);
 										streamingHeader.setContentDescription(con.getDescription());
 										mRowsAdapter.add(0,new SectionRow(streamingHeader));
 										int i = -1;
@@ -73,12 +74,13 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 													= new ArrayObjectAdapter(cardPresenter);
 												listRowAdapter.addAll(listRowAdapter.size(), g.getRooms());
 											HeaderItem header = new HeaderItem(g.getGroup());
-	//										HeaderItem header = new HeaderItem(STREAM_PREFIX + con.getConference());
 											header.setDescription(con.getConference() +" - "+ con.getDescription());
+											//HeaderItem header = new HeaderItem(STREAM_PREFIX + con.getConference());
 											header.setContentDescription(g.getGroup());
 											mRowsAdapter.add(i+1,new ListRow(header, listRowAdapter));
 										}
-										mRowsAdapter.add(i+1,new SectionRow("Recordings"));
+										mRowsAdapter.add(i+1,new DividerRow());
+										mRowsAdapter.add(i+2,new SectionRow("Recordings"));
 
 									}
 								}
