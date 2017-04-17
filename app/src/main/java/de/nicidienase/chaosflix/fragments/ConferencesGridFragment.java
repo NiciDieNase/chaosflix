@@ -24,23 +24,23 @@ public class ConferencesGridFragment extends VerticalGridFragment {
 	private static final int NUM_COLUMNS = 5;
 	private static final String TAG = ConferencesGridFragment.class.getSimpleName();
 	private final ArrayObjectAdapter mConferenceAdapter =
-            new ArrayObjectAdapter(new CardPresenter());
+			new ArrayObjectAdapter(new CardPresenter());
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable()
-			.subscribe(mediaApiService -> {
-				mediaApiService.getConferences()
-					.observeOn(AndroidSchedulers.mainThread())
-					.subscribe(conferences -> {
-						List<Conference> conferenceList = conferences.getConferences();
-						Collections.sort(conferenceList);
-						Collections.reverse(conferenceList);
-						mConferenceAdapter.addAll(0, conferenceList);
-						setAdapter(mConferenceAdapter);
-					});
-			});
+		((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
+				.subscribe(mediaApiService -> {
+					mediaApiService.getConferences()
+							.observeOn(AndroidSchedulers.mainThread())
+							.subscribe(conferences -> {
+								List<Conference> conferenceList = conferences.getConferences();
+								Collections.sort(conferenceList);
+								Collections.reverse(conferenceList);
+								mConferenceAdapter.addAll(0, conferenceList);
+								setAdapter(mConferenceAdapter);
+							});
+				});
 		setTitle("Chaosflix");
 
 		VerticalGridPresenter gridPresenter = new VerticalGridPresenter();

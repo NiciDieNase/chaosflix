@@ -32,9 +32,10 @@ public class StreamUrl implements Parcelable {
 		}
 	};
 
-	public StreamUrl(){}
+	public StreamUrl() {
+	}
 
-	public StreamUrl(String display, String tech, String url){
+	public StreamUrl(String display, String tech, String url) {
 		this.display = display;
 		this.tech = tech;
 		this.url = url;

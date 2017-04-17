@@ -80,92 +80,92 @@ public class EventsDetailsFragment extends DetailsFragment {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Log.d(TAG,"onCreate");
+		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 
 		prepareBackgroundManager();
 		final BrowseErrorFragment browseErrorFragment =
-				BrowseErrorFragment.showErrorFragment(getFragmentManager(),FRAGMENT);
+				BrowseErrorFragment.showErrorFragment(getFragmentManager(), FRAGMENT);
 		eventType = getActivity().getIntent().getIntExtra(DetailsActivity.TYPE, -1);
 
-		if(eventType == DetailsActivity.TYPE_RECORDING){
+		if (eventType == DetailsActivity.TYPE_RECORDING) {
 			mSelectedEvent = getActivity().getIntent()
 					.getParcelableExtra(DetailsActivity.EVENT);
-		} else if(eventType == DetailsActivity.TYPE_STREAM){
+		} else if (eventType == DetailsActivity.TYPE_STREAM) {
 			mRoom = getActivity().getIntent()
 					.getParcelableExtra(DetailsActivity.ROOM);
 		}
 
 		final ArrayObjectAdapter adapter = setupDetailsOverviewRowPresenter();
 
-			((AbstractServiceConnectedAcitivty)getActivity()).getmApiServiceObservable()
-					.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
-					.subscribe(mediaApiService -> {
-						mMediaApiService = mediaApiService;
-						if(eventType == DetailsActivity.TYPE_RECORDING){
-							final DetailsOverviewRow detailsOverviewRow = setupDetailsOverviewRow(mSelectedEvent);
-							mediaApiService.getEvent(mSelectedEvent.getApiID())
-									.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
-									.subscribe(event -> {
-										mSelectedEvent = event;
-										final ArrayObjectAdapter recordingActionsAdapter =
-												getRecordingActionsAdapter(mSelectedEvent.getRecordings());
-										detailsOverviewRow.setActionsAdapter(recordingActionsAdapter);
-										adapter.add(detailsOverviewRow);
-										mediaApiService.getConference(
-												mSelectedEvent.getConferenceId())
-												.observeOn(AndroidSchedulers.mainThread())
-												.subscribe(conference -> {
-													String tag = null;
-													if(mSelectedEvent.getTags().size()>0) {
-														tag = mSelectedEvent.getTags().get(0);
-														List<Event> relatedEvents = conference.getEventsByTags().get(tag);
-														relatedEvents.remove(mSelectedEvent);
-														Collections.shuffle(relatedEvents);
-														if (relatedEvents.size() > 5) {
-															relatedEvents = relatedEvents.subList(0, NUM_RELATED_TALKS );
-														}
-														ArrayObjectAdapter relatedEventsAdapter
-																= new ArrayObjectAdapter(new CardPresenter());
-														relatedEventsAdapter.addAll(0,relatedEvents);
-														HeaderItem header = new HeaderItem(getString(R.string.random_talks_on_this_track));
-														adapter.add(new ListRow(header,relatedEventsAdapter));
-													}
-
-													List<Event> selectedEvents = getRandomEvents(conference, tag);
-													if(selectedEvents.size()>0){
-														ArrayObjectAdapter randomEventAdapter
-																= new ArrayObjectAdapter(new CardPresenter());
-														randomEventAdapter.addAll(0,selectedEvents);
-														HeaderItem header = new HeaderItem(getString(R.string.random_talks));
-														adapter.add(new ListRow(header,randomEventAdapter));
-													}
-
-													setAdapter(adapter);
-													setOnItemViewClickedListener(
-															new ItemViewClickedListener(EventsDetailsFragment.this));
-													browseErrorFragment.dismiss();
-												});
-									});
-						} else if(eventType == DetailsActivity.TYPE_STREAM){
-							mediaApiService.getStreamingConferences()
-									.observeOn(AndroidSchedulers.mainThread())
-									.subscribe(liveConferences -> {
-								mRoom = getRoom(mRoom, liveConferences);
-								if(mRoom != null){
-									final DetailsOverviewRow detailsOverviewRow = setupDetailsOverviewRow(mRoom);
-									ArrayObjectAdapter actionsAdapter = getStreamActionsAdapter(mRoom.getStreams());
-									detailsOverviewRow.setActionsAdapter(actionsAdapter);
+		((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
+				.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
+				.subscribe(mediaApiService -> {
+					mMediaApiService = mediaApiService;
+					if (eventType == DetailsActivity.TYPE_RECORDING) {
+						final DetailsOverviewRow detailsOverviewRow = setupDetailsOverviewRow(mSelectedEvent);
+						mediaApiService.getEvent(mSelectedEvent.getApiID())
+								.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
+								.subscribe(event -> {
+									mSelectedEvent = event;
+									final ArrayObjectAdapter recordingActionsAdapter =
+											getRecordingActionsAdapter(mSelectedEvent.getRecordings());
+									detailsOverviewRow.setActionsAdapter(recordingActionsAdapter);
 									adapter.add(detailsOverviewRow);
-									setAdapter(adapter);
-									setOnItemViewClickedListener(
-											new ItemViewClickedListener(EventsDetailsFragment.this));
-									browseErrorFragment.dismiss();
-								}
-								// TODO add other streams
-							});
-						}
-		});
+									mediaApiService.getConference(
+											mSelectedEvent.getConferenceId())
+											.observeOn(AndroidSchedulers.mainThread())
+											.subscribe(conference -> {
+												String tag = null;
+												if (mSelectedEvent.getTags().size() > 0) {
+													tag = mSelectedEvent.getTags().get(0);
+													List<Event> relatedEvents = conference.getEventsByTags().get(tag);
+													relatedEvents.remove(mSelectedEvent);
+													Collections.shuffle(relatedEvents);
+													if (relatedEvents.size() > 5) {
+														relatedEvents = relatedEvents.subList(0, NUM_RELATED_TALKS);
+													}
+													ArrayObjectAdapter relatedEventsAdapter
+															= new ArrayObjectAdapter(new CardPresenter());
+													relatedEventsAdapter.addAll(0, relatedEvents);
+													HeaderItem header = new HeaderItem(getString(R.string.random_talks_on_this_track));
+													adapter.add(new ListRow(header, relatedEventsAdapter));
+												}
+
+												List<Event> selectedEvents = getRandomEvents(conference, tag);
+												if (selectedEvents.size() > 0) {
+													ArrayObjectAdapter randomEventAdapter
+															= new ArrayObjectAdapter(new CardPresenter());
+													randomEventAdapter.addAll(0, selectedEvents);
+													HeaderItem header = new HeaderItem(getString(R.string.random_talks));
+													adapter.add(new ListRow(header, randomEventAdapter));
+												}
+
+												setAdapter(adapter);
+												setOnItemViewClickedListener(
+														new ItemViewClickedListener(EventsDetailsFragment.this));
+												browseErrorFragment.dismiss();
+											});
+								});
+					} else if (eventType == DetailsActivity.TYPE_STREAM) {
+						mediaApiService.getStreamingConferences()
+								.observeOn(AndroidSchedulers.mainThread())
+								.subscribe(liveConferences -> {
+									mRoom = getRoom(mRoom, liveConferences);
+									if (mRoom != null) {
+										final DetailsOverviewRow detailsOverviewRow = setupDetailsOverviewRow(mRoom);
+										ArrayObjectAdapter actionsAdapter = getStreamActionsAdapter(mRoom.getStreams());
+										detailsOverviewRow.setActionsAdapter(actionsAdapter);
+										adapter.add(detailsOverviewRow);
+										setAdapter(adapter);
+										setOnItemViewClickedListener(
+												new ItemViewClickedListener(EventsDetailsFragment.this));
+										browseErrorFragment.dismiss();
+									}
+									// TODO add other streams
+								});
+					}
+				});
 	}
 
 	@Override
@@ -181,7 +181,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 		getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
 	}
 
-	private void updateBackground(String uri){
+	private void updateBackground(String uri) {
 		Glide.with(this)
 				.load(uri)
 				.asBitmap()
@@ -195,10 +195,10 @@ public class EventsDetailsFragment extends DetailsFragment {
 	}
 
 	private Room getRoom(Room room, List<LiveConference> liveConferences) {
-		for(LiveConference con : liveConferences){
-			for(Group g : con.getGroups()){
-				for(Room r : g.getRooms()){
-					if(r.getSlug().equals(room.getSlug())){
+		for (LiveConference con : liveConferences) {
+			for (Group g : con.getGroups()) {
+				for (Room r : g.getRooms()) {
+					if (r.getSlug().equals(room.getSlug())) {
 						return r;
 					}
 				}
@@ -212,18 +212,18 @@ public class EventsDetailsFragment extends DetailsFragment {
 		List<Event> randomEvents = conference.getEvents();
 		Collections.shuffle(randomEvents);
 		List<Event> selectedEvents;
-		if(tag != null){
+		if (tag != null) {
 			selectedEvents = new ArrayList<Event>();
-			for(Event e : randomEvents){
-				if(!e.getTags().contains(tag)){
+			for (Event e : randomEvents) {
+				if (!e.getTags().contains(tag)) {
 					selectedEvents.add(e);
 				}
-				if(selectedEvents.size()==5){
+				if (selectedEvents.size() == 5) {
 					break;
 				}
 			}
 		} else {
-			selectedEvents = randomEvents.subList(0, NUM_RANDOM_TALKS );
+			selectedEvents = randomEvents.subList(0, NUM_RANDOM_TALKS);
 		}
 		return selectedEvents;
 	}
@@ -245,28 +245,28 @@ public class EventsDetailsFragment extends DetailsFragment {
 
 		mDetailsPresenter.setOnActionClickedListener(action -> {
 			Intent i = new Intent(getActivity(), PlayerActivity.class);
-			i.putExtra(DetailsActivity.TYPE,eventType);
-			if(eventType == DetailsActivity.TYPE_RECORDING){
-				i.putExtra(DetailsActivity.EVENT,mSelectedEvent);
-				if(action.getId() == DUMMY_ID){
+			i.putExtra(DetailsActivity.TYPE, eventType);
+			if (eventType == DetailsActivity.TYPE_RECORDING) {
+				i.putExtra(DetailsActivity.EVENT, mSelectedEvent);
+				if (action.getId() == DUMMY_ID) {
 					Recording dummy = new Recording();
 					dummy.setRecordingUrl("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8");
 					dummy.setMimeType("video/hls");
 					dummy.setLanguage("eng");
 					dummy.setHighQuality(true);
-					i.putExtra(DetailsActivity.RECORDING,dummy);
+					i.putExtra(DetailsActivity.RECORDING, dummy);
 				} else {
-					for(Recording r : mSelectedEvent.getRecordings()){
-						if(r.getApiID() == action.getId()){
-							i.putExtra(DetailsActivity.RECORDING,r);
+					for (Recording r : mSelectedEvent.getRecordings()) {
+						if (r.getApiID() == action.getId()) {
+							i.putExtra(DetailsActivity.RECORDING, r);
 							break;
 						}
 					}
 				}
-			} else if(eventType == DetailsActivity.TYPE_STREAM){
-				i.putExtra(DetailsActivity.ROOM,mRoom);
+			} else if (eventType == DetailsActivity.TYPE_STREAM) {
+				i.putExtra(DetailsActivity.ROOM, mRoom);
 				StreamUrl streamUrl = getStreamUrlForActionId((int) action.getId());
-				if(streamUrl != null){
+				if (streamUrl != null) {
 					i.putExtra(DetailsActivity.STREAM_URL, streamUrl);
 				} else {
 					// TODO handle missing Stream
@@ -276,7 +276,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 		});
 
 		ClassPresenterSelector mPresenterSelector = new ClassPresenterSelector();
-		mPresenterSelector.addClassPresenter(DetailsOverviewRow.class,mDetailsPresenter);
+		mPresenterSelector.addClassPresenter(DetailsOverviewRow.class, mDetailsPresenter);
 		mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
 		return new ArrayObjectAdapter(mPresenterSelector);
 	}
@@ -284,7 +284,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 	private DetailsOverviewRow setupDetailsOverviewRow(Object event) {
 		final DetailsOverviewRow row = new DetailsOverviewRow(event);
 		String thumbUrl;
-		if(event instanceof Event){
+		if (event instanceof Event) {
 			thumbUrl = ((Event) event).getThumbUrl();
 		} else {
 			thumbUrl = ((Room) event).getThumb();
@@ -292,11 +292,11 @@ public class EventsDetailsFragment extends DetailsFragment {
 		Glide.with(getActivity())
 				.load(thumbUrl)
 				.asBitmap()
-				.into(new SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH,DETAIL_THUMB_HEIGHT) {
+				.into(new SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH, DETAIL_THUMB_HEIGHT) {
 					@Override
 					public void onResourceReady(Bitmap resource,
 												GlideAnimation<? super Bitmap> glideAnimation) {
-						row.setImageBitmap(getActivity(),resource);
+						row.setImageBitmap(getActivity(), resource);
 					}
 
 					@Override
@@ -310,10 +310,10 @@ public class EventsDetailsFragment extends DetailsFragment {
 
 	private ArrayObjectAdapter getRecordingActionsAdapter(List<Recording> recordings) {
 		ArrayObjectAdapter actionsAdapter = new ArrayObjectAdapter();
-		if(recordings != null){
-			for(int i = 0; i < recordings.size(); i++){
+		if (recordings != null) {
+			for (int i = 0; i < recordings.size(); i++) {
 				Recording recording = recordings.get(i);
-				if(recording.getMimeType().startsWith("video/") || true){
+				if (recording.getMimeType().startsWith("video/") || true) {
 					String quality = recording.isHighQuality() ? "HD" : "SD";
 					String title = quality + " (" + recording.getLanguage() + ")";
 					actionsAdapter.add(new Action(recording.getApiID(), title, recording.getMimeType().substring(6)));
@@ -325,23 +325,23 @@ public class EventsDetailsFragment extends DetailsFragment {
 		return actionsAdapter;
 	}
 
-	private ArrayObjectAdapter getStreamActionsAdapter(List<Stream> streams){
+	private ArrayObjectAdapter getStreamActionsAdapter(List<Stream> streams) {
 		ArrayObjectAdapter actionsAdapter = new ArrayObjectAdapter();
 		streamUrlList = new ArrayList<StreamUrl>();
-		for(Stream s: streams){
-			if(s.getType().equals("video") || true)
-			for(String key :s.getUrls().keySet()){
-				StreamUrl url = s.getUrls().get(key);
-				int index = streamUrlList.size();
-				streamUrlList.add(url);
-				actionsAdapter.add(new Action(index,s.getDisplay(), url.getDisplay()));
-			}
+		for (Stream s : streams) {
+			if (s.getType().equals("video") || true)
+				for (String key : s.getUrls().keySet()) {
+					StreamUrl url = s.getUrls().get(key);
+					int index = streamUrlList.size();
+					streamUrlList.add(url);
+					actionsAdapter.add(new Action(index, s.getDisplay(), url.getDisplay()));
+				}
 		}
 		return actionsAdapter;
 	}
 
-	private StreamUrl getStreamUrlForActionId(int actionId){
-		if(streamUrlList != null && streamUrlList.size() > actionId){
+	private StreamUrl getStreamUrlForActionId(int actionId) {
+		if (streamUrlList != null && streamUrlList.size() > actionId) {
 			return streamUrlList.get(actionId);
 		} else {
 			return null;

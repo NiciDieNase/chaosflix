@@ -72,13 +72,13 @@ public class CardPresenter extends Presenter {
 	@Override
 	public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
 		ImageCardView cardView = (ImageCardView) viewHolder.view;
-			cardView.setMainImageScaleType(ImageView.ScaleType.FIT_CENTER);
-		if(item instanceof Conference){
+		cardView.setMainImageScaleType(ImageView.ScaleType.FIT_CENTER);
+		if (item instanceof Conference) {
 			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_4);
 			Conference conference = (Conference) item;
 			cardView.setTitleText(conference.getTitle());
 			cardView.setContentText(conference.getAcronym());
-			if(conference.getLogoUrl() != null){
+			if (conference.getLogoUrl() != null) {
 
 				Glide.with(viewHolder.view.getContext())
 						.load(conference.getLogoUrl())
@@ -87,7 +87,7 @@ public class CardPresenter extends Presenter {
 						.into(cardView.getMainImageView());
 			}
 		}
-		if(item instanceof Event){
+		if (item instanceof Event) {
 			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_16);
 			Event event = (Event) item;
 			cardView.setTitleText(event.getTitle());
@@ -101,19 +101,19 @@ public class CardPresenter extends Presenter {
 						.into(cardView.getMainImageView());
 			}
 		}
-		if(item instanceof LiveConference){
+		if (item instanceof LiveConference) {
 			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_4);
 			LiveConference con = (LiveConference) item;
 			cardView.setTitleText(con.getConference());
 			cardView.setMainImage(mDefaultCardImage);
 			cardView.setContentText(con.getDescription());
 		}
-		if(item instanceof Room){
+		if (item instanceof Room) {
 			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_16);
 			Room room = (Room) item;
 			cardView.setTitleText(room.getDisplay());
 			cardView.setContentText(room.getShedulename());
-			if(room.getThumb() != null){
+			if (room.getThumb() != null) {
 				Glide.with(viewHolder.view.getContext())
 						.load(room.getThumb())
 						.fitCenter()
