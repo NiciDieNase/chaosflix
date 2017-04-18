@@ -60,7 +60,6 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 	private DefaultBandwidthMeter bandwidthMeter;
 	private SimpleExoPlayer player;
 	private String mUserAgent;
-	public static final int FRAGMENT = R.id.videoView;
 
 	private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 	private Handler mainHandler;
@@ -134,7 +133,7 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 
 			@Override
 			public void onLoadingChanged(boolean isLoading) {
-				if(isLoading){
+				if(isLoading && player.getPlaybackState() != ExoPlayer.STATE_READY){
 					showLoadingSpinner();
 				} else{
 					hideLoadingSpinner();
@@ -145,7 +144,9 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 			public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 				switch (playbackState){
 					case ExoPlayer.STATE_BUFFERING:
-						showLoadingSpinner();
+						if(player.isLoading()){
+							showLoadingSpinner();
+						}
 						break;
 					case ExoPlayer.STATE_IDLE:
 					case ExoPlayer.STATE_READY:
