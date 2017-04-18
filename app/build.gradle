@@ -8,8 +8,8 @@ android {
         applicationId "de.nicidienase.chaosflix"
         minSdkVersion 22
         targetSdkVersion 25
-        versionCode 3
-        versionName "0.1.2"
+        versionCode 4
+        versionName "0.1.3"
         multiDexEnabled true
     }
     buildTypes {
