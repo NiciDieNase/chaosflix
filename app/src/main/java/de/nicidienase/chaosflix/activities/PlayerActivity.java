@@ -7,15 +7,22 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
@@ -24,6 +31,7 @@ import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -46,10 +54,13 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 	private static final String TAG = PlayerActivity.class.getSimpleName();
 	@BindView(R.id.videoView)
 	SurfaceView mSurfaceView;
+	@BindView(R.id.loading_player)
+	ProgressBar loadingSpinner;
 	OverlayFragment mPlaybackControllFragment;
 	private DefaultBandwidthMeter bandwidthMeter;
 	private SimpleExoPlayer player;
 	private String mUserAgent;
+	public static final int FRAGMENT = R.id.videoView;
 
 	private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 	private Handler mainHandler;
@@ -75,6 +86,7 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 	@Override
 	protected void onStart() {
 		super.onStart();
+		showLoadingSpinner();
 		// TODO get persisted playback progress
 	}
 
@@ -97,6 +109,72 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 		LoadControl loadControl = new DefaultLoadControl();
 		player = ExoPlayerFactory.newSimpleInstance(this, trackSelector, loadControl);
 		player.setVideoSurfaceView(mSurfaceView);
+
+		player.setVideoListener(new SimpleExoPlayer.VideoListener() {
+			@Override
+			public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+
+			}
+
+			@Override
+			public void onRenderedFirstFrame() {
+				hideLoadingSpinner();
+			}
+		});
+		player.addListener(new ExoPlayer.EventListener() {
+			@Override
+			public void onTimelineChanged(Timeline timeline, Object manifest) {
+
+			}
+
+			@Override
+			public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+			}
+
+			@Override
+			public void onLoadingChanged(boolean isLoading) {
+				if(isLoading){
+					showLoadingSpinner();
+				} else{
+					hideLoadingSpinner();
+				}
+			}
+
+			@Override
+			public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+				switch (playbackState){
+					case ExoPlayer.STATE_BUFFERING:
+						showLoadingSpinner();
+						break;
+					case ExoPlayer.STATE_IDLE:
+					case ExoPlayer.STATE_READY:
+					default:
+						hideLoadingSpinner();
+				}
+			}
+
+			@Override
+			public void onPlayerError(ExoPlaybackException error) {
+				String errorMessage = getResources().getString(R.string.error_fragment_message);
+				Toast.makeText(PlayerActivity.this,errorMessage,Toast.LENGTH_SHORT).show();
+				Log.d(TAG,errorMessage,error);
+				PlayerActivity.this.finish();
+			}
+
+			@Override
+			public void onPositionDiscontinuity() {
+
+			}
+		});
+	}
+
+	private void showLoadingSpinner() {
+		loadingSpinner.setVisibility(View.VISIBLE);
+	}
+
+	private void hideLoadingSpinner(){
+		loadingSpinner.setVisibility(View.INVISIBLE);
 	}
 
 	@Override
