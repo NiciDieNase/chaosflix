@@ -27,11 +27,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +42,7 @@ import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.activities.EventDetailsActivity;
 import de.nicidienase.chaosflix.activities.PlayerActivity;
+import de.nicidienase.chaosflix.entities.WatchlistItem;
 import de.nicidienase.chaosflix.entities.recording.Conference;
 import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.recording.Recording;
@@ -70,6 +68,8 @@ public class EventsDetailsFragment extends DetailsFragment {
 	public static final int FRAGMENT = R.id.details_fragment;
 	public static final int DUMMY_ID = 1646465164;
 	public static final int DEFAULT_DRAWABLE = R.drawable.default_background;
+	private static final long ADD_WATCHLIST_ACTION = 1646465165;
+	private static final long REMOVE_WATCHLIST_ACTION = 1646465166;
 	private Event mSelectedEvent;
 	private MediaApiService mMediaApiService;
 	private Room mRoom;
@@ -77,6 +77,8 @@ public class EventsDetailsFragment extends DetailsFragment {
 	private ArrayList<StreamUrl> streamUrlList;
 	private BackgroundManager mBackgroundmanager;
 	private DisplayMetrics mMetrics;
+	private WatchlistItem mWatchlistItem;
+	private ArrayObjectAdapter mRecordingActionsAdapter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -91,6 +93,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 		if (eventType == DetailsActivity.TYPE_RECORDING) {
 			mSelectedEvent = getActivity().getIntent()
 					.getParcelableExtra(DetailsActivity.EVENT);
+			mWatchlistItem = WatchlistItem.findById(WatchlistItem.class, mSelectedEvent.getApiID());
 		} else if (eventType == DetailsActivity.TYPE_STREAM) {
 			mRoom = getActivity().getIntent()
 					.getParcelableExtra(DetailsActivity.ROOM);
@@ -113,9 +116,9 @@ public class EventsDetailsFragment extends DetailsFragment {
 								.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
 								.subscribe(event -> {
 									mSelectedEvent = event;
-									final ArrayObjectAdapter recordingActionsAdapter =
+									mRecordingActionsAdapter =
 											getRecordingActionsAdapter(mSelectedEvent.getRecordings());
-									detailsOverviewRow.setActionsAdapter(recordingActionsAdapter);
+									detailsOverviewRow.setActionsAdapter(mRecordingActionsAdapter);
 									adapter.add(detailsOverviewRow);
 									mediaApiService.getConference(
 											mSelectedEvent.getConferenceId())
@@ -255,36 +258,46 @@ public class EventsDetailsFragment extends DetailsFragment {
 
 		mDetailsPresenter.setOnActionClickedListener(action -> {
 			Log.d(TAG,"OnActionClicked");
-			Intent i = new Intent(getActivity(), PlayerActivity.class);
-			i.putExtra(DetailsActivity.TYPE, eventType);
-			if (eventType == DetailsActivity.TYPE_RECORDING) {
-				i.putExtra(DetailsActivity.EVENT, mSelectedEvent);
-				if (action.getId() == DUMMY_ID) {
-					Recording dummy = new Recording();
-					dummy.setRecordingUrl("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8");
-					dummy.setMimeType("video/hls");
-					dummy.setLanguage("eng");
-					dummy.setHighQuality(true);
-					i.putExtra(DetailsActivity.RECORDING, dummy);
-				} else {
-					for (Recording r : mSelectedEvent.getRecordings()) {
-						if (r.getApiID() == action.getId()) {
-							i.putExtra(DetailsActivity.RECORDING, r);
-							break;
+			if(action.getId() == ADD_WATCHLIST_ACTION) {
+				new WatchlistItem(mSelectedEvent.getApiID()).save();
+				mRecordingActionsAdapter.replace(0,new Action(REMOVE_WATCHLIST_ACTION,getString(R.string.remove_from_watchlist)));
+			} else if (action.getId() == REMOVE_WATCHLIST_ACTION) {
+				if(mWatchlistItem != null){
+					mWatchlistItem.delete();
+				}
+				mRecordingActionsAdapter.replace(0,new Action(ADD_WATCHLIST_ACTION,getString(R.string.add_to_watchlist)));
+			} else {
+				Intent i = new Intent(getActivity(), PlayerActivity.class);
+				i.putExtra(DetailsActivity.TYPE, eventType);
+				if (eventType == DetailsActivity.TYPE_RECORDING) {
+					i.putExtra(DetailsActivity.EVENT, mSelectedEvent);
+					if (action.getId() == DUMMY_ID) {
+						Recording dummy = new Recording();
+						dummy.setRecordingUrl("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8");
+						dummy.setMimeType("video/hls");
+						dummy.setLanguage("eng");
+						dummy.setHighQuality(true);
+						i.putExtra(DetailsActivity.RECORDING, dummy);
+					} else {
+						for (Recording r : mSelectedEvent.getRecordings()) {
+							if (r.getApiID() == action.getId()) {
+								i.putExtra(DetailsActivity.RECORDING, r);
+								break;
+							}
 						}
 					}
+				} else if (eventType == DetailsActivity.TYPE_STREAM) {
+					i.putExtra(DetailsActivity.ROOM, mRoom);
+					StreamUrl streamUrl = getStreamUrlForActionId((int) action.getId());
+					if (streamUrl != null) {
+						i.putExtra(DetailsActivity.STREAM_URL, streamUrl);
+					} else {
+						// TODO handle missing Stream
+						return;
+					}
 				}
-			} else if (eventType == DetailsActivity.TYPE_STREAM) {
-				i.putExtra(DetailsActivity.ROOM, mRoom);
-				StreamUrl streamUrl = getStreamUrlForActionId((int) action.getId());
-				if (streamUrl != null) {
-					i.putExtra(DetailsActivity.STREAM_URL, streamUrl);
-				} else {
-					// TODO handle missing Stream
-					return;
-				}
+				getActivity().startActivity(i);
 			}
-			getActivity().startActivity(i);
 		});
 		return mDetailsPresenter;
 	}
@@ -318,6 +331,11 @@ public class EventsDetailsFragment extends DetailsFragment {
 
 	private ArrayObjectAdapter getRecordingActionsAdapter(List<Recording> recordings) {
 		ArrayObjectAdapter actionsAdapter = new ArrayObjectAdapter();
+		if(mWatchlistItem != null){
+			actionsAdapter.add(new Action(REMOVE_WATCHLIST_ACTION,getString(R.string.remove_from_watchlist)));
+		} else {
+			actionsAdapter.add(new Action(ADD_WATCHLIST_ACTION,getString(R.string.add_to_watchlist)));
+		}
 		if (recordings != null) {
 			for (int i = 0; i < recordings.size(); i++) {
 				Recording recording = recordings.get(i);

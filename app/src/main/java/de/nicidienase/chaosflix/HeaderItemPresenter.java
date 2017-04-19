@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
@@ -35,13 +36,15 @@ public class HeaderItemPresenter extends RowHeaderPresenter {
 		ImageView headerIcon = (ImageView) view.findViewById(R.id.header_icon);
 		TextView headerLabel = (TextView) view.findViewById(R.id.header_label);
 
-		if (headerItem.getName().startsWith(ConferencesBrowseFragment.STREAM_PREFIX)) {
-			Drawable camIcon = view.getContext().getResources().getDrawable(R.drawable.ic_videocam_white_24dp);
+		Resources resources = view.getContext().getResources();
+		String streamingPrefix = resources.getString(R.string.streaming_prefix);
+		if (headerItem.getName().startsWith(streamingPrefix)) {
+			Drawable camIcon = resources.getDrawable(R.drawable.ic_videocam_white_24dp);
 			headerIcon.setImageDrawable(camIcon);
 			((ListRow) item).setHeaderItem(new HeaderItem(headerItem.getName()
-					.substring(ConferencesBrowseFragment.STREAM_PREFIX.length())));
+					.substring(streamingPrefix.length())));
 		} else {
-			Drawable movieIcon = view.getContext().getResources().getDrawable(R.drawable.ic_local_movies_white_24dp);
+			Drawable movieIcon = resources.getDrawable(R.drawable.ic_local_movies_white_24dp);
 			headerIcon.setImageDrawable(movieIcon);
 			headerLabel.setText(headerItem.getName());
 		}
