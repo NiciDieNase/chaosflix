@@ -29,7 +29,7 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.entities.recording.Event;
-import de.nicidienase.chaosflix.entities.recording.PlaybackProgress;
+import de.nicidienase.chaosflix.entities.PlaybackProgress;
 import de.nicidienase.chaosflix.entities.recording.Recording;
 import de.nicidienase.chaosflix.entities.streaming.Room;
 import de.nicidienase.chaosflix.entities.streaming.StreamUrl;
@@ -141,7 +141,7 @@ public class OverlayFragment extends PlaybackFragment {
 			mSelectedRecording = intent.getParcelableExtra(DetailsActivity.RECORDING);
 			mHelper = new PlaybackHelper(getActivity(), this, mSelectedEvent, mSelectedRecording);
 
-			List<PlaybackProgress> progressList = PlaybackProgress.find(PlaybackProgress.class, "event_guid = ?", mSelectedEvent.getGuid());
+			List<PlaybackProgress> progressList = PlaybackProgress.find(PlaybackProgress.class, "event_id = ?", String.valueOf(mSelectedEvent.getApiID()));
 			if (progressList.size() > 0) {
 				mPlaybackProgress = progressList.get(0);
 			}
@@ -300,7 +300,7 @@ public class OverlayFragment extends PlaybackFragment {
 					mPlaybackProgress.delete();
 				}
 			} else if ((mSelectedEvent.getLength() - mCallback.getCurrentPosition() / 1000) > MAX_REMAINING) {
-				mPlaybackProgress = new PlaybackProgress(mSelectedEvent.getGuid(),
+				mPlaybackProgress = new PlaybackProgress(mSelectedEvent.getApiID(),
 						mCallback.getCurrentPosition(), mSelectedRecording.getApiID());
 				mPlaybackProgress.save();
 			}

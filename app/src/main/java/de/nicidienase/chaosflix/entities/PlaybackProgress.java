@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.entities.recording;
+package de.nicidienase.chaosflix.entities;
 
 import com.orm.SugarRecord;
 
@@ -7,25 +7,25 @@ import com.orm.SugarRecord;
  */
 
 public class PlaybackProgress extends SugarRecord {
-	String eventGuid;
+	int eventId;
 	long progress;
 	long recordingId;
 
 	public PlaybackProgress() {
 	}
 
-	public PlaybackProgress(String eventGuid, long progress, long recordingId) {
-		this.eventGuid = eventGuid;
+	public PlaybackProgress(int eventId, long progress, long recordingId) {
+		this.eventId = eventId;
 		this.progress = progress;
 		this.recordingId = recordingId;
 	}
 
-	public String getEventGuid() {
-		return eventGuid;
+	public int getEventId() {
+		return eventId;
 	}
 
-	public void setEventGuid(String eventGuid) {
-		this.eventGuid = eventGuid;
+	public void setEventId(int eventId) {
+		this.eventId = eventId;
 	}
 
 	public long getProgress() {
