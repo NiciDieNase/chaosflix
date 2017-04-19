@@ -96,7 +96,12 @@ public class EventsDetailsFragment extends DetailsFragment {
 					.getParcelableExtra(DetailsActivity.ROOM);
 		}
 
-		final ArrayObjectAdapter adapter = setupDetailsOverviewRowPresenter();
+		FullWidthDetailsOverviewRowPresenter mDetailsPresenter
+				= setupDetailsOverviewRowPresenter();
+		ClassPresenterSelector mPresenterSelector = new ClassPresenterSelector();
+		mPresenterSelector.addClassPresenter(DetailsOverviewRow.class, mDetailsPresenter);
+		mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
+		final ArrayObjectAdapter adapter = new ArrayObjectAdapter(mPresenterSelector);
 
 		((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
 				.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
@@ -142,8 +147,8 @@ public class EventsDetailsFragment extends DetailsFragment {
 												}
 
 												setAdapter(adapter);
-												setOnItemViewClickedListener(
-														new ItemViewClickedListener(EventsDetailsFragment.this));
+												ItemViewClickedListener listener = new ItemViewClickedListener(EventsDetailsFragment.this);
+												setOnItemViewClickedListener(listener);
 												browseErrorFragment.dismiss();
 											});
 								});
@@ -158,8 +163,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 										detailsOverviewRow.setActionsAdapter(actionsAdapter);
 										adapter.add(detailsOverviewRow);
 										setAdapter(adapter);
-										setOnItemViewClickedListener(
-												new ItemViewClickedListener(EventsDetailsFragment.this));
+										setOnItemViewClickedListener(new ItemViewClickedListener(EventsDetailsFragment.this));
 										browseErrorFragment.dismiss();
 									}
 									// TODO add other streams
@@ -234,7 +238,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 		return selectedEvents;
 	}
 
-	private ArrayObjectAdapter setupDetailsOverviewRowPresenter() {
+	private FullWidthDetailsOverviewRowPresenter setupDetailsOverviewRowPresenter() {
 		FullWidthDetailsOverviewRowPresenter mDetailsPresenter = new FullWidthDetailsOverviewRowPresenter(
 				new EventDetailsDescriptionPresenter(getActivity()),
 				new EventDetailsOverviewLogoPresenter());
@@ -250,6 +254,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 		prepareEntranceTransition();
 
 		mDetailsPresenter.setOnActionClickedListener(action -> {
+			Log.d(TAG,"OnActionClicked");
 			Intent i = new Intent(getActivity(), PlayerActivity.class);
 			i.putExtra(DetailsActivity.TYPE, eventType);
 			if (eventType == DetailsActivity.TYPE_RECORDING) {
@@ -276,15 +281,12 @@ public class EventsDetailsFragment extends DetailsFragment {
 					i.putExtra(DetailsActivity.STREAM_URL, streamUrl);
 				} else {
 					// TODO handle missing Stream
+					return;
 				}
 			}
 			getActivity().startActivity(i);
 		});
-
-		ClassPresenterSelector mPresenterSelector = new ClassPresenterSelector();
-		mPresenterSelector.addClassPresenter(DetailsOverviewRow.class, mDetailsPresenter);
-		mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
-		return new ArrayObjectAdapter(mPresenterSelector);
+		return mDetailsPresenter;
 	}
 
 	private DetailsOverviewRow setupDetailsOverviewRow(Object event) {
