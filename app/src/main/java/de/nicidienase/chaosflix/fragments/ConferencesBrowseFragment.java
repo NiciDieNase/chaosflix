@@ -12,6 +12,7 @@ import android.support.v17.leanback.widget.PresenterSelector;
 import android.support.v17.leanback.widget.SectionRow;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +22,7 @@ import de.nicidienase.chaosflix.HeaderItemPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
+import de.nicidienase.chaosflix.entities.WatchlistItem;
 import de.nicidienase.chaosflix.entities.recording.Conference;
 import de.nicidienase.chaosflix.entities.streaming.Group;
 import de.nicidienase.chaosflix.entities.streaming.LiveConference;
@@ -36,10 +38,10 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 
 	private static final String TAG = ConferencesBrowseFragment.class.getSimpleName();
 	public static final int FRAGMENT = R.id.browse_fragment;
-	public static final String STREAM_PREFIX = "[streaming]";
 	private ArrayObjectAdapter mRowsAdapter;
 	private Map<String, List<Conference>> mConferences;
 	CompositeDisposable mDisposables = new CompositeDisposable();
+	private ArrayObjectAdapter watchListAdapter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(), FRAGMENT);
 		CardPresenter cardPresenter = new CardPresenter();
 		mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
+		watchListAdapter = new ArrayObjectAdapter(cardPresenter);
 
 		Disposable disposable = ((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
 				.subscribe(mediaApiService -> {
@@ -64,7 +67,8 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 							.subscribe(liveConferences -> {
 								if (liveConferences.size() > 0) {
 									for (LiveConference con : liveConferences) {
-										HeaderItem streamingHeader = new HeaderItem(con.getConference() + " " + STREAM_PREFIX);
+										HeaderItem streamingHeader = new HeaderItem(con.getConference()
+												+ " " + getString(R.string.streaming_prefix));
 										streamingHeader.setContentDescription(con.getDescription());
 										mRowsAdapter.add(0, new SectionRow(streamingHeader));
 										int i = -1;
@@ -80,7 +84,6 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 											mRowsAdapter.add(i + 1, new ListRow(header, listRowAdapter));
 										}
 										mRowsAdapter.add(i + 1, new DividerRow());
-										mRowsAdapter.add(i + 2, new SectionRow("Recordings"));
 
 									}
 								}
@@ -92,6 +95,12 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 							})
 							.observeOn(AndroidSchedulers.mainThread())
 							.subscribe(conferences -> {
+								mRowsAdapter.add(new SectionRow(getString(R.string.recomendations)));
+								HeaderItem header = new HeaderItem(getString(R.string.watchlist));
+//								header.setDescription(description);
+								ListRow watchRow = new ListRow(header, watchListAdapter);
+								mRowsAdapter.add(watchRow);
+								mRowsAdapter.add(new SectionRow(getString(R.string.conferences)));
 								mConferences = conferences.getConferencesBySeries();
 								Set<String> keySet = mConferences.keySet();
 								for (String tag : getOrderedConferencesList()) {
@@ -112,6 +121,22 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 					mDisposables.add(disposable2);
 				});
 		mDisposables.add(disposable);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		mDisposables.add(((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
+				.subscribe(mediaApiService -> {
+					Iterator<WatchlistItem> watchlistItems = WatchlistItem.findAll(WatchlistItem.class);
+					watchListAdapter.clear();
+					watchlistItems.forEachRemaining(watchlistItem -> {
+						mediaApiService.getEvent(watchlistItem.getEventId())
+								.observeOn(AndroidSchedulers.mainThread())
+								.subscribe(event -> watchListAdapter.add(event));
+					});
+				}));
+
 	}
 
 	@Override

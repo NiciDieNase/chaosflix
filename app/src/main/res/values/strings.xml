@@ -22,4 +22,11 @@
     <string name="start_again">Start again</string>
     <string name="resume">Resume</string>
     <string name="related_talks">Related Talks</string>
+    <string name="recomendations">Recomendations</string>
+    <string name="watchlist">Watchlist</string>
+    <string name="recordings">Recordings</string>
+    <string name="streaming_prefix">[streaming]</string>
+    <string name="conferences">Conferences</string>
+    <string name="remove_from_watchlist">Remove from Watchlist</string>
+    <string name="add_to_watchlist">Add to Watchlist</string>
 </resources>
