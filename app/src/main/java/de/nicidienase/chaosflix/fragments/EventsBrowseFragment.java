@@ -55,11 +55,9 @@ import de.nicidienase.chaosflix.entities.recording.Event;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class EventsBrowseFragment extends BrowseFragment {
-	private static final String TAG = "MainFragment";
+	private static final String TAG = EventsBrowseFragment.class.getSimpleName();
 
 	private static final int BACKGROUND_UPDATE_DELAY = 300;
-	private static final int GRID_ITEM_WIDTH = 200;
-	private static final int GRID_ITEM_HEIGHT = 200;
 	private static final int FRAGMENT = R.id.browse_fragment;
 
 	private final Handler mHandler = new Handler();
@@ -95,7 +93,8 @@ public class EventsBrowseFragment extends BrowseFragment {
 				});
 
 		prepareBackgroundManager();
-		setupEventListeners();
+		setOnItemViewClickedListener(new ItemViewClickedListener(this));
+		setOnItemViewSelectedListener(new ItemViewSelectedListener());
 	}
 
 	@Override
@@ -168,11 +167,6 @@ public class EventsBrowseFragment extends BrowseFragment {
 		// set search icon color
 		setSearchAffordanceColor(getResources().getColor(R.color.search_opaque));
 
-	}
-
-	private void setupEventListeners() {
-		setOnItemViewClickedListener(new ItemViewClickedListener(this));
-		setOnItemViewSelectedListener(new ItemViewSelectedListener());
 	}
 
 	protected void updateBackground(String uri) {
