@@ -9,6 +9,7 @@ import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.util.Log;
 
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.activities.EventDetailsActivity;
@@ -22,6 +23,7 @@ import de.nicidienase.chaosflix.entities.streaming.Room;
  */
 public class ItemViewClickedListener implements OnItemViewClickedListener {
 
+	private static final String TAG = ItemViewClickedListener.class.getSimpleName();
 	private Fragment fragment;
 
 	public ItemViewClickedListener(Fragment fragment) {
@@ -31,6 +33,7 @@ public class ItemViewClickedListener implements OnItemViewClickedListener {
 	@Override
 	public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
 							  RowPresenter.ViewHolder rowViewHolder, Row row) {
+		Log.d(TAG, "onItemClicked");
 		if (item instanceof Conference) {
 			Conference conference = (Conference) item;
 			// Start EventsActivity for this conference

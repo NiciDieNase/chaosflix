@@ -7,4 +7,6 @@ import com.orm.SugarRecord;
  */
 
 public class WatchlistItem extends SugarRecord {
+	int eventId;
+
 }
