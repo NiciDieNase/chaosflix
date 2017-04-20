@@ -130,13 +130,16 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 				.subscribe(mediaApiService -> {
 					Iterator<WatchlistItem> watchlistItems = WatchlistItem.findAll(WatchlistItem.class);
 					watchListAdapter.clear();
-					watchlistItems.forEachRemaining(watchlistItem -> {
-						mediaApiService.getEvent(watchlistItem.getEventId())
+					while (watchlistItems.hasNext()){
+						WatchlistItem watchlistItem = watchlistItems.next();
+							mediaApiService.getEvent(watchlistItem.getEventId())
 								.observeOn(AndroidSchedulers.mainThread())
 								.subscribe(event -> watchListAdapter.add(event));
-					});
+					}
+					if(watchListAdapter.size() == 0){
+						// TODO hide empty watchlist
+					}
 				}));
-
 	}
 
 	@Override
