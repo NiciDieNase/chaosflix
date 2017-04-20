@@ -2,6 +2,8 @@
 
 A Android TV / FireTV app to watch content from media.ccc.de
 
+[![Install from Amazon](https://images-na.ssl-images-amazon.com/images/G/01/mobile-apps/devportal2/res/images/amazon-underground-app-us-black.png)](http://www.amazon.com/gp/product/B06Y3GYYGB/ref=mas_pm_chaosflix)
+
 
 ## Screenshots
 ![screenshot](screenshots/device-2017-04-06-191750.png)
