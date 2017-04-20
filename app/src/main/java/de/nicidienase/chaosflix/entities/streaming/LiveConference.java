@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.entities.streaming;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +16,13 @@ public class LiveConference {
 	String startsAt;
 	String endsAt;
 	List<Group> groups;
+
+	public LiveConference() {}
+
+	public LiveConference(String conference, String description) {
+		this.conference = conference;
+		this.description = description;
+	}
 
 	public String getConference() {
 		return conference;
@@ -78,5 +86,12 @@ public class LiveConference {
 
 	public void setGroups(List<Group> groups) {
 		this.groups = groups;
+	}
+
+	public static LiveConference getDummyObject(){
+		LiveConference dummyCon = new LiveConference("DummyCon", "Conference McConferenceface");
+		dummyCon.setGroups(new ArrayList<>());
+		dummyCon.getGroups().add(Group.getDummyObject());
+		return dummyCon;
 	}
 }

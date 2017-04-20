@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.entities.streaming;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,6 +17,8 @@ public class Room implements Parcelable {
 	String link;
 	String display;
 	List<Stream> streams;
+
+	public Room() {}
 
 	protected Room(Parcel in) {
 		slug = in.readString();
@@ -97,5 +100,15 @@ public class Room implements Parcelable {
 
 	public void setStreams(List<Stream> streams) {
 		this.streams = streams;
+	}
+
+	public static Room getDummyObject(){
+		Room dummy = new Room();
+		dummy.setStreams(new ArrayList<>());
+		dummy.getStreams().add(Stream.getDummyObject());
+		dummy.setDisplay("Dummy Room");
+		dummy.setSlug("dummy_room");
+		dummy.setShedulename("Dummy Room");
+		return dummy;
 	}
 }
