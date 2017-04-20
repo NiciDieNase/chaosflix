@@ -86,8 +86,7 @@ public class CardPresenter extends Presenter {
 						.error(mDefaultCardImage)
 						.into(cardView.getMainImageView());
 			}
-		}
-		if (item instanceof Event) {
+		} else if (item instanceof Event) {
 			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_16);
 			Event event = (Event) item;
 			cardView.setTitleText(event.getTitle());
@@ -100,15 +99,13 @@ public class CardPresenter extends Presenter {
 						.error(mDefaultCardImage)
 						.into(cardView.getMainImageView());
 			}
-		}
-		if (item instanceof LiveConference) {
+		} else if (item instanceof LiveConference) {
 			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_4);
 			LiveConference con = (LiveConference) item;
 			cardView.setTitleText(con.getConference());
 			cardView.setMainImage(mDefaultCardImage);
 			cardView.setContentText(con.getDescription());
-		}
-		if (item instanceof Room) {
+		} else if (item instanceof Room) {
 			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_16);
 			Room room = (Room) item;
 			cardView.setTitleText(room.getDisplay());
@@ -120,7 +117,14 @@ public class CardPresenter extends Presenter {
 						.error(mDefaultCardImage)
 						.into(cardView.getMainImageView());
 			}
+		} else if(item instanceof String) {
+			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_4);
+			cardView.setTitleText((String) item);
+			Glide.with(viewHolder.view.getContext())
+					.load(R.drawable.icon)
+					.into(cardView.getMainImageView());
 		}
+
 	}
 
 	@Override
