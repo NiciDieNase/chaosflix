@@ -7,25 +7,29 @@ import android.support.v17.leanback.widget.DividerRow;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
-import android.support.v17.leanback.widget.Presenter;
-import android.support.v17.leanback.widget.PresenterSelector;
 import android.support.v17.leanback.widget.SectionRow;
 
+import com.google.common.collect.Lists;
+
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import de.nicidienase.chaosflix.CardPresenter;
-import de.nicidienase.chaosflix.HeaderItemPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.entities.WatchlistItem;
 import de.nicidienase.chaosflix.entities.recording.Conference;
+import de.nicidienase.chaosflix.entities.recording.ConferencesWrapper;
+import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.streaming.Group;
 import de.nicidienase.chaosflix.entities.streaming.LiveConference;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -38,6 +42,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 
 	private static final String TAG = ConferencesBrowseFragment.class.getSimpleName();
 	public static final int FRAGMENT = R.id.browse_fragment;
+	private static final boolean OLDEST_FIRST = false;
 	private ArrayObjectAdapter mRowsAdapter;
 	private Map<String, List<Conference>> mConferences;
 	CompositeDisposable mDisposables = new CompositeDisposable();
@@ -63,64 +68,74 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 
 		Disposable disposable = ((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
 				.subscribe(mediaApiService -> {
-					Disposable disposable1 = mediaApiService.getStreamingConferences()
-							.subscribe(liveConferences -> {
-								if (liveConferences.size() > 0) {
-									for (LiveConference con : liveConferences) {
-										HeaderItem streamingHeader = new HeaderItem(con.getConference()
-												+ " " + getString(R.string.streaming_prefix));
-										streamingHeader.setContentDescription(con.getDescription());
-										mRowsAdapter.add(0, new SectionRow(streamingHeader));
-										int i = -1;
-										for (i = 0; i < con.getGroups().size(); i++) {
-											Group g = con.getGroups().get(i);
-											ArrayObjectAdapter listRowAdapter
-													= new ArrayObjectAdapter(cardPresenter);
-											listRowAdapter.addAll(listRowAdapter.size(), g.getRooms());
-											HeaderItem header = new HeaderItem(g.getGroup());
-											header.setDescription(con.getConference() + " - " + con.getDescription());
-											//HeaderItem header = new HeaderItem(STREAM_PREFIX + con.getConference());
-											header.setContentDescription(g.getGroup());
-											mRowsAdapter.add(i + 1, new ListRow(header, listRowAdapter));
-										}
-										mRowsAdapter.add(i + 1, new DividerRow());
-
-									}
-								}
-							});
-					mDisposables.add(disposable1);
-					Disposable disposable2 = mediaApiService.getConferences()
-							.doOnError(t -> {
-								errorFragment.setErrorContent(t.getMessage());
+					mDisposables.add(Observable.zip(mediaApiService.getStreamingConferences(),
+							mediaApiService.getConferences(),
+							(liveConferences, conferencesWrapper) -> {
+								ArrayList<Object> list = new ArrayList<>();
+								list.add(liveConferences);
+								list.add(conferencesWrapper);
+								return list;
 							})
 							.observeOn(AndroidSchedulers.mainThread())
-							.subscribe(conferences -> {
-								mRowsAdapter.add(new SectionRow(getString(R.string.recomendations)));
-								HeaderItem header = new HeaderItem(getString(R.string.watchlist));
-//								header.setDescription(description);
-								ListRow watchRow = new ListRow(header, watchListAdapter);
-								mRowsAdapter.add(watchRow);
-								mRowsAdapter.add(new SectionRow(getString(R.string.conferences)));
-								mConferences = conferences.getConferencesBySeries();
-								Set<String> keySet = mConferences.keySet();
-								for (String tag : getOrderedConferencesList()) {
-									if (keySet.contains(tag)) {
-										ListRow row = getRow(mConferences, cardPresenter, tag, "");
-										mRowsAdapter.add(row);
-									}
-								}
-								for (String tag : keySet) {
-									if (!getOrderedConferencesList().contains(tag)) {
-										mRowsAdapter.add(getRow(mConferences, cardPresenter, tag, ""));
-									}
-								}
+							.subscribe(objects -> {
+								List<LiveConference> liveConferences = (List<LiveConference>) objects.get(0);
+								ConferencesWrapper conferences = (ConferencesWrapper) objects.get(1);
+								addStreams(cardPresenter, liveConferences);
+								addRecordings(cardPresenter, conferences);
 								errorFragment.dismiss();
 								setOnItemViewClickedListener(new ItemViewClickedListener(this));
 								setAdapter(mRowsAdapter);
-							});
-					mDisposables.add(disposable2);
+								setSelectedPosition(1);
+							}));
 				});
 		mDisposables.add(disposable);
+	}
+
+	private void addRecordings(CardPresenter cardPresenter, ConferencesWrapper conferences) {
+		mRowsAdapter.add(new SectionRow(getString(R.string.recomendations)));
+		HeaderItem header = new HeaderItem(getString(R.string.watchlist));
+//								header.setDescription(description);
+		ListRow watchRow = new ListRow(header, watchListAdapter);
+		mRowsAdapter.add(watchRow);
+		mRowsAdapter.add(new SectionRow(getString(R.string.conferences)));
+		mConferences = conferences.getConferencesBySeries();
+		Set<String> keySet = mConferences.keySet();
+		for (String tag : getOrderedConferencesList()) {
+			if (keySet.contains(tag)) {
+				ListRow row = getRow(mConferences, cardPresenter, tag, "");
+				mRowsAdapter.add(row);
+			}
+		}
+		for (String tag : keySet) {
+			if (!getOrderedConferencesList().contains(tag)) {
+				mRowsAdapter.add(getRow(mConferences, cardPresenter, tag, ""));
+			}
+		}
+	}
+
+	private void addStreams(CardPresenter cardPresenter, List<LiveConference> liveConferences) {
+		if (liveConferences.size() > 0) {
+			for (LiveConference con : liveConferences) {
+				HeaderItem streamingHeader = new HeaderItem(con.getConference()
+						+ " " + getString(R.string.streaming_prefix));
+				streamingHeader.setContentDescription(con.getDescription());
+				mRowsAdapter.add(0, new SectionRow(streamingHeader));
+				int i = -1;
+				for (i = 0; i < con.getGroups().size(); i++) {
+					Group g = con.getGroups().get(i);
+					ArrayObjectAdapter listRowAdapter
+							= new ArrayObjectAdapter(cardPresenter);
+					listRowAdapter.addAll(listRowAdapter.size(), g.getRooms());
+					HeaderItem header = new HeaderItem(g.getGroup());
+					header.setDescription(con.getConference() + " - " + con.getDescription());
+					//HeaderItem header = new HeaderItem(STREAM_PREFIX + con.getConference());
+					header.setContentDescription(g.getGroup());
+					mRowsAdapter.add(i + 1, new ListRow(header, listRowAdapter));
+				}
+				mRowsAdapter.add(i + 1, new DividerRow());
+
+			}
+		}
 	}
 
 	@Override
@@ -128,24 +143,33 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 		super.onStart();
 		mDisposables.add(((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
 				.subscribe(mediaApiService -> {
-					Iterator<WatchlistItem> watchlistItems = WatchlistItem.findAll(WatchlistItem.class);
+					List<WatchlistItem> watchlistItems
+							= Lists.newArrayList(WatchlistItem.findAll(WatchlistItem.class));
+					Collections.sort(watchlistItems, (o1, o2) -> {
+						WatchlistItem i1, i2;
+						i1 = (WatchlistItem) o1;
+						i2 = (WatchlistItem) o2;
+						int result = i1.getAdded().compareTo(i2.getAdded());
+						if(OLDEST_FIRST){
+							return result * -1;
+						} else {
+							return result;
+						}
+					});
+					List < Event > watchEvents = new LinkedList<>();
 					watchListAdapter.clear();
-					while (watchlistItems.hasNext()){
-						WatchlistItem watchlistItem = watchlistItems.next();
-							mediaApiService.getEvent(watchlistItem.getEventId())
+					for(WatchlistItem i : watchlistItems){
+						mediaApiService.getEvent(i.getEventId())
 								.observeOn(AndroidSchedulers.mainThread())
 								.subscribe(event -> watchListAdapter.add(event));
-					}
-					if(watchListAdapter.size() == 0){
-						// TODO hide empty watchlist
 					}
 				}));
 	}
 
 	@Override
-	public void onDestroy() {
+	public void onStop() {
 		mDisposables.dispose();
-		super.onDestroy();
+		super.onStop();
 	}
 
 	private ListRow getRow(Map<String, List<Conference>> conferences, CardPresenter cardPresenter, String tag, String description) {
