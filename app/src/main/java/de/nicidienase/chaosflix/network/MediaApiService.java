@@ -92,8 +92,6 @@ public class MediaApiService extends Service {
 				.subscribeOn(Schedulers.io());
 	}
 
-	;
-
 	public Observable<Conference> getConference(long id) {
 		return mRecordingApiService.getConference(id)
 				.subscribeOn(Schedulers.io());

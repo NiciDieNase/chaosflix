@@ -2,13 +2,10 @@ package de.nicidienase.chaosflix;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.support.multidex.MultiDex;
 
 import com.facebook.stetho.Stetho;
 import com.orm.SugarContext;
-
-import de.nicidienase.chaosflix.activities.ConferencesActivity;
 
 /**
  * Created by felix on 18.03.17.
