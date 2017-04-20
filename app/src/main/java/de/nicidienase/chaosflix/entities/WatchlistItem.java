@@ -12,7 +12,7 @@ import java.util.Date;
 
 public class WatchlistItem extends SugarRecord {
 	int eventId;
-	DateTime added;
+	long timestamp;
 
 	public WatchlistItem() {
 	}
@@ -20,13 +20,13 @@ public class WatchlistItem extends SugarRecord {
 	public WatchlistItem(int eventId) {
 		this.setId((long) eventId);
 		this.eventId = eventId;
-		this.added = new DateTime(new Date());
+		setAdded(new DateTime(new Date()));
 	}
 
 	public WatchlistItem(int eventId, DateTime added) {
 		this.setId((long) eventId);
 		this.eventId = eventId;
-		this.added = added;
+		setAdded(added);
 	}
 
 	public int getEventId() {
@@ -38,10 +38,18 @@ public class WatchlistItem extends SugarRecord {
 	}
 
 	public DateTime getAdded() {
-		return added;
+		return new DateTime(timestamp);
 	}
 
 	public void setAdded(DateTime added) {
-		this.added = added;
+		timestamp = added.getMillis();
+	}
+
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
 	}
 }
