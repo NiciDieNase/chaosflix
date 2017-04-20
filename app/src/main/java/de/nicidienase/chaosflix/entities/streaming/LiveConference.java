@@ -2,8 +2,6 @@ package de.nicidienase.chaosflix.entities.streaming;
 
 import java.util.List;
 
-import de.nicidienase.chaosflix.entities.streaming.Group;
-
 /**
  * Created by felix on 23.03.17.
  */
