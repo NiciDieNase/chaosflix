@@ -1,7 +1,6 @@
 package de.nicidienase.chaosflix;
 
 import android.content.Context;
-import android.support.v17.leanback.widget.AbstractDetailsDescriptionPresenter;
 import android.support.v17.leanback.widget.Presenter;
 import android.text.TextUtils;
 import android.view.LayoutInflater;

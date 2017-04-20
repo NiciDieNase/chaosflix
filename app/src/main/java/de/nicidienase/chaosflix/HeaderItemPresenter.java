@@ -13,8 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import de.nicidienase.chaosflix.fragments.ConferencesBrowseFragment;
-
 /**
  * Created by felix on 16.04.17.
  */
