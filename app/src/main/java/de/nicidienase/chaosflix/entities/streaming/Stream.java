@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.entities.streaming;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,6 +17,8 @@ public class Stream implements Parcelable {
 	boolean isTranslated;
 	int[] videoSize;
 	Map<String, StreamUrl> urls;
+
+	public Stream() {}
 
 	protected Stream(Parcel in) {
 		slug = in.readString();
@@ -97,5 +100,18 @@ public class Stream implements Parcelable {
 
 	public void setUrls(Map<String, StreamUrl> urls) {
 		this.urls = urls;
+	}
+
+	public static Stream getDummyObject(){
+		Stream dummy = new Stream();
+		dummy.setDisplay("Dummy");
+		dummy.setSlug("dummy");
+		dummy.setTranslated(false);
+		HashMap<String, StreamUrl> streamMap = new HashMap<>();
+		streamMap.put("dummy",StreamUrl.getDummyObject());
+		dummy.setUrls(streamMap);
+		dummy.setVideoSize(new int[]{1, 1});
+		dummy.setType("dummy");
+		return dummy;
 	}
 }
