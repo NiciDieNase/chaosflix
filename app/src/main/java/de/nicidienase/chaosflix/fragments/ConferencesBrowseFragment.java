@@ -13,8 +13,6 @@ import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +24,6 @@ import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
 import de.nicidienase.chaosflix.entities.WatchlistItem;
 import de.nicidienase.chaosflix.entities.recording.Conference;
 import de.nicidienase.chaosflix.entities.recording.ConferencesWrapper;
-import de.nicidienase.chaosflix.entities.recording.Event;
 import de.nicidienase.chaosflix.entities.streaming.Group;
 import de.nicidienase.chaosflix.entities.streaming.LiveConference;
 import io.reactivex.Observable;
@@ -42,11 +39,13 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 
 	private static final String TAG = ConferencesBrowseFragment.class.getSimpleName();
 	public static final int FRAGMENT = R.id.browse_fragment;
-	private static final boolean OLDEST_FIRST = false;
 	private ArrayObjectAdapter mRowsAdapter;
 	private Map<String, List<Conference>> mConferences;
 	CompositeDisposable mDisposables = new CompositeDisposable();
 	private ArrayObjectAdapter watchListAdapter;
+	private ListRow mWatchlistRow;
+	private boolean streamsAvailable = false;
+	private SectionRow mRecomendationsSectionsRow;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -80,6 +79,8 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 							.subscribe(objects -> {
 								List<LiveConference> liveConferences = (List<LiveConference>) objects.get(0);
 								ConferencesWrapper conferences = (ConferencesWrapper) objects.get(1);
+								liveConferences.add(LiveConference.getDummyObject());
+								streamsAvailable = liveConferences.size() > 0;
 								addStreams(cardPresenter, liveConferences);
 								addRecordings(cardPresenter, conferences);
 								errorFragment.dismiss();
@@ -92,11 +93,6 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	}
 
 	private void addRecordings(CardPresenter cardPresenter, ConferencesWrapper conferences) {
-		mRowsAdapter.add(new SectionRow(getString(R.string.recomendations)));
-		HeaderItem header = new HeaderItem(getString(R.string.watchlist));
-//								header.setDescription(description);
-		ListRow watchRow = new ListRow(header, watchListAdapter);
-		mRowsAdapter.add(watchRow);
 		mRowsAdapter.add(new SectionRow(getString(R.string.conferences)));
 		mConferences = conferences.getConferencesBySeries();
 		Set<String> keySet = mConferences.keySet();
@@ -132,7 +128,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 					header.setContentDescription(g.getGroup());
 					mRowsAdapter.add(i + 1, new ListRow(header, listRowAdapter));
 				}
-				mRowsAdapter.add(i + 1, new DividerRow());
+//				mRowsAdapter.add(i + 1, new DividerRow());
 
 			}
 		}
@@ -141,29 +137,41 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-		mDisposables.add(((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
+		List<WatchlistItem> watchlistItems
+				= Lists.newArrayList(WatchlistItem.findAll(WatchlistItem.class));
+		// setup and list items
+		if(mWatchlistRow == null && mRecomendationsSectionsRow == null){
+			int offset = streamsAvailable ? 2 : 0;
+			mRecomendationsSectionsRow = new SectionRow(getString(R.string.recomendations));
+			mRowsAdapter.add(offset, mRecomendationsSectionsRow);
+			HeaderItem header = new HeaderItem(getString(R.string.watchlist));
+//								header.setDescription(description);
+			mWatchlistRow = new ListRow(header, watchListAdapter);
+			mRowsAdapter.add(offset + 1, mWatchlistRow);
+		}
+		updateWatchlist(watchlistItems);
+	}
+
+	private Disposable updateWatchlist(List<WatchlistItem> watchlistItems) {
+		return ((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
+				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(mediaApiService -> {
-					List<WatchlistItem> watchlistItems
-							= Lists.newArrayList(WatchlistItem.findAll(WatchlistItem.class));
-					Collections.sort(watchlistItems, (o1, o2) -> {
-						WatchlistItem i1, i2;
-						i1 = (WatchlistItem) o1;
-						i2 = (WatchlistItem) o2;
-						int result = i1.getAdded().compareTo(i2.getAdded());
-						if(OLDEST_FIRST){
-							return result * -1;
-						} else {
-							return result;
-						}
-					});
-					List < Event > watchEvents = new LinkedList<>();
 					watchListAdapter.clear();
-					for(WatchlistItem i : watchlistItems){
-						mediaApiService.getEvent(i.getEventId())
+					if(watchlistItems.size() > 0){
+						Observable.fromIterable(watchlistItems)
+								.flatMap(watchlistItem -> mediaApiService.getEvent(watchlistItem.getEventId()))
 								.observeOn(AndroidSchedulers.mainThread())
 								.subscribe(event -> watchListAdapter.add(event));
+					} else {
+						watchListAdapter.add("Watchlist empty");
 					}
-				}));
+				});
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
 	}
 
 	@Override

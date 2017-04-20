@@ -55,8 +55,7 @@ public class ItemViewClickedListener implements OnItemViewClickedListener {
 					((ImageCardView) itemViewHolder.view).getMainImageView(),
 					EventDetailsActivity.SHARED_ELEMENT_NAME).toBundle();
 			fragment.getActivity().startActivity(i, bundle);
-		}
-		if (item instanceof Room) {
+		} else if (item instanceof Room) {
 			Room room = (Room) item;
 			Intent i = new Intent(fragment.getActivity(), DetailsActivity.class);
 			i.putExtra(DetailsActivity.TYPE, DetailsActivity.TYPE_STREAM);
