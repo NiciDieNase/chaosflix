@@ -79,7 +79,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 							.subscribe(objects -> {
 								List<LiveConference> liveConferences = (List<LiveConference>) objects.get(0);
 								ConferencesWrapper conferences = (ConferencesWrapper) objects.get(1);
-								liveConferences.add(LiveConference.getDummyObject());
+//								liveConferences.add(LiveConference.getDummyObject());
 								streamsAvailable = liveConferences.size() > 0;
 								addStreams(cardPresenter, liveConferences);
 								addRecordings(cardPresenter, conferences);

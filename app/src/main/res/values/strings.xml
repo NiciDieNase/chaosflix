@@ -1,4 +1,8 @@
 <resources>
+    <string name="api_media_ccc_url">https://api.media.ccc.de</string>
+    <string name="streaming_media_ccc_url">https://streaming.media.ccc.de</string>
+    <!--<string name="streaming_media_ccc_url">http://192.168.178.98:8000</string>-->
+
     <string name="app_name">Chaosflix</string>
     <string name="related_movies">Related Videos</string>
     <string name="error">Error</string>
@@ -7,7 +11,7 @@
     <string name="play">Play</string>
     <string name="stop">Stop</string>
 
-    <!-- Error messages -->
+
     <string name="video_error_media_load_timeout">Media loading timed out</string>
     <string name="video_error_server_inaccessible">Media server was not reachable</string>
     <string name="video_error_unknown_error">Failed to load video</string>
@@ -16,8 +20,6 @@
     <string name="oops">Oops</string>
     <string name="random_talks_on_this_track">Random Talks in the same Track</string>
     <string name="random_talks">Other random Talks at this Conference</string>
-    <string name="api_media_ccc_url">https://api.media.ccc.de</string>
-    <string name="streaming_media_ccc_url">https://streaming.media.ccc.de</string>
     <string name="resume_question">Resume previous position or start from beginning</string>
     <string name="start_again">Start again</string>
     <string name="resume">Resume</string>
