@@ -80,8 +80,8 @@ public class StreamUrl implements Parcelable {
 	public static StreamUrl getDummyObject(){
 		StreamUrl dummy = new StreamUrl();
 		dummy.setUrl("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8");
-		dummy.setTech("dummy");
-		dummy.setDisplay("DummyStream");
+		dummy.setTech("");
+		dummy.setDisplay("HLS");
 		return dummy;
 	}
 }

@@ -104,13 +104,13 @@ public class Stream implements Parcelable {
 
 	public static Stream getDummyObject(){
 		Stream dummy = new Stream();
-		dummy.setDisplay("Dummy");
 		dummy.setSlug("dummy");
+		dummy.setDisplay("Dummy");
+		dummy.setType("video");
 		dummy.setTranslated(false);
-		HashMap<String, StreamUrl> streamMap = new HashMap<>();
-		streamMap.put("dummy",StreamUrl.getDummyObject());
-		dummy.setUrls(streamMap);
 		dummy.setVideoSize(new int[]{1, 1});
+		dummy.setUrls(new HashMap<>());
+		dummy.getUrls().put("hls",StreamUrl.getDummyObject());
 		dummy.setType("dummy");
 		return dummy;
 	}
