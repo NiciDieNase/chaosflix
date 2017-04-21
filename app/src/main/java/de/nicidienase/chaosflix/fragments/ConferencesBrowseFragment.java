@@ -3,7 +3,6 @@ package de.nicidienase.chaosflix.fragments;
 import android.os.Bundle;
 import android.support.v17.leanback.app.BrowseFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
-import android.support.v17.leanback.widget.DividerRow;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
@@ -111,21 +110,21 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 
 	private void addStreams(CardPresenter cardPresenter, List<LiveConference> liveConferences) {
 		if (liveConferences.size() > 0) {
+			HeaderItem streamingHeader = new HeaderItem(getString(R.string.livestreams));
+			mRowsAdapter.add(0, new SectionRow(streamingHeader));
 			for (LiveConference con : liveConferences) {
-				HeaderItem streamingHeader = new HeaderItem(con.getConference()
-						+ " " + getString(R.string.streaming_prefix));
-				streamingHeader.setContentDescription(con.getDescription());
-				mRowsAdapter.add(0, new SectionRow(streamingHeader));
 				int i = -1;
 				for (i = 0; i < con.getGroups().size(); i++) {
 					Group g = con.getGroups().get(i);
+					// setup header
+					String group = g.getGroup().length() > 0 ? g.getGroup() : con.getConference();
+					HeaderItem header = new HeaderItem(group);
+					header.setDescription(con.getConference() + " - " + con.getDescription());
+					header.setContentDescription(group);
+					// setup list
 					ArrayObjectAdapter listRowAdapter
 							= new ArrayObjectAdapter(cardPresenter);
 					listRowAdapter.addAll(listRowAdapter.size(), g.getRooms());
-					HeaderItem header = new HeaderItem(g.getGroup());
-					header.setDescription(con.getConference() + " - " + con.getDescription());
-					//HeaderItem header = new HeaderItem(STREAM_PREFIX + con.getConference());
-					header.setContentDescription(g.getGroup());
 					mRowsAdapter.add(i + 1, new ListRow(header, listRowAdapter));
 				}
 //				mRowsAdapter.add(i + 1, new DividerRow());

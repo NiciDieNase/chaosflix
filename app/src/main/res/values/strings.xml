@@ -31,4 +31,6 @@
     <string name="conferences">Conferences</string>
     <string name="remove_from_watchlist">Remove from Watchlist</string>
     <string name="add_to_watchlist">Add to Watchlist</string>
+    <string name="streams">Streams</string>
+    <string name="livestreams">Livestreams</string>
 </resources>
