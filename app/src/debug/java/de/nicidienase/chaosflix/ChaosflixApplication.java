@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
-import com.facebook.stetho.Stetho;
 import com.orm.SugarContext;
 
 /**
@@ -15,7 +14,6 @@ public class ChaosflixApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Stetho.initializeWithDefaults(this);
 		SugarContext.init(this);
 	}
 

@@ -149,9 +149,8 @@ public class EventsDetailsFragment extends DetailsFragment {
 													adapter.add(new ListRow(header, randomEventAdapter));
 												}
 
+												setOnItemViewClickedListener(new ItemViewClickedListener(this));
 												setAdapter(adapter);
-												ItemViewClickedListener listener = new ItemViewClickedListener(EventsDetailsFragment.this);
-												setOnItemViewClickedListener(listener);
 												browseErrorFragment.dismiss();
 											});
 								});
@@ -166,8 +165,8 @@ public class EventsDetailsFragment extends DetailsFragment {
 									ArrayObjectAdapter actionsAdapter = getStreamActionsAdapter(mRoom.getStreams());
 									detailsOverviewRow.setActionsAdapter(actionsAdapter);
 									adapter.add(detailsOverviewRow);
-									setAdapter(adapter);
 									setOnItemViewClickedListener(new ItemViewClickedListener(EventsDetailsFragment.this));
+									setAdapter(adapter);
 									browseErrorFragment.dismiss();
 									// TODO add other streams
 								});
