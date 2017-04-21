@@ -26,6 +26,7 @@ public class Room implements Parcelable {
 		thumb = in.readString();
 		link = in.readString();
 		display = in.readString();
+		streams = in.createTypedArrayList(Stream.CREATOR);
 	}
 
 	public static final Creator<Room> CREATOR = new Creator<Room>() {
@@ -52,7 +53,9 @@ public class Room implements Parcelable {
 		dest.writeString(thumb);
 		dest.writeString(link);
 		dest.writeString(display);
+		dest.writeTypedList(streams);
 	}
+
 
 	public String getSlug() {
 		return slug;
