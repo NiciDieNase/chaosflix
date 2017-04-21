@@ -130,6 +130,7 @@ public class Stream implements Parcelable {
 		dummy.getUrls().put("webm,vp8",StreamUrl.getDummyObject("webm,vp8"));
 		dummy.getUrls().put("mp4,h265",StreamUrl.getDummyObject("mp4,h265"));
 		dummy.getUrls().put("4x3",StreamUrl.getDummyObject("4x3"));
+		dummy.getUrls().put("winkekatze",StreamUrl.getDummyObject("winkekatze"));
 		dummy.setType("dummy");
 		return dummy;
 	}
