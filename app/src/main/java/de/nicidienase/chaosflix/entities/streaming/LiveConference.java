@@ -92,6 +92,10 @@ public class LiveConference {
 		LiveConference dummyCon = new LiveConference("DummyCon", "Conference McConferenceface");
 		dummyCon.setGroups(new ArrayList<>());
 		dummyCon.getGroups().add(Group.getDummyObject());
+		dummyCon.setSlug("duco");
+		dummyCon.setAuthor("");
+		dummyCon.setDescription("A placeholder conference");
+		dummyCon.setKeywords("");
 		return dummyCon;
 	}
 }
