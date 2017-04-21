@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.nicidienase.chaosflix.BuildConfig;
 import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
@@ -78,7 +79,9 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 							.subscribe(objects -> {
 								List<LiveConference> liveConferences = (List<LiveConference>) objects.get(0);
 								ConferencesWrapper conferences = (ConferencesWrapper) objects.get(1);
-//								liveConferences.add(LiveConference.getDummyObject());
+								if (BuildConfig.DEBUG) {
+									liveConferences.add(LiveConference.getDummyObject());
+								}
 								streamsAvailable = liveConferences.size() > 0;
 								addStreams(cardPresenter, liveConferences);
 								addRecordings(cardPresenter, conferences);
