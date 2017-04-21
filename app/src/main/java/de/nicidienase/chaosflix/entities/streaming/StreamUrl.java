@@ -100,6 +100,10 @@ public class StreamUrl implements Parcelable {
 				dummy.setUrl("http://html5demos.com/assets/dizzy.mp4");
 				dummy.setDisplay("dizzy");
 				break;
+			case "winkekatze":
+				dummy.setUrl("https://r5---sn-4g57knlz.googlevideo.com/videoplayback?id=acfd4764b9107d34&itag=299&source=youtube&requiressl=yes&initcwndbps=1472500&pl=20&mv=m&ei=RVj6WJbVMZO2cMvgqIAF&ms=au&mm=31&mn=sn-4g57knlz&ratebypass=yes&mime=video/mp4&gir=yes&clen=17985037641&lmt=1418590845082732&dur=36011.200&key=dg_yt0&mt=1492801526&upn=cA3U7DFBWOw&signature=537B4E86C9CD83ED2EACFAFCFAEE840E259C2DD1.12BF28ED6A0BA6AFDD4FD1631786AA46DC798D12&ip=109.192.170.65&ipbits=0&expire=1492823205&sparams=ip,ipbits,expire,id,itag,source,requiressl,initcwndbps,pl,mv,ei,ms,mm,mn,ratebypass,mime,gir,clen,lmt,dur");
+				dummy.setDisplay("winkekatze");
+				break;
 		}
 		return dummy;
 	}
