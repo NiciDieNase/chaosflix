@@ -125,7 +125,11 @@ public class Stream implements Parcelable {
 		dummy.setTranslated(false);
 		dummy.setVideoSize(new int[]{1, 1});
 		dummy.setUrls(new HashMap<>());
-		dummy.getUrls().put("hls",StreamUrl.getDummyObject());
+		dummy.getUrls().put("hls",StreamUrl.getDummyObject("hls"));
+		dummy.getUrls().put("dizzy",StreamUrl.getDummyObject("dizzy"));
+		dummy.getUrls().put("webm,vp8",StreamUrl.getDummyObject("webm,vp8"));
+		dummy.getUrls().put("mp4,h265",StreamUrl.getDummyObject("mp4,h265"));
+		dummy.getUrls().put("4x3",StreamUrl.getDummyObject("4x3"));
 		dummy.setType("dummy");
 		return dummy;
 	}
