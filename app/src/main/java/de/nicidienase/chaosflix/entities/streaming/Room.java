@@ -104,11 +104,13 @@ public class Room implements Parcelable {
 
 	public static Room getDummyObject(){
 		Room dummy = new Room();
-		dummy.setStreams(new ArrayList<>());
-		dummy.getStreams().add(Stream.getDummyObject());
-		dummy.setDisplay("Dummy Room");
 		dummy.setSlug("dummy_room");
 		dummy.setShedulename("Dummy Room");
+		dummy.setThumb("https://static.media.ccc.de/media/unknown.png");
+		dummy.setLink("");
+		dummy.setDisplay("Dummy Room");
+		dummy.setStreams(new ArrayList<>());
+		dummy.getStreams().add(Stream.getDummyObject());
 		return dummy;
 	}
 }
