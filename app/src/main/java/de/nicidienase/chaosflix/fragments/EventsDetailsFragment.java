@@ -159,16 +159,16 @@ public class EventsDetailsFragment extends DetailsFragment {
 						mediaApiService.getStreamingConferences()
 								.observeOn(AndroidSchedulers.mainThread())
 								.subscribe(liveConferences -> {
-									mRoom = getRoom(mRoom, liveConferences);
-									if (mRoom != null) {
-										final DetailsOverviewRow detailsOverviewRow = setupDetailsOverviewRow(mRoom);
-										ArrayObjectAdapter actionsAdapter = getStreamActionsAdapter(mRoom.getStreams());
-										detailsOverviewRow.setActionsAdapter(actionsAdapter);
-										adapter.add(detailsOverviewRow);
-										setAdapter(adapter);
-										setOnItemViewClickedListener(new ItemViewClickedListener(EventsDetailsFragment.this));
-										browseErrorFragment.dismiss();
+									if(mRoom.getStreams() == null){
+										mRoom = getRoom(mRoom, liveConferences);
 									}
+									final DetailsOverviewRow detailsOverviewRow = setupDetailsOverviewRow(mRoom);
+									ArrayObjectAdapter actionsAdapter = getStreamActionsAdapter(mRoom.getStreams());
+									detailsOverviewRow.setActionsAdapter(actionsAdapter);
+									adapter.add(detailsOverviewRow);
+									setAdapter(adapter);
+									setOnItemViewClickedListener(new ItemViewClickedListener(EventsDetailsFragment.this));
+									browseErrorFragment.dismiss();
 									// TODO add other streams
 								});
 					}

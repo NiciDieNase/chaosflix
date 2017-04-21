@@ -1,22 +1,26 @@
 package de.nicidienase.chaosflix.entities.streaming;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by felix on 23.03.17.
  */
 
 public class Stream implements Parcelable {
+	private static final String MAP_KEY = "map-key";
 	String slug;
 	String display;
 	String type;
 	boolean isTranslated;
 	int[] videoSize;
-	Map<String, StreamUrl> urls;
+	HashMap<String, StreamUrl> urls;
 
 	public Stream() {}
 
@@ -26,20 +30,11 @@ public class Stream implements Parcelable {
 		type = in.readString();
 		isTranslated = in.readByte() != 0;
 		videoSize = in.createIntArray();
-	}
-
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeString(slug);
-		dest.writeString(display);
-		dest.writeString(type);
-		dest.writeByte((byte) (isTranslated ? 1 : 0));
-		dest.writeIntArray(videoSize);
-	}
-
-	@Override
-	public int describeContents() {
-		return 0;
+		int mapSize = in.readInt();
+		urls = new HashMap<>();
+		for(int i = 0; i< mapSize; i++){
+			urls.put(in.readString(),in.readParcelable(StreamUrl.class.getClassLoader()));
+		}
 	}
 
 	public static final Creator<Stream> CREATOR = new Creator<Stream>() {
@@ -53,6 +48,26 @@ public class Stream implements Parcelable {
 			return new Stream[size];
 		}
 	};
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(slug);
+		dest.writeString(display);
+		dest.writeString(type);
+		dest.writeByte((byte) (isTranslated ? 1 : 0));
+		dest.writeIntArray(videoSize);
+		dest.writeInt(urls.size());
+		Set<String> keys = urls.keySet();
+		for(String s: keys){
+			dest.writeString(s);
+			dest.writeParcelable(urls.get(s),0);
+		}
+	}
 
 	public String getSlug() {
 		return slug;
@@ -98,7 +113,7 @@ public class Stream implements Parcelable {
 		return urls;
 	}
 
-	public void setUrls(Map<String, StreamUrl> urls) {
+	public void setUrls(HashMap<String, StreamUrl> urls) {
 		this.urls = urls;
 	}
 
