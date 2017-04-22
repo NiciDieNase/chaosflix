@@ -45,7 +45,10 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	private ArrayObjectAdapter watchListAdapter;
 	private ListRow mWatchlistRow;
 	private boolean streamsAvailable = false;
+	private SectionRow mStreamingSection;
 	private SectionRow mRecomendationsSectionsRow;
+	private SectionRow mConferencesSection;
+	private boolean mWatchlistVisible = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -95,7 +98,8 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	}
 
 	private void addRecordings(CardPresenter cardPresenter, ConferencesWrapper conferences) {
-		mRowsAdapter.add(new SectionRow(getString(R.string.conferences)));
+		mConferencesSection = new SectionRow(getString(R.string.conferences));
+		mRowsAdapter.add(mConferencesSection);
 		mConferences = conferences.getConferencesBySeries();
 		Set<String> keySet = mConferences.keySet();
 		for (String tag : getOrderedConferencesList()) {
@@ -114,7 +118,8 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	private void addStreams(CardPresenter cardPresenter, List<LiveConference> liveConferences) {
 		if (liveConferences.size() > 0) {
 			HeaderItem streamingHeader = new HeaderItem(getString(R.string.livestreams));
-			mRowsAdapter.add(0, new SectionRow(streamingHeader));
+			mStreamingSection = new SectionRow(streamingHeader);
+			mRowsAdapter.add(0, mStreamingSection);
 			for (LiveConference con : liveConferences) {
 				int i = -1;
 				for (i = 0; i < con.getGroups().size(); i++) {
@@ -137,43 +142,64 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
+	public void onResume() {
+		super.onResume();
 		List<WatchlistItem> watchlistItems
 				= Lists.newArrayList(WatchlistItem.findAll(WatchlistItem.class));
 		// setup and list items
-		if(mWatchlistRow == null && mRecomendationsSectionsRow == null){
-			int offset = streamsAvailable ? 2 : 0;
-			mRecomendationsSectionsRow = new SectionRow(getString(R.string.recomendations));
-			mRowsAdapter.add(offset, mRecomendationsSectionsRow);
-			HeaderItem header = new HeaderItem(getString(R.string.watchlist));
-//								header.setDescription(description);
-			mWatchlistRow = new ListRow(header, watchListAdapter);
-			mRowsAdapter.add(offset + 1, mWatchlistRow);
-		}
 		updateWatchlist(watchlistItems);
+	}
+
+	private void showWatchlist() {
+		if(mWatchlistRow == null && mRecomendationsSectionsRow == null){
+			mRecomendationsSectionsRow = new SectionRow(getString(R.string.recomendations));
+			HeaderItem header = new HeaderItem(getString(R.string.watchlist));
+			mWatchlistRow = new ListRow(header, watchListAdapter);
+		}
+		int offset = getWatchlistOffset();
+		if(!mWatchlistVisible){
+			mRowsAdapter.add(offset, mRecomendationsSectionsRow);
+			mRowsAdapter.add(offset + 1, mWatchlistRow);
+			mWatchlistVisible = true;
+		}
 	}
 
 	private Disposable updateWatchlist(List<WatchlistItem> watchlistItems) {
 		return ((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(mediaApiService -> {
+					showWatchlist();
 					watchListAdapter.clear();
 					if(watchlistItems.size() > 0){
+//						int i = Math.max(0,mRowsAdapter.indexOf(mConferencesSection));
+//						mRowsAdapter.add(i,mRecomendationsSectionsRow);
+//						mRowsAdapter.add(i+1,watchListAdapter);
 						Observable.fromIterable(watchlistItems)
 								.flatMap(watchlistItem -> mediaApiService.getEvent(watchlistItem.getEventId()))
 								.observeOn(AndroidSchedulers.mainThread())
 								.subscribe(event -> watchListAdapter.add(event));
 					} else {
-						watchListAdapter.add("Watchlist empty");
+//						watchListAdapter.add("Watchlist empty");
+						hideWatchlist();
 					}
 				});
 	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
+	private void hideWatchlist() {
+		if(mWatchlistVisible){
+			int i = mRowsAdapter.indexOf(mRecomendationsSectionsRow);
+			mRowsAdapter.removeItems(i,2);
+			mWatchlistVisible = false;
+		}
+	}
 
+	private int getWatchlistOffset() {
+		if(mRowsAdapter.size()>0 || streamsAvailable){
+			int i = mRowsAdapter.indexOf(mConferencesSection);
+			return Math.max(i,0);
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
