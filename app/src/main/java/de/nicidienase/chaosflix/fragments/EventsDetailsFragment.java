@@ -1,6 +1,8 @@
 package de.nicidienase.chaosflix.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -18,7 +20,9 @@ import android.support.v17.leanback.widget.FullWidthDetailsOverviewSharedElement
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
+import android.support.v17.leanback.widget.OnActionClickedListener;
 import android.support.v17.leanback.widget.Presenter;
+import android.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,6 +43,7 @@ import de.nicidienase.chaosflix.EventDetailsDescriptionPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
+import de.nicidienase.chaosflix.activities.ConferencesActivity;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.activities.EventDetailsActivity;
 import de.nicidienase.chaosflix.activities.PlayerActivity;
@@ -79,6 +84,69 @@ public class EventsDetailsFragment extends DetailsFragment {
 	private DisplayMetrics mMetrics;
 	private WatchlistItem mWatchlistItem;
 	private ArrayObjectAdapter mRecordingActionsAdapter;
+	private OnActionClickedListener mOnActionClickedListener = new OnActionClickedListener() {
+		@Override
+		public void onActionClicked(Action action) {
+			Log.d(TAG, "OnActionClicked");
+			if (action.getId() == ADD_WATCHLIST_ACTION) {
+				new WatchlistItem(mSelectedEvent.getApiID()).save();
+				mRecordingActionsAdapter.replace(0, new Action(REMOVE_WATCHLIST_ACTION, EventsDetailsFragment.this.getString(R.string.remove_from_watchlist)));
+				SharedPreferences preferences = getActivity().getSharedPreferences(getString(R.string.watchlist_preferences_key), Context.MODE_PRIVATE);
+				if(preferences.getBoolean(getString(R.string.watchlist_dialog_needed), true)) { // new item
+					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+					builder.setTitle(R.string.watchlist_message);
+					builder.setNegativeButton(R.string.return_to_homescreen,(dialog, which) -> {
+						Intent i = new Intent(getActivity(), ConferencesActivity.class);
+						i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+						startActivity(i);
+						getActivity().finish();
+					});
+					builder.setPositiveButton("OK",(dialog, which) -> {});
+					SharedPreferences.Editor edit = preferences.edit();
+					edit.putBoolean(getString(R.string.watchlist_dialog_needed), false);
+					edit.commit();
+
+					builder.create().show();
+				}
+			} else if (action.getId() == REMOVE_WATCHLIST_ACTION) {
+				if (mWatchlistItem != null) {
+					mWatchlistItem.delete();
+				}
+				mRecordingActionsAdapter.replace(0, new Action(ADD_WATCHLIST_ACTION, EventsDetailsFragment.this.getString(R.string.add_to_watchlist)));
+			} else {
+				Intent i = new Intent(EventsDetailsFragment.this.getActivity(), PlayerActivity.class);
+				i.putExtra(DetailsActivity.TYPE, eventType);
+				if (eventType == DetailsActivity.TYPE_RECORDING) {
+					i.putExtra(DetailsActivity.EVENT, mSelectedEvent);
+					if (action.getId() == DUMMY_ID) {
+						Recording dummy = new Recording();
+						dummy.setRecordingUrl("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8");
+						dummy.setMimeType("video/hls");
+						dummy.setLanguage("eng");
+						dummy.setHighQuality(true);
+						i.putExtra(DetailsActivity.RECORDING, dummy);
+					} else {
+						for (Recording r : mSelectedEvent.getRecordings()) {
+							if (r.getApiID() == action.getId()) {
+								i.putExtra(DetailsActivity.RECORDING, r);
+								break;
+							}
+						}
+					}
+				} else if (eventType == DetailsActivity.TYPE_STREAM) {
+					i.putExtra(DetailsActivity.ROOM, mRoom);
+					StreamUrl streamUrl = EventsDetailsFragment.this.getStreamUrlForActionId((int) action.getId());
+					if (streamUrl != null) {
+						i.putExtra(DetailsActivity.STREAM_URL, streamUrl);
+					} else {
+						// TODO handle missing Stream
+						return;
+					}
+				}
+				EventsDetailsFragment.this.getActivity().startActivity(i);
+			}
+		}
+	};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -255,49 +323,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 		mDetailsPresenter.setListener(helper);
 		prepareEntranceTransition();
 
-		mDetailsPresenter.setOnActionClickedListener(action -> {
-			Log.d(TAG,"OnActionClicked");
-			if(action.getId() == ADD_WATCHLIST_ACTION) {
-				new WatchlistItem(mSelectedEvent.getApiID()).save();
-				mRecordingActionsAdapter.replace(0,new Action(REMOVE_WATCHLIST_ACTION,getString(R.string.remove_from_watchlist)));
-			} else if (action.getId() == REMOVE_WATCHLIST_ACTION) {
-				if(mWatchlistItem != null){
-					mWatchlistItem.delete();
-				}
-				mRecordingActionsAdapter.replace(0,new Action(ADD_WATCHLIST_ACTION,getString(R.string.add_to_watchlist)));
-			} else {
-				Intent i = new Intent(getActivity(), PlayerActivity.class);
-				i.putExtra(DetailsActivity.TYPE, eventType);
-				if (eventType == DetailsActivity.TYPE_RECORDING) {
-					i.putExtra(DetailsActivity.EVENT, mSelectedEvent);
-					if (action.getId() == DUMMY_ID) {
-						Recording dummy = new Recording();
-						dummy.setRecordingUrl("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8");
-						dummy.setMimeType("video/hls");
-						dummy.setLanguage("eng");
-						dummy.setHighQuality(true);
-						i.putExtra(DetailsActivity.RECORDING, dummy);
-					} else {
-						for (Recording r : mSelectedEvent.getRecordings()) {
-							if (r.getApiID() == action.getId()) {
-								i.putExtra(DetailsActivity.RECORDING, r);
-								break;
-							}
-						}
-					}
-				} else if (eventType == DetailsActivity.TYPE_STREAM) {
-					i.putExtra(DetailsActivity.ROOM, mRoom);
-					StreamUrl streamUrl = getStreamUrlForActionId((int) action.getId());
-					if (streamUrl != null) {
-						i.putExtra(DetailsActivity.STREAM_URL, streamUrl);
-					} else {
-						// TODO handle missing Stream
-						return;
-					}
-				}
-				getActivity().startActivity(i);
-			}
-		});
+		mDetailsPresenter.setOnActionClickedListener(mOnActionClickedListener);
 		return mDetailsPresenter;
 	}
 
