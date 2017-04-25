@@ -148,6 +148,10 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 							showLoadingSpinner();
 						}
 						break;
+					case ExoPlayer.STATE_ENDED:
+						Log.d(TAG,"Finished Playback");
+						finish();
+						break;
 					case ExoPlayer.STATE_IDLE:
 					case ExoPlayer.STATE_READY:
 					default:
