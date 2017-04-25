@@ -161,7 +161,7 @@ public class PlayerActivity extends AbstractServiceConnectedAcitivty
 
 			@Override
 			public void onPlayerError(ExoPlaybackException error) {
-				String errorMessage = getResources().getString(R.string.error_fragment_message);
+				String errorMessage = error.getCause().getMessage();
 				Toast.makeText(PlayerActivity.this,errorMessage,Toast.LENGTH_SHORT).show();
 				Log.d(TAG,errorMessage,error);
 				PlayerActivity.this.finish();
