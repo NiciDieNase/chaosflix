@@ -33,4 +33,8 @@
     <string name="add_to_watchlist">Add to Watchlist</string>
     <string name="streams">Streams</string>
     <string name="livestreams">Livestreams</string>
+    <string name="watchlist_message">You can find you watchlist on the Homescreen of Chaosflix</string>
+    <string name="watchlist_preferences_key">watchlist</string>
+    <string name="watchlist_dialog_needed">new-watchlist</string>
+    <string name="return_to_homescreen">Return to Homescreen</string>
 </resources>
