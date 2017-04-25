@@ -30,17 +30,6 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activities.FiretvStartActivity"
-            android:banner="@drawable/chaosflix_logo"
-            android:icon="@drawable/chaosflix_logo"
-            android:label="@string/app_name"
-            android:logo="@drawable/chaosflix_logo"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
         <activity android:name=".activities.EventsActivity"
                   android:exported="true"
                   android:theme="@style/Theme.Leanback"/>
