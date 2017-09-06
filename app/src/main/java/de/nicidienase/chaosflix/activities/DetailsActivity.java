@@ -21,7 +21,7 @@ import de.nicidienase.chaosflix.R;
 /*
  * Details activity class that loads LeanbackDetailsFragment class
  */
-public class DetailsActivity extends AbstractServiceConnectedAcitivty {
+public class DetailsActivity extends AbstractServiceConnectedActivity {
 
 	public static final String SHARED_ELEMENT_NAME = "hero";
 	public static final String EVENT = "event";

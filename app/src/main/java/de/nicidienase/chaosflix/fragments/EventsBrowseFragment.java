@@ -48,7 +48,7 @@ import java.util.TimerTask;
 import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
+import de.nicidienase.chaosflix.activities.AbstractServiceConnectedActivity;
 import de.nicidienase.chaosflix.activities.EventsActivity;
 import de.nicidienase.chaosflix.entities.recording.Conference;
 import de.nicidienase.chaosflix.entities.recording.Event;
@@ -79,7 +79,7 @@ public class EventsBrowseFragment extends BrowseFragment {
 		conferenceId = this.getActivity().getIntent().getIntExtra(EventsActivity.CONFERENCE_ID, 0);
 		mConference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.CONFERENCE);
 
-		((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
+		((AbstractServiceConnectedActivity) getActivity()).getmApiServiceObservable()
 				.subscribe(mediaApiService -> {
 					mediaApiService.getConference(mConference.getApiID())
 							.observeOn(AndroidSchedulers.mainThread())

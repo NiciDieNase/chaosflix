@@ -9,7 +9,7 @@ import de.nicidienase.chaosflix.R;
  * Created by felix on 18.03.17.
  */
 
-public class EventDetailsActivity extends AbstractServiceConnectedAcitivty {
+public class EventDetailsActivity extends AbstractServiceConnectedActivity {
 
 	public static final String EVENT = "event";
 	public static final String SHARED_ELEMENT_NAME = "transision_element";
