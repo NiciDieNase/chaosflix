@@ -26,7 +26,7 @@ import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.PlaybackHelper;
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
+import de.nicidienase.chaosflix.activities.AbstractServiceConnectedActivity;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.entities.PlaybackProgress;
 import de.nicidienase.chaosflix.entities.recording.Event;
@@ -229,7 +229,7 @@ public class OverlayFragment extends PlaybackFragment {
 	private Row getRelatedItems() {
 		ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
 		final long[] related = mSelectedEvent.getMetadata().getRelated();
-		mDisposables.add(((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
+		mDisposables.add(((AbstractServiceConnectedActivity) getActivity()).getmApiServiceObservable()
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(
 						mediaApiService -> {

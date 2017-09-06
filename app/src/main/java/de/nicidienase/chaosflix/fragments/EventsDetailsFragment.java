@@ -42,7 +42,7 @@ import de.nicidienase.chaosflix.CardPresenter;
 import de.nicidienase.chaosflix.EventDetailsDescriptionPresenter;
 import de.nicidienase.chaosflix.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.activities.AbstractServiceConnectedAcitivty;
+import de.nicidienase.chaosflix.activities.AbstractServiceConnectedActivity;
 import de.nicidienase.chaosflix.activities.ConferencesActivity;
 import de.nicidienase.chaosflix.activities.DetailsActivity;
 import de.nicidienase.chaosflix.activities.EventDetailsActivity;
@@ -174,7 +174,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 		mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
 		final ArrayObjectAdapter adapter = new ArrayObjectAdapter(mPresenterSelector);
 
-		((AbstractServiceConnectedAcitivty) getActivity()).getmApiServiceObservable()
+		((AbstractServiceConnectedActivity) getActivity()).getmApiServiceObservable()
 				.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
 				.subscribe(mediaApiService -> {
 					mMediaApiService = mediaApiService;
