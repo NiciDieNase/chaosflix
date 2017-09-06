@@ -48,7 +48,7 @@ import de.nicidienase.chaosflix.fragments.OverlayFragment;
  * Created by felix on 26.03.17.
  */
 
-public class PlayerActivity extends AbstractServiceConnectedAcitivty
+public class PlayerActivity extends AbstractServiceConnectedActivity
 		implements OverlayFragment.PlaybackControlListener {
 
 	private static final String TAG = PlayerActivity.class.getSimpleName();

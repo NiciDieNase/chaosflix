@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import de.nicidienase.chaosflix.R;
 
-public class EventsActivity extends AbstractServiceConnectedAcitivty {
+public class EventsActivity extends AbstractServiceConnectedActivity {
 
 	public static final String CONFERENCE_ID = "conference_id";
 	public static final String CONFERENCE = "conference";

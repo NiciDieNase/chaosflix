@@ -17,7 +17,7 @@ import io.reactivex.Single;
  * Created by felix on 24.03.17.
  */
 
-public class AbstractServiceConnectedAcitivty extends Activity {
+public class AbstractServiceConnectedActivity extends Activity {
 	private MediaApiService mMediaApiService = null;
 	private ServiceConnection conn;
 	private boolean mConnected = false;
@@ -63,7 +63,7 @@ public class AbstractServiceConnectedAcitivty extends Activity {
 						mConnected = false;
 					}
 				};
-				AbstractServiceConnectedAcitivty.this.bindService(s, conn, Context.BIND_AUTO_CREATE);
+				AbstractServiceConnectedActivity.this.bindService(s, conn, Context.BIND_AUTO_CREATE);
 			}
 		});
 	}
