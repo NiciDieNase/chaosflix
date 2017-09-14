@@ -8,10 +8,8 @@ import android.support.test.rule.ServiceTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -20,8 +18,7 @@ import java.util.Collections;
 import java.util.concurrent.TimeoutException;
 
 import de.nicidienase.chaosflix.test.R;
-import de.nicidienase.chaosflix.network.MediaApiService;
-import okhttp3.mockwebserver.MockResponse;
+import de.nicidienase.chaosflix.shared.network.MediaApiService;
 import okhttp3.mockwebserver.MockWebServer;
 
 import static junit.framework.Assert.fail;

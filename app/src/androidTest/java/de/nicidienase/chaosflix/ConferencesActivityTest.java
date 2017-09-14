@@ -16,8 +16,7 @@ import de.nicidienase.chaosflix.test.R;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-import de.nicidienase.chaosflix.activities.ConferencesActivity;
-import de.nicidienase.chaosflix.network.MediaApiService;
+import de.nicidienase.chaosflix.leanback.activities.ConferencesActivity;
 import okhttp3.mockwebserver.MockWebServer;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
