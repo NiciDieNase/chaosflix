@@ -10,7 +10,7 @@
         android:layout_gravity="center"/>
 
     <fragment
-        android:name="de.nicidienase.chaosflix.fragments.OverlayFragment"
+        android:name="de.nicidienase.chaosflix.leanback.fragments.OverlayFragment"
         android:id="@+id/playback_controls_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
