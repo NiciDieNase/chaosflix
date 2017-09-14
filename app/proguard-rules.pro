@@ -24,7 +24,7 @@
 -dontwarn javax.annotation.**
 -dontwarn sun.misc.Unsafe
 -dontwarn okio.**
--keep class de.nicidienase.chaosflix.entities.** { *; }
+-keep class de.nicidienase.chaosflix.shared.entities.** { *; }
 #retrofit
 -dontwarn retrofit2.**
 -keep class retrofit2.** { *; }

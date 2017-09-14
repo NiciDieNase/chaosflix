@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-          android:name="de.nicidienase.chaosflix.fragments.ConferencesBrowseFragment"
+          android:name="de.nicidienase.chaosflix.leanback.fragments.ConferencesBrowseFragment"
           android:id="@+id/browse_fragment"
           android:orientation="vertical"
           android:layout_width="match_parent"
