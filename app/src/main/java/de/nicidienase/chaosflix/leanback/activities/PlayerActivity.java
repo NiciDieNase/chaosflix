@@ -17,6 +17,7 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -161,6 +162,11 @@ public class PlayerActivity extends AbstractServiceConnectedActivity
 			}
 
 			@Override
+			public void onRepeatModeChanged(int repeatMode) {
+
+			}
+
+			@Override
 			public void onPlayerError(ExoPlaybackException error) {
 				String errorMessage = error.getCause().getMessage();
 				Toast.makeText(PlayerActivity.this,errorMessage,Toast.LENGTH_SHORT).show();
@@ -170,6 +176,11 @@ public class PlayerActivity extends AbstractServiceConnectedActivity
 
 			@Override
 			public void onPositionDiscontinuity() {
+
+			}
+
+			@Override
+			public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
 
 			}
 		});
