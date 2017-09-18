@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.touch;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper;
 import de.nicidienase.chaosflix.touch.fragments.ConferenceFragment;
@@ -19,11 +21,13 @@ import de.nicidienase.chaosflix.touch.fragments.ConferenceFragment;
 public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 
 	private static final String TAG = ConferenceGroupsFragmentPager.class.getSimpleName();
+	private final Context mContext;
 	private List<String> orderedConferencesList = new ArrayList<>();
 	private Map<String, List<Conference>> mConferenceMap;
 
-	public ConferenceGroupsFragmentPager(FragmentManager fm) {
+	public ConferenceGroupsFragmentPager(Context context, FragmentManager fm) {
 		super(fm);
+		this.mContext = context;
 	}
 
 	@Override
@@ -41,9 +45,7 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 
 	@Override
 	public CharSequence getPageTitle(int position) {
-		String string = ConferencesWrapper.getStringForTag(orderedConferencesList.get(position));
-		Log.d(TAG,string);
-		return string;
+		return ConferencesWrapper.getStringForTag(orderedConferencesList.get(position));
 	}
 
 	public void setContent(Map<String, List<Conference>> conferenceMap) {
@@ -60,5 +62,11 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 				orderedConferencesList.add(tag);
 			}
 		}
+	}
+
+	@Override
+	public float getPageWidth(int position) {
+		int integer = mContext.getResources().getInteger(R.integer.num_columns);
+		return 1f/integer;
 	}
 }

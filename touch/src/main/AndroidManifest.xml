@@ -14,7 +14,7 @@
         android:name=".ChaosflixApplication"
         android:theme="@style/Base.Theme.AppCompat.Light">
         <activity android:name=".touch.activities.ConferencesActivity"
-                  android:icon="@drawable/icon"
+                  android:icon="@drawable/icon_notext"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
