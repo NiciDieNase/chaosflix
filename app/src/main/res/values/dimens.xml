@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="detail_thumb_width">274dp</dimen>
-    <dimen name="detail_thumb_height">274dp</dimen>
-    <dimen name="spinner_width">50dp</dimen>
-    <dimen name="spinner_height">50dp</dimen>
-</resources>
