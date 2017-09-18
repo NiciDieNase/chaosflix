@@ -2,13 +2,10 @@ package de.nicidienase.chaosflix.common.entities.recording;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
 import com.orm.SugarRecord;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -155,54 +152,6 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 			this.save();
 		}
 	}
-
-	public Recording getOptimalStream() {
-		List<Recording> result = new ArrayList<>();
-		for(Recording r : getRecordings()){
-			if(r.isHighQuality() && r.getMimeType().equals("video/mp4"))
-				result.add(r);
-		}
-		if(result.size()== 0){
-			for(Recording r : getRecordings()){
-				if(r.getMimeType().equals("video/mp4"))
-					result.add(r);
-			}
-		}
-		if(result.size()== 0){
-			for(Recording r : getRecordings()){
-				if(r.getMimeType().startsWith("video/"))
-					result.add(r);
-			}
-		}
-		// sort by length of language-string in decending order, so first item has most languages
-		Collections.sort(result,(o1, o2) -> o2.getLanguage().length() - o1.getLanguage().length());
-		if(result.size() > 0){
-			return result.get(0);
-		} else {
-			return getRecordings().get(0);
-		}
-	}
-
-	public String getExtendedDescription(){
-		StringBuilder sb = new StringBuilder();
-		sb.append(getDescription())
-				.append("\n")
-				.append("\nreleased at: ").append(getReleaseDate())
-				.append("\nTags: ").append(android.text.TextUtils.join(", ", getTags()));
-		return sb.toString();
-	}
-
-	public String getSpeakerString(){
-		return TextUtils.join(", ", getPersons());
-	}
-
-//	@BindingAdapter({"bind:imageUrl"})
-//	public static void loadImage(ImageView imageView, String url){
-//		Picasso.with(imageView.getContext())
-//				.load(url)
-//				.noFade()
-//				.into(imageView);
-//	}
 
 	public int getApiID() {
 		String[] strings = getUrl().split("/");

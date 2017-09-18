@@ -1,7 +1,5 @@
 package de.nicidienase.chaosflix.common.entities.recording;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -16,33 +14,18 @@ import java.util.Set;
  * Created by felix on 17.03.17.
  */
 
-public class ConferencesWrapper implements Parcelable{
+public class ConferencesWrapper {
 	private static final String TAG = ConferencesWrapper.class.getSimpleName();
-	private static final String CONGRESS = "congress";
-	private static final String EVENTS = "events";
-	private static final String CONFERENCES = "conferences";
-	private static final String DEFAULT_CONFERENCE_GROUP = "other conferences";
-	private static final String EVENT_GROUP = "Events";
-	private static final int MIN_NUM_CONS = 1;
-
 	private List<Conference> conferences;
+
+	private final String CONGRESS = "congress";
+	private final String EVENTS = "events";
+	private final String CONFERENCES = "conferences";
+	private final String DEFAULT_CONFERENCE_GROUP = "other conferences";
+	private final String EVENT_GROUP = "Events";
+
 	private Map<String, List<Conference>> conferenceMap = null;
-
-	protected ConferencesWrapper(Parcel in) {
-		conferences = in.createTypedArrayList(Conference.CREATOR);
-	}
-
-	public static final Creator<ConferencesWrapper> CREATOR = new Creator<ConferencesWrapper>() {
-		@Override
-		public ConferencesWrapper createFromParcel(Parcel in) {
-			return new ConferencesWrapper(in);
-		}
-
-		@Override
-		public ConferencesWrapper[] newArray(int size) {
-			return new ConferencesWrapper[size];
-		}
-	};
+	private int MIN_NUM_CONS = 1;
 
 	public static String getStringForTag(String tag) {
 		switch (tag) {
@@ -90,20 +73,10 @@ public class ConferencesWrapper implements Parcelable{
 	}
 
 	public static List<String> getOrderedConferencesList() {
-		return Arrays.asList(
-				"congress",
-				"gpn",
-				"mrmcd",
-				"eh",
-				"sendezentrum",
-				"camp",
-				"broadcast/chaosradio",
-				"froscon",
-				"sigint",
-				"datenspuren",
-				"fiffkon",
-				"cryptocon"
-		);
+		return Arrays.asList("congress", "sendezentrum", "camp",
+				"gpn", "mrmcd", "broadcast/chaosradio",
+				"eh", "froscon", "sigint",
+				"datenspuren", "fiffkon", "cryptocon");
 	}
 
 
@@ -190,21 +163,5 @@ public class ConferencesWrapper implements Parcelable{
 
 	public void setConferences(List<Conference> conferences) {
 		this.conferences = conferences;
-	}
-
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeTypedList(conferences);
-		dest.writeString(CONGRESS);
-		dest.writeString(EVENTS);
-		dest.writeString(CONFERENCES);
-		dest.writeString(DEFAULT_CONFERENCE_GROUP);
-		dest.writeString(EVENT_GROUP);
-		dest.writeInt(MIN_NUM_CONS);
 	}
 }
