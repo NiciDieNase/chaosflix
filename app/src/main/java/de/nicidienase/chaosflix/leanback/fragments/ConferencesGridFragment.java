@@ -11,7 +11,7 @@ import java.util.List;
 
 import de.nicidienase.chaosflix.leanback.CardPresenter;
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
-import de.nicidienase.chaosflix.shared.AbstractServiceConnectedActivity;
+import de.nicidienase.chaosflix.shared.ChaosflixBaseActivity;
 import de.nicidienase.chaosflix.shared.entities.recording.Conference;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
@@ -29,7 +29,7 @@ public class ConferencesGridFragment extends VerticalGridFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		((AbstractServiceConnectedActivity) getActivity()).getmApiServiceObservable()
+		((ChaosflixBaseActivity) getActivity()).getmApiServiceObservable()
 				.subscribe(mediaApiService -> {
 					mediaApiService.getConferences()
 							.observeOn(AndroidSchedulers.mainThread())

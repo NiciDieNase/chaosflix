@@ -20,7 +20,7 @@ import de.nicidienase.chaosflix.BuildConfig;
 import de.nicidienase.chaosflix.leanback.CardPresenter;
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.shared.AbstractServiceConnectedActivity;
+import de.nicidienase.chaosflix.shared.ChaosflixBaseActivity;
 import de.nicidienase.chaosflix.shared.entities.WatchlistItem;
 import de.nicidienase.chaosflix.shared.entities.recording.Conference;
 import de.nicidienase.chaosflix.shared.entities.recording.ConferencesWrapper;
@@ -68,7 +68,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 		mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 		watchListAdapter = new ArrayObjectAdapter(cardPresenter);
 
-		Disposable disposable = ((AbstractServiceConnectedActivity) getActivity()).getmApiServiceObservable()
+		Disposable disposable = ((ChaosflixBaseActivity) getActivity()).getmApiServiceObservable()
 				.subscribe(mediaApiService -> {
 					mDisposables.add(Observable.zip(mediaApiService.getStreamingConferences(),
 							mediaApiService.getConferences(),
@@ -165,7 +165,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	}
 
 	private Disposable updateWatchlist(List<WatchlistItem> watchlistItems) {
-		return ((AbstractServiceConnectedActivity) getActivity()).getmApiServiceObservable()
+		return ((ChaosflixBaseActivity) getActivity()).getmApiServiceObservable()
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(mediaApiService -> {
 					showWatchlist();
