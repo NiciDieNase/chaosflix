@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Chaosflix-Common</string>
+    <string name="api_media_ccc_url">https://api.media.ccc.de</string>
+    <string name="streaming_media_ccc_url">https://streaming.media.ccc.de</string>
+</resources>
