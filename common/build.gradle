@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+<<<<<<< HEAD
 apply plugin: 'android-maven'
 
 android {
@@ -10,6 +11,17 @@ android {
         minSdkVersion 17
 //        minSdkVersion rootProject.ext.minSDK
         targetSdkVersion rootProject.ext.targetSDK
+=======
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 25
+>>>>>>> extracte module common
         versionCode 1
         versionName "1.0"
 
@@ -30,6 +42,7 @@ android {
 
 }
 
+<<<<<<< HEAD
 group="de.nicidienase.chaosflix"
 version="1.0.0"
 
@@ -50,6 +63,20 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
     implementation 'joda-time:joda-time:2.9.9'
     implementation 'org.joda:joda-convert:1.8'
+=======
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:25.4.0'
+    compile 'com.github.satyan:sugar:1.4'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'io.reactivex.rxjava2:rxjava:2.0.1'
+
+    compile 'com.squareup.retrofit2:retrofit:2.2.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
+    compile 'joda-time:joda-time:2.9.9'
+    compile 'org.joda:joda-convert:1.8'
+>>>>>>> extracte module common
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
