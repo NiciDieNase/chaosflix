@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.touch.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -55,7 +56,10 @@ public class ConferencesActivity extends TouchBaseActivity implements Conference
 
 	@Override
 	public void onListFragmentInteraction(Conference item) {
-		Log.d(TAG,"ListItem clicked");
+		Log.d(TAG,"Clicked " + item.getAcronym());
+		Intent intent = new Intent(this, EventsActivity.class);
+		intent.putExtra(EventsActivity.CONFERENCE_KEY,item);
+		startActivity(intent);
 	}
 
 

@@ -21,7 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".touch.activities.EventsActivity"/>
+
         <service android:name=".common.network.MediaApiService"/>
+
     </application>
 
 </manifest>
