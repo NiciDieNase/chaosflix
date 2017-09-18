@@ -16,7 +16,6 @@
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Leanback"
         android:name=".ChaosflixApplication">
         <activity
             android:name=".leanback.activities.ConferencesActivity"
@@ -24,6 +23,7 @@
             android:icon="@drawable/icon"
             android:label="@string/app_name"
             android:logo="@drawable/icon"
+            android:theme="@style/Theme.Leanback"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

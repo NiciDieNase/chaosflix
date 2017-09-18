@@ -17,12 +17,12 @@ package de.nicidienase.chaosflix.leanback.activities;
 import android.os.Bundle;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.shared.AbstractServiceConnectedActivity;
+import de.nicidienase.chaosflix.shared.ChaosflixBaseActivity;
 
 /*
  * Details activity class that loads LeanbackDetailsFragment class
  */
-public class DetailsActivity extends AbstractServiceConnectedActivity {
+public class DetailsActivity extends ChaosflixBaseActivity {
 
 	public static final String SHARED_ELEMENT_NAME = "hero";
 	public static final String EVENT = "event";
