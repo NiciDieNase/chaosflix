@@ -29,7 +29,7 @@ public class ConferencesGridFragment extends VerticalGridFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		((ChaosflixBaseActivity) getActivity()).getmApiServiceObservable()
+		((ChaosflixBaseActivity) getActivity()).getApiServiceObservable()
 				.subscribe(mediaApiService -> {
 					mediaApiService.getConferences()
 							.observeOn(AndroidSchedulers.mainThread())
