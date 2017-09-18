@@ -44,13 +44,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.leanback.fragments.OverlayFragment;
-import de.nicidienase.chaosflix.shared.AbstractServiceConnectedActivity;
+import de.nicidienase.chaosflix.shared.ChaosflixBaseActivity;
 
 /**
  * Created by felix on 26.03.17.
  */
 
-public class PlayerActivity extends AbstractServiceConnectedActivity
+public class PlayerActivity extends ChaosflixBaseActivity
 		implements OverlayFragment.PlaybackControlListener {
 
 	private static final String TAG = PlayerActivity.class.getSimpleName();

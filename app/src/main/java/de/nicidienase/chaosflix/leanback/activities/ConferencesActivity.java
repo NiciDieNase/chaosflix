@@ -3,13 +3,13 @@ package de.nicidienase.chaosflix.leanback.activities;
 import android.os.Bundle;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.shared.AbstractServiceConnectedActivity;
+import de.nicidienase.chaosflix.shared.ChaosflixBaseActivity;
 
 /**
  * Created by felix on 18.03.17.
  */
 
-public class ConferencesActivity extends AbstractServiceConnectedActivity {
+public class ConferencesActivity extends ChaosflixBaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
