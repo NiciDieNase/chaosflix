@@ -18,11 +18,12 @@ import java.util.Collections;
 import java.util.concurrent.TimeoutException;
 
 import de.nicidienase.chaosflix.test.R;
-import de.nicidienase.chaosflix.shared.network.MediaApiService;
+import de.nicidienase.chaosflix.common.network.MediaApiService;
 import okhttp3.mockwebserver.MockWebServer;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Created by felix on 17.03.17.

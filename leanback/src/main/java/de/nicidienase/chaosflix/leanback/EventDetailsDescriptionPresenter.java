@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.shared.entities.recording.Event;
-import de.nicidienase.chaosflix.shared.entities.streaming.Room;
+import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.common.entities.streaming.Room;
 
 /**
  * Created by felix on 18.03.17.

@@ -22,10 +22,10 @@ import android.support.v17.leanback.widget.PlaybackControlsRowPresenter;
 import android.support.v17.leanback.widget.SparseArrayObjectAdapter;
 import android.util.Log;
 
-import de.nicidienase.chaosflix.shared.entities.recording.Event;
-import de.nicidienase.chaosflix.shared.entities.recording.Recording;
-import de.nicidienase.chaosflix.shared.entities.streaming.Room;
-import de.nicidienase.chaosflix.shared.entities.streaming.StreamUrl;
+import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.common.entities.recording.Recording;
+import de.nicidienase.chaosflix.common.entities.streaming.Room;
+import de.nicidienase.chaosflix.common.entities.streaming.StreamUrl;
 import de.nicidienase.chaosflix.leanback.fragments.OverlayFragment;
 import io.reactivex.disposables.Disposable;
 

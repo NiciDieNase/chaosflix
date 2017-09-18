@@ -28,11 +28,11 @@ import de.nicidienase.chaosflix.leanback.PlaybackHelper;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.leanback.activities.LeanbackBaseActivity;
 import de.nicidienase.chaosflix.leanback.activities.DetailsActivity;
-import de.nicidienase.chaosflix.shared.entities.PlaybackProgress;
-import de.nicidienase.chaosflix.shared.entities.recording.Event;
-import de.nicidienase.chaosflix.shared.entities.recording.Recording;
-import de.nicidienase.chaosflix.shared.entities.streaming.Room;
-import de.nicidienase.chaosflix.shared.entities.streaming.StreamUrl;
+import de.nicidienase.chaosflix.common.entities.PlaybackProgress;
+import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.common.entities.recording.Recording;
+import de.nicidienase.chaosflix.common.entities.streaming.Room;
+import de.nicidienase.chaosflix.common.entities.streaming.StreamUrl;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 

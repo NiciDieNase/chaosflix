@@ -14,9 +14,9 @@ import android.util.Log;
 import de.nicidienase.chaosflix.leanback.activities.DetailsActivity;
 import de.nicidienase.chaosflix.leanback.activities.EventDetailsActivity;
 import de.nicidienase.chaosflix.leanback.activities.EventsActivity;
-import de.nicidienase.chaosflix.shared.entities.recording.Conference;
-import de.nicidienase.chaosflix.shared.entities.recording.Event;
-import de.nicidienase.chaosflix.shared.entities.streaming.Room;
+import de.nicidienase.chaosflix.common.entities.recording.Conference;
+import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.common.entities.streaming.Room;
 
 /**
  * Created by felix on 21.03.17.

@@ -1,6 +1,5 @@
-package de.nicidienase.chaosflix.leanback.activities;
+package de.nicidienase.chaosflix.touch.activities;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +8,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 import de.nicidienase.chaosflix.common.network.MediaApiService;
 import io.reactivex.Single;
@@ -17,7 +17,7 @@ import io.reactivex.Single;
  * Created by felix on 24.03.17.
  */
 
-public class LeanbackBaseActivity extends Activity {
+public class TouchBaseActivity extends AppCompatActivity {
 	private MediaApiService mMediaApiService = null;
 	private ServiceConnection conn;
 	private boolean mConnected = false;
@@ -63,7 +63,7 @@ public class LeanbackBaseActivity extends Activity {
 						mConnected = false;
 					}
 				};
-				LeanbackBaseActivity.this.bindService(s, conn, Context.BIND_AUTO_CREATE);
+				TouchBaseActivity.this.bindService(s, conn, Context.BIND_AUTO_CREATE);
 			}
 		});
 	}

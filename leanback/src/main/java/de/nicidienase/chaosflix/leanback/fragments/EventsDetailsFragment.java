@@ -47,16 +47,16 @@ import de.nicidienase.chaosflix.leanback.activities.DetailsActivity;
 import de.nicidienase.chaosflix.leanback.activities.EventDetailsActivity;
 import de.nicidienase.chaosflix.leanback.activities.LeanbackBaseActivity;
 import de.nicidienase.chaosflix.leanback.activities.PlayerActivity;
-import de.nicidienase.chaosflix.shared.entities.WatchlistItem;
-import de.nicidienase.chaosflix.shared.entities.recording.Conference;
-import de.nicidienase.chaosflix.shared.entities.recording.Event;
-import de.nicidienase.chaosflix.shared.entities.recording.Recording;
-import de.nicidienase.chaosflix.shared.entities.streaming.Group;
-import de.nicidienase.chaosflix.shared.entities.streaming.LiveConference;
-import de.nicidienase.chaosflix.shared.entities.streaming.Room;
-import de.nicidienase.chaosflix.shared.entities.streaming.Stream;
-import de.nicidienase.chaosflix.shared.entities.streaming.StreamUrl;
-import de.nicidienase.chaosflix.shared.network.MediaApiService;
+import de.nicidienase.chaosflix.common.entities.WatchlistItem;
+import de.nicidienase.chaosflix.common.entities.recording.Conference;
+import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.common.entities.recording.Recording;
+import de.nicidienase.chaosflix.common.entities.streaming.Group;
+import de.nicidienase.chaosflix.common.entities.streaming.LiveConference;
+import de.nicidienase.chaosflix.common.entities.streaming.Room;
+import de.nicidienase.chaosflix.common.entities.streaming.Stream;
+import de.nicidienase.chaosflix.common.entities.streaming.StreamUrl;
+import de.nicidienase.chaosflix.common.network.MediaApiService;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**

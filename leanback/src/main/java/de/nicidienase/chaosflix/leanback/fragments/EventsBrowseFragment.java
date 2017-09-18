@@ -50,8 +50,8 @@ import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.leanback.activities.LeanbackBaseActivity;
 import de.nicidienase.chaosflix.leanback.activities.EventsActivity;
-import de.nicidienase.chaosflix.shared.entities.recording.Conference;
-import de.nicidienase.chaosflix.shared.entities.recording.Event;
+import de.nicidienase.chaosflix.common.entities.recording.Conference;
+import de.nicidienase.chaosflix.common.entities.recording.Event;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class EventsBrowseFragment extends BrowseFragment {

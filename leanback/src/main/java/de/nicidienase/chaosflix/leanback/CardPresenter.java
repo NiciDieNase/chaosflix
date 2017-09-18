@@ -23,10 +23,10 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.shared.entities.recording.Conference;
-import de.nicidienase.chaosflix.shared.entities.recording.Event;
-import de.nicidienase.chaosflix.shared.entities.streaming.LiveConference;
-import de.nicidienase.chaosflix.shared.entities.streaming.Room;
+import de.nicidienase.chaosflix.common.entities.recording.Conference;
+import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.common.entities.streaming.LiveConference;
+import de.nicidienase.chaosflix.common.entities.streaming.Room;
 
 /*
  * A CardPresenter is used to generate Views and bind Objects to them on demand.

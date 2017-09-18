@@ -12,7 +12,7 @@ import java.util.List;
 import de.nicidienase.chaosflix.leanback.CardPresenter;
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
 import de.nicidienase.chaosflix.leanback.activities.LeanbackBaseActivity;
-import de.nicidienase.chaosflix.shared.entities.recording.Conference;
+import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
