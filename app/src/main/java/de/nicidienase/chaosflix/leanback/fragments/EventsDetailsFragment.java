@@ -174,7 +174,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 		mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
 		final ArrayObjectAdapter adapter = new ArrayObjectAdapter(mPresenterSelector);
 
-		((ChaosflixBaseActivity) getActivity()).getmApiServiceObservable()
+		((ChaosflixBaseActivity) getActivity()).getApiServiceObservable()
 				.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
 				.subscribe(mediaApiService -> {
 					mMediaApiService = mediaApiService;

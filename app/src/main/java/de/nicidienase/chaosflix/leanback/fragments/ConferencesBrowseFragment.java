@@ -11,7 +11,6 @@ import android.support.v17.leanback.widget.SectionRow;
 import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -68,7 +67,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 		mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 		watchListAdapter = new ArrayObjectAdapter(cardPresenter);
 
-		Disposable disposable = ((ChaosflixBaseActivity) getActivity()).getmApiServiceObservable()
+		Disposable disposable = ((ChaosflixBaseActivity) getActivity()).getApiServiceObservable()
 				.subscribe(mediaApiService -> {
 					mDisposables.add(Observable.zip(mediaApiService.getStreamingConferences(),
 							mediaApiService.getConferences(),
@@ -102,14 +101,14 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 		mRowsAdapter.add(mConferencesSection);
 		mConferences = conferences.getConferencesBySeries();
 		Set<String> keySet = mConferences.keySet();
-		for (String tag : getOrderedConferencesList()) {
+		for (String tag : ConferencesWrapper.getOrderedConferencesList()) {
 			if (keySet.contains(tag)) {
 				ListRow row = getRow(mConferences, cardPresenter, tag, "");
 				mRowsAdapter.add(row);
 			}
 		}
 		for (String tag : keySet) {
-			if (!getOrderedConferencesList().contains(tag)) {
+			if (!ConferencesWrapper.getOrderedConferencesList().contains(tag)) {
 				mRowsAdapter.add(getRow(mConferences, cardPresenter, tag, ""));
 			}
 		}
@@ -165,7 +164,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	}
 
 	private Disposable updateWatchlist(List<WatchlistItem> watchlistItems) {
-		return ((ChaosflixBaseActivity) getActivity()).getmApiServiceObservable()
+		return ((ChaosflixBaseActivity) getActivity()).getApiServiceObservable()
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(mediaApiService -> {
 					showWatchlist();
@@ -211,60 +210,9 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	private ListRow getRow(Map<String, List<Conference>> conferences, CardPresenter cardPresenter, String tag, String description) {
 		ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
 		listRowAdapter.addAll(0, conferences.get(tag));
-		HeaderItem header = new HeaderItem(getStringForTag(tag));
+		HeaderItem header = new HeaderItem(ConferencesWrapper.getStringForTag(tag));
 		header.setDescription(description);
 		return new ListRow(header, listRowAdapter);
 	}
 
-	private String getStringForTag(String tag) {
-		switch (tag) {
-			case "congress":
-				return "Congress";
-			case "sendezentrum":
-				return "Sendezentrum";
-			case "camp":
-				return "Camp";
-			case "broadcast/chaosradio":
-				return "Chaosradio";
-			case "eh":
-				return "Easterhegg";
-			case "gpn":
-				return "GPN";
-			case "froscon":
-				return "FrOSCon";
-			case "mrmcd":
-				return "MRMCD";
-			case "sigint":
-				return "SIGINT";
-			case "datenspuren":
-				return "Datenspuren";
-			case "fiffkon":
-				return "FifFKon";
-			case "blinkenlights":
-				return "Blinkenlights";
-			case "chaoscologne":
-				return "1c2 Chaos Cologne";
-			case "cryptocon":
-				return "CryptoCon";
-			case "other conferences":
-				return "Other Conferences";
-			case "denog":
-				return "DENOG";
-			case "vcfb":
-				return "Vintage Computing Festival Berlin";
-			case "hackover":
-				return "Hackover";
-			case "netzpolitik":
-				return "Das ist Netzpolitik!";
-			default:
-				return tag;
-		}
-	}
-
-	private List<String> getOrderedConferencesList() {
-		return Arrays.asList("congress", "sendezentrum", "camp",
-				"broadcast/chaosradio", "eh", "gpn",
-				"froscon", "mrmcd", "sigint",
-				"datenspuren", "fiffkon", "cryptocon");
-	}
 }

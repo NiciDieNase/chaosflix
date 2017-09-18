@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.shared.entities.recording;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,58 @@ public class ConferencesWrapper {
 
 	private Map<String, List<Conference>> conferenceMap = null;
 	private int MIN_NUM_CONS = 1;
+
+	public static String getStringForTag(String tag) {
+		switch (tag) {
+			case "congress":
+				return "Congress";
+			case "sendezentrum":
+				return "Sendezentrum";
+			case "camp":
+				return "Camp";
+			case "broadcast/chaosradio":
+				return "Chaosradio";
+			case "eh":
+				return "Easterhegg";
+			case "gpn":
+				return "GPN";
+			case "froscon":
+				return "FrOSCon";
+			case "mrmcd":
+				return "MRMCD";
+			case "sigint":
+				return "SIGINT";
+			case "datenspuren":
+				return "Datenspuren";
+			case "fiffkon":
+				return "FifFKon";
+			case "blinkenlights":
+				return "Blinkenlights";
+			case "chaoscologne":
+				return "1c2 Chaos Cologne";
+			case "cryptocon":
+				return "CryptoCon";
+			case "other conferences":
+				return "Other Conferences";
+			case "denog":
+				return "DENOG";
+			case "vcfb":
+				return "Vintage Computing Festival Berlin";
+			case "hackover":
+				return "Hackover";
+			case "netzpolitik":
+				return "Das ist Netzpolitik!";
+			default:
+				return tag;
+		}
+	}
+
+	public static List<String> getOrderedConferencesList() {
+		return Arrays.asList("congress", "sendezentrum", "camp",
+				"broadcast/chaosradio", "eh", "gpn",
+				"froscon", "mrmcd", "sigint",
+				"datenspuren", "fiffkon", "cryptocon");
+	}
 
 
 	public List<Conference> getConferences() {

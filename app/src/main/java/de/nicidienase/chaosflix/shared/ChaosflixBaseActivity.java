@@ -39,7 +39,7 @@ public class ChaosflixBaseActivity extends AppCompatActivity {
 	}
 
 
-	public Single<MediaApiService> getmApiServiceObservable() {
+	public Single<MediaApiService> getApiServiceObservable() {
 		Intent s = new Intent(this, MediaApiService.class);
 		if (serverUrl != null) {
 			s.putExtra(MediaApiService.RECORDING_URL, serverUrl);
