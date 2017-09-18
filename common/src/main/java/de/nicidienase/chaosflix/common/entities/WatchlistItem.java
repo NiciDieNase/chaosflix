@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.shared.entities;
+package de.nicidienase.chaosflix.common.entities;
 
 import com.orm.SugarRecord;
 

@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.shared.entities.recording;
+package de.nicidienase.chaosflix.common.entities.recording;
 
 import android.util.Log;
 

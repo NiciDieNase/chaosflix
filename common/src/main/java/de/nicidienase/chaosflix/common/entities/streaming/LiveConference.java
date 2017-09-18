@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.shared.entities.streaming;
+package de.nicidienase.chaosflix.common.entities.streaming;
 
 import java.util.ArrayList;
 import java.util.List;

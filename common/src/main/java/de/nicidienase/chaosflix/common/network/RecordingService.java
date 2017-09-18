@@ -1,11 +1,11 @@
-package de.nicidienase.chaosflix.shared.network;
+package de.nicidienase.chaosflix.common.network;
 
 import java.util.List;
 
-import de.nicidienase.chaosflix.shared.entities.recording.Conference;
-import de.nicidienase.chaosflix.shared.entities.recording.ConferencesWrapper;
-import de.nicidienase.chaosflix.shared.entities.recording.Event;
-import de.nicidienase.chaosflix.shared.entities.recording.Recording;
+import de.nicidienase.chaosflix.common.entities.recording.Conference;
+import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper;
+import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.common.entities.recording.Recording;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Path;

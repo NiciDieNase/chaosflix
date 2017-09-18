@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.shared.network;
+package de.nicidienase.chaosflix.common.network;
 
 import android.app.Service;
 import android.content.Intent;
@@ -11,11 +11,11 @@ import android.util.Log;
 import java.util.List;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.shared.entities.recording.Conference;
-import de.nicidienase.chaosflix.shared.entities.recording.ConferencesWrapper;
-import de.nicidienase.chaosflix.shared.entities.recording.Event;
-import de.nicidienase.chaosflix.shared.entities.recording.Recording;
-import de.nicidienase.chaosflix.shared.entities.streaming.LiveConference;
+import de.nicidienase.chaosflix.common.entities.recording.Conference;
+import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper;
+import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.common.entities.recording.Recording;
+import de.nicidienase.chaosflix.common.entities.streaming.LiveConference;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;

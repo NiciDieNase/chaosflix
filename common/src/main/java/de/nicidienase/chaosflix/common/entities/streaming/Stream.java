@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.shared.entities.streaming;
+package de.nicidienase.chaosflix.common.entities.streaming;
 
 import android.os.Parcel;
 import android.os.Parcelable;
