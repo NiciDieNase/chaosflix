@@ -34,7 +34,7 @@ public class ConferencesActivity extends TouchBaseActivity implements Conference
 							.observeOn(AndroidSchedulers.mainThread())
 							.subscribe(conferencesWrapper -> {
 								ConferenceGroupsFragmentPager fragmentPager
-										= new ConferenceGroupsFragmentPager(getSupportFragmentManager());
+										= new ConferenceGroupsFragmentPager(ConferencesActivity.this,getSupportFragmentManager());
 								fragmentPager.setContent(conferencesWrapper.getConferencesBySeries());
 
 								ViewPager pager = (ViewPager) findViewById(R.id.viewpager);
