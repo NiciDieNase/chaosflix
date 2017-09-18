@@ -36,12 +36,14 @@
 
                 <TextView
                     android:id="@+id/title_text"
+                    style="@style/TextAppearance.AppCompat.Large"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="8dp"
                     android:layout_weight="1"
-                    android:text="Title"/>
+                    android:text="Title"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
                 <TextView
                     android:id="@+id/acronym_text"

@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.touch.fragments;
+package de.nicidienase.chaosflix.touch.activities;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,36 +9,39 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.recording.Conference;
-import de.nicidienase.chaosflix.touch.fragments.ConferenceFragment.OnListFragmentInteractionListener;
-
 import java.util.List;
 
-public class ConferenceRecyclerViewAdapter extends RecyclerView.Adapter<ConferenceRecyclerViewAdapter.ViewHolder> {
+import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.common.entities.recording.Event;
 
-	private final List<Conference> mConferences;
+/**
+ * Created by felix on 19.09.17.
+ */
+
+class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecyclerViewAdapter.ViewHolder> {
+
+	private final List<Event> mEvents;
 	private final OnListFragmentInteractionListener mListener;
 
-	public ConferenceRecyclerViewAdapter(List<Conference> items, OnListFragmentInteractionListener listener) {
-		mConferences = items;
+	public EventsRecyclerViewAdapter(List<Event> items, OnListFragmentInteractionListener listener) {
+		mEvents = items;
 		mListener = listener;
 	}
 
 	@Override
-	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+	public EventsRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		View view = LayoutInflater.from(parent.getContext())
 				.inflate(R.layout.cardview_item, parent, false);
-		return new ViewHolder(view);
+		return new EventsRecyclerViewAdapter.ViewHolder(view);
 	}
 
 	@Override
-	public void onBindViewHolder(final ViewHolder holder, int position) {
-		holder.mItem = mConferences.get(position);
-		holder.mTitleText.setText(mConferences.get(position).getTitle());
-		holder.mAcronym.setText(mConferences.get(position).getAcronym());
+	public void onBindViewHolder(final EventsRecyclerViewAdapter.ViewHolder holder, int position) {
+		holder.mItem = mEvents.get(position);
+		holder.mTitleText.setText(mEvents.get(position).getTitle());
+		holder.mAcronym.setText(mEvents.get(position).getSubtitle());
 		Glide.with(holder.mIcon.getContext())
-				.load(mConferences.get(position).getLogoUrl())
+				.load(mEvents.get(position).getThumbUrl())
 				.fitCenter()
 				.into(holder.mIcon);
 
@@ -46,14 +49,18 @@ public class ConferenceRecyclerViewAdapter extends RecyclerView.Adapter<Conferen
 			if (null != mListener) {
 				// Notify the active callbacks interface (the activity, if the
 				// fragment is attached to one) that an item has been selected.
-				mListener.onListFragmentInteraction(holder.mItem);
+				mListener.onListItemSelected(holder.mItem);
 			}
 		});
 	}
 
 	@Override
 	public int getItemCount() {
-		return mConferences.size();
+		return mEvents.size();
+	}
+
+	public interface OnListFragmentInteractionListener {
+		public void onListItemSelected(Event event);
 	}
 
 	public class ViewHolder extends RecyclerView.ViewHolder {
@@ -61,7 +68,7 @@ public class ConferenceRecyclerViewAdapter extends RecyclerView.Adapter<Conferen
 		public final ImageView mIcon;
 		public final TextView mTitleText;
 		public final TextView mAcronym;
-		public Conference mItem;
+		public Event mItem;
 
 		public ViewHolder(View view) {
 			super(view);

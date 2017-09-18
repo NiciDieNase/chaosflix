@@ -10,6 +10,6 @@
     android:paddingBottom="4dp"
     app:layoutManager="LinearLayoutManager"
     tools:context="de.nicidienase.chaosflix.touch.fragments.ConferenceFragment"
-    tools:listitem="@layout/fragment_conference">
+    tools:listitem="@layout/cardview_item">
 
 </android.support.v7.widget.RecyclerView>
