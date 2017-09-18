@@ -229,7 +229,7 @@ public class OverlayFragment extends PlaybackFragment {
 	private Row getRelatedItems() {
 		ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
 		final long[] related = mSelectedEvent.getMetadata().getRelated();
-		mDisposables.add(((ChaosflixBaseActivity) getActivity()).getmApiServiceObservable()
+		mDisposables.add(((ChaosflixBaseActivity) getActivity()).getApiServiceObservable()
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(
 						mediaApiService -> {

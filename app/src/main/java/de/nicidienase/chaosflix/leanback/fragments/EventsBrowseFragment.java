@@ -79,7 +79,7 @@ public class EventsBrowseFragment extends BrowseFragment {
 		conferenceId = this.getActivity().getIntent().getIntExtra(EventsActivity.CONFERENCE_ID, 0);
 		mConference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.CONFERENCE);
 
-		((ChaosflixBaseActivity) getActivity()).getmApiServiceObservable()
+		((ChaosflixBaseActivity) getActivity()).getApiServiceObservable()
 				.subscribe(mediaApiService -> {
 					mediaApiService.getConference(mConference.getApiID())
 							.observeOn(AndroidSchedulers.mainThread())
