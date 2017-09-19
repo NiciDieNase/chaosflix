@@ -16,6 +16,7 @@ import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.touch.adapters.ItemRecyclerViewAdapter;
 import de.nicidienase.chaosflix.touch.ConferenceGroupsFragmentPager;
 import de.nicidienase.chaosflix.touch.fragments.ConferencesBrowseFragment;
+import de.nicidienase.chaosflix.touch.fragments.EventDetailsFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventsFragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -25,7 +26,10 @@ import io.reactivex.disposables.Disposable;
  * Created by felix on 17.09.17.
  */
 
-public class BrowseActivity extends TouchBaseActivity implements ItemRecyclerViewAdapter.OnListFragmentInteractionListener{
+public class BrowseActivity extends TouchBaseActivity implements
+		ConferencesBrowseFragment.OnConferenceListFragmentInteractionListener,
+		EventsFragment.OnEventsListFragmentInteractionListener,
+		EventDetailsFragment.OnEventDetailsFragmentInteractionListener{
 
 	private static final String TAG = BrowseActivity.class.getSimpleName();
 	CompositeDisposable mDisposables = new CompositeDisposable();
@@ -56,41 +60,51 @@ public class BrowseActivity extends TouchBaseActivity implements ItemRecyclerVie
 		mDisposables.dispose();
 	}
 
-	@Override
-	public void onListFragmentInteraction(Object item) {
-		if(item instanceof Conference){
-			Conference con = (Conference) item;
-			Disposable disposable = getApiServiceObservable()
-					.subscribe(mediaApiService -> {
-						mediaApiService.getConference(con.getApiID())
-								.observeOn(AndroidSchedulers.mainThread())
-								.subscribe(conference -> {
-									EventsFragment eventsFragment = EventsFragment.newInstance(getNumColumns());
-									eventsFragment.setContent(conference);
-									FragmentManager fm = getSupportFragmentManager();
-									Fragment oldFragment = fm.findFragmentById(R.id.fragment_container);
-
-									TransitionInflater transitionInflater = TransitionInflater.from(this);
-									oldFragment.setExitTransition(
-											transitionInflater.inflateTransition(android.R.transition.fade));
-									eventsFragment.setEnterTransition(
-											transitionInflater.inflateTransition(android.R.transition.slide_right));
-
-									FragmentTransaction ft = fm.beginTransaction();
-									ft.replace(R.id.fragment_container,eventsFragment);
-									ft.addToBackStack(null);
-									ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-									ft.commit();
-								});
-					});
-			mDisposables.add(disposable);
-		} else if (item instanceof Event){
-			Event event = (Event) item;
-			// TODO show event details
-		}
-	}
-
 	private int getNumColumns() {
 		return getResources().getInteger(R.integer.num_columns);
+	}
+
+	@Override
+	public void onConferenceSelected(Conference con) {
+		Disposable disposable = getApiServiceObservable()
+				.subscribe(mediaApiService -> {
+					mediaApiService.getConference(con.getApiID())
+							.observeOn(AndroidSchedulers.mainThread())
+							.subscribe(conference -> {
+								EventsFragment eventsFragment = EventsFragment.newInstance(conference,getNumColumns());
+								updateFragment(eventsFragment);
+							});
+				});
+		mDisposables.add(disposable);
+	}
+
+	@Override
+	public void onEventSelected(Event e) {
+		Disposable disposable = getApiServiceObservable()
+				.subscribe(mediaApiService -> {
+					mediaApiService.getEvent(e.getApiID())
+							.subscribe(event -> {
+								EventDetailsFragment detailsFragment = EventDetailsFragment.newInstance(event);
+								updateFragment(detailsFragment);
+							});
+				});
+		mDisposables.add(disposable);
+	}
+
+	private void updateFragment(Fragment fragment) {
+		FragmentManager fm = getSupportFragmentManager();
+		Fragment oldFragment = fm.findFragmentById(R.id.fragment_container);
+
+		TransitionInflater transitionInflater = TransitionInflater.from(this);
+		oldFragment.setExitTransition(
+				transitionInflater.inflateTransition(android.R.transition.fade));
+		fragment.setEnterTransition(
+				transitionInflater.inflateTransition(android.R.transition.slide_right));
+
+		FragmentTransaction ft = fm.beginTransaction();
+		ft.replace(R.id.fragment_container, fragment);
+		ft.addToBackStack(null);
+		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+		ft.commit();
 	}
 }

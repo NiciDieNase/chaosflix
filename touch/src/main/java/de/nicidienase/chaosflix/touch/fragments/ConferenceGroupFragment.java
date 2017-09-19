@@ -23,7 +23,7 @@ public class ConferenceGroupFragment extends Fragment {
 
 	private static final String ARG_COLUMN_COUNT = "column-count";
 	private int mColumnCount = 1;
-	private ItemRecyclerViewAdapter.OnListFragmentInteractionListener mListener;
+	private ConferencesBrowseFragment.OnConferenceListFragmentInteractionListener mListener;
 	private List<Conference> mItmes = new ArrayList<>();
 
 	public ConferenceGroupFragment() {
@@ -74,8 +74,8 @@ public class ConferenceGroupFragment extends Fragment {
 	@Override
 	public void onAttach(Context context) {
 		super.onAttach(context);
-		if (context instanceof ItemRecyclerViewAdapter.OnListFragmentInteractionListener) {
-			mListener = (ItemRecyclerViewAdapter.OnListFragmentInteractionListener) context;
+		if (context instanceof ConferencesBrowseFragment.OnConferenceListFragmentInteractionListener) {
+			mListener = (ConferencesBrowseFragment.OnConferenceListFragmentInteractionListener) context;
 		} else {
 			throw new RuntimeException(context.toString()
 					+ " must implement OnListFragmentInteractionListener");

@@ -12,9 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
@@ -25,8 +22,9 @@ public class EventsFragment extends Fragment {
 
 
 	private static final String ARG_COLUMN_COUNT = "column-count";
+	private static final String ARG_CONFERENCE = "conference";
 	private int mColumnCount = 1;
-	private ItemRecyclerViewAdapter.OnListFragmentInteractionListener mListener;
+	private OnEventsListFragmentInteractionListener mListener;
 	private Conference mConference;
 	private CharSequence mPreviousTitle;
 	private ActionBar mActionBar;
@@ -34,14 +32,11 @@ public class EventsFragment extends Fragment {
 	public EventsFragment() {
 	}
 
-	public void setContent(Conference conference){
-		mConference = conference;
-	}
-
-	public static EventsFragment newInstance(int columnCount) {
+	public static EventsFragment newInstance(Conference conference, int columnCount) {
 		EventsFragment fragment = new EventsFragment();
 		Bundle args = new Bundle();
 		args.putInt(ARG_COLUMN_COUNT, columnCount);
+		args.putParcelable(ARG_CONFERENCE, conference);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -51,6 +46,7 @@ public class EventsFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 		if (getArguments() != null) {
 			mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+			mConference = getArguments().getParcelable(ARG_CONFERENCE);
 		}
 	}
 
@@ -58,7 +54,7 @@ public class EventsFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.recycler_view_layout, container, false);
-
+		mActionBar.setTitle(mConference.getTitle());
 		// Set the adapter
 		if (view instanceof RecyclerView) {
 			Context context = view.getContext();
@@ -81,9 +77,8 @@ public class EventsFragment extends Fragment {
 		super.onAttach(context);
 		mActionBar = ((AppCompatActivity) context).getSupportActionBar();
 		mPreviousTitle = mActionBar.getTitle();
-		mActionBar.setTitle(mConference.getTitle());
-		if (context instanceof ItemRecyclerViewAdapter.OnListFragmentInteractionListener) {
-			mListener = (ItemRecyclerViewAdapter.OnListFragmentInteractionListener) context;
+		if (context instanceof OnEventsListFragmentInteractionListener) {
+			mListener = (OnEventsListFragmentInteractionListener) context;
 		} else {
 			throw new RuntimeException(context.toString()
 					+ " must implement OnListFragmentInteractionListener");
@@ -97,5 +92,8 @@ public class EventsFragment extends Fragment {
 		mActionBar.setTitle(mPreviousTitle);
 	}
 
+	public interface OnEventsListFragmentInteractionListener{
+		void onEventSelected(Event event);
+	}
 
 }

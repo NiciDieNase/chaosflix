@@ -14,11 +14,9 @@ import de.nicidienase.chaosflix.R;
 public abstract class ItemRecyclerViewAdapter<T> extends RecyclerView.Adapter<ItemRecyclerViewAdapter.ViewHolder> {
 
 	protected final List<T> mItems;
-	protected final OnListFragmentInteractionListener mListener;
 
-	public ItemRecyclerViewAdapter(List<T> items, OnListFragmentInteractionListener listener) {
+	public ItemRecyclerViewAdapter(List<T> items) {
 		mItems = items;
-		mListener = listener;
 	}
 
 	@Override
@@ -55,9 +53,5 @@ public abstract class ItemRecyclerViewAdapter<T> extends RecyclerView.Adapter<It
 		public String toString() {
 			return super.toString() + " '" + mTitleText.getText() + "'";
 		}
-	}
-
-	public interface OnListFragmentInteractionListener {
-		void onListFragmentInteraction(Object item);
 	}
 }

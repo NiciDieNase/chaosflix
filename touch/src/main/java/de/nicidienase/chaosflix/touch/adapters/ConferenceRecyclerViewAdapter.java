@@ -5,11 +5,15 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
+import de.nicidienase.chaosflix.touch.fragments.ConferencesBrowseFragment;
 
 public class ConferenceRecyclerViewAdapter extends ItemRecyclerViewAdapter<Conference> {
 
-	public ConferenceRecyclerViewAdapter(List<Conference> items, OnListFragmentInteractionListener listener) {
-		super(items, listener);
+	private final ConferencesBrowseFragment.OnConferenceListFragmentInteractionListener mListener;
+
+	public ConferenceRecyclerViewAdapter(List<Conference> items, ConferencesBrowseFragment.OnConferenceListFragmentInteractionListener listener) {
+		super(items);
+		mListener = listener;
 	}
 
 
@@ -25,9 +29,7 @@ public class ConferenceRecyclerViewAdapter extends ItemRecyclerViewAdapter<Confe
 
 		holder.mView.setOnClickListener(v -> {
 			if (null != mListener) {
-				// Notify the active callbacks interface (the activity, if the
-				// fragment is attached to one) that an item has been selected.
-				mListener.onListFragmentInteraction(holder.mItem);
+				mListener.onConferenceSelected((Conference) holder.mItem);
 			}
 		});
 	}
