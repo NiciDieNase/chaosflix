@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title">title</string>
+    <string name="subtitle">subtitle</string>
+    <string name="thumbnail">thumbnail</string>
+    <string name="card">card</string>
+</resources>

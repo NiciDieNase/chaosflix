@@ -1,9 +1,13 @@
 package de.nicidienase.chaosflix.touch.adapters;
 
+import android.content.res.Resources;
+import android.support.v4.view.ViewCompat;
+
 import com.bumptech.glide.Glide;
 
 import java.util.Collections;
 
+import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.touch.fragments.EventsFragment;
@@ -38,13 +42,22 @@ public class EventRecyclerViewAdapter extends ItemRecyclerViewAdapter<Event> {
 			holder.mTag.setText(tagString);
 		}
 		Glide.with(holder.mIcon.getContext())
-				.load(event.getThumbUrl())
+				.load(event.getPosterUrl())
+				.dontAnimate()
 				.fitCenter()
 				.into(holder.mIcon);
 
+		Resources resources = holder.mTitleText.getContext().getResources();
+		ViewCompat.setTransitionName(holder.mTitleText,
+				resources.getString(R.string.title)+event.getApiID());
+		ViewCompat.setTransitionName(holder.mSubtitle,
+				resources.getString(R.string.subtitle)+event.getApiID());
+		ViewCompat.setTransitionName(holder.mIcon,
+				resources.getString(R.string.thumbnail)+event.getApiID());
+
 		holder.mView.setOnClickListener(v -> {
 			if (null != mListener) {
-				mListener.onEventSelected((Event) holder.mItem);
+				mListener.onEventSelected((Event) holder.mItem, v);
 			}
 		});
 	}
