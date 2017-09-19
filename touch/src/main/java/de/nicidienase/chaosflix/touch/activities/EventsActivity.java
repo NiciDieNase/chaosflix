@@ -32,6 +32,7 @@ public class EventsActivity extends TouchBaseActivity implements EventsRecyclerV
 			mediaApiService.getConference(intentConference.getApiID())
 					.observeOn(AndroidSchedulers.mainThread())
 					.subscribe(conference -> {
+						getSupportActionBar().setTitle(conference.getTitle());
 						List<Event> events = conference.getEvents();
 						// TODO build Adapters, etc.
 						recyclerView.setAdapter(new EventsRecyclerViewAdapter(events,this));

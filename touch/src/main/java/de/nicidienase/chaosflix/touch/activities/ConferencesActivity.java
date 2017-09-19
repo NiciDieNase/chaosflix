@@ -9,8 +9,8 @@ import android.util.Log;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
+import de.nicidienase.chaosflix.touch.adapters.ItemRecyclerViewAdapter;
 import de.nicidienase.chaosflix.touch.ConferenceGroupsFragmentPager;
-import de.nicidienase.chaosflix.touch.fragments.ConferenceFragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -19,7 +19,7 @@ import io.reactivex.disposables.Disposable;
  * Created by felix on 17.09.17.
  */
 
-public class ConferencesActivity extends TouchBaseActivity implements ConferenceFragment.OnListFragmentInteractionListener{
+public class ConferencesActivity extends TouchBaseActivity implements ItemRecyclerViewAdapter.OnListFragmentInteractionListener<Conference>{
 
 	private static final String TAG = ConferencesActivity.class.getSimpleName();
 	CompositeDisposable mDisposables = new CompositeDisposable();

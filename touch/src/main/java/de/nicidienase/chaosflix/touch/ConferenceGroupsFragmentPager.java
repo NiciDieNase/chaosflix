@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.Map;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper;
-import de.nicidienase.chaosflix.touch.fragments.ConferenceFragment;
+import de.nicidienase.chaosflix.touch.fragments.ConferenceListFragment;
 
 /**
  * Created by felix on 18.09.17.
@@ -32,7 +31,7 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 
 	@Override
 	public Fragment getItem(int position) {
-		ConferenceFragment conferenceFragment = new ConferenceFragment();
+		ConferenceListFragment conferenceFragment = new ConferenceListFragment();
 		List<Conference> conferences = mConferenceMap.get(orderedConferencesList.get(position));
 		conferenceFragment.setContent(conferences);
 		return conferenceFragment;

@@ -9,7 +9,7 @@
     android:layout_height="match_parent"
     android:paddingBottom="4dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="de.nicidienase.chaosflix.touch.fragments.ConferenceFragment"
+    tools:context="de.nicidienase.chaosflix.touch.fragments.ConferenceListFragment"
     tools:listitem="@layout/cardview_item">
 
 </android.support.v7.widget.RecyclerView>
