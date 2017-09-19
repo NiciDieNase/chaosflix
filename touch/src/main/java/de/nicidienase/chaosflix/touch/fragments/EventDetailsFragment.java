@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,7 +59,10 @@ public class EventDetailsFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		postponeEnterTransition();
-		setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
+		Transition transition = TransitionInflater.from(getContext())
+				.inflateTransition(android.R.transition.move);
+		transition.setDuration(getResources().getInteger(R.integer.anim_duration));
+		setSharedElementEnterTransition(transition);
 
 		if (getArguments() != null) {
 			mEvent = getArguments().getParcelable(EVENT_PARAM);

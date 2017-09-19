@@ -8,7 +8,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/icon"
+        android:icon="@drawable/icon_notext"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:name=".ChaosflixApplication"

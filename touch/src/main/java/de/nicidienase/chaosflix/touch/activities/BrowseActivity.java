@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
+import android.view.Menu;
 import android.view.View;
 
 import de.nicidienase.chaosflix.R;
@@ -48,6 +49,7 @@ public class BrowseActivity extends TouchBaseActivity implements
 							});
 				});
 		mDisposables.add(disposable);
+		getSupportActionBar().setLogo(R.drawable.icon_notext);
 	}
 
 	@Override
@@ -102,6 +104,9 @@ public class BrowseActivity extends TouchBaseActivity implements
 							.subscribe(event -> {
 								EventDetailsFragment detailsFragment = EventDetailsFragment.newInstance(event);
 								FragmentManager fm = getSupportFragmentManager();
+
+								detailsFragment.setAllowEnterTransitionOverlap(true);
+								detailsFragment.setAllowReturnTransitionOverlap(true);
 
 								FragmentTransaction ft = fm.beginTransaction();
 								ft.replace(R.id.fragment_container, detailsFragment);
