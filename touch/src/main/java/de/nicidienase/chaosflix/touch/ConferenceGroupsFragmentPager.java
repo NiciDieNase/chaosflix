@@ -12,7 +12,7 @@ import java.util.Map;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper;
-import de.nicidienase.chaosflix.touch.fragments.ConferenceListFragment;
+import de.nicidienase.chaosflix.touch.fragments.ConferencesFragment;
 
 /**
  * Created by felix on 18.09.17.
@@ -31,7 +31,8 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 
 	@Override
 	public Fragment getItem(int position) {
-		ConferenceListFragment conferenceFragment = new ConferenceListFragment();
+//		ConferencesFragment conferenceFragment = ConferencesFragment.newInstance(getNumColumns());
+		ConferencesFragment conferenceFragment = ConferencesFragment.newInstance(1);
 		List<Conference> conferences = mConferenceMap.get(orderedConferencesList.get(position));
 		conferenceFragment.setContent(conferences);
 		return conferenceFragment;
@@ -65,7 +66,11 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 
 	@Override
 	public float getPageWidth(int position) {
-		int integer = mContext.getResources().getInteger(R.integer.num_columns);
+		int integer = getNumColumns();
 		return 1f/integer;
+	}
+
+	private int getNumColumns() {
+		return mContext.getResources().getInteger(R.integer.num_columns);
 	}
 }

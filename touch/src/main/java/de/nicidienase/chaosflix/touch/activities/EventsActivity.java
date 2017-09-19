@@ -2,6 +2,8 @@ package de.nicidienase.chaosflix.touch.activities;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.List;
@@ -24,8 +26,13 @@ public class EventsActivity extends TouchBaseActivity implements EventsRecyclerV
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragment_conference_list);
+		setContentView(R.layout.recycler_view_layout);
 		RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list);
+		if(getNumColumns() <= 1){
+			recyclerView.setLayoutManager(new LinearLayoutManager(this));
+		} else {
+			recyclerView.setLayoutManager(new GridLayoutManager(this,getNumColumns()));
+		}
 
 		Conference intentConference = (Conference) getIntent().getParcelableExtra(CONFERENCE_KEY);
 		Disposable disposable = getApiServiceObservable().subscribe(mediaApiService -> {
@@ -53,4 +60,7 @@ public class EventsActivity extends TouchBaseActivity implements EventsRecyclerV
 		// TODO start detailview for Events
 	}
 
+	private int getNumColumns() {
+		return getResources().getInteger(R.integer.num_columns);
+	}
 }
