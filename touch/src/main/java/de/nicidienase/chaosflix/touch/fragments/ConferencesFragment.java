@@ -18,30 +18,23 @@ import de.nicidienase.chaosflix.touch.adapters.ItemRecyclerViewAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConferenceListFragment extends Fragment {
+public class ConferencesFragment extends Fragment {
 
-	// TODO: Customize parameter argument names
+
 	private static final String ARG_COLUMN_COUNT = "column-count";
-	// TODO: Customize parameters
 	private int mColumnCount = 1;
 	private ItemRecyclerViewAdapter.OnListFragmentInteractionListener<Conference> mListener;
 	private List<Conference> mItmes = new ArrayList<>();
 
-	/**
-	 * Mandatory empty constructor for the fragment manager to instantiate the
-	 * fragment (e.g. upon screen orientation changes).
-	 */
-	public ConferenceListFragment() {
+	public ConferencesFragment() {
 	}
 
 	public void setContent(List<Conference> itmes){
 		mItmes = itmes;
 	}
 
-	// TODO: Customize parameter initialization
-	@SuppressWarnings("unused")
-	public static ConferenceListFragment newInstance(int columnCount) {
-		ConferenceListFragment fragment = new ConferenceListFragment();
+	public static ConferencesFragment newInstance(int columnCount) {
+		ConferencesFragment fragment = new ConferencesFragment();
 		Bundle args = new Bundle();
 		args.putInt(ARG_COLUMN_COUNT, columnCount);
 		fragment.setArguments(args);
@@ -59,7 +52,7 @@ public class ConferenceListFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_conference_list, container, false);
+		View view = inflater.inflate(R.layout.recycler_view_layout, container, false);
 
 		// Set the adapter
 		if (view instanceof RecyclerView) {
