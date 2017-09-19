@@ -2,39 +2,39 @@ package de.nicidienase.chaosflix.touch.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
-import de.nicidienase.chaosflix.touch.adapters.ConferenceRecyclerViewAdapter;
+import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper;
+import de.nicidienase.chaosflix.touch.ConferenceGroupsFragmentPager;
 import de.nicidienase.chaosflix.touch.adapters.ItemRecyclerViewAdapter;
 
-import java.util.ArrayList;
-import java.util.List;
+/**
+ * Created by felix on 19.09.17.
+ */
 
-public class ConferencesFragment extends Fragment {
-
+public class ConferencesBrowseFragment extends Fragment {
 
 	private static final String ARG_COLUMN_COUNT = "column-count";
 	private int mColumnCount = 1;
-	private ItemRecyclerViewAdapter.OnListFragmentInteractionListener<Conference> mListener;
-	private List<Conference> mItmes = new ArrayList<>();
+	private ItemRecyclerViewAdapter.OnListFragmentInteractionListener mListener;
+	private ConferencesWrapper conferencesWrapper;
 
-	public ConferencesFragment() {
+	public ConferencesBrowseFragment() {
 	}
 
-	public void setContent(List<Conference> itmes){
-		mItmes = itmes;
+	public void setContent(ConferencesWrapper conferencesWrapper){
+		this.conferencesWrapper = conferencesWrapper;
 	}
 
-	public static ConferencesFragment newInstance(int columnCount) {
-		ConferencesFragment fragment = new ConferencesFragment();
+	public static ConferencesBrowseFragment newInstance(int columnCount) {
+		ConferencesBrowseFragment fragment = new ConferencesBrowseFragment();
 		Bundle args = new Bundle();
 		args.putInt(ARG_COLUMN_COUNT, columnCount);
 		fragment.setArguments(args);
@@ -52,21 +52,16 @@ public class ConferencesFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.recycler_view_layout, container, false);
+		View view = inflater.inflate(R.layout.tab_layout, container, false);
+		ConferenceGroupsFragmentPager fragmentPager
+				= new ConferenceGroupsFragmentPager(this.getContext(),getChildFragmentManager());
+		fragmentPager.setContent(conferencesWrapper.getConferencesBySeries());
 
-		// Set the adapter
-		if (view instanceof RecyclerView) {
-			Context context = view.getContext();
-			RecyclerView recyclerView = (RecyclerView) view;
-			if (mColumnCount <= 1) {
-				recyclerView.setLayoutManager(new LinearLayoutManager(context));
-			} else {
-				recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-			}
+		ViewPager pager = (ViewPager) view.findViewById(R.id.viewpager);
+		pager.setAdapter(fragmentPager);
 
-			recyclerView.setAdapter(new ConferenceRecyclerViewAdapter(mItmes, mListener) {
-			});
-		}
+		TabLayout tabLayout = (TabLayout) view.findViewById(R.id.sliding_tabs);
+		tabLayout.setupWithViewPager(pager);
 		return view;
 	}
 
@@ -75,7 +70,7 @@ public class ConferencesFragment extends Fragment {
 	public void onAttach(Context context) {
 		super.onAttach(context);
 		if (context instanceof ItemRecyclerViewAdapter.OnListFragmentInteractionListener) {
-			mListener = (ItemRecyclerViewAdapter.OnListFragmentInteractionListener<Conference>) context;
+			mListener = (ItemRecyclerViewAdapter.OnListFragmentInteractionListener) context;
 		} else {
 			throw new RuntimeException(context.toString()
 					+ " must implement OnListFragmentInteractionListener");
@@ -87,6 +82,4 @@ public class ConferencesFragment extends Fragment {
 		super.onDetach();
 		mListener = null;
 	}
-
-
 }

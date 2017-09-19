@@ -12,7 +12,7 @@ import java.util.Map;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper;
-import de.nicidienase.chaosflix.touch.fragments.ConferencesFragment;
+import de.nicidienase.chaosflix.touch.fragments.ConferenceGroupFragment;
 
 /**
  * Created by felix on 18.09.17.
@@ -32,7 +32,7 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 	@Override
 	public Fragment getItem(int position) {
 //		ConferencesFragment conferenceFragment = ConferencesFragment.newInstance(getNumColumns());
-		ConferencesFragment conferenceFragment = ConferencesFragment.newInstance(1);
+		ConferenceGroupFragment conferenceFragment = ConferenceGroupFragment.newInstance(1);
 		List<Conference> conferences = mConferenceMap.get(orderedConferencesList.get(position));
 		conferenceFragment.setContent(conferences);
 		return conferenceFragment;
