@@ -3,17 +3,19 @@ package de.nicidienase.chaosflix.touch.adapters;
 import com.bumptech.glide.Glide;
 
 import java.util.Collections;
-import java.util.List;
 
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.touch.fragments.EventsFragment;
 
 public class EventRecyclerViewAdapter extends ItemRecyclerViewAdapter<Event> {
 
 	private final boolean areTagsUsefull;
+	private final EventsFragment.OnEventsListFragmentInteractionListener mListener;
 
-	public EventRecyclerViewAdapter(Conference conference, OnListFragmentInteractionListener listener) {
-		super(conference.getEvents(), listener);
+	public EventRecyclerViewAdapter(Conference conference, EventsFragment.OnEventsListFragmentInteractionListener listener) {
+		super(conference.getEvents());
+		mListener = listener;
 		areTagsUsefull = conference.areTagsUsefull();
 		Collections.sort(mItems,(o1, o2) -> o1.getTitle().compareTo(o2.getTitle()));
 	}
@@ -42,9 +44,7 @@ public class EventRecyclerViewAdapter extends ItemRecyclerViewAdapter<Event> {
 
 		holder.mView.setOnClickListener(v -> {
 			if (null != mListener) {
-				// Notify the active callbacks interface (the activity, if the
-				// fragment is attached to one) that an item has been selected.
-				mListener.onListFragmentInteraction(holder.mItem);
+				mListener.onEventSelected((Event) holder.mItem);
 			}
 		});
 	}
