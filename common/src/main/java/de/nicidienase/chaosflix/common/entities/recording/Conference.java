@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by felix on 11.03.17.
@@ -36,6 +38,8 @@ public class Conference extends SugarRecord implements Parcelable, Comparable<Co
 	String updatedAt;
 
 	List<Event> events;
+
+	private HashMap<String, List<Event>> eventsByTag;
 
 	public Conference() {
 	}
@@ -86,7 +90,10 @@ public class Conference extends SugarRecord implements Parcelable, Comparable<Co
 	};
 
 	public HashMap<String, List<Event>> getEventsByTags() {
-		HashMap<String, List<Event>> result = new HashMap<>();
+		if(eventsByTag != null){
+			return eventsByTag;
+		}
+		eventsByTag = new HashMap<>();
 		List<Event> untagged = new ArrayList<>();
 		for (Event event : this.getEvents()) {
 			if (event.getTags().size() > 0) {
@@ -94,11 +101,11 @@ public class Conference extends SugarRecord implements Parcelable, Comparable<Co
 					if (tag != null) {
 
 						List<Event> list;
-						if (result.keySet().contains(tag)) {
-							list = result.get(tag);
+						if (eventsByTag.keySet().contains(tag)) {
+							list = eventsByTag.get(tag);
 						} else {
 							list = new LinkedList<>();
-							result.put(tag, list);
+							eventsByTag.put(tag, list);
 						}
 						list.add(event);
 					} else {
@@ -110,9 +117,9 @@ public class Conference extends SugarRecord implements Parcelable, Comparable<Co
 			}
 		}
 		if (untagged.size() > 0) {
-			result.put("untagged", untagged);
+			eventsByTag.put("untagged", untagged);
 		}
-		return result;
+		return eventsByTag;
 	}
 
 	public int getApiID() {
@@ -222,6 +229,20 @@ public class Conference extends SugarRecord implements Parcelable, Comparable<Co
 			// TODO actually update
 			this.save();
 		}
+	}
+
+	public boolean areTagsUsefull(){
+		return getSensibleTags().size() > 1;
+	}
+
+	public Set<String> getSensibleTags(){
+		Set<String> sensibleTags = new TreeSet<>();
+		for(String s: getEventsByTags().keySet()){
+			if(! (getAcronym().equals(s) || s.matches("\\d+") )){
+				sensibleTags.add(s);
+			}
+		}
+		return sensibleTags;
 	}
 
 	@Override
