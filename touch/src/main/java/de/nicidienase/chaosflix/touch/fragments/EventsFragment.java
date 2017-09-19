@@ -28,7 +28,6 @@ public class EventsFragment extends Fragment {
 	private int mColumnCount = 1;
 	private ItemRecyclerViewAdapter.OnListFragmentInteractionListener mListener;
 	private Conference mConference;
-	private List<Event> mItmes = new ArrayList<>();
 	private CharSequence mPreviousTitle;
 	private ActionBar mActionBar;
 
@@ -37,7 +36,6 @@ public class EventsFragment extends Fragment {
 
 	public void setContent(Conference conference){
 		mConference = conference;
-		mItmes = conference.getEvents();
 	}
 
 	public static EventsFragment newInstance(int columnCount) {
@@ -71,7 +69,7 @@ public class EventsFragment extends Fragment {
 				recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
 			}
 
-			recyclerView.setAdapter(new EventRecyclerViewAdapter(mItmes, mListener) {
+			recyclerView.setAdapter(new EventRecyclerViewAdapter(mConference, mListener) {
 			});
 		}
 		return view;

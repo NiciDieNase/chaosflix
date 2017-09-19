@@ -43,7 +43,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginTop="4dp"
                     android:layout_weight="1"
-                    android:text="Title"
+                    android:text=""
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
                 <TextView
@@ -51,7 +51,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Acronym"
+                    android:text=""
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"/>
 
                 <TextView
@@ -60,7 +60,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="bottom|right"
-                    android:text="tag"/>
+                    android:text=""/>
             </LinearLayout>
 
         </LinearLayout>
