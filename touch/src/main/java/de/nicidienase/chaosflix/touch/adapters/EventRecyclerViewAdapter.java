@@ -5,12 +5,16 @@ import com.bumptech.glide.Glide;
 import java.util.Collections;
 import java.util.List;
 
+import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 
 public class EventRecyclerViewAdapter extends ItemRecyclerViewAdapter<Event> {
 
-	public EventRecyclerViewAdapter(List<Event> items, OnListFragmentInteractionListener listener) {
-		super(items, listener);
+	private final boolean areTagsUsefull;
+
+	public EventRecyclerViewAdapter(Conference conference, OnListFragmentInteractionListener listener) {
+		super(conference.getEvents(), listener);
+		areTagsUsefull = conference.areTagsUsefull();
 		Collections.sort(mItems,(o1, o2) -> o1.getTitle().compareTo(o2.getTitle()));
 	}
 
@@ -21,13 +25,16 @@ public class EventRecyclerViewAdapter extends ItemRecyclerViewAdapter<Event> {
 		holder.mItem = event;
 		holder.mTitleText.setText(event.getTitle());
 		holder.mSubtitle.setText(event.getSubtitle());
-		StringBuilder tagString = new StringBuilder();
-		for(String tag: event.getTags()){
-			if(tagString.length() > 0)
-				tagString.append(", ");
-			tagString.append(tag);
+		if(areTagsUsefull){
+			StringBuilder tagString = new StringBuilder();
+			for(String tag: event.getTags()){
+				if(tagString.length() > 0) {
+					tagString.append(", ");
+				}
+				tagString.append(tag);
+			}
+			holder.mTag.setText(tagString);
 		}
-		holder.mTag.setText(tagString);
 		Glide.with(holder.mIcon.getContext())
 				.load(event.getThumbUrl())
 				.fitCenter()
