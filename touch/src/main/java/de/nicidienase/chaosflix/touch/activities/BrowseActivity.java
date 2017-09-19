@@ -75,8 +75,6 @@ public class BrowseActivity extends TouchBaseActivity implements ItemRecyclerVie
 											transitionInflater.inflateTransition(android.R.transition.fade));
 									eventsFragment.setEnterTransition(
 											transitionInflater.inflateTransition(android.R.transition.slide_right));
-									eventsFragment.setExitTransition(
-											transitionInflater.inflateTransition(android.R.transition.slide_right));
 
 									FragmentTransaction ft = fm.beginTransaction();
 									ft.replace(R.id.fragment_container,eventsFragment);

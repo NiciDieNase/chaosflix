@@ -16,11 +16,20 @@ public class EventRecyclerViewAdapter extends ItemRecyclerViewAdapter<Event> {
 
 	@Override
 	public void onBindViewHolder(ItemRecyclerViewAdapter.ViewHolder holder, int position) {
-		holder.mItem = mItems.get(position);
-		holder.mTitleText.setText(mItems.get(position).getTitle());
-		holder.mSubtitle.setText(mItems.get(position).getSubtitle());
+		Event event = mItems.get(position);
+
+		holder.mItem = event;
+		holder.mTitleText.setText(event.getTitle());
+		holder.mSubtitle.setText(event.getSubtitle());
+		StringBuilder tagString = new StringBuilder();
+		for(String tag: event.getTags()){
+			if(tagString.length() > 0)
+				tagString.append(", ");
+			tagString.append(tag);
+		}
+		holder.mTag.setText(tagString);
 		Glide.with(holder.mIcon.getContext())
-				.load(mItems.get(position).getThumbUrl())
+				.load(event.getThumbUrl())
 				.fitCenter()
 				.into(holder.mIcon);
 

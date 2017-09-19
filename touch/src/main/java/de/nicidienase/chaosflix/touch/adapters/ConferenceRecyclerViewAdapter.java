@@ -18,6 +18,7 @@ public class ConferenceRecyclerViewAdapter extends ItemRecyclerViewAdapter<Confe
 		holder.mItem = mItems.get(position);
 		holder.mTitleText.setText(mItems.get(position).getTitle());
 		holder.mSubtitle.setText(mItems.get(position).getAcronym());
+		holder.mTag.setText("");
 		Glide.with(holder.mIcon.getContext())
 				.load(mItems.get(position).getLogoUrl())
 				.fitCenter()

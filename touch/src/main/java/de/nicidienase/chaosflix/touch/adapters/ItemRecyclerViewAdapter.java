@@ -40,6 +40,7 @@ public abstract class ItemRecyclerViewAdapter<T> extends RecyclerView.Adapter<It
 		public final ImageView mIcon;
 		public final TextView mTitleText;
 		public final TextView mSubtitle;
+		public final TextView mTag;
 
 		public ViewHolder(View view) {
 			super(view);
@@ -47,6 +48,7 @@ public abstract class ItemRecyclerViewAdapter<T> extends RecyclerView.Adapter<It
 			mIcon = (ImageView) view.findViewById(R.id.imageView);
 			mTitleText = (TextView) view.findViewById(R.id.title_text);
 			mSubtitle = (TextView) view.findViewById(R.id.acronym_text);
+			mTag = (TextView) view.findViewById(R.id.tag_text);
 		}
 
 		@Override
