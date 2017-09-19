@@ -1,13 +1,22 @@
 package de.nicidienase.chaosflix.touch.fragments;
 
 import android.content.Context;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
+import org.w3c.dom.Text;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 
@@ -16,6 +25,17 @@ public class EventDetailsFragment extends Fragment {
 
 	private OnEventDetailsFragmentInteractionListener mListener;
 	private Event mEvent;
+
+	@BindView(R.id.title_text)
+	TextView mTitleText;
+	@BindView(R.id.subtitle_text)
+	TextView mSubtitleText;
+	@BindView(R.id.speaker_text)
+	TextView mSpeakerText;
+	@BindView(R.id.thumb_image)
+	ImageView mThumbImage;
+	@BindView(R.id.description_text)
+	TextView mDescriptionText;
 
 	public EventDetailsFragment() {
 		// Required empty public constructor
@@ -41,7 +61,27 @@ public class EventDetailsFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_event_details, container, false);
-		// TODO setup Content
+		ButterKnife.bind(this,view);
+
+		mTitleText.setText(mEvent.getTitle());
+		if(mEvent.getSubtitle() != null && mEvent.getSubtitle().length() > 0){
+			mSubtitleText.setText(mEvent.getSubtitle());
+		} else {
+			mSubtitleText.setVisibility(View.GONE);
+		}
+		mSpeakerText.setText(
+				android.text.TextUtils.join(", ",mEvent.getPersons()));
+		StringBuilder sb = new StringBuilder();
+		sb.append(mEvent.getDescription())
+				.append("\n")
+				.append("\nreleased at: ").append(mEvent.getReleaseDate())
+				.append("\nTags: ").append(android.text.TextUtils.join(", ", mEvent.getTags()));
+		mDescriptionText.setText(sb);
+
+		Glide.with(getContext())
+				.load(mEvent.getPosterUrl())
+				.fitCenter()
+				.into(mThumbImage);
 		return view;
 	}
 
