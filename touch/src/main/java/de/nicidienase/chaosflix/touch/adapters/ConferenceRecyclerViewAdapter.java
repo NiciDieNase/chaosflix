@@ -8,7 +8,7 @@ import de.nicidienase.chaosflix.common.entities.recording.Conference;
 
 public class ConferenceRecyclerViewAdapter extends ItemRecyclerViewAdapter<Conference> {
 
-	public ConferenceRecyclerViewAdapter(List<Conference> items, OnListFragmentInteractionListener<Conference> listener) {
+	public ConferenceRecyclerViewAdapter(List<Conference> items, OnListFragmentInteractionListener listener) {
 		super(items, listener);
 	}
 

@@ -16,7 +16,7 @@ public abstract class ItemRecyclerViewAdapter<T> extends RecyclerView.Adapter<It
 	protected final List<T> mItems;
 	protected final OnListFragmentInteractionListener mListener;
 
-	public ItemRecyclerViewAdapter(List<T> items, OnListFragmentInteractionListener<T> listener) {
+	public ItemRecyclerViewAdapter(List<T> items, OnListFragmentInteractionListener listener) {
 		mItems = items;
 		mListener = listener;
 	}
@@ -55,7 +55,7 @@ public abstract class ItemRecyclerViewAdapter<T> extends RecyclerView.Adapter<It
 		}
 	}
 
-	public interface OnListFragmentInteractionListener <T> {
-		void onListFragmentInteraction(T item);
+	public interface OnListFragmentInteractionListener {
+		void onListFragmentInteraction(Object item);
 	}
 }

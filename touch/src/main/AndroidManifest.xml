@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:name=".ChaosflixApplication"
         android:theme="@style/Base.Theme.AppCompat.Light">
-        <activity android:name=".touch.activities.ConferencesActivity"
+        <activity android:name=".touch.activities.BrowseActivity"
                   android:icon="@drawable/icon_notext"
                   android:label="@string/app_name">
             <intent-filter>
@@ -21,7 +21,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".touch.activities.EventsActivity"/>
 
         <service android:name=".common.network.MediaApiService"/>
 

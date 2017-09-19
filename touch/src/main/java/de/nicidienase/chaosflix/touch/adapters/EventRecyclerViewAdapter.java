@@ -8,7 +8,7 @@ import de.nicidienase.chaosflix.common.entities.recording.Event;
 
 public class EventRecyclerViewAdapter extends ItemRecyclerViewAdapter<Event> {
 
-	public EventRecyclerViewAdapter(List<Event> items, OnListFragmentInteractionListener<Event> listener) {
+	public EventRecyclerViewAdapter(List<Event> items, OnListFragmentInteractionListener listener) {
 		super(items, listener);
 	}
 
