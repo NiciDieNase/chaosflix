@@ -120,19 +120,21 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 			mStreamingSection = new SectionRow(streamingHeader);
 			mRowsAdapter.add(0, mStreamingSection);
 			for (LiveConference con : liveConferences) {
-				int i = -1;
-				for (i = 0; i < con.getGroups().size(); i++) {
-					Group g = con.getGroups().get(i);
-					// setup header
-					String group = g.getGroup().length() > 0 ? g.getGroup() : con.getConference();
-					HeaderItem header = new HeaderItem(group);
-					header.setDescription(con.getConference() + " - " + con.getDescription());
-					header.setContentDescription(group);
-					// setup list
-					ArrayObjectAdapter listRowAdapter
-							= new ArrayObjectAdapter(cardPresenter);
-					listRowAdapter.addAll(listRowAdapter.size(), g.getRooms());
-					mRowsAdapter.add(i + 1, new ListRow(header, listRowAdapter));
+				if(!con.getConference().equals("Sendeschleife")){
+					int i = -1;
+					for (i = 0; i < con.getGroups().size(); i++) {
+						Group g = con.getGroups().get(i);
+						// setup header
+						String group = g.getGroup().length() > 0 ? g.getGroup() : con.getConference();
+						HeaderItem header = new HeaderItem(group);
+						header.setDescription(con.getConference() + " - " + con.getDescription());
+						header.setContentDescription(group);
+						// setup list
+						ArrayObjectAdapter listRowAdapter
+								= new ArrayObjectAdapter(cardPresenter);
+						listRowAdapter.addAll(listRowAdapter.size(), g.getRooms());
+						mRowsAdapter.add(i + 1, new ListRow(header, listRowAdapter));
+					}
 				}
 //				mRowsAdapter.add(i + 1, new DividerRow());
 
