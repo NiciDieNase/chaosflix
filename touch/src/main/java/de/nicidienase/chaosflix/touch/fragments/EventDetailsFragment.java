@@ -4,7 +4,9 @@ import android.content.Context;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import org.w3c.dom.Text;
 
@@ -52,6 +57,9 @@ public class EventDetailsFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		postponeEnterTransition();
+		setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
+
 		if (getArguments() != null) {
 			mEvent = getArguments().getParcelable(EVENT_PARAM);
 		}
@@ -60,12 +68,23 @@ public class EventDetailsFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_event_details, container, false);
+		return inflater.inflate(R.layout.fragment_event_details, container, false);
+
+	}
+
+	@Override
+	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
 		ButterKnife.bind(this,view);
 
+		view.setTransitionName(getString(R.string.card));
+
 		mTitleText.setText(mEvent.getTitle());
+		mTitleText.setTransitionName(getString(R.string.title)+mEvent.getApiID());
+
 		if(mEvent.getSubtitle() != null && mEvent.getSubtitle().length() > 0){
 			mSubtitleText.setText(mEvent.getSubtitle());
+			mSubtitleText.setTransitionName(getString(R.string.subtitle)+mEvent.getApiID());
 		} else {
 			mSubtitleText.setVisibility(View.GONE);
 		}
@@ -78,13 +97,28 @@ public class EventDetailsFragment extends Fragment {
 				.append("\nTags: ").append(android.text.TextUtils.join(", ", mEvent.getTags()));
 		mDescriptionText.setText(sb);
 
+		mThumbImage.setTransitionName(getString(R.string.thumbnail)+mEvent.getApiID());
 		Glide.with(getContext())
 				.load(mEvent.getPosterUrl())
 				.fitCenter()
-				.into(mThumbImage);
-		return view;
-	}
+				.dontAnimate()
+				.override(1024,768)
+				.listener(new RequestListener<String, GlideDrawable>() {
+					@Override
+					public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+						startPostponedEnterTransition();
+						return false;
+					}
 
+					@Override
+					public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+						startPostponedEnterTransition();
+						return false;
+					}
+				})
+				.into(mThumbImage);
+		startPostponedEnterTransition();
+	}
 
 	@Override
 	public void onAttach(Context context) {
@@ -104,6 +138,6 @@ public class EventDetailsFragment extends Fragment {
 	}
 
 	public interface OnEventDetailsFragmentInteractionListener {
-		void onEventSelected(Event event);
+		void onEventSelected(Event event, View v);
 	}
 }

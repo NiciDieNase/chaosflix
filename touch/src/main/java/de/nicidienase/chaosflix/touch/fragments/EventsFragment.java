@@ -16,7 +16,6 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.touch.adapters.EventRecyclerViewAdapter;
-import de.nicidienase.chaosflix.touch.adapters.ItemRecyclerViewAdapter;
 
 public class EventsFragment extends Fragment {
 
@@ -93,7 +92,7 @@ public class EventsFragment extends Fragment {
 	}
 
 	public interface OnEventsListFragmentInteractionListener{
-		void onEventSelected(Event event);
+		void onEventSelected(Event event, View v);
 	}
 
 }
