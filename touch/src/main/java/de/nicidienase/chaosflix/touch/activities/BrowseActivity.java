@@ -12,7 +12,7 @@ import android.view.View;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
-import de.nicidienase.chaosflix.touch.fragments.ConferencesBrowseFragment;
+import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventDetailsFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventsFragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -24,7 +24,7 @@ import io.reactivex.disposables.Disposable;
  */
 
 public class BrowseActivity extends TouchBaseActivity implements
-		ConferencesBrowseFragment.OnConferenceListFragmentInteractionListener,
+		ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener,
 		EventsFragment.OnEventsListFragmentInteractionListener,
 		EventDetailsFragment.OnEventDetailsFragmentInteractionListener{
 

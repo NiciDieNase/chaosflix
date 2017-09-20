@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.touch.adapters.ConferenceRecyclerViewAdapter;
-import de.nicidienase.chaosflix.touch.adapters.ItemRecyclerViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class ConferenceGroupFragment extends Fragment {
 
 	private static final String ARG_COLUMN_COUNT = "column-count";
 	private int mColumnCount = 1;
-	private ConferencesBrowseFragment.OnConferenceListFragmentInteractionListener mListener;
+	private ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener mListener;
 	private List<Conference> mItmes = new ArrayList<>();
 
 	public ConferenceGroupFragment() {
@@ -52,7 +51,7 @@ public class ConferenceGroupFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.recycler_view_layout, container, false);
+		View view = inflater.inflate(R.layout.recycler_view_pager_layout, container, false);
 
 		// Set the adapter
 		if (view instanceof RecyclerView) {
@@ -74,8 +73,8 @@ public class ConferenceGroupFragment extends Fragment {
 	@Override
 	public void onAttach(Context context) {
 		super.onAttach(context);
-		if (context instanceof ConferencesBrowseFragment.OnConferenceListFragmentInteractionListener) {
-			mListener = (ConferencesBrowseFragment.OnConferenceListFragmentInteractionListener) context;
+		if (context instanceof ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener) {
+			mListener = (ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener) context;
 		} else {
 			throw new RuntimeException(context.toString()
 					+ " must implement OnListFragmentInteractionListener");
