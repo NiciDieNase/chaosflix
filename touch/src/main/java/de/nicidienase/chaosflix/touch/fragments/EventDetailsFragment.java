@@ -112,9 +112,11 @@ public class EventDetailsFragment extends Fragment {
 		mAppBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
 			double v = (double) Math.abs(verticalOffset) / appBarLayout.getTotalScrollRange();
 			Log.d(TAG,"Offset changed: " + v);
-			appBarExpanded = v > 0.8;
-			collapsingToolbar.setTitleEnabled(appBarExpanded);
-//			invalidateOptionsMenu();
+			if(appBarExpanded ^ v > 0.8){
+//				invalidateOptionsMenu();
+				appBarExpanded = v > 0.8;
+				collapsingToolbar.setTitleEnabled(appBarExpanded);
+			}
 		});
 
 		if(mEvent.getSubtitle() != null && mEvent.getSubtitle().length() > 0){
