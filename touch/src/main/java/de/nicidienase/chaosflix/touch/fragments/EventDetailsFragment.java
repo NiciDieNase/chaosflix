@@ -111,7 +111,6 @@ public class EventDetailsFragment extends Fragment {
 				.load(mEvent.getPosterUrl())
 				.fitCenter()
 				.dontAnimate()
-				.override(1024,768)
 				.listener(new RequestListener<String, GlideDrawable>() {
 					@Override
 					public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
