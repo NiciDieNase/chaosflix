@@ -134,10 +134,6 @@ public class BrowseActivity extends TouchBaseActivity implements
 								ft.replace(R.id.fragment_container, detailsFragment,TAG_RETAINED_FRAGMENT);
 								ft.addToBackStack(null);
 
-//								View title = v.findViewById(R.id.title_text);
-//								ft.addSharedElement(title,ViewCompat.getTransitionName(title));
-//								View subtitle = v.findViewById(R.id.acronym_text);
-//								ft.addSharedElement(subtitle,ViewCompat.getTransitionName(subtitle));
 								View thumb = v.findViewById(R.id.imageView);
 								ft.addSharedElement(thumb,ViewCompat.getTransitionName(thumb));
 

@@ -93,7 +93,6 @@ public class EventDetailsFragment extends Fragment {
 
 		if(mEvent.getSubtitle() != null && mEvent.getSubtitle().length() > 0){
 			mSubtitleText.setText(mEvent.getSubtitle());
-			mSubtitleText.setTransitionName(getString(R.string.subtitle)+mEvent.getApiID());
 		} else {
 			mSubtitleText.setVisibility(View.GONE);
 		}
