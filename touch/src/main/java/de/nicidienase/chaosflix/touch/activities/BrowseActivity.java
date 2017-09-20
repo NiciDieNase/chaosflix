@@ -32,27 +32,35 @@ public class BrowseActivity extends TouchBaseActivity implements
 		EventDetailsFragment.OnEventDetailsFragmentInteractionListener{
 
 	private static final String TAG = BrowseActivity.class.getSimpleName();
+	private static final String TAG_RETAINED_FRAGMENT = "retained_fragment";
 	CompositeDisposable mDisposables = new CompositeDisposable();
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_container_layout);
-		Disposable disposable = getApiServiceObservable()
-				.subscribe(mediaApiService -> {
-					mediaApiService.getConferences()
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		Fragment fragment = fragmentManager.findFragmentByTag(TAG_RETAINED_FRAGMENT);
+		if(fragment != null){
+			FragmentTransaction ft = fragmentManager.beginTransaction();
+			ft.replace(R.id.fragment_container,fragment,TAG_RETAINED_FRAGMENT);
+			ft.commit();
+		} else {
+			Disposable disposable = getApiServiceObservable()
+					.subscribe(mediaApiService -> {
+						mediaApiService.getConferences()
 							.observeOn(AndroidSchedulers.mainThread())
 							.subscribe(conferencesWrapper -> {
-								ConferencesBrowseFragment browseFragment
-										= ConferencesBrowseFragment.newInstance(getNumColumns());
-								browseFragment.setContent(conferencesWrapper);
-								FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-								ft.replace(R.id.fragment_container,browseFragment);
-								ft.commit();
-							});
-				});
-		mDisposables.add(disposable);
-		getSupportActionBar().setLogo(R.drawable.icon_notext);
+									ConferencesTabBrowseFragment browseFragment
+									= ConferencesTabBrowseFragment.newInstance(getNumColumns());
+									browseFragment.setContent(conferencesWrapper);
+									FragmentTransaction ft = fragmentManager.beginTransaction();
+									ft.replace(R.id.fragment_container,browseFragment);
+									ft.commit();
+					});
+		});
+			mDisposables.add(disposable);
+		}
 	}
 
 	@Override
