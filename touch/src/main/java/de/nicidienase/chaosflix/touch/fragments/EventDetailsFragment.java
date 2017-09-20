@@ -5,6 +5,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
@@ -32,8 +33,10 @@ public class EventDetailsFragment extends Fragment {
 	private OnEventDetailsFragmentInteractionListener mListener;
 	private Event mEvent;
 
-	@BindView(R.id.title_text)
-	TextView mTitleText;
+//	@BindView(R.id.title_text)
+//	TextView mTitleText;
+	@BindView(R.id.collapsing_toolbar)
+	CollapsingToolbarLayout collapsingToolbar;
 	@BindView(R.id.subtitle_text)
 	TextView mSubtitleText;
 	@BindView(R.id.speaker_text)
@@ -72,8 +75,7 @@ public class EventDetailsFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_event_details, container, false);
-
+		return inflater.inflate(R.layout.fragment_event_details_new, container, false);
 	}
 
 	@Override
@@ -83,8 +85,10 @@ public class EventDetailsFragment extends Fragment {
 
 		view.setTransitionName(getString(R.string.card));
 
-		mTitleText.setText(mEvent.getTitle());
-		mTitleText.setTransitionName(getString(R.string.title)+mEvent.getApiID());
+		collapsingToolbar.setTitle(mEvent.getTitle());
+		collapsingToolbar.setTransitionName(getString(R.string.title)+mEvent.getApiID());
+//		mTitleText.setText(mEvent.getTitle());
+//		mTitleText.setTransitionName(getString(R.string.title)+mEvent.getApiID());
 
 		if(mEvent.getSubtitle() != null && mEvent.getSubtitle().length() > 0){
 			mSubtitleText.setText(mEvent.getSubtitle());
