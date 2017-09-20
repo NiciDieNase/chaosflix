@@ -5,13 +5,13 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
-import de.nicidienase.chaosflix.touch.fragments.ConferencesBrowseFragment;
+import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 
 public class ConferenceRecyclerViewAdapter extends ItemRecyclerViewAdapter<Conference> {
 
-	private final ConferencesBrowseFragment.OnConferenceListFragmentInteractionListener mListener;
+	private final ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener mListener;
 
-	public ConferenceRecyclerViewAdapter(List<Conference> items, ConferencesBrowseFragment.OnConferenceListFragmentInteractionListener listener) {
+	public ConferenceRecyclerViewAdapter(List<Conference> items, ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener listener) {
 		super(items);
 		mListener = listener;
 	}
