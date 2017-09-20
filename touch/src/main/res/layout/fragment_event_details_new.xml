@@ -26,7 +26,7 @@
             <ImageView
                 android:id="@+id/thumb_image"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/appbar_header_height"
                 android:background="@drawable/default_background"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"

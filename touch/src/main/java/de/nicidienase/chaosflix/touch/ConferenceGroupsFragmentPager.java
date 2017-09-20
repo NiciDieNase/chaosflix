@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +33,13 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 
 	@Override
 	public Fragment getItem(int position) {
-//		ConferencesFragment conferenceFragment = ConferencesFragment.newInstance(getNumColumns());
-		ConferenceGroupFragment conferenceFragment = ConferenceGroupFragment.newInstance(1);
-		List<Conference> conferences = mConferenceMap.get(orderedConferencesList.get(position));
+//		ConferenceGroupFragment conferenceFragment = ConferenceGroupFragment.newInstance(1);
+		ConferenceGroupFragment conferenceFragment = ConferenceGroupFragment.newInstance(getNumColumns());
+		String confKey = orderedConferencesList.get(position);
+		List<Conference> conferences = mConferenceMap.get(confKey);
 		conferenceFragment.setContent(conferences);
+		conferenceFragment.setRetainInstance(true);
+		Log.d(TAG,"Created Fragment for: " + confKey);
 		return conferenceFragment;
 	}
 

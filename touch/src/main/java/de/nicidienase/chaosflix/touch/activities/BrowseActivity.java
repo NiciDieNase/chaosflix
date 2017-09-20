@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix.touch.activities;
 
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -40,7 +41,10 @@ public class BrowseActivity extends TouchBaseActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_container_layout);
 		FragmentManager fragmentManager = getSupportFragmentManager();
-		Fragment fragment = fragmentManager.findFragmentByTag(TAG_RETAINED_FRAGMENT);
+		Fragment fragment = null;
+		if(savedInstanceState != null){
+			fragment = fragmentManager.getFragment(savedInstanceState,TAG_RETAINED_FRAGMENT);
+		}
 		if(fragment != null){
 			FragmentTransaction ft = fragmentManager.beginTransaction();
 			ft.replace(R.id.fragment_container,fragment,TAG_RETAINED_FRAGMENT);
@@ -55,11 +59,21 @@ public class BrowseActivity extends TouchBaseActivity implements
 									= ConferencesTabBrowseFragment.newInstance(getNumColumns());
 									browseFragment.setContent(conferencesWrapper);
 									FragmentTransaction ft = fragmentManager.beginTransaction();
-									ft.replace(R.id.fragment_container,browseFragment);
+									ft.replace(R.id.fragment_container,browseFragment,TAG_RETAINED_FRAGMENT);
 									ft.commit();
 					});
 		});
 			mDisposables.add(disposable);
+		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		Fragment fragment = fragmentManager.findFragmentByTag(TAG_RETAINED_FRAGMENT);
+		if(fragment != null){
+			fragmentManager.putFragment(outState,TAG_RETAINED_FRAGMENT,fragment);
 		}
 	}
 
@@ -120,12 +134,13 @@ public class BrowseActivity extends TouchBaseActivity implements
 								ft.replace(R.id.fragment_container, detailsFragment,TAG_RETAINED_FRAGMENT);
 								ft.addToBackStack(null);
 
-								View title = v.findViewById(R.id.title_text);
-								View subtitle = v.findViewById(R.id.acronym_text);
-								View thumb = v.findViewById(R.id.imageView);
+//								View title = v.findViewById(R.id.title_text);
 //								ft.addSharedElement(title,ViewCompat.getTransitionName(title));
+//								View subtitle = v.findViewById(R.id.acronym_text);
 //								ft.addSharedElement(subtitle,ViewCompat.getTransitionName(subtitle));
+								View thumb = v.findViewById(R.id.imageView);
 								ft.addSharedElement(thumb,ViewCompat.getTransitionName(thumb));
+
 								ft.commit();
 							});
 				});
