@@ -42,7 +42,7 @@ public class EventRecyclerViewAdapter extends ItemRecyclerViewAdapter<Event> {
 			holder.mTag.setText(tagString);
 		}
 		Glide.with(holder.mIcon.getContext())
-				.load(event.getPosterUrl())
+				.load(event.getThumbUrl())
 				.dontAnimate()
 				.fitCenter()
 				.into(holder.mIcon);
