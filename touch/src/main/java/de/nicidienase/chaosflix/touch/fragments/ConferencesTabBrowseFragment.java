@@ -1,12 +1,14 @@
 package de.nicidienase.chaosflix.touch.fragments;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,13 +24,18 @@ import de.nicidienase.chaosflix.touch.ConferenceGroupsFragmentPager;
 
 public class ConferencesTabBrowseFragment extends Fragment {
 
+	private static final String TAG = ConferencesTabBrowseFragment.class.getSimpleName();
+
 	private static final String ARG_COLUMN_COUNT = "column-count";
-	public static final String CONFERENCEWRAPPER_KEY = "conferencewrapper";
+	private static final String CONFERENCEWRAPPER_KEY = "conferencewrapper";
+	private static final String CURRENTTAB_KEY = "current_tab";
 	private int mColumnCount = 1;
 	private OnConferenceListFragmentInteractionListener mListener;
 	private ConferencesWrapper mConferencesWrapper;
 	private Toolbar mToolbar;
 	private Context mContext;
+	private int mCurrentTab = -1;
+	private ViewPager mViewPager;
 
 	public ConferencesTabBrowseFragment() {
 	}
@@ -60,8 +67,11 @@ public class ConferencesTabBrowseFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
+		Log.d(TAG,"onCreate");
 		if(savedInstanceState != null){
 			mConferencesWrapper = savedInstanceState.getParcelable(CONFERENCEWRAPPER_KEY);
+			mCurrentTab = savedInstanceState.getInt(CURRENTTAB_KEY);
 		}
 		if (getArguments() != null) {
 			mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -77,11 +87,15 @@ public class ConferencesTabBrowseFragment extends Fragment {
 				= new ConferenceGroupsFragmentPager(this.getContext(),getChildFragmentManager());
 		fragmentPager.setContent(mConferencesWrapper.getConferencesBySeries());
 
-		ViewPager pager = (ViewPager) view.findViewById(R.id.viewpager);
-		pager.setAdapter(fragmentPager);
+		mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
+		mViewPager.setAdapter(fragmentPager);
 
 		TabLayout tabLayout = (TabLayout) view.findViewById(R.id.sliding_tabs);
-		tabLayout.setupWithViewPager(pager);
+		tabLayout.setupWithViewPager(mViewPager);
+
+		if(mCurrentTab != -1){
+			mViewPager.setCurrentItem(mCurrentTab);
+		}
 
 		mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
 		((AppCompatActivity)mContext).setSupportActionBar(mToolbar);
@@ -94,6 +108,7 @@ public class ConferencesTabBrowseFragment extends Fragment {
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putParcelable(CONFERENCEWRAPPER_KEY, mConferencesWrapper);
+		outState.putInt(CURRENTTAB_KEY, mViewPager.getCurrentItem());
 	}
 
 	@Override

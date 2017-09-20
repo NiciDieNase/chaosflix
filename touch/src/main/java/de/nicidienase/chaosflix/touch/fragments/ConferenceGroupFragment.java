@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import java.util.List;
 
 public class ConferenceGroupFragment extends Fragment {
 
+	private static final String TAG = ConferenceGroupFragment.class.getSimpleName();
 
 	private static final String ARG_COLUMN_COUNT = "column-count";
 	private int mColumnCount = 1;
@@ -69,7 +71,6 @@ public class ConferenceGroupFragment extends Fragment {
 		return view;
 	}
 
-
 	@Override
 	public void onAttach(Context context) {
 		super.onAttach(context);
@@ -86,6 +87,4 @@ public class ConferenceGroupFragment extends Fragment {
 		super.onDetach();
 		mListener = null;
 	}
-
-
 }
