@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,8 @@ public class EventsFragment extends Fragment {
 	private OnEventsListFragmentInteractionListener mListener;
 	private Conference mConference;
 	private CharSequence mPreviousTitle;
-	private ActionBar mActionBar;
+	private Toolbar mToolbar;
+	private Context mContext;
 
 	public EventsFragment() {
 	}
@@ -41,41 +43,10 @@ public class EventsFragment extends Fragment {
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		if (getArguments() != null) {
-			mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-			mConference = getArguments().getParcelable(ARG_CONFERENCE);
-		}
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.recycler_view_layout, container, false);
-		mActionBar.setTitle(mConference.getTitle());
-		// Set the adapter
-		if (view instanceof RecyclerView) {
-			Context context = view.getContext();
-			RecyclerView recyclerView = (RecyclerView) view;
-			if (mColumnCount <= 1) {
-				recyclerView.setLayoutManager(new LinearLayoutManager(context));
-			} else {
-				recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-			}
-
-			recyclerView.setAdapter(new EventRecyclerViewAdapter(mConference, mListener) {
-			});
-		}
-		return view;
-	}
-
-
-	@Override
 	public void onAttach(Context context) {
 		super.onAttach(context);
-		mActionBar = ((AppCompatActivity) context).getSupportActionBar();
-		mPreviousTitle = mActionBar.getTitle();
+		mContext = context;
+//		mPreviousTitle = mActionBar.getTitle();
 		if (context instanceof OnEventsListFragmentInteractionListener) {
 			mListener = (OnEventsListFragmentInteractionListener) context;
 		} else {
@@ -85,10 +56,43 @@ public class EventsFragment extends Fragment {
 	}
 
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if (getArguments() != null) {
+			mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+			mConference = getArguments().getParcelable(ARG_CONFERENCE);
+		}
+	}
+
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+							 Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.recycler_view_toolbar_layout, container, false);
+//		mActionBar.setTitle(mConference.getTitle());
+		// Set the adapter
+		Context context = view.getContext();
+		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+		if (mColumnCount <= 1) {
+			recyclerView.setLayoutManager(new LinearLayoutManager(context));
+		} else {
+			recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+		}
+
+		recyclerView.setAdapter(new EventRecyclerViewAdapter(mConference, mListener));
+
+		mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
+		((AppCompatActivity)mContext).setSupportActionBar(mToolbar);
+		mToolbar.setTitle(mConference.getTitle());
+
+		return view;
+	}
+
+	@Override
 	public void onDetach() {
 		super.onDetach();
 		mListener = null;
-		mActionBar.setTitle(mPreviousTitle);
+//		mActionBar.setTitle(mPreviousTitle);
 	}
 
 	public interface OnEventsListFragmentInteractionListener{

@@ -6,7 +6,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
-import android.view.Menu;
+import android.transition.Slide;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
+import android.view.Gravity;
 import android.view.View;
 
 import de.nicidienase.chaosflix.R;
@@ -73,21 +76,18 @@ public class BrowseActivity extends TouchBaseActivity implements
 								FragmentManager fm = getSupportFragmentManager();
 								Fragment oldFragment = fm.findFragmentById(R.id.fragment_container);
 
-//								TransitionInflater transitionInflater = TransitionInflater.from(this);
-//								oldFragment.setExitTransition(
-//										transitionInflater.inflateTransition(android.R.transition.fade));
-//								fragment.setEnterTransition(
-//										transitionInflater.inflateTransition(android.R.transition.slide_right));
-//
-//								Slide slideTransition = new Slide(Gravity.RIGHT);
+								TransitionInflater transitionInflater = TransitionInflater.from(this);
+								oldFragment.setExitTransition(
+										transitionInflater.inflateTransition(android.R.transition.fade));
+								eventsFragment.setEnterTransition(
+										transitionInflater.inflateTransition(android.R.transition.slide_right));
+
+								Slide slideTransition = new Slide(Gravity.RIGHT);
 //								slideTransition.setDuration(1000);
-//								fragment.setEnterTransition(slideTransition);
-//
-//								Transition changeBoundsTransition = TransitionInflater.from(this).inflateTransition(R.transition.change_bounds);
-//								fragment.setSharedElementEnterTransition(changeBoundsTransition);
+								eventsFragment.setEnterTransition(slideTransition);
 
 								FragmentTransaction ft = fm.beginTransaction();
-								ft.replace(R.id.fragment_container, eventsFragment);
+								ft.replace(R.id.fragment_container, eventsFragment,TAG_RETAINED_FRAGMENT);
 								ft.addToBackStack(null);
 								ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 								ft.commit();
@@ -109,14 +109,14 @@ public class BrowseActivity extends TouchBaseActivity implements
 								detailsFragment.setAllowReturnTransitionOverlap(true);
 
 								FragmentTransaction ft = fm.beginTransaction();
-								ft.replace(R.id.fragment_container, detailsFragment);
+								ft.replace(R.id.fragment_container, detailsFragment,TAG_RETAINED_FRAGMENT);
 								ft.addToBackStack(null);
 
 								View title = v.findViewById(R.id.title_text);
 								View subtitle = v.findViewById(R.id.acronym_text);
 								View thumb = v.findViewById(R.id.imageView);
-								ft.addSharedElement(title,ViewCompat.getTransitionName(title));
-								ft.addSharedElement(subtitle,ViewCompat.getTransitionName(subtitle));
+//								ft.addSharedElement(title,ViewCompat.getTransitionName(title));
+//								ft.addSharedElement(subtitle,ViewCompat.getTransitionName(subtitle));
 								ft.addSharedElement(thumb,ViewCompat.getTransitionName(thumb));
 								ft.commit();
 							});

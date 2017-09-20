@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="thumbnail_size">64dp</dimen>
+    <dimen name="appbar_header_height">256dp</dimen>
+    <dimen name="margin_content">120dp</dimen>
+    <dimen name="details_text_margin">8dp</dimen>
 </resources>
