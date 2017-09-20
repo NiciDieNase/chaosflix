@@ -61,6 +61,7 @@ public class EventDetailsFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
 		postponeEnterTransition();
 		Transition transition = TransitionInflater.from(getContext())
 				.inflateTransition(android.R.transition.move);
