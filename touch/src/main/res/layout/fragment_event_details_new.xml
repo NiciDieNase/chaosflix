@@ -104,6 +104,7 @@
                 android:layout_marginBottom="@dimen/details_text_margin"
                 android:text="Lorem Ipsum"/>
 
+            <!--TODO Add list of related or other videos-->
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

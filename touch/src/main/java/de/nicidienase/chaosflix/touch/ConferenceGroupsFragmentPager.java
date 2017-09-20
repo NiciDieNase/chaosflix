@@ -33,8 +33,8 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 
 	@Override
 	public Fragment getItem(int position) {
-//		ConferenceGroupFragment conferenceFragment = ConferenceGroupFragment.newInstance(1);
-		ConferenceGroupFragment conferenceFragment = ConferenceGroupFragment.newInstance(getNumColumns());
+		ConferenceGroupFragment conferenceFragment = ConferenceGroupFragment.newInstance(1);
+//		ConferenceGroupFragment conferenceFragment = ConferenceGroupFragment.newInstance(getNumColumns());
 		String confKey = orderedConferencesList.get(position);
 		List<Conference> conferences = mConferenceMap.get(confKey);
 		conferenceFragment.setContent(conferences);
