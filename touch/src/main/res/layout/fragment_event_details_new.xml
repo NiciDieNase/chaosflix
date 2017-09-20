@@ -21,6 +21,7 @@
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleMarginStart="25dp"
+            app:titleEnabled="false"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
             <ImageView
@@ -37,6 +38,20 @@
                 android:layout_height="160dp"
                 android:layout_gravity="bottom"
                 android:background="@drawable/scrim"/>
+
+            <TextView
+                android:id="@+id/title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="@dimen/details_title_margin"
+                android:layout_marginLeft="@dimen/details_title_margin"
+                android:layout_marginRight="@dimen/details_title_margin"
+                android:layout_marginTop="@dimen/details_title_margin"
+                android:text="Title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textColor="@color/white"
+                app:layout_collapseParallaxMultiplier="1.0"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/anim_toolbar"
@@ -59,16 +74,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:paddingBottom="24dp">
-
-            <TextView
-                android:id="@+id/title_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/details_text_margin"
-                android:layout_marginRight="@dimen/details_text_margin"
-                android:layout_marginLeft="@dimen/details_text_margin"
-                android:text="Title"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 
             <TextView
                 android:id="@+id/subtitle_text"

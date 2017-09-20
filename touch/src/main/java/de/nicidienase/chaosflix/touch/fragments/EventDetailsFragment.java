@@ -1,12 +1,11 @@
 package de.nicidienase.chaosflix.touch.fragments;
 
 import android.content.Context;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
@@ -33,10 +32,12 @@ public class EventDetailsFragment extends Fragment {
 	private OnEventDetailsFragmentInteractionListener mListener;
 	private Event mEvent;
 
-//	@BindView(R.id.title_text)
-//	TextView mTitleText;
 	@BindView(R.id.collapsing_toolbar)
 	CollapsingToolbarLayout collapsingToolbar;
+	@BindView(R.id.anim_toolbar)
+	Toolbar mToolbar;
+	@BindView(R.id.title_text)
+	TextView mTitleText;
 	@BindView(R.id.subtitle_text)
 	TextView mSubtitleText;
 	@BindView(R.id.speaker_text)
@@ -87,9 +88,8 @@ public class EventDetailsFragment extends Fragment {
 		view.setTransitionName(getString(R.string.card));
 
 		collapsingToolbar.setTitle(mEvent.getTitle());
-		collapsingToolbar.setTransitionName(getString(R.string.title)+mEvent.getApiID());
-//		mTitleText.setText(mEvent.getTitle());
-//		mTitleText.setTransitionName(getString(R.string.title)+mEvent.getApiID());
+		mToolbar.setTitle(mEvent.getTitle());
+		mTitleText.setText(mEvent.getTitle());
 
 		if(mEvent.getSubtitle() != null && mEvent.getSubtitle().length() > 0){
 			mSubtitleText.setText(mEvent.getSubtitle());
