@@ -15,6 +15,8 @@ import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -79,6 +81,7 @@ public class EventDetailsFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
+		setHasOptionsMenu(true);
 		postponeEnterTransition();
 		Transition transition = TransitionInflater.from(getContext())
 				.inflateTransition(android.R.transition.move);
@@ -102,11 +105,13 @@ public class EventDetailsFragment extends Fragment {
 		ButterKnife.bind(this,view);
 
 		mPlayButton.setOnClickListener(v -> {
-			Toast.makeText(v.getContext(),"Play the video",Toast.LENGTH_SHORT).show();
+			play();
 		});
 
 		view.setTransitionName(getString(R.string.card));
 
+		if(mListener != null)
+			mListener.setActionbar(mToolbar);
 		collapsingToolbar.setTitle(mEvent.getTitle());
 //		mToolbar.setTitle(mEvent.getTitle());
 		mTitleText.setText(mEvent.getTitle());
@@ -116,6 +121,8 @@ public class EventDetailsFragment extends Fragment {
 			Log.d(TAG,"Offset changed: " + v);
 			if(appBarExpanded ^ v > 0.8){
 //				invalidateOptionsMenu();
+				if(mListener != null)
+					mListener.onToolbarStateChange();
 				appBarExpanded = v > 0.8;
 				collapsingToolbar.setTitleEnabled(appBarExpanded);
 			}
@@ -203,7 +210,26 @@ public class EventDetailsFragment extends Fragment {
 		super.onPrepareOptionsMenu(menu);
 	}
 
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		if(appBarExpanded)
+			inflater.inflate(R.menu.details_menu,menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()){
+			case R.id.play:
+				play();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
 	public interface OnEventDetailsFragmentInteractionListener {
-		void onEventSelected(Event event, View v);
+		void onToolbarStateChange();
+		void setActionbar(Toolbar toolbar);
 	}
 }

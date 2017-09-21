@@ -7,10 +7,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.View;
 
 import de.nicidienase.chaosflix.R;
@@ -143,4 +145,38 @@ public class BrowseActivity extends TouchBaseActivity implements
 		mDisposables.add(disposable);
 	}
 
+	@Override
+	public void onToolbarStateChange() {
+		invalidateOptionsMenu();
+	}
+
+	@Override
+	public void setActionbar(Toolbar toolbar) {
+		setSupportActionBar(toolbar);
+		toolbar.setTitle("");
+	}
+
+//	public List<Event> getRelatedEvents(Event event, MediaApiService service){
+//		List<Event> results = new ArrayList<>();
+//		Metadata metadata = event.getMetadata();
+//		if(metadata != null && metadata.getRelated() != null){
+//			Observable<Event> eventObservable = null;
+//			for(long id: metadata.getRelated()){
+//				if(eventObservable == null){
+//					eventObservable = service.getEvent(id);
+//				} else {
+//					eventObservable.mergeWith(service.getEvent(id));
+//				}
+//			}
+//			eventObservable.subscribe()
+//		}
+//		return results;
+//	}
+
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.browse_menu,menu);
+		return true;
+	}
 }
