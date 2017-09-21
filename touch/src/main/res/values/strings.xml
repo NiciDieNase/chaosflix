@@ -4,4 +4,5 @@
     <string name="subtitle">subtitle</string>
     <string name="thumbnail">thumbnail</string>
     <string name="card">card</string>
+    <string name="select_option">Select Media Option</string>
 </resources>
