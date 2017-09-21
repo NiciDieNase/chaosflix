@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.common.entities.PlayableItem;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.common.entities.recording.Metadata;
@@ -164,6 +165,16 @@ public class BrowseActivity extends TouchBaseActivity implements
 	public void setActionbar(Toolbar toolbar) {
 		setSupportActionBar(toolbar);
 		toolbar.setTitle("");
+	}
+
+	@Override
+	public void playItem(PlayableItem item) {
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+		MediaPlayerFragment playerFragment = MediaPlayerFragment.newInstance(item, -1);
+		ft.replace(R.id.fragment_container,playerFragment,TAG_RETAINED_FRAGMENT);
+		ft.addToBackStack(null);
+		ft.commit();
 	}
 
 //	public List<Event> getRelatedEvents(Event event, MediaApiService service){

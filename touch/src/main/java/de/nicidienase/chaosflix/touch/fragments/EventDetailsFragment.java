@@ -27,6 +27,7 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.common.entities.PlayableItem;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 
 public class EventDetailsFragment extends Fragment {
@@ -152,7 +153,9 @@ public class EventDetailsFragment extends Fragment {
 	}
 
 	private void play() {
-		Toast.makeText(getContext(),"Play the video",Toast.LENGTH_SHORT).show();
+		if(mListener != null){
+			mListener.playItem(mEvent);
+		}
 	}
 
 	@Override
@@ -198,5 +201,6 @@ public class EventDetailsFragment extends Fragment {
 	public interface OnEventDetailsFragmentInteractionListener {
 		void onToolbarStateChange();
 		void setActionbar(Toolbar toolbar);
+		void playItem(PlayableItem item);
 	}
 }
