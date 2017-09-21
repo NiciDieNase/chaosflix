@@ -27,6 +27,7 @@ import de.nicidienase.chaosflix.common.network.MediaApiService;
 import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventDetailsFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventsFragment;
+import de.nicidienase.chaosflix.touch.fragments.MediaPlayerFragment;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -39,7 +40,8 @@ import io.reactivex.disposables.Disposable;
 public class BrowseActivity extends TouchBaseActivity implements
 		ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener,
 		EventsFragment.OnEventsListFragmentInteractionListener,
-		EventDetailsFragment.OnEventDetailsFragmentInteractionListener{
+		EventDetailsFragment.OnEventDetailsFragmentInteractionListener,
+		MediaPlayerFragment.OnMediaPlayerInteractionListener {
 
 	private static final String TAG = BrowseActivity.class.getSimpleName();
 	private static final String TAG_RETAINED_FRAGMENT = "retained_fragment";
