@@ -77,7 +77,7 @@ public class EventDetailsFragment extends Fragment {
 		postponeEnterTransition();
 		Transition transition = TransitionInflater.from(getContext())
 				.inflateTransition(android.R.transition.move);
-		transition.setDuration(getResources().getInteger(R.integer.anim_duration));
+//		transition.setDuration(getResources().getInteger(R.integer.anim_duration));
 		setSharedElementEnterTransition(transition);
 
 		if (getArguments() != null) {
@@ -136,7 +136,7 @@ public class EventDetailsFragment extends Fragment {
 
 		mThumbImage.setTransitionName(getString(R.string.thumbnail)+mEvent.getApiID());
 		Picasso.with(getContext())
-				.load(mEvent.getPosterUrl())
+				.load(mEvent.getThumbUrl())
 				.noFade()
 				.into(mThumbImage, new Callback() {
 					@Override

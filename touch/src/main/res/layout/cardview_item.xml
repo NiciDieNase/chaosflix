@@ -26,8 +26,7 @@
                 android:id="@+id/imageView"
                 android:layout_width="@dimen/thumbnail_size"
                 android:layout_height="@dimen/thumbnail_size"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/default_background"/>
+                android:scaleType="fitCenter"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
