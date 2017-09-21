@@ -1,14 +1,12 @@
 package de.nicidienase.chaosflix.touch.fragments;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
@@ -23,12 +21,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.bumptech.glide.request.target.Target;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -143,34 +135,9 @@ public class EventDetailsFragment extends Fragment {
 		mDescriptionText.setText(sb);
 
 		mThumbImage.setTransitionName(getString(R.string.thumbnail)+mEvent.getApiID());
-//		Glide.with(getContext())
-//				.load(mEvent.getPosterUrl())
-////				.fitCenter()
-//				.dontAnimate()
-//				.dontTransform()
-//				.listener(new RequestListener<String, GlideDrawable>() {
-//					@Override
-//					public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-//						startPostponedEnterTransition();
-//						return false;
-//					}
-//
-//					@Override
-//					public boolean onResourceReady(GlideDrawable resource, String model,
-//													Target<GlideDrawable> target,
-//													boolean isFromMemoryCache,
-//													boolean isFirstResource) {
-//						startPostponedEnterTransition();
-//						return false;
-//					}
-//				})
-//				.into(mThumbImage);
 		Picasso.with(getContext())
 				.load(mEvent.getPosterUrl())
-//				.fit()
-//				.resize(mThumbImage.getMaxWidth(),mThumbImage.getMaxHeight())
 				.noFade()
-//				.centerCrop()
 				.into(mThumbImage, new Callback() {
 					@Override
 					public void onSuccess() {
