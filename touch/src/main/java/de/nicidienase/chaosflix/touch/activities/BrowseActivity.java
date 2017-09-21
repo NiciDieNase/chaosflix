@@ -2,6 +2,7 @@ package de.nicidienase.chaosflix.touch.activities;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,12 +16,18 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.common.entities.recording.Metadata;
+import de.nicidienase.chaosflix.common.network.MediaApiService;
 import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventDetailsFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventsFragment;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -82,7 +89,7 @@ public class BrowseActivity extends TouchBaseActivity implements
 	@Override
 	protected void onStop() {
 		super.onStop();
-		mDisposables.dispose();
+		mDisposables.clear();
 	}
 
 	private int getNumColumns() {
@@ -126,6 +133,7 @@ public class BrowseActivity extends TouchBaseActivity implements
 				.subscribe(mediaApiService -> {
 					mediaApiService.getEvent(e.getApiID())
 							.subscribe(event -> {
+
 								EventDetailsFragment detailsFragment = EventDetailsFragment.newInstance(event);
 								FragmentManager fm = getSupportFragmentManager();
 

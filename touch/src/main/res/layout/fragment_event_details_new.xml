@@ -20,6 +20,7 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
+            app:statusBarScrim="?attr/colorPrimary"
             app:expandedTitleMarginStart="25dp"
             app:titleEnabled="false"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
@@ -61,7 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+                app:popupTheme="@style/AppTheme"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
