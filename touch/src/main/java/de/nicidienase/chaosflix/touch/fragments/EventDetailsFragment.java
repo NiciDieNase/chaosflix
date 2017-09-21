@@ -27,6 +27,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.Target;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -134,16 +136,15 @@ public class EventDetailsFragment extends Fragment {
 		mDescriptionText.setText(sb);
 
 		mThumbImage.setTransitionName(getString(R.string.thumbnail)+mEvent.getApiID());
-		Glide.with(getContext())
-				.load(mEvent.getPosterUrl())
-				.asBitmap()
-				.fitCenter()
-				.dontAnimate()
+//		Glide.with(getContext())
+//				.load(mEvent.getPosterUrl())
+////				.fitCenter()
+//				.dontAnimate()
 //				.dontTransform()
 //				.listener(new RequestListener<String, GlideDrawable>() {
 //					@Override
 //					public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-////						startPostponedEnterTransition();
+//						startPostponedEnterTransition();
 //						return false;
 //					}
 //
@@ -152,25 +153,32 @@ public class EventDetailsFragment extends Fragment {
 //													Target<GlideDrawable> target,
 //													boolean isFromMemoryCache,
 //													boolean isFirstResource) {
-////						startPostponedEnterTransition();
+//						startPostponedEnterTransition();
 //						return false;
 //					}
 //				})
-				.into(new BitmapImageViewTarget(mThumbImage){
+//				.into(mThumbImage);
+		Picasso.with(getContext())
+				.load(mEvent.getPosterUrl())
+//				.fit()
+//				.resize(mThumbImage.getMaxWidth(),mThumbImage.getMaxHeight())
+				.noFade()
+//				.centerCrop()
+				.into(mThumbImage, new Callback() {
 					@Override
-					public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-						super.onResourceReady(resource, glideAnimation);
-						mThumbImage.setImageBitmap(resource);
-						Palette.from(resource).generate(palette -> {
-							int vibrantColor = palette.getVibrantColor(getResources().getColor(R.color.primary_500));
-							collapsingToolbar.setContentScrimColor(vibrantColor);
-							collapsingToolbar.setStatusBarScrimColor(getResources().getColor(R.color.black_trans80));
-						});
+					public void onSuccess() {
+						startPostponedEnterTransition();
+					}
+
+					@Override
+					public void onError() {
 						startPostponedEnterTransition();
 					}
 				});
-//				.into(mThumbImage);
-		startPostponedEnterTransition();
+	}
+
+	private void play() {
+		Toast.makeText(getContext(),"Play the video",Toast.LENGTH_SHORT).show();
 	}
 
 	@Override

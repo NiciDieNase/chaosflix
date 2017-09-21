@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix.touch.adapters;
 
 import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -22,9 +23,10 @@ public class ConferenceRecyclerViewAdapter extends ItemRecyclerViewAdapter<Confe
 		holder.mItem = mItems.get(position);
 		holder.mTitleText.setText(mItems.get(position).getTitle());
 		holder.mSubtitle.setText(mItems.get(position).getAcronym());
-		Glide.with(holder.mIcon.getContext())
+		Picasso.with(holder.mIcon.getContext())
 				.load(mItems.get(position).getLogoUrl())
-				.fitCenter()
+				.fit()
+				.centerInside()
 				.into(holder.mIcon);
 
 		holder.mView.setOnClickListener(v -> {

@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.support.v4.view.ViewCompat;
 
 import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 import java.util.Collections;
 
@@ -41,11 +42,17 @@ public class EventRecyclerViewAdapter extends ItemRecyclerViewAdapter<Event> {
 			}
 			holder.mTag.setText(tagString);
 		}
-		Glide.with(holder.mIcon.getContext())
-				.load(event.getThumbUrl())
-				.dontAnimate()
-				.fitCenter()
+		Picasso.with(holder.mIcon.getContext())
+				.load(event.getPosterUrl())
+				.noFade()
+				.fit()
+				.centerInside()
 				.into(holder.mIcon);
+//		Glide.with(holder.mIcon.getContext())
+//				.load(event.getThumbUrl())
+//				.dontAnimate()
+//				.fitCenter()
+//				.into(holder.mIcon);
 
 		Resources resources = holder.mTitleText.getContext().getResources();
 		ViewCompat.setTransitionName(holder.mTitleText,
