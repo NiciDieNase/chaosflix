@@ -1,6 +1,5 @@
 package de.nicidienase.chaosflix.touch.adapters;
 
-import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
