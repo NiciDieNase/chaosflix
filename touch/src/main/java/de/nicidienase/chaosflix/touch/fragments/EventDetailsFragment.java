@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -27,7 +26,6 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.PlayableItem;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 
 public class EventDetailsFragment extends Fragment {
@@ -154,7 +152,7 @@ public class EventDetailsFragment extends Fragment {
 
 	private void play() {
 		if(mListener != null){
-			mListener.playItem(mEvent);
+			mListener.playItem(mEvent.getTitle(),mEvent.getSubtitle(),mEvent.getOptimalStream());
 		}
 	}
 
@@ -201,6 +199,6 @@ public class EventDetailsFragment extends Fragment {
 	public interface OnEventDetailsFragmentInteractionListener {
 		void onToolbarStateChange();
 		void setActionbar(Toolbar toolbar);
-		void playItem(PlayableItem item);
+		void playItem(String title, String subtitle, String url);
 	}
 }

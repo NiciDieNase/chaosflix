@@ -7,8 +7,11 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PersistableBundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+
+import com.devbrackets.android.exomedia.ExoMedia;
 
 import de.nicidienase.chaosflix.common.network.MediaApiService;
 import io.reactivex.Single;
