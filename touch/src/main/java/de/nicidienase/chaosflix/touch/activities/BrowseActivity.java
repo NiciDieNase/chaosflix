@@ -1,8 +1,6 @@
 package de.nicidienase.chaosflix.touch.activities;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,26 +8,18 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
-import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.PlayableItem;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
-import de.nicidienase.chaosflix.common.entities.recording.Metadata;
-import de.nicidienase.chaosflix.common.network.MediaApiService;
 import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventDetailsFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventsFragment;
 import de.nicidienase.chaosflix.touch.fragments.MediaPlayerFragment;
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -168,10 +158,10 @@ public class BrowseActivity extends TouchBaseActivity implements
 	}
 
 	@Override
-	public void playItem(PlayableItem item) {
+	public void playItem(String title, String subtitle, String url) {
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
-		MediaPlayerFragment playerFragment = MediaPlayerFragment.newInstance(item, -1);
+		MediaPlayerFragment playerFragment = MediaPlayerFragment.newInstance(title,subtitle,url);
 		ft.replace(R.id.fragment_container,playerFragment,TAG_RETAINED_FRAGMENT);
 		ft.addToBackStack(null);
 		ft.commit();

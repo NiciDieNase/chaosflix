@@ -7,13 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import de.nicidienase.chaosflix.common.entities.PlayableItem;
-
 /**
  * Created by felix on 23.03.17.
  */
 
-public class Room implements Parcelable, PlayableItem {
+public class Room implements Parcelable {
 	String slug;
 	String shedulename;
 	String thumb;
@@ -118,41 +116,5 @@ public class Room implements Parcelable, PlayableItem {
 		dummy.setStreams(new ArrayList<>());
 		dummy.getStreams().add(Stream.getDummyObject());
 		return dummy;
-	}
-
-	@Override
-	public String getTitle() {
-		return getDisplay();
-	}
-
-	@Override
-	public String getSubtitle() {
-		return "";
-	}
-
-	@Override
-	public String getImageUrl() {
-		return getThumb();
-	}
-
-	@Override
-	public List<String> getPlaybackOptions() {
-		List<String> result = new ArrayList<>();
-		for(Stream s: getStreams()){
-			result.add(s.getDisplay());
-		}
-		return result;
-	}
-
-	@Override
-	public String getUrlForOption(int index) {
-		// Kind of hacky, we get the HLS-Stream if one exists,
-		// otherwise we just take the fist stream we can get
-		Map<String, StreamUrl> urls = getStreams().get(index).getUrls();
-		if(urls.containsKey("hls")){
-			return urls.get("hsl").getUrl();
-		} else {
-			return urls.values().iterator().next().getUrl();
-		}
 	}
 }

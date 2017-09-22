@@ -7,15 +7,14 @@ import com.google.gson.annotations.SerializedName;
 import com.orm.SugarRecord;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import de.nicidienase.chaosflix.common.entities.PlayableItem;
 
 /**
  * Created by felix on 11.03.17.
  */
 
-public class Event extends SugarRecord implements Parcelable, Comparable<Event>, PlayableItem {
+public class Event extends SugarRecord implements Parcelable, Comparable<Event> {
 
 	@SerializedName("conference_id")
 	int conferenceId;
@@ -193,23 +192,15 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event>,
 		return subtitle;
 	}
 
-	@Override
-	public String getImageUrl() {
-		return getPosterUrl();
-	}
-
-	@Override
-	public List<String> getPlaybackOptions() {
-		List<String> result = new ArrayList<>();
+	public String getOptimalStream() {
+		List<Recording> result = new ArrayList<>();
 		for(Recording r : getRecordings()){
-			result.add(r.getMimeType() + "/" + r.getLanguage());
+			if(r.isHighQuality() && r.getMimeType().equals("video/mp4"))
+				result.add(r);
 		}
-		return result;
-	}
-
-	@Override
-	public String getUrlForOption(int index) {
-		return getRecordings().get(index).getRecordingUrl();
+		// sort by length of language-string in decending order, so first item has most languages
+		Collections.sort(result,(o1, o2) -> o2.getLanguage().length() - o1.getLanguage().length());
+		return result.get(0).getRecordingUrl();
 	}
 
 	public void setSubtitle(String subtitle) {
