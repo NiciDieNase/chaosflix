@@ -51,8 +51,8 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:design:25.4.0'
-    compile 'com.devbrackets.android:exomedia:4.0.0'
 
+    compile 'com.google.android.exoplayer:exoplayer:r2.5.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton:butterknife:8.5.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'

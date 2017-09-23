@@ -19,7 +19,7 @@ import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventDetailsFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventsFragment;
-import de.nicidienase.chaosflix.touch.fragments.MediaPlayerFragment;
+import de.nicidienase.chaosflix.touch.fragments.ExoPlayerFragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -32,7 +32,7 @@ public class BrowseActivity extends TouchBaseActivity implements
 		ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener,
 		EventsFragment.OnEventsListFragmentInteractionListener,
 		EventDetailsFragment.OnEventDetailsFragmentInteractionListener,
-		MediaPlayerFragment.OnMediaPlayerInteractionListener {
+		ExoPlayerFragment.OnMediaPlayerInteractionListener {
 
 	private static final String TAG = BrowseActivity.class.getSimpleName();
 	private static final String TAG_RETAINED_FRAGMENT = "retained_fragment";
@@ -161,7 +161,7 @@ public class BrowseActivity extends TouchBaseActivity implements
 	public void playItem(String title, String subtitle, String url) {
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
-		MediaPlayerFragment playerFragment = MediaPlayerFragment.newInstance(title,subtitle,url);
+		Fragment playerFragment = ExoPlayerFragment.newInstance(title,subtitle,url);
 		ft.replace(R.id.fragment_container,playerFragment,TAG_RETAINED_FRAGMENT);
 		ft.addToBackStack(null);
 		ft.commit();
