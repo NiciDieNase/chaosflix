@@ -156,7 +156,7 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 		}
 	}
 
-	public String getOptimalStream() {
+	public Recording getOptimalStream() {
 		List<Recording> result = new ArrayList<>();
 		for(Recording r : getRecordings()){
 			if(r.isHighQuality() && r.getMimeType().equals("video/mp4"))
@@ -164,7 +164,7 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 		}
 		// sort by length of language-string in decending order, so first item has most languages
 		Collections.sort(result,(o1, o2) -> o2.getLanguage().length() - o1.getLanguage().length());
-		return result.get(0).getRecordingUrl();
+		return result.get(0);
 	}
 
 	public String getExtendedDescription(){
