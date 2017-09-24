@@ -2,6 +2,7 @@ package de.nicidienase.chaosflix.common.entities.recording;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
 import com.orm.SugarRecord;
@@ -155,6 +156,38 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 		}
 	}
 
+	public String getOptimalStream() {
+		List<Recording> result = new ArrayList<>();
+		for(Recording r : getRecordings()){
+			if(r.isHighQuality() && r.getMimeType().equals("video/mp4"))
+				result.add(r);
+		}
+		// sort by length of language-string in decending order, so first item has most languages
+		Collections.sort(result,(o1, o2) -> o2.getLanguage().length() - o1.getLanguage().length());
+		return result.get(0).getRecordingUrl();
+	}
+
+	public String getExtendedDescription(){
+		StringBuilder sb = new StringBuilder();
+		sb.append(getDescription())
+				.append("\n")
+				.append("\nreleased at: ").append(getReleaseDate())
+				.append("\nTags: ").append(android.text.TextUtils.join(", ", getTags()));
+		return sb.toString();
+	}
+
+	public String getSpeakerString(){
+		return TextUtils.join(", ", getPersons());
+	}
+
+//	@BindingAdapter({"bind:imageUrl"})
+//	public static void loadImage(ImageView imageView, String url){
+//		Picasso.with(imageView.getContext())
+//				.load(url)
+//				.noFade()
+//				.into(imageView);
+//	}
+
 	public int getApiID() {
 		String[] strings = getUrl().split("/");
 		return Integer.parseInt(strings[strings.length - 1]);
@@ -190,17 +223,6 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 
 	public String getSubtitle() {
 		return subtitle;
-	}
-
-	public String getOptimalStream() {
-		List<Recording> result = new ArrayList<>();
-		for(Recording r : getRecordings()){
-			if(r.isHighQuality() && r.getMimeType().equals("video/mp4"))
-				result.add(r);
-		}
-		// sort by length of language-string in decending order, so first item has most languages
-		Collections.sort(result,(o1, o2) -> o2.getLanguage().length() - o1.getLanguage().length());
-		return result.get(0).getRecordingUrl();
 	}
 
 	public void setSubtitle(String subtitle) {
