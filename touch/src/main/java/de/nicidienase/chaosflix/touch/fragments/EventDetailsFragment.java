@@ -20,6 +20,7 @@ import com.squareup.picasso.Picasso;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.common.entities.recording.Recording;
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsNewBinding;
 
 public class EventDetailsFragment extends Fragment {
@@ -107,7 +108,7 @@ public class EventDetailsFragment extends Fragment {
 
 	private void play() {
 		if(mListener != null){
-			mListener.playItem(mEvent.getTitle(),mEvent.getSubtitle(),mEvent.getOptimalStream());
+			mListener.playItem(mEvent,mEvent.getOptimalStream());
 		}
 	}
 
@@ -154,6 +155,6 @@ public class EventDetailsFragment extends Fragment {
 	public interface OnEventDetailsFragmentInteractionListener {
 		void onToolbarStateChange();
 		void setActionbar(Toolbar toolbar);
-		void playItem(String title, String subtitle, String url);
+		void playItem(Event event, Recording recording);
 	}
 }

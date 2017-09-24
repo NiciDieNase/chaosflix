@@ -16,6 +16,7 @@ import android.view.View;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.common.entities.recording.Recording;
 import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventDetailsFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventsFragment;
@@ -158,10 +159,10 @@ public class BrowseActivity extends TouchBaseActivity implements
 	}
 
 	@Override
-	public void playItem(String title, String subtitle, String url) {
+	public void playItem(Event event, Recording recording) {
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
-		Fragment playerFragment = ExoPlayerFragment.newInstance(title,subtitle,url);
+		Fragment playerFragment = ExoPlayerFragment.newInstance(event,recording);
 		ft.replace(R.id.fragment_container,playerFragment,TAG_RETAINED_FRAGMENT);
 		ft.addToBackStack(null);
 		ft.commit();

@@ -48,13 +48,14 @@ import com.google.android.exoplayer2.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.common.entities.recording.Recording;
 
 public class ExoPlayerFragment extends Fragment {
-	private static final String ARG_TITEL = "title";
-	private static final String ARG_SUBTITLE = "subtitle";
-	private static final String ARG_URL = "url";
 	private static final String TAG = ExoPlayerFragment.class.getSimpleName();
 	public static final String PLAYBACK_STATE = "playback_state";
+	private static final String ARG_EVENT = "event";
+	private static final String ARG_RECORDING = "recording";
 
 	private OnMediaPlayerInteractionListener mListener;
 	private final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
@@ -71,23 +72,21 @@ public class ExoPlayerFragment extends Fragment {
 	@BindView(R.id.subtitle_text)
 	TextView subtitleText;
 
-	private String mTitle;
-	private String mSubtitle;
-	private String mUrl;
 	private SimpleExoPlayer mPlayer;
 	private String mUserAgent;
 	private Handler mainHandler = new Handler();
 	private boolean mPlaybackState = true;
+	private Event mEvent;
+	private Recording mRecording;
 
 	public ExoPlayerFragment() {
 	}
 
-	public static ExoPlayerFragment newInstance(String title, String subtitle, String url) {
+	public static ExoPlayerFragment newInstance(Event event, Recording recording) {
 		ExoPlayerFragment fragment = new ExoPlayerFragment();
 		Bundle args = new Bundle();
-		args.putString(ARG_TITEL, title);
-		args.putString(ARG_SUBTITLE, subtitle);
-		args.putString(ARG_URL, url);
+		args.putParcelable(ARG_EVENT,event);
+		args.putParcelable(ARG_RECORDING,recording);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -97,9 +96,8 @@ public class ExoPlayerFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 		if (getArguments() != null) {
-			mTitle = getArguments().getString(ARG_TITEL);
-			mSubtitle = getArguments().getString(ARG_SUBTITLE);
-			mUrl = getArguments().getString(ARG_URL);
+			mEvent = getArguments().getParcelable(ARG_EVENT);
+			mRecording = getArguments().getParcelable(ARG_RECORDING);
 		}
 		if(savedInstanceState != null){
 			mPlaybackState = savedInstanceState.getBoolean(PLAYBACK_STATE,true);
@@ -117,9 +115,9 @@ public class ExoPlayerFragment extends Fragment {
 		super.onViewCreated(view, savedInstanceState);
 		ButterKnife.bind(this,view);
 		if(titleText != null)
-			titleText.setText(mTitle);
+			titleText.setText(mEvent.getTitle());
 		if(subtitleText != null)
-			subtitleText.setText(mSubtitle);
+			subtitleText.setText(mEvent.getSubtitle());
 
 		if(mPlayer == null){
 			setupPlayer();
@@ -176,7 +174,7 @@ public class ExoPlayerFragment extends Fragment {
 		mVideoView.setPlayer(mPlayer);
 		mPlayer.setPlayWhenReady(mPlaybackState);
 
-		mPlayer.prepare(buildMediaSource(Uri.parse(mUrl),""));
+		mPlayer.prepare(buildMediaSource(Uri.parse(mRecording.getRecordingUrl()),""));
 	}
 
 	@Override
