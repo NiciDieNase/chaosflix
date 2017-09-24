@@ -3,9 +3,6 @@ package de.nicidienase.chaosflix.touch.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
@@ -17,16 +14,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.databinding.FragmentEventDetailsNewBinding;
 
 public class EventDetailsFragment extends Fragment {
 	private static final String TAG = EventDetailsFragment.class.getSimpleName();
@@ -34,25 +28,6 @@ public class EventDetailsFragment extends Fragment {
 
 	private OnEventDetailsFragmentInteractionListener mListener;
 	private Event mEvent;
-
-	@BindView(R.id.collapsing_toolbar)
-	CollapsingToolbarLayout collapsingToolbar;
-	@BindView(R.id.anim_toolbar)
-	Toolbar mToolbar;
-	@BindView(R.id.appbar)
-	AppBarLayout mAppBarLayout;
-	@BindView(R.id.title_text)
-	TextView mTitleText;
-	@BindView(R.id.subtitle_text)
-	TextView mSubtitleText;
-	@BindView(R.id.speaker_text)
-	TextView mSpeakerText;
-	@BindView(R.id.thumb_image)
-	ImageView mThumbImage;
-	@BindView(R.id.description_text)
-	TextView mDescriptionText;
-	@BindView(R.id.play_fab)
-	FloatingActionButton mPlayButton;
 
 	private boolean appBarExpanded;
 
@@ -93,51 +68,31 @@ public class EventDetailsFragment extends Fragment {
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		ButterKnife.bind(this,view);
+		FragmentEventDetailsNewBinding binding = FragmentEventDetailsNewBinding.bind(view);
+		binding.setEvent(mEvent);
 
-		mPlayButton.setOnClickListener(v -> {
+		binding.playFab.setOnClickListener(v -> {
 			play();
 		});
 
-		view.setTransitionName(getString(R.string.card));
-
 		if(mListener != null)
-			mListener.setActionbar(mToolbar);
-		collapsingToolbar.setTitle(mEvent.getTitle());
-//		mToolbar.setTitle(mEvent.getTitle());
-		mTitleText.setText(mEvent.getTitle());
+			mListener.setActionbar(binding.animToolbar);
 
-		mAppBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+		binding.appbar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
 			double v = (double) Math.abs(verticalOffset) / appBarLayout.getTotalScrollRange();
-			Log.d(TAG,"Offset changed: " + v);
 			if(appBarExpanded ^ v > 0.8){
-//				invalidateOptionsMenu();
 				if(mListener != null)
 					mListener.onToolbarStateChange();
 				appBarExpanded = v > 0.8;
-				collapsingToolbar.setTitleEnabled(appBarExpanded);
+				binding.collapsingToolbar.setTitleEnabled(appBarExpanded);
 			}
 		});
 
-		if(mEvent.getSubtitle() != null && mEvent.getSubtitle().length() > 0){
-			mSubtitleText.setText(mEvent.getSubtitle());
-		} else {
-			mSubtitleText.setVisibility(View.GONE);
-		}
-		mSpeakerText.setText(
-				android.text.TextUtils.join(", ",mEvent.getPersons()));
-		StringBuilder sb = new StringBuilder();
-		sb.append(mEvent.getDescription())
-				.append("\n")
-				.append("\nreleased at: ").append(mEvent.getReleaseDate())
-				.append("\nTags: ").append(android.text.TextUtils.join(", ", mEvent.getTags()));
-		mDescriptionText.setText(sb);
-
-		mThumbImage.setTransitionName(getString(R.string.thumbnail)+mEvent.getApiID());
+		binding.thumbImage.setTransitionName(getString(R.string.thumbnail)+mEvent.getApiID());
 		Picasso.with(getContext())
 				.load(mEvent.getThumbUrl())
 				.noFade()
-				.into(mThumbImage, new Callback() {
+				.into(binding.thumbImage, new Callback() {
 					@Override
 					public void onSuccess() {
 						startPostponedEnterTransition();
