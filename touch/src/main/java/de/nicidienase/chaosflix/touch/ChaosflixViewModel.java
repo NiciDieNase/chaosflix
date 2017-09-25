@@ -14,6 +14,8 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.common.entities.recording.Recording;
+import de.nicidienase.chaosflix.common.entities.streaming.LiveConference;
 import de.nicidienase.chaosflix.common.network.RecordingService;
 import de.nicidienase.chaosflix.common.network.StreamingService;
 import io.reactivex.Completable;
@@ -77,6 +79,16 @@ public class ChaosflixViewModel extends ViewModel {
 
 	public Observable<Event> getEvent(int apiID) {
 		return mRecordingApi.getEvent(apiID)
+				.subscribeOn(Schedulers.io());
+	}
+
+	public Observable<Recording> getRecording(long id) {
+		return mRecordingApi.getRecording(id)
+				.subscribeOn(Schedulers.io());
+	}
+
+	public Observable<List<LiveConference>> getStreamingConferences() {
+		return mStreamingApi.getStreamingConferences()
 				.subscribeOn(Schedulers.io());
 	}
 
