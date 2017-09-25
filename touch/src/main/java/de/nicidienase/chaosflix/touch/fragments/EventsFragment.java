@@ -11,6 +11,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -55,6 +57,7 @@ public class EventsFragment extends ChaosflixFragment {
 	@Override
 	public void onAttach(Context context) {
 		super.onAttach(context);
+		setHasOptionsMenu(true);
 		mContext = context;
 		if (context instanceof OnEventsListFragmentInteractionListener) {
 			mListener = (OnEventsListFragmentInteractionListener) context;
@@ -109,7 +112,11 @@ public class EventsFragment extends ChaosflixFragment {
 		return view;
 	}
 
-
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.events_menu,menu);
+	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
