@@ -1,5 +1,8 @@
 package de.nicidienase.chaosflix.touch;
 
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelStore;
@@ -7,6 +10,7 @@ import android.arch.lifecycle.ViewModelStoreOwner;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.List;
 
@@ -20,6 +24,8 @@ import de.nicidienase.chaosflix.common.network.RecordingService;
 import de.nicidienase.chaosflix.common.network.StreamingService;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -58,6 +64,18 @@ public class ChaosflixViewModel extends ViewModel {
 		mStreamingApi = retrofigStreaming.create(StreamingService.class);
 	}
 
+	public LiveData<ConferencesWrapper> getConferencesWrapperAsLiveData(){
+		return new LiveData<ConferencesWrapper>() {
+			@Override
+			protected void onActive() {
+				super.onActive();
+				mRecordingApi.getConferences()
+						.subscribeOn(Schedulers.io())
+						.observeOn(AndroidSchedulers.mainThread())
+						.subscribe(conferencesWrapper -> setValue(conferencesWrapper));
+			}
+		};
+	}
 	public Observable<ConferencesWrapper> getConferencesWrapper() {
 		return mRecordingApi.getConferences()
 				.doOnError(throwable -> Log.d(TAG, String.valueOf(throwable.getCause())))
