@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
 import android.transition.TransitionInflater;
@@ -33,14 +34,13 @@ import io.reactivex.schedulers.Schedulers;
  * Created by felix on 17.09.17.
  */
 
-public class BrowseActivity extends TouchBaseActivity implements
+public class BrowseActivity extends AppCompatActivity implements
 		ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener,
 		EventsFragment.OnEventsListFragmentInteractionListener,
 		EventDetailsFragment.OnEventDetailsFragmentInteractionListener,
 		ExoPlayerFragment.OnMediaPlayerInteractionListener {
 
 	private static final String TAG = BrowseActivity.class.getSimpleName();
-//	private static final String TAG_RETAINED_FRAGMENT = "retained_fragment";
 	CompositeDisposable mDisposables = new CompositeDisposable();
 	private ChaosflixViewModel mViewModel;
 
@@ -56,42 +56,17 @@ public class BrowseActivity extends TouchBaseActivity implements
 						res.getString(R.string.streaming_media_ccc_url));
 		mViewModel = ViewModelProviders.of(this,factory).get(ChaosflixViewModel.class);
 
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		Fragment fragment = null;
-		if(savedInstanceState != null){
-			// Restore previous state
-//			fragment = fragmentManager.getFragment(savedInstanceState,TAG_RETAINED_FRAGMENT);
-		} else {
-			// New instance
-			if(fragment != null){
-				FragmentTransaction ft = fragmentManager.beginTransaction();
-//			ft.replace(R.id.fragment_container,fragment,TAG_RETAINED_FRAGMENT);
-				ft.replace(R.id.fragment_container,fragment);
-				ft.commit();
-			} else {
+		if(savedInstanceState == null){
 				mDisposables.add(mViewModel.getConferencesWrapper()
 						.observeOn(AndroidSchedulers.mainThread())
 						.subscribe(conferencesWrapper -> {
 							ConferencesTabBrowseFragment browseFragment
 								= ConferencesTabBrowseFragment.newInstance(getNumColumns());
-//									browseFragment.setContent(conferencesWrapper);
-								FragmentTransaction ft = fragmentManager.beginTransaction();
-//							ft.replace(R.id.fragment_container,browseFragment,TAG_RETAINED_FRAGMENT);
+								FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 								ft.replace(R.id.fragment_container,browseFragment);
 								ft.commit();
 			}));
-			}
 		}
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-//		FragmentManager fragmentManager = getSupportFragmentManager();
-//		Fragment fragment = fragmentManager.findFragmentByTag(TAG_RETAINED_FRAGMENT);
-//		if(fragment != null){
-//			fragmentManager.putFragment(outState,TAG_RETAINED_FRAGMENT,fragment);
-//		}
 	}
 
 	@Override
@@ -120,11 +95,9 @@ public class BrowseActivity extends TouchBaseActivity implements
 							transitionInflater.inflateTransition(android.R.transition.slide_right));
 
 					Slide slideTransition = new Slide(Gravity.RIGHT);
-//								slideTransition.setDuration(1000);
 					eventsFragment.setEnterTransition(slideTransition);
 
 					FragmentTransaction ft = fm.beginTransaction();
-//								ft.replace(R.id.fragment_container, eventsFragment,TAG_RETAINED_FRAGMENT);
 					ft.replace(R.id.fragment_container, eventsFragment);
 					ft.addToBackStack(null);
 					ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -145,7 +118,6 @@ public class BrowseActivity extends TouchBaseActivity implements
 					detailsFragment.setAllowReturnTransitionOverlap(true);
 
 					FragmentTransaction ft = fm.beginTransaction();
-//								ft.replace(R.id.fragment_container, detailsFragment,TAG_RETAINED_FRAGMENT);
 					ft.replace(R.id.fragment_container, detailsFragment);
 					ft.addToBackStack(null);
 
@@ -172,28 +144,11 @@ public class BrowseActivity extends TouchBaseActivity implements
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
 		Fragment playerFragment = ExoPlayerFragment.newInstance(event,recording);
-//		ft.replace(R.id.fragment_container,playerFragment,TAG_RETAINED_FRAGMENT);
 		ft.replace(R.id.fragment_container,playerFragment);
 		ft.addToBackStack(null);
 		ft.commit();
 	}
 
-//	public List<Event> getRelatedEvents(Event event, MediaApiService service){
-//		List<Event> results = new ArrayList<>();
-//		Metadata metadata = event.getMetadata();
-//		if(metadata != null && metadata.getRelated() != null){
-//			Observable<Event> eventObservable = null;
-//			for(long id: metadata.getRelated()){
-//				if(eventObservable == null){
-//					eventObservable = service.getEvent(id);
-//				} else {
-//					eventObservable.mergeWith(service.getEvent(id));
-//				}
-//			}
-//			eventObservable.subscribe()
-//		}
-//		return results;
-//	}
 
 
 	@Override
