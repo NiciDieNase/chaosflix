@@ -2,6 +2,7 @@ package de.nicidienase.chaosflix.touch.adapters;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
@@ -11,11 +12,14 @@ public class ConferenceRecyclerViewAdapter extends ItemRecyclerViewAdapter<Confe
 
 	private final ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener mListener;
 
+	public ConferenceRecyclerViewAdapter(ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener listener){
+		this(new ArrayList<>(),listener);
+	}
+
 	public ConferenceRecyclerViewAdapter(List<Conference> items, ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener listener) {
 		super(items);
 		mListener = listener;
 	}
-
 
 	@Override
 	public void onBindViewHolder(ItemRecyclerViewAdapter.ViewHolder holder, int position) {

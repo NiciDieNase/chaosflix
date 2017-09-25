@@ -1,7 +1,9 @@
 package de.nicidienase.chaosflix.touch.fragments;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -16,13 +18,17 @@ import android.view.ViewGroup;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper;
+import de.nicidienase.chaosflix.touch.ChaosflixViewModel;
 import de.nicidienase.chaosflix.touch.ConferenceGroupsFragmentPager;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by felix on 19.09.17.
  */
 
-public class ConferencesTabBrowseFragment extends Fragment {
+public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 
 	private static final String TAG = ConferencesTabBrowseFragment.class.getSimpleName();
 
@@ -31,17 +37,19 @@ public class ConferencesTabBrowseFragment extends Fragment {
 	private static final String CURRENTTAB_KEY = "current_tab";
 	private int mColumnCount = 1;
 	private OnConferenceListFragmentInteractionListener mListener;
-	private ConferencesWrapper mConferencesWrapper;
 	private Toolbar mToolbar;
 	private Context mContext;
 	private int mCurrentTab = -1;
 	private ViewPager mViewPager;
 
+	private final CompositeDisposable mDisposable = new CompositeDisposable();
+
+
 	public ConferencesTabBrowseFragment() {
 	}
 
 	public void setContent(ConferencesWrapper conferencesWrapper){
-		this.mConferencesWrapper = conferencesWrapper;
+//		this.mConferencesWrapper = conferencesWrapper;
 	}
 
 	public static ConferencesTabBrowseFragment newInstance(int columnCount) {
@@ -67,10 +75,10 @@ public class ConferencesTabBrowseFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
+
 		Log.d(TAG,"onCreate");
 		if(savedInstanceState != null){
-			mConferencesWrapper = savedInstanceState.getParcelable(CONFERENCEWRAPPER_KEY);
+//			mConferencesWrapper = savedInstanceState.getParcelable(CONFERENCEWRAPPER_KEY);
 			mCurrentTab = savedInstanceState.getInt(CURRENTTAB_KEY);
 		}
 		if (getArguments() != null) {
@@ -85,7 +93,14 @@ public class ConferencesTabBrowseFragment extends Fragment {
 		View view = inflater.inflate(R.layout.fragment_tab_pager_layout, container, false);
 		ConferenceGroupsFragmentPager fragmentPager
 				= new ConferenceGroupsFragmentPager(this.getContext(),getChildFragmentManager());
-		fragmentPager.setContent(mConferencesWrapper.getConferencesBySeries());
+
+		getViewModel().getConferencesWrapper()
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(conferencesWrapper -> {
+					fragmentPager.setContent(conferencesWrapper.getConferencesBySeries());
+					mViewPager.setCurrentItem(mCurrentTab);
+						});
 
 		mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
 		mViewPager.setAdapter(fragmentPager);
@@ -105,9 +120,15 @@ public class ConferencesTabBrowseFragment extends Fragment {
 	}
 
 	@Override
+	public void onStop() {
+		super.onStop();
+		mDisposable.clear();
+	}
+
+	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putParcelable(CONFERENCEWRAPPER_KEY, mConferencesWrapper);
+//		outState.putParcelable(CONFERENCEWRAPPER_KEY, mConferencesWrapper);
 		outState.putInt(CURRENTTAB_KEY, mViewPager.getCurrentItem());
 	}
 

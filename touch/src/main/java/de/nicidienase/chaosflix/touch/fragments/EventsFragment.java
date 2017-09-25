@@ -2,6 +2,7 @@ package de.nicidienase.chaosflix.touch.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,27 +18,36 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.touch.adapters.EventRecyclerViewAdapter;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
-public class EventsFragment extends Fragment {
+public class EventsFragment extends ChaosflixFragment {
 
 
 	private static final String ARG_COLUMN_COUNT = "column-count";
 	private static final String ARG_CONFERENCE = "conference";
+	private static final String LAYOUTMANAGER_STATE = "layoutmanager-state";
 	private int mColumnCount = 1;
 	private OnEventsListFragmentInteractionListener mListener;
-	private Conference mConference;
-	private CharSequence mPreviousTitle;
+
 	private Toolbar mToolbar;
 	private Context mContext;
+	private EventRecyclerViewAdapter mAdapter;
+	private int mConferenceId;
+
+	CompositeDisposable mDisposable = new CompositeDisposable();
+	private LinearLayoutManager layoutManager;
 
 	public EventsFragment() {
 	}
 
-	public static EventsFragment newInstance(Conference conference, int columnCount) {
+	public static EventsFragment newInstance(int conferenceId, int columnCount) {
 		EventsFragment fragment = new EventsFragment();
 		Bundle args = new Bundle();
 		args.putInt(ARG_COLUMN_COUNT, columnCount);
-		args.putParcelable(ARG_CONFERENCE, conference);
+		args.putInt(ARG_CONFERENCE, conferenceId);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -46,7 +56,6 @@ public class EventsFragment extends Fragment {
 	public void onAttach(Context context) {
 		super.onAttach(context);
 		mContext = context;
-//		mPreviousTitle = mActionBar.getTitle();
 		if (context instanceof OnEventsListFragmentInteractionListener) {
 			mListener = (OnEventsListFragmentInteractionListener) context;
 		} else {
@@ -58,10 +67,9 @@ public class EventsFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
 		if (getArguments() != null) {
 			mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-			mConference = getArguments().getParcelable(ARG_CONFERENCE);
+			mConferenceId = getArguments().getInt(ARG_CONFERENCE);
 		}
 	}
 
@@ -70,30 +78,55 @@ public class EventsFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.recycler_view_toolbar_layout, container, false);
-//		mActionBar.setTitle(mConference.getTitle());
 		// Set the adapter
 		Context context = view.getContext();
 		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
 		if (mColumnCount <= 1) {
-			recyclerView.setLayoutManager(new LinearLayoutManager(context));
+			layoutManager = new LinearLayoutManager(context);
 		} else {
-			recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+			layoutManager = new GridLayoutManager(context, mColumnCount);
 		}
+		layoutManager.onRestoreInstanceState(savedInstanceState);
+		recyclerView.setLayoutManager(layoutManager);
 
-		recyclerView.setAdapter(new EventRecyclerViewAdapter(mConference, mListener));
+		mAdapter = new EventRecyclerViewAdapter(mListener);
+		recyclerView.setAdapter(mAdapter);
 
 		mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
 		((AppCompatActivity)mContext).setSupportActionBar(mToolbar);
-		mToolbar.setTitle(mConference.getTitle());
 
+		mDisposable.add(getViewModel().getConference(mConferenceId)
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(conference -> {
+					if(savedInstanceState != null){
+						Parcelable parcelable = savedInstanceState.getParcelable(LAYOUTMANAGER_STATE);
+						layoutManager.onRestoreInstanceState(parcelable);
+					}
+					mAdapter.setItems(conference);
+					mToolbar.setTitle(conference.getTitle());
+				}));
 		return view;
+	}
+
+
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelable(LAYOUTMANAGER_STATE,layoutManager.onSaveInstanceState());
 	}
 
 	@Override
 	public void onDetach() {
 		super.onDetach();
 		mListener = null;
-//		mActionBar.setTitle(mPreviousTitle);
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		mDisposable.clear();
 	}
 
 	public interface OnEventsListFragmentInteractionListener{

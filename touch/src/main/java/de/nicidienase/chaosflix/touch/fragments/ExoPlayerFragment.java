@@ -94,7 +94,6 @@ public class ExoPlayerFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
 		if (getArguments() != null) {
 			mEvent = getArguments().getParcelable(ARG_EVENT);
 			mRecording = getArguments().getParcelable(ARG_RECORDING);

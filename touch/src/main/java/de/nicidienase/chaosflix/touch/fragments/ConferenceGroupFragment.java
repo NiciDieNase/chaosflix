@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.touch.fragments;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,31 +14,41 @@ import android.view.ViewGroup;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
+import de.nicidienase.chaosflix.touch.ChaosflixViewModel;
 import de.nicidienase.chaosflix.touch.adapters.ConferenceRecyclerViewAdapter;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConferenceGroupFragment extends Fragment {
+public class ConferenceGroupFragment extends ChaosflixFragment {
 
 	private static final String TAG = ConferenceGroupFragment.class.getSimpleName();
 
 	private static final String ARG_COLUMN_COUNT = "column-count";
-	private int mColumnCount = 1;
+	private static final String ARG_GROUP_NAME = "group-name";
+	private static final String LAYOUTMANAGER_STATE = "layoutmanager-state";
 	private ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener mListener;
-	private List<Conference> mItmes = new ArrayList<>();
+
+	private int mColumnCount = 1;
+	private String mGroupName;
+
+	private ConferenceRecyclerViewAdapter mAdapter;
+
+	CompositeDisposable mDisposable = new CompositeDisposable();
+	private RecyclerView.LayoutManager mLayoutManager;
 
 	public ConferenceGroupFragment() {
 	}
 
-	public void setContent(List<Conference> itmes){
-		mItmes = itmes;
-	}
-
-	public static ConferenceGroupFragment newInstance(int columnCount) {
+	public static ConferenceGroupFragment newInstance(String group,int columnCount) {
 		ConferenceGroupFragment fragment = new ConferenceGroupFragment();
 		Bundle args = new Bundle();
 		args.putInt(ARG_COLUMN_COUNT, columnCount);
+		args.putString(ARG_GROUP_NAME, group);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -47,7 +58,9 @@ public class ConferenceGroupFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 		if (getArguments() != null) {
 			mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+			mGroupName = getArguments().getString(ARG_GROUP_NAME);
 		}
+
 	}
 
 	@Override
@@ -58,15 +71,21 @@ public class ConferenceGroupFragment extends Fragment {
 		// Set the adapter
 		if (view instanceof RecyclerView) {
 			Context context = view.getContext();
-			RecyclerView recyclerView = (RecyclerView) view;
+			RecyclerView mRecyclerView = (RecyclerView) view;
 			if (mColumnCount <= 1) {
-				recyclerView.setLayoutManager(new LinearLayoutManager(context));
+				mLayoutManager = new LinearLayoutManager(context);
 			} else {
-				recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+				mLayoutManager = new GridLayoutManager(context, mColumnCount);
 			}
+			mLayoutManager.onRestoreInstanceState(savedInstanceState);
+			mRecyclerView.setLayoutManager(mLayoutManager);
 
-			recyclerView.setAdapter(new ConferenceRecyclerViewAdapter(mItmes, mListener) {
-			});
+			mAdapter = new ConferenceRecyclerViewAdapter(mListener);
+			mRecyclerView.setAdapter(mAdapter);
+			mDisposable.add(getViewModel().getConferencesByGroup(mGroupName)
+					.subscribeOn(Schedulers.io())
+					.observeOn(AndroidSchedulers.mainThread())
+					.subscribe(conferences -> mAdapter.setItems(conferences)));
 		}
 		return view;
 	}
@@ -80,6 +99,18 @@ public class ConferenceGroupFragment extends Fragment {
 			throw new RuntimeException(context.toString()
 					+ " must implement OnListFragmentInteractionListener");
 		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelable(LAYOUTMANAGER_STATE,mLayoutManager.onSaveInstanceState());
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		mDisposable.clear();
 	}
 
 	@Override
