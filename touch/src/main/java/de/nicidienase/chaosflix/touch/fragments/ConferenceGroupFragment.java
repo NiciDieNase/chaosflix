@@ -77,7 +77,6 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 			} else {
 				mLayoutManager = new GridLayoutManager(context, mColumnCount);
 			}
-			mLayoutManager.onRestoreInstanceState(savedInstanceState);
 			mRecyclerView.setLayoutManager(mLayoutManager);
 
 			mAdapter = new ConferenceRecyclerViewAdapter(mListener);
@@ -85,7 +84,13 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 			mDisposable.add(getViewModel().getConferencesByGroup(mGroupName)
 					.subscribeOn(Schedulers.io())
 					.observeOn(AndroidSchedulers.mainThread())
-					.subscribe(conferences -> mAdapter.setItems(conferences)));
+					.subscribe(conferences -> {
+						mAdapter.setItems(conferences);
+						if(savedInstanceState != null){
+							mLayoutManager.onRestoreInstanceState(
+									savedInstanceState.getParcelable(LAYOUTMANAGER_STATE));
+						}
+					}));
 		}
 		return view;
 	}
