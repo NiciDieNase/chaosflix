@@ -58,15 +58,25 @@ public class BrowseActivity extends AppCompatActivity implements
 		mViewModel = ViewModelProviders.of(this,factory).get(ChaosflixViewModel.class);
 
 		if(savedInstanceState == null){
-				mDisposables.add(mViewModel.getConferencesWrapper()
-						.observeOn(AndroidSchedulers.mainThread())
-						.subscribe(conferencesWrapper -> {
-							ConferencesTabBrowseFragment browseFragment
-								= ConferencesTabBrowseFragment.newInstance(getNumColumns());
-								FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-								ft.replace(R.id.fragment_container,browseFragment);
-								ft.commit();
-			}));
+			ConferencesTabBrowseFragment browseFragment
+					= ConferencesTabBrowseFragment.newInstance(getNumColumns());
+			mViewModel.getConferencesWrapperAsLiveData().observe(browseFragment,conferencesWrapper -> {
+				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+				ft.replace(R.id.fragment_container,browseFragment);
+				ft.setReorderingAllowed(true);
+				ft.commit();
+			});
+//			mDisposables.add(mViewModel.getConferencesWrapper()
+//					.observeOn(AndroidSchedulers.mainThread())
+//					.doOnError(throwable -> Log.d(TAG, String.valueOf(throwable.getCause())))
+//					.subscribe(conferencesWrapper -> {
+//						ConferencesTabBrowseFragment browseFragment
+//								= ConferencesTabBrowseFragment.newInstance(getNumColumns());
+//						FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//						ft.replace(R.id.fragment_container,browseFragment);
+//						ft.setReorderingAllowed(true);
+//						ft.commit();
+//					}));
 		}
 	}
 
