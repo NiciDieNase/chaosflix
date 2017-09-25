@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
@@ -99,6 +100,7 @@ public class BrowseActivity extends AppCompatActivity implements
 
 					FragmentTransaction ft = fm.beginTransaction();
 					ft.replace(R.id.fragment_container, eventsFragment);
+					ft.setReorderingAllowed(true);
 					ft.addToBackStack(null);
 					ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 					ft.commit();
@@ -120,6 +122,7 @@ public class BrowseActivity extends AppCompatActivity implements
 					FragmentTransaction ft = fm.beginTransaction();
 					ft.replace(R.id.fragment_container, detailsFragment);
 					ft.addToBackStack(null);
+					ft.setReorderingAllowed(true);
 
 					View thumb = v.findViewById(R.id.imageView);
 					ft.addSharedElement(thumb,ViewCompat.getTransitionName(thumb));
