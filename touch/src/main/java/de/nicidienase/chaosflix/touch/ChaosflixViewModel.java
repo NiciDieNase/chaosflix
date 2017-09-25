@@ -32,14 +32,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ChaosflixViewModel extends ViewModel {
 
+	private static final String TAG = ChaosflixViewModel.class.getSimpleName();
 	private final StreamingService mStreamingApi;
 	private final RecordingService mRecordingApi;
 
 	public ChaosflixViewModel(String recordingUrl, String streamingUrl){
-//		Resources resources = context.getResources();
-//		String recordingUrl = resources.getString(R.string.api_media_ccc_url);
-//		String streamingUrl = resources.getString(R.string.streaming_media_ccc_url);
-
 		OkHttpClient client = new OkHttpClient();
 		GsonConverterFactory gsonConverterFactory = GsonConverterFactory.create();
 		RxJava2CallAdapterFactory rxJava2CallAdapterFactory = RxJava2CallAdapterFactory.create();
@@ -63,6 +60,7 @@ public class ChaosflixViewModel extends ViewModel {
 
 	public Observable<ConferencesWrapper> getConferencesWrapper() {
 		return mRecordingApi.getConferences()
+				.doOnError(throwable -> Log.d(TAG, String.valueOf(throwable.getCause())))
 				.subscribeOn(Schedulers.io());
 	}
 
