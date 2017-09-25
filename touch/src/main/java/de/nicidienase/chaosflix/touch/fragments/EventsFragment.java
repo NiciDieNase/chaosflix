@@ -3,8 +3,6 @@ package de.nicidienase.chaosflix.touch.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,10 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.touch.adapters.EventRecyclerViewAdapter;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -41,9 +37,6 @@ public class EventsFragment extends ChaosflixFragment {
 
 	CompositeDisposable mDisposable = new CompositeDisposable();
 	private LinearLayoutManager layoutManager;
-
-	public EventsFragment() {
-	}
 
 	public static EventsFragment newInstance(int conferenceId, int columnCount) {
 		EventsFragment fragment = new EventsFragment();
@@ -83,7 +76,7 @@ public class EventsFragment extends ChaosflixFragment {
 		View view = inflater.inflate(R.layout.recycler_view_toolbar_layout, container, false);
 		// Set the adapter
 		Context context = view.getContext();
-		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+		RecyclerView recyclerView = view.findViewById(R.id.list);
 		if (mColumnCount <= 1) {
 			layoutManager = new LinearLayoutManager(context);
 		} else {
@@ -95,7 +88,7 @@ public class EventsFragment extends ChaosflixFragment {
 		mAdapter = new EventRecyclerViewAdapter(mListener);
 		recyclerView.setAdapter(mAdapter);
 
-		mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
+		mToolbar = view.findViewById(R.id.toolbar);
 		((AppCompatActivity)mContext).setSupportActionBar(mToolbar);
 
 		mDisposable.add(getViewModel().getConference(mConferenceId)

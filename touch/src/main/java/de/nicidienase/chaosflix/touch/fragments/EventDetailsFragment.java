@@ -32,10 +32,6 @@ public class EventDetailsFragment extends Fragment {
 
 	private boolean appBarExpanded;
 
-	public EventDetailsFragment() {
-		// Required empty public constructor
-	}
-
 	public static EventDetailsFragment newInstance(Event event) {
 		EventDetailsFragment fragment = new EventDetailsFragment();
 		Bundle args = new Bundle();

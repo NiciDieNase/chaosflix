@@ -1,12 +1,8 @@
 package de.nicidienase.chaosflix.touch.fragments;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,8 +13,6 @@ import android.view.ViewGroup;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
-import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper;
-import de.nicidienase.chaosflix.touch.ChaosflixViewModel;
 import de.nicidienase.chaosflix.touch.ConferenceGroupsFragmentPager;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -33,7 +27,6 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 	private static final String TAG = ConferencesTabBrowseFragment.class.getSimpleName();
 
 	private static final String ARG_COLUMN_COUNT = "column-count";
-	private static final String CONFERENCEWRAPPER_KEY = "conferencewrapper";
 	private static final String CURRENTTAB_KEY = "current_tab";
 	private int mColumnCount = 1;
 	private OnConferenceListFragmentInteractionListener mListener;
@@ -44,13 +37,6 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 
 	private final CompositeDisposable mDisposable = new CompositeDisposable();
 
-
-	public ConferencesTabBrowseFragment() {
-	}
-
-	public void setContent(ConferencesWrapper conferencesWrapper){
-//		this.mConferencesWrapper = conferencesWrapper;
-	}
 
 	public static ConferencesTabBrowseFragment newInstance(int columnCount) {
 		ConferencesTabBrowseFragment fragment = new ConferencesTabBrowseFragment();
@@ -78,7 +64,6 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 
 		Log.d(TAG,"onCreate");
 		if(savedInstanceState != null){
-//			mConferencesWrapper = savedInstanceState.getParcelable(CONFERENCEWRAPPER_KEY);
 			mCurrentTab = savedInstanceState.getInt(CURRENTTAB_KEY);
 		}
 		if (getArguments() != null) {
@@ -102,17 +87,17 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 					mViewPager.setCurrentItem(mCurrentTab);
 						});
 
-		mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
+		mViewPager = view.findViewById(R.id.viewpager);
 		mViewPager.setAdapter(fragmentPager);
 
-		TabLayout tabLayout = (TabLayout) view.findViewById(R.id.sliding_tabs);
+		TabLayout tabLayout = view.findViewById(R.id.sliding_tabs);
 		tabLayout.setupWithViewPager(mViewPager);
 
 		if(mCurrentTab != -1){
 			mViewPager.setCurrentItem(mCurrentTab);
 		}
 
-		mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
+		mToolbar = view.findViewById(R.id.toolbar);
 		((AppCompatActivity)mContext).setSupportActionBar(mToolbar);
 //		mToolbar.setLogo(R.drawable.toolbar_icon);
 
@@ -128,7 +113,6 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-//		outState.putParcelable(CONFERENCEWRAPPER_KEY, mConferencesWrapper);
 		outState.putInt(CURRENTTAB_KEY, mViewPager.getCurrentItem());
 	}
 

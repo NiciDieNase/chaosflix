@@ -1,28 +1,19 @@
 package de.nicidienase.chaosflix.touch.fragments;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.recording.Conference;
-import de.nicidienase.chaosflix.touch.ChaosflixViewModel;
 import de.nicidienase.chaosflix.touch.adapters.ConferenceRecyclerViewAdapter;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ConferenceGroupFragment extends ChaosflixFragment {
 
@@ -68,7 +59,6 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.recycler_view_pager_layout, container, false);
 
-		// Set the adapter
 		if (view instanceof RecyclerView) {
 			Context context = view.getContext();
 			RecyclerView mRecyclerView = (RecyclerView) view;
