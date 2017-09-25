@@ -5,4 +5,5 @@
     <string name="thumbnail">thumbnail</string>
     <string name="card">card</string>
     <string name="select_option">Select Media Option</string>
+    <string name="search_title">Search</string>
 </resources>
