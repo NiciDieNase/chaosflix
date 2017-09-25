@@ -6,6 +6,7 @@ import android.support.v4.view.ViewCompat;
 import com.squareup.picasso.Picasso;
 
 import java.util.Collections;
+import java.util.List;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
@@ -14,12 +15,22 @@ import de.nicidienase.chaosflix.touch.fragments.EventsFragment;
 
 public class EventRecyclerViewAdapter extends ItemRecyclerViewAdapter<Event> {
 
-	private final boolean areTagsUsefull;
+	private boolean areTagsUsefull;
 	private final EventsFragment.OnEventsListFragmentInteractionListener mListener;
+
+	public EventRecyclerViewAdapter(EventsFragment.OnEventsListFragmentInteractionListener listener) {
+		super();
+		mListener = listener;
+	}
 
 	public EventRecyclerViewAdapter(Conference conference, EventsFragment.OnEventsListFragmentInteractionListener listener) {
 		super(conference.getEvents());
 		mListener = listener;
+		setItems(conference);
+	}
+
+	public void setItems(Conference conference){
+		setItems(conference.getEvents());
 		areTagsUsefull = conference.areTagsUsefull();
 		Collections.sort(mItems,(o1, o2) -> o1.getTitle().compareTo(o2.getTitle()));
 	}

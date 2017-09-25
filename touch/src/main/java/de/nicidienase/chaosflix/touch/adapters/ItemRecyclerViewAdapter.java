@@ -7,16 +7,26 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.nicidienase.chaosflix.R;
 
 public abstract class ItemRecyclerViewAdapter<T> extends RecyclerView.Adapter<ItemRecyclerViewAdapter.ViewHolder> {
 
-	protected final List<T> mItems;
+	protected List<T> mItems;
+
+	public ItemRecyclerViewAdapter(){
+		mItems = new ArrayList<>();
+	}
 
 	public ItemRecyclerViewAdapter(List<T> items) {
 		mItems = items;
+	}
+
+	public void setItems(List<T> items){
+		mItems = items;
+		notifyDataSetChanged();
 	}
 
 	@Override

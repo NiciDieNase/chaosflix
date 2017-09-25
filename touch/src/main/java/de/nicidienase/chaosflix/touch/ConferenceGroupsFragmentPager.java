@@ -24,7 +24,6 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 	private static final String TAG = ConferenceGroupsFragmentPager.class.getSimpleName();
 	private final Context mContext;
 	private List<String> orderedConferencesList = new ArrayList<>();
-	private Map<String, List<Conference>> mConferenceMap;
 
 	public ConferenceGroupsFragmentPager(Context context, FragmentManager fm) {
 		super(fm);
@@ -33,11 +32,8 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 
 	@Override
 	public Fragment getItem(int position) {
-		ConferenceGroupFragment conferenceFragment = ConferenceGroupFragment.newInstance(1);
-//		ConferenceGroupFragment conferenceFragment = ConferenceGroupFragment.newInstance(getNumColumns());
 		String confKey = orderedConferencesList.get(position);
-		List<Conference> conferences = mConferenceMap.get(confKey);
-		conferenceFragment.setContent(conferences);
+		ConferenceGroupFragment conferenceFragment = ConferenceGroupFragment.newInstance(confKey,1);
 		conferenceFragment.setRetainInstance(true);
 		Log.d(TAG,"Created Fragment for: " + confKey);
 		return conferenceFragment;
@@ -54,8 +50,6 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 	}
 
 	public void setContent(Map<String, List<Conference>> conferenceMap) {
-		mConferenceMap = conferenceMap;
-//			orderedConferencesList = new ArrayList<>(conferenceMap.keySet());
 		orderedConferencesList = new ArrayList<>();
 		for (String tag : ConferencesWrapper.getOrderedConferencesList()) {
 			if (conferenceMap.keySet().contains(tag)) {
@@ -67,6 +61,7 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 				orderedConferencesList.add(tag);
 			}
 		}
+		notifyDataSetChanged();
 	}
 
 	@Override
