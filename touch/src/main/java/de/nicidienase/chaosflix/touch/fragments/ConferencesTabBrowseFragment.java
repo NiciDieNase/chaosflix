@@ -114,7 +114,7 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 
 		mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
 		((AppCompatActivity)mContext).setSupportActionBar(mToolbar);
-//		mToolbar.setLogo(R.drawable.icon_notext);
+//		mToolbar.setLogo(R.drawable.toolbar_icon);
 
 		return view;
 	}
