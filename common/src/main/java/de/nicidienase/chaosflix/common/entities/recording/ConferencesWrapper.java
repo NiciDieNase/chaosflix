@@ -90,10 +90,20 @@ public class ConferencesWrapper implements Parcelable{
 	}
 
 	public static List<String> getOrderedConferencesList() {
-		return Arrays.asList("congress", "sendezentrum", "camp",
-				"gpn", "mrmcd", "broadcast/chaosradio",
-				"eh", "froscon", "sigint",
-				"datenspuren", "fiffkon", "cryptocon");
+		return Arrays.asList(
+				"congress",
+				"gpn",
+				"mrmcd",
+				"eh",
+				"sendezentrum",
+				"camp",
+				"broadcast/chaosradio",
+				"froscon",
+				"sigint",
+				"datenspuren",
+				"fiffkon",
+				"cryptocon"
+		);
 	}
 
 
