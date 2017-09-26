@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".common.network.MediaApiService"/>
+        <activity android:name=".touch.fragments.AboutActivity"/>
 
     </application>
 
