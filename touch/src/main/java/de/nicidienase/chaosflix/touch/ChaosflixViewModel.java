@@ -106,13 +106,13 @@ public class ChaosflixViewModel extends ViewModel {
 	public Observable<Long> getPlaybackProgress(int apiID) {
 		return Observable.fromCallable(() -> {
 			List<PlaybackProgress> progresses
-					= PlaybackProgress.find(PlaybackProgress.class, "api_id = ?", Integer.toString(apiID));
+					= PlaybackProgress.find(PlaybackProgress.class, "event_id = ?", Integer.toString(apiID));
 			if(progresses.size() > 0){
 				return progresses.get(0).getProgress();
 			} else {
 				return 0l;
 			}
-		});
+		}).subscribeOn(Schedulers.io());
 	}
 
 	public static class Factory extends ViewModelProvider.NewInstanceFactory{
