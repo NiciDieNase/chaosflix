@@ -7,6 +7,7 @@ import android.util.Log;
 
 import java.util.List;
 
+import de.nicidienase.chaosflix.common.entities.PlaybackProgress;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
@@ -96,6 +97,22 @@ public class ChaosflixViewModel extends ViewModel {
 	public Observable<List<LiveConference>> getStreamingConferences() {
 		return mStreamingApi.getStreamingConferences()
 				.subscribeOn(Schedulers.io());
+	}
+
+	public void setPlaybackProgress(int apiId, long progress){
+		new PlaybackProgress(apiId,progress,0).save();
+	}
+
+	public Observable<Long> getPlaybackProgress(int apiID) {
+		return Observable.fromCallable(() -> {
+			List<PlaybackProgress> progresses
+					= PlaybackProgress.find(PlaybackProgress.class, "api_id = ?", Integer.toString(apiID));
+			if(progresses.size() > 0){
+				return progresses.get(0).getProgress();
+			} else {
+				return 0l;
+			}
+		});
 	}
 
 	public static class Factory extends ViewModelProvider.NewInstanceFactory{

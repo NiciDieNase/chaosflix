@@ -50,8 +50,10 @@ import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.common.entities.recording.Recording;
+import de.nicidienase.chaosflix.touch.ChaosflixViewModel;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
-public class ExoPlayerFragment extends Fragment {
+public class ExoPlayerFragment extends ChaosflixFragment {
 	private static final String TAG = ExoPlayerFragment.class.getSimpleName();
 	public static final String PLAYBACK_STATE = "playback_state";
 	private static final String ARG_EVENT = "event";
@@ -133,6 +135,9 @@ public class ExoPlayerFragment extends Fragment {
 		getView().setSystemUiVisibility(View.INVISIBLE);
 		if(mPlayer != null){
 			mPlayer.setPlayWhenReady(mPlaybackState);
+			getViewModel().getPlaybackProgress(mEvent.getApiID())
+					.observeOn(AndroidSchedulers.mainThread())
+					.subscribe(aLong -> mPlayer.seekTo(aLong));
 		}
 	}
 
@@ -141,6 +146,7 @@ public class ExoPlayerFragment extends Fragment {
 		super.onPause();
 		getView().setSystemUiVisibility(View.VISIBLE);
 		if(mPlayer != null){
+			getViewModel().setPlaybackProgress(mEvent.getApiID(),mPlayer.getCurrentPosition());
 			mPlayer.setPlayWhenReady(false);
 		}
 	}
