@@ -162,9 +162,25 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 			if(r.isHighQuality() && r.getMimeType().equals("video/mp4"))
 				result.add(r);
 		}
+		if(result.size()== 0){
+			for(Recording r : getRecordings()){
+				if(r.getMimeType().equals("video/mp4"))
+					result.add(r);
+			}
+		}
+		if(result.size()== 0){
+			for(Recording r : getRecordings()){
+				if(r.getMimeType().startsWith("video/"))
+					result.add(r);
+			}
+		}
 		// sort by length of language-string in decending order, so first item has most languages
 		Collections.sort(result,(o1, o2) -> o2.getLanguage().length() - o1.getLanguage().length());
-		return result.get(0);
+		if(result.size() > 0){
+			return result.get(0);
+		} else {
+			return getRecordings().get(0);
+		}
 	}
 
 	public String getExtendedDescription(){
