@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix.touch.activities;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,9 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
 import android.transition.TransitionInflater;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import de.nicidienase.chaosflix.R;
@@ -23,14 +24,13 @@ import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.common.entities.recording.Recording;
 import de.nicidienase.chaosflix.touch.ChaosflixViewModel;
+import de.nicidienase.chaosflix.touch.fragments.AboutActivity;
 import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventDetailsFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventsFragment;
 import de.nicidienase.chaosflix.touch.fragments.ExoPlayerFragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by felix on 17.09.17.
@@ -160,11 +160,29 @@ public class BrowseActivity extends AppCompatActivity implements
 		ft.commit();
 	}
 
-
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.browse_menu,menu);
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()){
+			case R.id.action_about:
+				showAboutPage();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
+	private void showAboutPage() {
+		Intent intent = new Intent(this, AboutActivity.class);
+		startActivity(intent);
+//		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//		ft.replace(R.id.fragment_container,new AboutFragment());
+//		ft.addToBackStack(null);
+//		ft.commit();
 	}
 }
