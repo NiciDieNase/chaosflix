@@ -21,7 +21,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".touch.fragments.AboutActivity"/>
+        <activity android:name=".touch.activities.AboutActivity"/>
+
+        <activity android:name=".touch.activities.PlayerActivity"
+                  android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+                  android:launchMode="singleTop"/>
 
     </application>
 

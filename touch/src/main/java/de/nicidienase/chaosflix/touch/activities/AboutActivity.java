@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.touch.fragments;
+package de.nicidienase.chaosflix.touch.activities;
 
 
 import android.os.Bundle;
