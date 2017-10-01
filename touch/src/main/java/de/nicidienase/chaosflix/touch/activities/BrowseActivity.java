@@ -24,7 +24,6 @@ import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.common.entities.recording.Recording;
 import de.nicidienase.chaosflix.touch.ChaosflixViewModel;
-import de.nicidienase.chaosflix.touch.fragments.AboutActivity;
 import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventDetailsFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventsFragment;
