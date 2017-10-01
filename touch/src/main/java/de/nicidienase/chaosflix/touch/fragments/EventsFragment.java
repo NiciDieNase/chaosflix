@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.touch.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -101,7 +102,7 @@ public class EventsFragment extends ChaosflixFragment {
 					}
 					mAdapter.setItems(conference);
 					mToolbar.setTitle(conference.getTitle());
-				}));
+				}, throwable -> Snackbar.make(container,throwable.getMessage(),Snackbar.LENGTH_INDEFINITE).show()));
 		return view;
 	}
 
