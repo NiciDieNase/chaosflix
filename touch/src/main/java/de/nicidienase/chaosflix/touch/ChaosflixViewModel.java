@@ -5,6 +5,8 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.util.Log;
 
+import com.google.android.exoplayer2.SimpleExoPlayer;
+
 import java.util.List;
 
 import de.nicidienase.chaosflix.common.entities.PlaybackProgress;
@@ -32,6 +34,7 @@ public class ChaosflixViewModel extends ViewModel {
 	private static final String TAG = ChaosflixViewModel.class.getSimpleName();
 	private final StreamingService mStreamingApi;
 	private final RecordingService mRecordingApi;
+	private SimpleExoPlayer exoPlayer;
 
 	public ChaosflixViewModel(String recordingUrl, String streamingUrl){
 		OkHttpClient client = new OkHttpClient();
@@ -113,6 +116,14 @@ public class ChaosflixViewModel extends ViewModel {
 				return 0l;
 			}
 		}).subscribeOn(Schedulers.io());
+	}
+
+	public SimpleExoPlayer getExoPlayer(){
+		return exoPlayer;
+	}
+
+	public void setExoPlayer(SimpleExoPlayer exoPlayer) {
+		this.exoPlayer = exoPlayer;
 	}
 
 	public static class Factory extends ViewModelProvider.NewInstanceFactory{

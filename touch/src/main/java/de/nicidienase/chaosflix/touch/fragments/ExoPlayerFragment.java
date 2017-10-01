@@ -6,29 +6,24 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
@@ -36,7 +31,6 @@ import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -50,10 +44,9 @@ import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.common.entities.recording.Recording;
-import de.nicidienase.chaosflix.touch.ChaosflixViewModel;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
-public class ExoPlayerFragment extends ChaosflixFragment {
+public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.PlayerStateChangeListener{
 	private static final String TAG = ExoPlayerFragment.class.getSimpleName();
 	public static final String PLAYBACK_STATE = "playback_state";
 	private static final String ARG_EVENT = "event";
@@ -63,7 +56,7 @@ public class ExoPlayerFragment extends ChaosflixFragment {
 	private final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
 	@BindView(R.id.video_view)
-	SimpleExoPlayerView mVideoView;
+	SimpleExoPlayerView videoView;
 	@BindView(R.id.progressBar)
 	ProgressBar mProgressBar;
 
@@ -74,7 +67,6 @@ public class ExoPlayerFragment extends ChaosflixFragment {
 	@BindView(R.id.subtitle_text)
 	TextView subtitleText;
 
-	private SimpleExoPlayer mPlayer;
 	private String mUserAgent;
 	private Handler mainHandler = new Handler();
 	private boolean mPlaybackState = true;
@@ -120,10 +112,12 @@ public class ExoPlayerFragment extends ChaosflixFragment {
 		if(subtitleText != null)
 			subtitleText.setText(mEvent.getSubtitle());
 
-		if(mPlayer == null){
-			setupPlayer();
+		SimpleExoPlayer player;
+		if(getViewModel().getExoPlayer() == null){
+			player = setupPlayer();
+			getViewModel().setExoPlayer(player);
 		} else {
-			mVideoView.setPlayer(mPlayer);
+			player = getViewModel().getExoPlayer();
 			Log.d(TAG,"Player already set up.");
 		}
 
@@ -132,36 +126,51 @@ public class ExoPlayerFragment extends ChaosflixFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		getView().setSystemUiVisibility(View.INVISIBLE);
-		if(mPlayer != null){
-			mPlayer.setPlayWhenReady(mPlaybackState);
+		SimpleExoPlayer player = getViewModel().getExoPlayer();
+		if(player != null){
+			player.setPlayWhenReady(mPlaybackState);
 			getViewModel().getPlaybackProgress(mEvent.getApiID())
 					.observeOn(AndroidSchedulers.mainThread())
-					.subscribe(aLong -> mPlayer.seekTo(aLong));
+					.subscribe(aLong -> player.seekTo(aLong));
+			videoView.setPlayer(player);
 		}
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+		getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		getView().setSystemUiVisibility(View.VISIBLE);
-		if(mPlayer != null){
-			getViewModel().setPlaybackProgress(mEvent.getApiID(),mPlayer.getCurrentPosition());
-			mPlayer.setPlayWhenReady(false);
+		SimpleExoPlayer player = getViewModel().getExoPlayer();
+		if(player != null){
+			getViewModel().setPlaybackProgress(mEvent.getApiID(), player.getCurrentPosition());
+			player.setPlayWhenReady(false);
 		}
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		if(mPlayer != null){
-			outState.putBoolean(PLAYBACK_STATE, mPlayer.getPlayWhenReady());
+		if(getViewModel().getExoPlayer() != null){
+			outState.putBoolean(PLAYBACK_STATE, getViewModel().getExoPlayer().getPlayWhenReady());
 		}
 	}
 
-	private void setupPlayer(){
+	private SimpleExoPlayer setupPlayer(){
 		Log.d(TAG,"Setting up Player.");
-		mVideoView.setKeepScreenOn(true);
+		videoView.setKeepScreenOn(true);
 
 		mUserAgent = Util.getUserAgent(getContext(), getResources().getString(R.string.app_name));
 
@@ -172,14 +181,16 @@ public class ExoPlayerFragment extends ChaosflixFragment {
 		DefaultRenderersFactory renderersFactory
 				= new DefaultRenderersFactory(getContext(), null, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
 
-		mPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
-		mPlayer.addVideoListener(new MyListener());
-		mPlayer.addListener(new MyListener());
 
-		mVideoView.setPlayer(mPlayer);
-		mPlayer.setPlayWhenReady(mPlaybackState);
+		SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
+		MyListener listener = new MyListener(player, this);
+		player.addVideoListener(listener);
+		player.addListener(listener);
 
-		mPlayer.prepare(buildMediaSource(Uri.parse(mRecording.getRecordingUrl()),""));
+		player.setPlayWhenReady(mPlaybackState);
+
+		player.prepare(buildMediaSource(Uri.parse(mRecording.getRecordingUrl()),""));
+		return player;
 	}
 
 	@Override
@@ -199,92 +210,26 @@ public class ExoPlayerFragment extends ChaosflixFragment {
 		mListener = null;
 	}
 
-	private void showLoadingSpinner(){
+	@Override
+	public void notifyLoadingStart() {
 		if(mProgressBar != null){
 			mProgressBar.setVisibility(View.VISIBLE);
 		}
 	}
 
-	private void hideLoadingSpinner(){
+	@Override
+	public void notifyLoadingFinished() {
 		if(mProgressBar != null){
 			mProgressBar.setVisibility(View.INVISIBLE);
 		}
 	}
 
-	public interface OnMediaPlayerInteractionListener {
+	@Override
+	public void notifyError(String errorMessage) {
+		Snackbar.make(videoView, errorMessage, Snackbar.LENGTH_LONG).show();
 	}
 
-	private class MyListener implements Player.EventListener, SimpleExoPlayer.VideoListener {
-		@Override
-		public void onTimelineChanged(Timeline timeline, Object manifest) {
-
-		}
-
-		@Override
-		public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-
-		}
-
-		@Override
-		public void onLoadingChanged(boolean isLoading) {
-			if(isLoading && mPlayer.getPlaybackState() != Player.STATE_READY){
-				showLoadingSpinner();
-			} else{
-				hideLoadingSpinner();
-			}
-
-		}
-
-		@Override
-		public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-			switch (playbackState){
-					case Player.STATE_BUFFERING:
-						if(mPlayer.isLoading()){
-							showLoadingSpinner();
-						}
-						break;
-					case Player.STATE_ENDED:
-						Log.d(TAG,"Finished Playback");
-
-						break;
-					case Player.STATE_IDLE:
-					case Player.STATE_READY:
-					default:
-						hideLoadingSpinner();
-}
-		}
-
-		@Override
-		public void onRepeatModeChanged(int repeatMode) {
-
-		}
-
-		@Override
-		public void onPlayerError(ExoPlaybackException error) {
-				String errorMessage = error.getCause().getMessage();
-				Snackbar.make(mVideoView,errorMessage,Snackbar.LENGTH_LONG).show();
-				Log.d(TAG,errorMessage,error);
-		}
-
-		@Override
-		public void onPositionDiscontinuity() {
-
-		}
-
-		@Override
-		public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-
-		}
-
-		@Override
-		public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-
-		}
-
-		@Override
-		public void onRenderedFirstFrame() {
-			hideLoadingSpinner();
-		}
+	public interface OnMediaPlayerInteractionListener {
 	}
 
 	private MediaSource buildMediaSource(Uri uri, String overrideExtension) {
