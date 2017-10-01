@@ -151,12 +151,16 @@ public class BrowseActivity extends AppCompatActivity implements
 
 	@Override
 	public void playItem(Event event, Recording recording) {
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		Intent i = new Intent(this,PlayerActivity.class);
+		i.putExtra(PlayerActivity.EVENT_ID,event.getApiID());
+		i.putExtra(PlayerActivity.RECORDING_ID, recording.getApiID());
+		startActivity(i);
 
-		Fragment playerFragment = ExoPlayerFragment.newInstance(event,recording);
-		ft.replace(R.id.fragment_container,playerFragment);
-		ft.addToBackStack(null);
-		ft.commit();
+//		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//		Fragment playerFragment = ExoPlayerFragment.newInstance(event,recording);
+//		ft.replace(R.id.fragment_container,playerFragment);
+//		ft.addToBackStack(null);
+//		ft.commit();
 	}
 
 	@Override
