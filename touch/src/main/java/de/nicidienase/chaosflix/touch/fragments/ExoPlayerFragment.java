@@ -262,5 +262,5 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 
 	private HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
 		return new DefaultHttpDataSourceFactory(mUserAgent, bandwidthMeter);
-}
+	}
 }
