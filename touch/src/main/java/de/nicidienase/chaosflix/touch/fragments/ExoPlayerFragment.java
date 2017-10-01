@@ -72,6 +72,7 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 	private boolean mPlaybackState = true;
 	private Event mEvent;
 	private Recording mRecording;
+	private SimpleExoPlayer exoPlayer;
 
 	public ExoPlayerFragment() {
 	}
@@ -112,12 +113,10 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 		if(subtitleText != null)
 			subtitleText.setText(mEvent.getSubtitle());
 
-		SimpleExoPlayer player;
-		if(getViewModel().getExoPlayer() == null){
-			player = setupPlayer();
-			getViewModel().setExoPlayer(player);
+		if(exoPlayer == null){
+			exoPlayer = setupPlayer();
 		} else {
-			player = getViewModel().getExoPlayer();
+			exoPlayer = exoPlayer;
 			Log.d(TAG,"Player already set up.");
 		}
 
@@ -126,13 +125,12 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 	@Override
 	public void onResume() {
 		super.onResume();
-		SimpleExoPlayer player = getViewModel().getExoPlayer();
-		if(player != null){
-			player.setPlayWhenReady(mPlaybackState);
+		if(exoPlayer != null){
+			exoPlayer.setPlayWhenReady(mPlaybackState);
 			getViewModel().getPlaybackProgress(mEvent.getApiID())
 					.observeOn(AndroidSchedulers.mainThread())
-					.subscribe(aLong -> player.seekTo(aLong));
-			videoView.setPlayer(player);
+					.subscribe(aLong -> exoPlayer.seekTo(aLong));
+			videoView.setPlayer(exoPlayer);
 		}
 	}
 
@@ -146,10 +144,9 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 	@Override
 	public void onPause() {
 		super.onPause();
-		SimpleExoPlayer player = getViewModel().getExoPlayer();
-		if(player != null){
-			getViewModel().setPlaybackProgress(mEvent.getApiID(), player.getCurrentPosition());
-			player.setPlayWhenReady(false);
+		if(exoPlayer != null){
+			getViewModel().setPlaybackProgress(mEvent.getApiID(), exoPlayer.getCurrentPosition());
+			exoPlayer.setPlayWhenReady(false);
 		}
 	}
 
@@ -163,8 +160,8 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		if(getViewModel().getExoPlayer() != null){
-			outState.putBoolean(PLAYBACK_STATE, getViewModel().getExoPlayer().getPlayWhenReady());
+		if(exoPlayer != null){
+			outState.putBoolean(PLAYBACK_STATE, exoPlayer.getPlayWhenReady());
 		}
 	}
 
@@ -182,15 +179,15 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 				= new DefaultRenderersFactory(getContext(), null, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
 
 
-		SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
-		MyListener listener = new MyListener(player, this);
-		player.addVideoListener(listener);
-		player.addListener(listener);
+		exoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
+		MyListener listener = new MyListener(exoPlayer, this);
+		exoPlayer.addVideoListener(listener);
+		exoPlayer.addListener(listener);
 
-		player.setPlayWhenReady(mPlaybackState);
+		exoPlayer.setPlayWhenReady(mPlaybackState);
 
-		player.prepare(buildMediaSource(Uri.parse(mRecording.getRecordingUrl()),""));
-		return player;
+		exoPlayer.prepare(buildMediaSource(Uri.parse(mRecording.getRecordingUrl()),""));
+		return exoPlayer;
 	}
 
 	@Override
