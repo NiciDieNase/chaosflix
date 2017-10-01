@@ -102,18 +102,24 @@ public class ChaosflixViewModel extends ViewModel {
 	}
 
 	public void setPlaybackProgress(int apiId, long progress){
-		new PlaybackProgress(apiId,progress,0).save();
+		getPlaybackProgress(apiId)
+				.subscribe(p -> {
+					if(p == 0l){
+						PlaybackProgress playbackProgress = new PlaybackProgress(apiId, progress, 0);
+						playbackProgress.setId((long) apiId);
+						playbackProgress.save();
+					} else {
+						PlaybackProgress playbackProgress = PlaybackProgress.findById(PlaybackProgress.class, apiId);
+						playbackProgress.setProgress(progress);
+						playbackProgress.save();
+					}
+				});
 	}
 
 	public Observable<Long> getPlaybackProgress(int apiID) {
 		return Observable.fromCallable(() -> {
-			List<PlaybackProgress> progresses
-					= PlaybackProgress.find(PlaybackProgress.class, "event_id = ?", Integer.toString(apiID));
-			if(progresses.size() > 0){
-				return progresses.get(0).getProgress();
-			} else {
-				return 0l;
-			}
+			PlaybackProgress progress = PlaybackProgress.findById(PlaybackProgress.class, apiID);
+			return progress != null ? progress.getProgress() : 0l;
 		}).subscribeOn(Schedulers.io());
 	}
 
