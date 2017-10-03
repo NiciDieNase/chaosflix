@@ -32,9 +32,11 @@ public abstract class ItemRecyclerViewAdapter<T> extends RecyclerView.Adapter<It
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		View view = LayoutInflater.from(parent.getContext())
-				.inflate(R.layout.cardview_item, parent, false);
+				.inflate(getLayout(), parent, false);
 		return new ViewHolder(view);
 	}
+
+	abstract int getLayout();
 
 
 	@Override
