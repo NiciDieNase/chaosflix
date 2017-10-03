@@ -73,4 +73,9 @@ public class EventRecyclerViewAdapter extends ItemRecyclerViewAdapter<Event> {
 			}
 		});
 	}
+
+	@Override
+	int getLayout() {
+		return R.layout.event_cardview_layout;
+	}
 }

@@ -5,6 +5,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 
@@ -37,5 +38,10 @@ public class ConferenceRecyclerViewAdapter extends ItemRecyclerViewAdapter<Confe
 				mListener.onConferenceSelected((Conference) holder.mItem);
 			}
 		});
+	}
+
+	@Override
+	int getLayout() {
+		return R.layout.conference_cardview_item;
 	}
 }
