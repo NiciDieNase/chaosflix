@@ -56,7 +56,7 @@ public class EventDetailsFragment extends Fragment {
 		if (getArguments() != null) {
 			mEvent = getArguments().getParcelable(EVENT_PARAM);
 		}
-		viewModel = ViewModelProviders.of(this).get(ChaosflixViewModel.class);
+		viewModel = ViewModelProviders.of(this,ChaosflixViewModel.getFactory(getContext())).get(ChaosflixViewModel.class);
 	}
 
 	@Override
