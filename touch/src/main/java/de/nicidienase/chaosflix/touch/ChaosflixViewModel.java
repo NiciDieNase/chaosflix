@@ -3,10 +3,13 @@ package de.nicidienase.chaosflix.touch;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
+import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 
 import java.util.List;
 
+import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.PlaybackProgress;
 import de.nicidienase.chaosflix.common.entities.WatchlistItem;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
@@ -31,8 +34,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ChaosflixViewModel extends ViewModel {
 
 	private static final String TAG = ChaosflixViewModel.class.getSimpleName();
+	private static Factory factory;
+
 	private final StreamingService mStreamingApi;
 	private final RecordingService mRecordingApi;
+
+	public static ChaosflixViewModel.Factory getFactory(Context context){
+		if(factory == null){
+			Resources res = context.getResources();
+			factory = new Factory(
+					res.getString(R.string.api_media_ccc_url),
+					res.getString(R.string.streaming_media_ccc_url));
+		}
+		return factory;
+	}
 
 	public ChaosflixViewModel(String recordingUrl, String streamingUrl){
 		OkHttpClient client = new OkHttpClient();

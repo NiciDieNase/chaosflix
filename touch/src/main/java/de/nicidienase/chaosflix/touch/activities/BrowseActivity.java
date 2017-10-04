@@ -50,12 +50,8 @@ public class BrowseActivity extends AppCompatActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_container_layout);
 
-		Resources res = getResources();
-		ChaosflixViewModel.Factory factory =
-				new ChaosflixViewModel.Factory(
-						res.getString(R.string.api_media_ccc_url),
-						res.getString(R.string.streaming_media_ccc_url));
-		mViewModel = ViewModelProviders.of(this,factory).get(ChaosflixViewModel.class);
+		mViewModel = ViewModelProviders.of(this,ChaosflixViewModel.getFactory(this))
+				.get(ChaosflixViewModel.class);
 
 		if(savedInstanceState == null){
 			ConferencesTabBrowseFragment browseFragment
