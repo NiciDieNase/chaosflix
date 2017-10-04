@@ -1,13 +1,14 @@
 package de.nicidienase.chaosflix.touch.fragments;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +23,7 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.common.entities.recording.Recording;
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsNewBinding;
+import de.nicidienase.chaosflix.touch.ChaosflixViewModel;
 
 public class EventDetailsFragment extends Fragment {
 	private static final String TAG = EventDetailsFragment.class.getSimpleName();
@@ -31,6 +33,7 @@ public class EventDetailsFragment extends Fragment {
 	private Event mEvent;
 
 	private boolean appBarExpanded;
+	private ChaosflixViewModel viewModel;
 
 	public static EventDetailsFragment newInstance(Event event) {
 		EventDetailsFragment fragment = new EventDetailsFragment();
@@ -53,6 +56,7 @@ public class EventDetailsFragment extends Fragment {
 		if (getArguments() != null) {
 			mEvent = getArguments().getParcelable(EVENT_PARAM);
 		}
+		viewModel = ViewModelProviders.of(this).get(ChaosflixViewModel.class);
 	}
 
 	@Override
@@ -127,6 +131,10 @@ public class EventDetailsFragment extends Fragment {
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
+		if(viewModel.bookmarkExists(mEvent.getApiID())){
+			menu.findItem(R.id.action_bookmark).setVisible(false);
+			menu.findItem(R.id.action_unbookmark).setVisible(true);
+		}
 	}
 
 	@Override
@@ -139,8 +147,20 @@ public class EventDetailsFragment extends Fragment {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()){
-			case R.id.play:
+			case R.id.action_play:
 				play();
+				return true;
+			case R.id.action_bookmark:
+				viewModel.createBookmark(mEvent.getApiID());
+				return true;
+			case R.id.action_unbookmark:
+				boolean success = viewModel.removeBookmark(mEvent.getApiID());
+				if(!success){
+					Snackbar.make(item.getActionView(),"Error removing Bookmark",Snackbar.LENGTH_LONG).show();
+				}
+				return true;
+			case R.id.action_download:
+				Snackbar.make(item.getActionView(),"Start download",Snackbar.LENGTH_LONG).show();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);

@@ -6,4 +6,7 @@
     <string name="card">card</string>
     <string name="select_option">Select Media Option</string>
     <string name="search_title">Search</string>
+    <string name="download">Download</string>
+    <string name="bookmark">Bookmark</string>
+    <string name="play">Play</string>
 </resources>
