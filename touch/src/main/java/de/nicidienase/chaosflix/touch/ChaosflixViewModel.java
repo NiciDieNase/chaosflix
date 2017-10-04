@@ -5,11 +5,10 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.util.Log;
 
-import com.google.android.exoplayer2.SimpleExoPlayer;
-
 import java.util.List;
 
 import de.nicidienase.chaosflix.common.entities.PlaybackProgress;
+import de.nicidienase.chaosflix.common.entities.WatchlistItem;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
@@ -121,6 +120,28 @@ public class ChaosflixViewModel extends ViewModel {
 			PlaybackProgress progress = PlaybackProgress.findById(PlaybackProgress.class, apiID);
 			return progress != null ? progress.getProgress() : 0l;
 		}).subscribeOn(Schedulers.io());
+	}
+
+	public void createBookmark(int apiId){
+		WatchlistItem bookmark = getBookmark(apiId);
+		if(bookmark != null){
+			bookmark = new WatchlistItem(apiId);
+			bookmark.save();
+		} else {
+			// Bookmark already exists
+		}
+	}
+
+	public WatchlistItem getBookmark(int apiId){
+		return WatchlistItem.findById(WatchlistItem.class, apiId);
+	}
+
+	public boolean bookmarkExists(int apiId) {
+		return getBookmark(apiId) != null;
+	}
+
+	public boolean removeBookmark(int apiID) {
+		return getBookmark(apiID).delete();
 	}
 
 	public static class Factory extends ViewModelProvider.NewInstanceFactory{
