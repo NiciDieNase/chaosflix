@@ -22,6 +22,7 @@ import android.util.Log;
 
 import java.util.List;
 
+import de.nicidienase.chaosflix.common.entities.PlaybackProgress;
 import de.nicidienase.chaosflix.leanback.CardPresenter;
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
 import de.nicidienase.chaosflix.leanback.PlaybackHelper;
