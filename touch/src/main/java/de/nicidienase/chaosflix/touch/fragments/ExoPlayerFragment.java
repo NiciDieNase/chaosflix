@@ -127,9 +127,13 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 		super.onResume();
 		if(exoPlayer != null){
 			exoPlayer.setPlayWhenReady(mPlaybackState);
-			getViewModel().getPlaybackProgress(mEvent.getApiID())
-					.observeOn(AndroidSchedulers.mainThread())
-					.subscribe(aLong -> exoPlayer.seekTo(aLong));
+//			getViewModel().getPlaybackProgress(mEvent.getApiID())
+//					.observe(this,
+//							playbackProgress -> {
+//						if(playbackProgress != null) {
+//							exoPlayer.seekTo(playbackProgress.getProgress());
+//						}
+//					});
 			videoView.setPlayer(exoPlayer);
 		}
 	}

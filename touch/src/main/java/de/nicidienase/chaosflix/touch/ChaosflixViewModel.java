@@ -1,15 +1,16 @@
 package de.nicidienase.chaosflix.touch;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
-import android.content.Context;
+import android.arch.persistence.room.Room;
 import android.content.res.Resources;
 import android.util.Log;
 
 import java.util.List;
 
 import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase;
 import de.nicidienase.chaosflix.common.entities.PlaybackProgress;
 import de.nicidienase.chaosflix.common.entities.WatchlistItem;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
@@ -19,8 +20,10 @@ import de.nicidienase.chaosflix.common.entities.recording.Recording;
 import de.nicidienase.chaosflix.common.entities.streaming.LiveConference;
 import de.nicidienase.chaosflix.common.network.RecordingService;
 import de.nicidienase.chaosflix.common.network.StreamingService;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -31,25 +34,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by felix on 24.09.17.
  */
 
-public class ChaosflixViewModel extends ViewModel {
+public class ChaosflixViewModel extends AndroidViewModel {
 
 	private static final String TAG = ChaosflixViewModel.class.getSimpleName();
-	private static Factory factory;
 
-	private final StreamingService mStreamingApi;
-	private final RecordingService mRecordingApi;
+	private final StreamingService streamingApi;
+	private final RecordingService recordingApi;
+	private final ChaosflixDatabase database;
+	CompositeDisposable disposable = new CompositeDisposable();
 
-	public static ChaosflixViewModel.Factory getFactory(Context context){
-		if(factory == null){
-			Resources res = context.getResources();
-			factory = new Factory(
-					res.getString(R.string.api_media_ccc_url),
-					res.getString(R.string.streaming_media_ccc_url));
-		}
-		return factory;
-	}
+	public ChaosflixViewModel(Application application){
+		super(application);
+		Resources res = application.getResources();
+		String recordingUrl = res.getString(R.string.api_media_ccc_url);
+		String streamingUrl = res.getString(R.string.streaming_media_ccc_url);
 
-	public ChaosflixViewModel(String recordingUrl, String streamingUrl){
 		OkHttpClient client = new OkHttpClient();
 		GsonConverterFactory gsonConverterFactory = GsonConverterFactory.create();
 		RxJava2CallAdapterFactory rxJava2CallAdapterFactory = RxJava2CallAdapterFactory.create();
@@ -60,7 +59,7 @@ public class ChaosflixViewModel extends ViewModel {
 				.addConverterFactory(gsonConverterFactory)
 				.addCallAdapterFactory(rxJava2CallAdapterFactory)
 				.build();
-		mRecordingApi = retrofitRecordings.create(RecordingService.class);
+		recordingApi = retrofitRecordings.create(RecordingService.class);
 
 		Retrofit retrofigStreaming = new Retrofit.Builder()
 				.baseUrl(streamingUrl)
@@ -68,7 +67,9 @@ public class ChaosflixViewModel extends ViewModel {
 				.addConverterFactory(gsonConverterFactory)
 				.addCallAdapterFactory(rxJava2CallAdapterFactory)
 				.build();
-		mStreamingApi = retrofigStreaming.create(StreamingService.class);
+		streamingApi = retrofigStreaming.create(StreamingService.class);
+
+		database = Room.databaseBuilder(getApplication().getApplicationContext(), ChaosflixDatabase.class, "mediaccc.db").build();
 	}
 
 	public LiveData<ConferencesWrapper> getConferencesWrapperAsLiveData(){
@@ -76,7 +77,7 @@ public class ChaosflixViewModel extends ViewModel {
 			@Override
 			protected void onActive() {
 				super.onActive();
-				mRecordingApi.getConferences()
+				recordingApi.getConferences()
 						.subscribeOn(Schedulers.io())
 						.observeOn(AndroidSchedulers.mainThread())
 						.subscribe(conferencesWrapper -> setValue(conferencesWrapper));
@@ -84,94 +85,73 @@ public class ChaosflixViewModel extends ViewModel {
 		};
 	}
 	public Observable<ConferencesWrapper> getConferencesWrapper() {
-		return mRecordingApi.getConferences()
+		return recordingApi.getConferences()
 				.doOnError(throwable -> Log.d(TAG, String.valueOf(throwable.getCause())))
 				.subscribeOn(Schedulers.io());
 	}
 
 	public Observable<List<Conference>> getConferencesByGroup(String group){
-		return mRecordingApi.getConferences().map(
+		return recordingApi.getConferences().map(
 				conferencesWrapper -> conferencesWrapper.getConferencesBySeries().get(group))
 				.subscribeOn(Schedulers.io());
 	}
 
 	public Observable<Conference> getConference(int mConferenceId) {
-		return mRecordingApi.getConference(mConferenceId)
+		return recordingApi.getConference(mConferenceId)
 				.subscribeOn(Schedulers.io());
 	}
 
 	public Observable<Event> getEvent(int apiID) {
-		return mRecordingApi.getEvent(apiID)
+		return recordingApi.getEvent(apiID)
 				.subscribeOn(Schedulers.io());
 	}
 
 	public Observable<Recording> getRecording(long id) {
-		return mRecordingApi.getRecording(id)
+		return recordingApi.getRecording(id)
 				.subscribeOn(Schedulers.io());
 	}
 
 	public Observable<List<LiveConference>> getStreamingConferences() {
-		return mStreamingApi.getStreamingConferences()
+		return streamingApi.getStreamingConferences()
 				.subscribeOn(Schedulers.io());
 	}
 
 	public void setPlaybackProgress(int apiId, long progress){
-		getPlaybackProgress(apiId)
-				.subscribe(p -> {
-					if(p == 0l){
-						PlaybackProgress playbackProgress = new PlaybackProgress(apiId, progress, 0);
-						playbackProgress.setId((long) apiId);
-						playbackProgress.save();
-					} else {
-						PlaybackProgress playbackProgress = PlaybackProgress.findById(PlaybackProgress.class, apiId);
+		database.playbackProgressDao().getProgressForEvent(apiId)
+				.subscribeOn(Schedulers.io())
+				.observeOn(Schedulers.io())
+				.subscribe(playbackProgress -> {
+					if(playbackProgress != null){
 						playbackProgress.setProgress(progress);
-						playbackProgress.save();
+					} else {
+						playbackProgress = new PlaybackProgress(apiId,progress);
+					}
+					database.playbackProgressDao().saveProgress(playbackProgress);
+				});
+	}
+
+	public Flowable<PlaybackProgress> getPlaybackProgress(int apiID) {
+		return database.playbackProgressDao().getProgressForEvent(apiID);
+	}
+
+	public void createBookmark(int apiId){
+		database.watchlistItemDao().getItemForEvent(apiId)
+				.subscribe(watchlistItem -> {
+					if(watchlistItem == null){
+						watchlistItem = new WatchlistItem(apiId,apiId);
+						database.watchlistItemDao().saveItem(watchlistItem);
 					}
 				});
 	}
 
-	public Observable<Long> getPlaybackProgress(int apiID) {
-		return Observable.fromCallable(() -> {
-			PlaybackProgress progress = PlaybackProgress.findById(PlaybackProgress.class, apiID);
-			return progress != null ? progress.getProgress() : 0l;
-		}).subscribeOn(Schedulers.io());
+	public Flowable<WatchlistItem> getBookmark(int apiId){
+		return database.watchlistItemDao().getItemForEvent(apiId);
 	}
 
-	public void createBookmark(int apiId){
-		WatchlistItem bookmark = getBookmark(apiId);
-		if(bookmark != null){
-			bookmark = new WatchlistItem(apiId);
-			bookmark.save();
-		} else {
-			// Bookmark already exists
-		}
-	}
-
-	public WatchlistItem getBookmark(int apiId){
-		return WatchlistItem.findById(WatchlistItem.class, apiId);
-	}
-
-	public boolean bookmarkExists(int apiId) {
-		return getBookmark(apiId) != null;
-	}
-
-	public boolean removeBookmark(int apiID) {
-		return getBookmark(apiID).delete();
-	}
-
-	public static class Factory extends ViewModelProvider.NewInstanceFactory{
-
-		private final String recordingUrl;
-		private final String streamUrl;
-
-		public Factory(String recordingUrl, String streamUrl){
-			this.recordingUrl = recordingUrl;
-			this.streamUrl = streamUrl;
-		}
-
-		@Override
-		public <T extends ViewModel> T create(Class<T> modelClass) {
-			return (T) new ChaosflixViewModel(recordingUrl,streamUrl);
-		}
+	public void removeBookmark(int apiID) {
+		getBookmark(apiID).subscribeOn(Schedulers.io())
+				.observeOn(Schedulers.io())
+				.subscribe(watchlistItem ->
+			database.watchlistItemDao().deleteItem(watchlistItem));
 	}
 }

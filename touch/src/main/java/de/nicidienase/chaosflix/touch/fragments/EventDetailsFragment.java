@@ -24,6 +24,7 @@ import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.common.entities.recording.Recording;
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsNewBinding;
 import de.nicidienase.chaosflix.touch.ChaosflixViewModel;
+import io.reactivex.disposables.CompositeDisposable;
 
 public class EventDetailsFragment extends Fragment {
 	private static final String TAG = EventDetailsFragment.class.getSimpleName();
@@ -34,6 +35,7 @@ public class EventDetailsFragment extends Fragment {
 
 	private boolean appBarExpanded;
 	private ChaosflixViewModel viewModel;
+	private CompositeDisposable disposable = new CompositeDisposable();
 
 	public static EventDetailsFragment newInstance(Event event) {
 		EventDetailsFragment fragment = new EventDetailsFragment();
@@ -56,7 +58,7 @@ public class EventDetailsFragment extends Fragment {
 		if (getArguments() != null) {
 			mEvent = getArguments().getParcelable(EVENT_PARAM);
 		}
-		viewModel = ViewModelProviders.of(this,ChaosflixViewModel.getFactory(getContext())).get(ChaosflixViewModel.class);
+		viewModel = ViewModelProviders.of(this).get(ChaosflixViewModel.class);
 	}
 
 	@Override
@@ -123,6 +125,12 @@ public class EventDetailsFragment extends Fragment {
 	}
 
 	@Override
+	public void onStop() {
+		super.onStop();
+		disposable.clear();
+	}
+
+	@Override
 	public void onDetach() {
 		super.onDetach();
 		mListener = null;
@@ -131,10 +139,13 @@ public class EventDetailsFragment extends Fragment {
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-		if(viewModel.bookmarkExists(mEvent.getApiID())){
-			menu.findItem(R.id.action_bookmark).setVisible(false);
-			menu.findItem(R.id.action_unbookmark).setVisible(true);
-		}
+		disposable.add(viewModel.getBookmark(mEvent.getApiID())
+				.subscribe(watchlistItem -> {
+					if (watchlistItem != null) {
+						menu.findItem(R.id.action_bookmark).setVisible(false);
+						menu.findItem(R.id.action_unbookmark).setVisible(true);
+					}
+				}));
 	}
 
 	@Override
@@ -154,10 +165,7 @@ public class EventDetailsFragment extends Fragment {
 				viewModel.createBookmark(mEvent.getApiID());
 				return true;
 			case R.id.action_unbookmark:
-				boolean success = viewModel.removeBookmark(mEvent.getApiID());
-				if(!success){
-					Snackbar.make(item.getActionView(),"Error removing Bookmark",Snackbar.LENGTH_LONG).show();
-				}
+				viewModel.removeBookmark(mEvent.getApiID());
 				return true;
 			case R.id.action_download:
 				Snackbar.make(item.getActionView(),"Start download",Snackbar.LENGTH_LONG).show();

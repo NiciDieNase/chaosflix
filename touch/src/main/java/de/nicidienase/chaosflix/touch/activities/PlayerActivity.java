@@ -32,12 +32,7 @@ public class PlayerActivity extends AppCompatActivity implements ExoPlayerFragme
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_container_layout);
 
-		Resources res = getResources();
-		ChaosflixViewModel.Factory factory =
-				new ChaosflixViewModel.Factory(
-						res.getString(R.string.api_media_ccc_url),
-						res.getString(R.string.streaming_media_ccc_url));
-		viewModel = ViewModelProviders.of(this,factory).get(ChaosflixViewModel.class);
+		viewModel = ViewModelProviders.of(this).get(ChaosflixViewModel.class);
 
 		int eventId = getIntent().getExtras().getInt(EVENT_ID);
 		int recordingId = getIntent().getExtras().getInt(RECORDING_ID);

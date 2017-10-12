@@ -20,12 +20,7 @@ public class ChaosflixFragment extends Fragment {
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Resources res = getResources();
-		ChaosflixViewModel.Factory factory =
-				new ChaosflixViewModel.Factory(
-						res.getString(R.string.api_media_ccc_url),
-						res.getString(R.string.streaming_media_ccc_url));
-		mViewModel = ViewModelProviders.of(getActivity(),factory).get(ChaosflixViewModel.class);
+		mViewModel = ViewModelProviders.of(getActivity()).get(ChaosflixViewModel.class);
 	}
 
 
