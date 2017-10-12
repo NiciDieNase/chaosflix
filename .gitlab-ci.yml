@@ -45,7 +45,7 @@ functionalTests:
   stage: test
   script:
     - env
-    - wget --quiet --output-document=android-wait-for-emulator https://raw.githubusercontent.com/travis-ci/travis-cookbooks/0f497eb71291b52a703143c5cd63a217c8766dc9/community-cookbooks/android-sdk/files/default/android-wait-for-emulator
+    - curl -s https://raw.githubusercontent.com/travis-ci/travis-cookbooks/0f497eb71291b52a703143c5cd63a217c8766dc9/community-cookbooks/android-sdk/files/default/android-wait-for-emulator > android-wait-for-emulator
     - chmod +x android-wait-for-emulator
     - echo y | tools/bin/sdkmanager "system-images;android-$ANDROID_COMPILE_SDK;google_apis;x86"
     - echo no | tools/bin/avdmanager create avd -n test -k "system-images;android-$ANDROID_COMPILE_SDK;google_apis;x86" --abi google_apis/x86
