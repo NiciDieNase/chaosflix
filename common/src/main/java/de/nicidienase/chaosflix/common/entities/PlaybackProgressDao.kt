@@ -1,7 +1,9 @@
 package de.nicidienase.chaosflix.common.entities
 
 import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
+import io.reactivex.Flowable
 
 /**
  * Created by felix on 04.10.17.
@@ -10,11 +12,11 @@ import android.arch.persistence.room.Query
 @Dao
 interface PlaybackProgressDao{
     @Query("SELECT * from playback_progress")
-    fun getAll(): List<PlaybackProgress>
+    fun getAll(): Flowable<List<PlaybackProgress>>
 
-    @Query("SELECT * from playback_progress WHERE id = (:id)")
-    fun getProgressForEvent(id:Int):PlaybackProgress
+    @Query("SELECT * from playback_progress WHERE event_id = :arg0 LIMIT 1")
+    fun getProgressForEvent(id:Int): Flowable<PlaybackProgress>
 
-    @Query("DELETE from playback_progress WHERE id = (:id)")
-    fun deleteProgress(id:Int)
+    @Insert
+    fun saveProgress(progress: PlaybackProgress)
 }
