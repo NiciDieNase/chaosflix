@@ -89,7 +89,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 		public void onActionClicked(Action action) {
 			Log.d(TAG, "OnActionClicked");
 			if (action.getId() == ADD_WATCHLIST_ACTION) {
-				new WatchlistItem(mSelectedEvent.getApiID()).save();
+//				new WatchlistItem(mSelectedEvent.getApiID()).save();
 				mRecordingActionsAdapter.replace(0, new Action(REMOVE_WATCHLIST_ACTION, EventsDetailsFragment.this.getString(R.string.remove_from_watchlist)));
 				SharedPreferences preferences = getActivity().getSharedPreferences(getString(R.string.watchlist_preferences_key), Context.MODE_PRIVATE);
 				if(preferences.getBoolean(getString(R.string.watchlist_dialog_needed), true)) { // new item
@@ -110,7 +110,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 				}
 			} else if (action.getId() == REMOVE_WATCHLIST_ACTION) {
 				if (mWatchlistItem != null) {
-					mWatchlistItem.delete();
+//					mWatchlistItem.delete();
 				}
 				mRecordingActionsAdapter.replace(0, new Action(ADD_WATCHLIST_ACTION, EventsDetailsFragment.this.getString(R.string.add_to_watchlist)));
 			} else {
@@ -161,7 +161,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 		if (eventType == DetailsActivity.TYPE_RECORDING) {
 			mSelectedEvent = getActivity().getIntent()
 					.getParcelableExtra(DetailsActivity.EVENT);
-			mWatchlistItem = WatchlistItem.findById(WatchlistItem.class, mSelectedEvent.getApiID());
+//			mWatchlistItem = WatchlistItem.findById(WatchlistItem.class, mSelectedEvent.getApiID());
 		} else if (eventType == DetailsActivity.TYPE_STREAM) {
 			mRoom = getActivity().getIntent()
 					.getParcelableExtra(DetailsActivity.ROOM);

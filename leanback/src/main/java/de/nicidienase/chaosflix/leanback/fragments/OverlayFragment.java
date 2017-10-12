@@ -141,10 +141,10 @@ public class OverlayFragment extends PlaybackFragment {
 			mSelectedRecording = intent.getParcelableExtra(DetailsActivity.RECORDING);
 			mHelper = new PlaybackHelper(getActivity(), this, mSelectedEvent, mSelectedRecording);
 
-			List<PlaybackProgress> progressList = PlaybackProgress.find(PlaybackProgress.class, "event_id = ?", String.valueOf(mSelectedEvent.getApiID()));
-			if (progressList.size() > 0) {
-				mPlaybackProgress = progressList.get(0);
-			}
+//			List<PlaybackProgress> progressList = PlaybackProgress.find(PlaybackProgress.class, "event_id = ?", String.valueOf(mSelectedEvent.getApiID()));
+//			if (progressList.size() > 0) {
+//				mPlaybackProgress = progressList.get(0);
+//			}
 		} else if (eventType == DetailsActivity.TYPE_STREAM) {
 			mSelectedRoom = intent.getParcelableExtra(DetailsActivity.ROOM);
 			mSelectedStream = intent.getParcelableExtra(DetailsActivity.STREAM_URL);
@@ -292,18 +292,18 @@ public class OverlayFragment extends PlaybackFragment {
 	public void onPause() {
 		super.onPause();
 		if (mSelectedEvent != null) {
-			if (mPlaybackProgress != null) {
-				if ((mSelectedEvent.getLength() - mCallback.getCurrentPosition() / 1000) > MAX_REMAINING) {
-					mPlaybackProgress.setProgress(mCallback.getCurrentPosition());
-					mPlaybackProgress.save();
-				} else {
-					mPlaybackProgress.delete();
-				}
-			} else if ((mSelectedEvent.getLength() - mCallback.getCurrentPosition() / 1000) > MAX_REMAINING) {
-				mPlaybackProgress = new PlaybackProgress(mSelectedEvent.getApiID(),
-						mCallback.getCurrentPosition(), mSelectedRecording.getApiID());
-				mPlaybackProgress.save();
-			}
+//			if (mPlaybackProgress != null) {
+//				if ((mSelectedEvent.getLength() - mCallback.getCurrentPosition() / 1000) > MAX_REMAINING) {
+//					mPlaybackProgress.setProgress(mCallback.getCurrentPosition());
+//					mPlaybackProgress.save();
+//				} else {
+//					mPlaybackProgress.delete();
+//				}
+//			} else if ((mSelectedEvent.getLength() - mCallback.getCurrentPosition() / 1000) > MAX_REMAINING) {
+//				mPlaybackProgress = new PlaybackProgress(mSelectedEvent.getApiID(),
+//						mCallback.getCurrentPosition(), mSelectedRecording.getApiID());
+//				mPlaybackProgress.save();
+//			}
 		}
 	}
 

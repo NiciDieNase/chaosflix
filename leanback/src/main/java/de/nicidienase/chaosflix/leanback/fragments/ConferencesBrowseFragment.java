@@ -137,7 +137,6 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 					}
 				}
 //				mRowsAdapter.add(i + 1, new DividerRow());
-
 			}
 		}
 	}
@@ -145,10 +144,10 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		List<WatchlistItem> watchlistItems
-				= Lists.newArrayList(WatchlistItem.findAll(WatchlistItem.class));
+//		List<WatchlistItem> watchlistItems
+//				= Lists.newArrayList(WatchlistItem.findAll(WatchlistItem.class));
 		// setup and list items
-		updateWatchlist(watchlistItems);
+//		updateWatchlist(watchlistItems);
 	}
 
 	private void showWatchlist() {
