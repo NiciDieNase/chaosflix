@@ -1,1 +1,1 @@
-include ':leanback', ':common', ':touch'
+include ':common'
