@@ -23,7 +23,9 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.common.entities.recording.Recording;
+import de.nicidienase.chaosflix.touch.BrowseViewModel;
 import de.nicidienase.chaosflix.touch.ChaosflixViewModel;
+import de.nicidienase.chaosflix.touch.ViewModelFactory;
 import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventDetailsFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventsFragment;
@@ -43,14 +45,14 @@ public class BrowseActivity extends AppCompatActivity implements
 
 	private static final String TAG = BrowseActivity.class.getSimpleName();
 	CompositeDisposable mDisposables = new CompositeDisposable();
-	private ChaosflixViewModel mViewModel;
+	private BrowseViewModel mViewModel;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_container_layout);
 
-		mViewModel = ViewModelProviders.of(this).get(ChaosflixViewModel.class);
+		mViewModel = ViewModelProviders.of(this, ViewModelFactory.INSTANCE).get(BrowseViewModel.class);
 
 		if(savedInstanceState == null){
 			ConferencesTabBrowseFragment browseFragment
