@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'android-maven'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -29,23 +30,26 @@ android {
 
 }
 
+group="de.nicidienase.chaosflix"
+version="1.0.0"
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
-    compile 'com.android.support:multidex:1.0.2'
-    implementation "android.arch.lifecycle:runtime:1.0.0"
+    implementation 'com.android.support:multidex:1.0.2'
+    implementation "android.arch.lifecycle:runtime:1.0.3"
     implementation "android.arch.lifecycle:extensions:1.0.0-alpha9-1"
     annotationProcessor "android.arch.lifecycle:compiler:1.0.0-alpha9-1"
 
-    compile 'com.github.satyan:sugar:1.4'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'io.reactivex.rxjava2:rxjava:2.1.3'
+    implementation 'com.github.satyan:sugar:1.4'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.3'
 
-    compile 'com.squareup.retrofit2:retrofit:2.2.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
-    compile 'joda-time:joda-time:2.9.9'
-    compile 'org.joda:joda-convert:1.8'
+    implementation 'com.squareup.retrofit2:retrofit:2.2.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.2.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
+    implementation 'joda-time:joda-time:2.9.9'
+    implementation 'org.joda:joda-convert:1.8'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
