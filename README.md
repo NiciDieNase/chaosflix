@@ -1,3 +1,5 @@
+This Repo remains for continuity reasons, further development is happening in [chaosflix-common](https://github.com/NiciDieNase/chaosflix-common), [chaosflix-leanback](https://github.com/NiciDieNase/chaosflix-leanback) and [chaosflix-touch](https://github.com/NiciDieNase/chaosflix-touch).
+
 # Chaosflix
 
 A Android TV / FireTV app to watch content from media.ccc.de
