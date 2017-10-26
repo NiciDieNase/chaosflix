@@ -14,7 +14,7 @@ interface PlaybackProgressDao{
     @Query("SELECT * from playback_progress")
     fun getAll(): Flowable<List<PlaybackProgress>>
 
-    @Query("SELECT * from playback_progress WHERE event_id = :arg0 LIMIT 1")
+    @Query("SELECT * from playback_progress WHERE event_id = :id LIMIT 1")
     fun getProgressForEvent(id:Int): Flowable<PlaybackProgress>
 
     @Insert

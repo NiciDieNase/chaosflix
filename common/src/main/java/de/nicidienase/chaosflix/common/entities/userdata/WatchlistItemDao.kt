@@ -12,7 +12,7 @@ interface WatchlistItemDao {
     @Query("SELECT * from watchlist_item")
     fun getAll(): LiveData<List<WatchlistItem>>
 
-    @Query("SELECT * from watchlist_item WHERE id = :arg0 LIMIT 1")
+    @Query("SELECT * from watchlist_item WHERE id = :id LIMIT 1")
     fun getItemForEvent(id:Int): LiveData<WatchlistItem>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
