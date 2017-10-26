@@ -2,6 +2,9 @@ package de.nicidienase.chaosflix.common.entities
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
+import de.nicidienase.chaosflix.common.entities.recording.ConferenceDao
+import de.nicidienase.chaosflix.common.entities.recording.EventDao
+import de.nicidienase.chaosflix.common.entities.recording.RecordingDao
 import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgress
 import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgressDao
 import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
@@ -15,4 +18,7 @@ import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItemDao
 abstract class ChaosflixDatabase : RoomDatabase() {
     abstract fun playbackProgressDao(): PlaybackProgressDao
     abstract fun watchlistItemDao(): WatchlistItemDao
+    abstract fun conferenceDao(): ConferenceDao
+    abstract fun eventDao(): EventDao
+    abstract fun recordingDao(): RecordingDao
 }
