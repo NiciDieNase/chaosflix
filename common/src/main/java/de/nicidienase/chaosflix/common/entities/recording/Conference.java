@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
-import com.orm.SugarRecord;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +14,7 @@ import java.util.List;
  * Created by felix on 11.03.17.
  */
 
-public class Conference extends SugarRecord implements Parcelable, Comparable<Conference> {
+public class Conference implements Parcelable, Comparable<Conference> {
 	String acronym;
 	@SerializedName("aspect_ratio")
 	String aspectRation;
@@ -215,13 +214,6 @@ public class Conference extends SugarRecord implements Parcelable, Comparable<Co
 
 	public void setEvents(List<Event> events) {
 		this.events = events;
-	}
-
-	public void update(Conference conf) {
-		if (!this.updatedAt.equals(conf.updatedAt)) {
-			// TODO actually update
-			this.save();
-		}
 	}
 
 	@Override

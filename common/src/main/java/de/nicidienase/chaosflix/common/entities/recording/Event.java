@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
-import com.orm.SugarRecord;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ import java.util.List;
  * Created by felix on 11.03.17.
  */
 
-public class Event extends SugarRecord implements Parcelable, Comparable<Event> {
+public class Event implements Parcelable, Comparable<Event> {
 
 	@SerializedName("conference_id")
 	int conferenceId;
@@ -144,13 +143,6 @@ public class Event extends SugarRecord implements Parcelable, Comparable<Event> 
 			return super.equals(obj);
 		}
 
-	}
-
-	public void update(Event e) {
-		if (!this.updatedAt.equals(e.getUpdatedAt())) {
-			// TODO actually update
-			this.save();
-		}
 	}
 
 	public int getApiID() {

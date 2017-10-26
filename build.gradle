@@ -33,7 +33,7 @@ ext{
     buildToolsVersion = "26.0.1"
     supportLibraryVersion = "26.1.0"
     constraintLayoutVersion = "1.0.2"
-    archCompVersion = "1.0.0-alpha9-1"
+    archCompVersion = "1.0.0-rc1"
     minSDK = 22
     targetSDK = 26
 }

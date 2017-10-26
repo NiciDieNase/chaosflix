@@ -4,13 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
-import com.orm.SugarRecord;
 
 /**
  * Created by felix on 06.04.17.
  */
 
-public class Metadata extends SugarRecord implements Parcelable {
+public class Metadata implements Parcelable {
 	long[] related;
 	@SerializedName("remote_id")
 	String remoteId;

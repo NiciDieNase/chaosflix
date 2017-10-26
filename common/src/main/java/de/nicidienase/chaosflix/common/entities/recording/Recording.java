@@ -4,13 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
-import com.orm.SugarRecord;
 
 /**
  * Created by felix on 17.03.17.
  */
 
-public class Recording extends SugarRecord implements Parcelable {
+public class Recording implements Parcelable {
 
 	private int size;
 	private int length;
@@ -221,10 +220,4 @@ public class Recording extends SugarRecord implements Parcelable {
 		this.conferenceUrl = conferenceUrl;
 	}
 
-	public void update(Recording r) {
-		if (!this.getUpdatedAt().equals(r.getUpdatedAt())) {
-			// TODO actually update
-			this.save();
-		}
-	}
 }
