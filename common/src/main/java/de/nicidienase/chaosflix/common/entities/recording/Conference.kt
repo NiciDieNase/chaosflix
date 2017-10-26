@@ -1,5 +1,7 @@
 package de.nicidienase.chaosflix.common.entities.recording
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
 
@@ -8,6 +10,7 @@ import com.google.gson.annotations.SerializedName
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
+@Entity(tableName = "conference")
 class Conference(
     var acronym: String,
     @SerializedName("aspect_ratio")
@@ -30,15 +33,15 @@ class Conference(
     var events: List<Event>
 ) : Parcelable, Comparable<Conference> {
 
-    //		return Event.find(Event.class,"parent_conference_id = ? ", String.valueOf(this.getId()));
-
+    @PrimaryKey
+    val apiID: Long
     val eventsByTags: HashMap<String, MutableList<Event>>
 
     init {
         eventsByTags = HashMap<String, MutableList<Event>>()
         val untagged = ArrayList<Event>()
         for (event in this.events) {
-            if (event.tags.size > 0) {
+            if (event.tags.isNotEmpty()) {
                 for (tag in event.tags) {
                     if (tag != null) {
 
@@ -61,13 +64,10 @@ class Conference(
         if (untagged.size > 0) {
             eventsByTags.put("untagged", untagged)
         }
+        val strings = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        apiID = (strings[strings.size - 1]).toLong()
     }
 
-    val apiID: Int
-        get() {
-            val strings = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            return Integer.parseInt(strings[strings.size - 1])
-        }
 
     protected constructor(`in`: Parcel) : this(
         `in`.readString(),

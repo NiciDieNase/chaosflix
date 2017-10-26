@@ -1,11 +1,12 @@
 package de.nicidienase.chaosflix.common.entities.recording
 
+import android.arch.persistence.room.Entity
 import android.os.Parcel
 import android.os.Parcelable
 
 import com.google.gson.annotations.SerializedName
 
-
+@Entity(tableName = "recording")
 class Recording(
     var size: Int = 0,
     var length: Int = 0,
@@ -30,17 +31,16 @@ class Recording(
     var conferenceUrl: String
 ) : Parcelable {
 
-    val apiID: Int
-        get() {
-            val strings = url!!.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            return Integer.parseInt(strings[strings.size - 1])
-        }
-
+    val apiID: Long
     val parentEventID: Long
-        get() {
-            val split = eventUrl!!.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            return java.lang.Long.parseLong(split[split.size - 1])
-        }
+
+    init {
+        val strings = url!!.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        apiID = (strings[strings.size - 1]).toLong()
+        val split = eventUrl!!.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        parentEventID = (split[split.size - 1]).toLong()
+
+    }
 
     protected constructor(`in`: Parcel) : this(
         `in`.readInt(),
