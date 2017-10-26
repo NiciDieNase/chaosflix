@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.common.entities
+package de.nicidienase.chaosflix.common.entities.userdata
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
