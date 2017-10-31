@@ -17,18 +17,18 @@ open class Event(@JsonProperty("conference_id") var conferenceId: Long,
                  val title: String,
                  val subtitle: String?,
                  val slug: String,
-                 val link: String,
-                 val description: String,
+                 val link: String?,
+                 val description: String?,
                  @JsonProperty("original_language") val originalLanguage: String,
-                 val persons: List<String>,
-                 val tags: List<String>,
-                 val date: String,
+                 val persons: List<String>?,
+                 val tags: List<String>?,
+                 val date: String?,
                  @JsonProperty("release_date") val releaseDate: String,
                  @JsonProperty("updated_at") val updatedAt: String,
                  val length: Long = 0,
                  @JsonProperty("thumb_url") val thumbUrl: String,
                  @JsonProperty("poster_url") val posterUrl: String,
-                 @JsonProperty("frontend_link") val frontendLink: String,
+                 @JsonProperty("frontend_link") val frontendLink: String?,
                  val url: String,
                  @JsonProperty("conference_url") val conferenceUrl: String,
                  val recordings: List<Recording>?,
@@ -50,10 +50,10 @@ open class Event(@JsonProperty("conference_id") var conferenceId: Long,
     }
 
     fun getExtendedDescription(): String
-        = "$description\n\nreleased at: $releaseDate\n\nTags: ${tags.joinToString(", ")}"
+        = "$description\n\nreleased at: $releaseDate\n\nTags: ${tags?.joinToString(", ")}"
 
-    fun getSpeakerString(): String
-        = persons.joinToString(", ")
+    fun getSpeakerString(): String?
+        = persons?.joinToString(", ")
 
     protected constructor(`in`: Parcel) : this(
             conferenceId = `in`.readLong(),

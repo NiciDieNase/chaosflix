@@ -38,20 +38,22 @@ open class Conference(
         val untagged = ArrayList<Event>()
         if(this.events != null){
             for (event in this.events) {
-                if (event.tags.isNotEmpty()) {
-                    for (tag in event.tags) {
-                        if (tag != null) {
+                if (event.tags?.isNotEmpty() ?: false) {
+                    if(event.tags != null){
+                        for (tag in event.tags) {
+                            if (tag != null) {
 
-                            val list: MutableList<Event>
-                            if (eventsByTags.keys.contains(tag)) {
-                                list = eventsByTags[tag]!!
+                                val list: MutableList<Event>
+                                if (eventsByTags.keys.contains(tag)) {
+                                    list = eventsByTags[tag]!!
+                                } else {
+                                    list = ArrayList<Event>()
+                                    eventsByTags.put(tag, list)
+                                }
+                                list.add(event)
                             } else {
-                                list = ArrayList<Event>()
-                                eventsByTags.put(tag, list)
+                                untagged.add(event)
                             }
-                            list.add(event)
-                        } else {
-                            untagged.add(event)
                         }
                     }
                 } else {
