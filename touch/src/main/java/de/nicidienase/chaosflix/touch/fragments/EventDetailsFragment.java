@@ -1,11 +1,9 @@
 package de.nicidienase.chaosflix.touch.fragments;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
@@ -23,10 +21,9 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.common.entities.recording.Recording;
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsNewBinding;
-import de.nicidienase.chaosflix.touch.ChaosflixViewModel;
 import io.reactivex.disposables.CompositeDisposable;
 
-public class EventDetailsFragment extends Fragment {
+public class EventDetailsFragment extends ChaosflixFragment {
 	private static final String TAG = EventDetailsFragment.class.getSimpleName();
 	private static final String EVENT_PARAM = "event_param";
 
@@ -34,7 +31,6 @@ public class EventDetailsFragment extends Fragment {
 	private Event mEvent;
 
 	private boolean appBarExpanded;
-	private ChaosflixViewModel viewModel;
 	private CompositeDisposable disposable = new CompositeDisposable();
 
 	public static EventDetailsFragment newInstance(Event event) {
@@ -58,7 +54,6 @@ public class EventDetailsFragment extends Fragment {
 		if (getArguments() != null) {
 			mEvent = getArguments().getParcelable(EVENT_PARAM);
 		}
-		viewModel = ViewModelProviders.of(this).get(ChaosflixViewModel.class);
 	}
 
 	@Override
@@ -139,7 +134,7 @@ public class EventDetailsFragment extends Fragment {
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-		disposable.add(viewModel.getBookmark(mEvent.getApiID())
+		disposable.add(getViewModel().getBookmark(mEvent.getApiID())
 				.subscribe(watchlistItem -> {
 					if (watchlistItem != null) {
 						menu.findItem(R.id.action_bookmark).setVisible(false);
@@ -162,10 +157,10 @@ public class EventDetailsFragment extends Fragment {
 				play();
 				return true;
 			case R.id.action_bookmark:
-				viewModel.createBookmark(mEvent.getApiID());
+				getViewModel().createBookmark(mEvent.getApiID());
 				return true;
 			case R.id.action_unbookmark:
-				viewModel.removeBookmark(mEvent.getApiID());
+				getViewModel().removeBookmark(mEvent.getApiID());
 				return true;
 			case R.id.action_download:
 				Snackbar.make(item.getActionView(),"Start download",Snackbar.LENGTH_LONG).show();

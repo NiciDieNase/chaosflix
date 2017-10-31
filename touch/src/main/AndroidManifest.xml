@@ -11,7 +11,7 @@
         android:icon="@drawable/icon_notext_512x512"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".ChaosflixApplication"
+        android:name=".touch.ChaosflixApplication"
         android:theme="@style/AppTheme">
         <activity android:name=".touch.activities.BrowseActivity"
                   android:label="@string/app_name">

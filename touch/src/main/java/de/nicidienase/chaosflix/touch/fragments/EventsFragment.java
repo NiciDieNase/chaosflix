@@ -34,16 +34,16 @@ public class EventsFragment extends ChaosflixFragment {
 	private Toolbar mToolbar;
 	private Context mContext;
 	private EventRecyclerViewAdapter mAdapter;
-	private int mConferenceId;
+	private long mConferenceId;
 
 	CompositeDisposable mDisposable = new CompositeDisposable();
 	private LinearLayoutManager layoutManager;
 
-	public static EventsFragment newInstance(int conferenceId, int columnCount) {
+	public static EventsFragment newInstance(long conferenceId, int columnCount) {
 		EventsFragment fragment = new EventsFragment();
 		Bundle args = new Bundle();
 		args.putInt(ARG_COLUMN_COUNT, columnCount);
-		args.putInt(ARG_CONFERENCE, conferenceId);
+		args.putLong(ARG_CONFERENCE, conferenceId);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -66,7 +66,7 @@ public class EventsFragment extends ChaosflixFragment {
 		super.onCreate(savedInstanceState);
 		if (getArguments() != null) {
 			mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-			mConferenceId = getArguments().getInt(ARG_CONFERENCE);
+			mConferenceId = getArguments().getLong(ARG_CONFERENCE);
 		}
 	}
 

@@ -20,9 +20,6 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class AboutActivity extends AppCompatActivity {
 
 	private static final String TAG = AboutActivity.class.getSimpleName();

@@ -3,16 +3,20 @@ package de.nicidienase.chaosflix.touch
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.persistence.room.Room
-import de.nicidienase.chaosflix.ChaosflixApplication
+import com.facebook.stetho.okhttp3.StethoInterceptor
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import de.nicidienase.chaosflix.BuildConfig
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.network.RecordingService
 import de.nicidienase.chaosflix.common.network.StreamingService
-import de.nicidienase.chaosflix.touch.BrowseViewModel
+import de.nicidienase.chaosflix.touch.viewmodels.PlayerViewModel
+import de.nicidienase.chaosflix.touch.viewmodels.BrowseViewModel
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.jackson.JacksonConverterFactory
 
 object ViewModelFactory: ViewModelProvider.Factory{
 
@@ -21,18 +25,25 @@ object ViewModelFactory: ViewModelProvider.Factory{
     val streamingApi: StreamingService
 
     init {
-        val res = ChaosflixApplication.getContext().getResources()
+        val res = ChaosflixApplication.APPLICATION_CONTEXT.resources
         val recordingUrl = res.getString(R.string.api_media_ccc_url)
         val streamingUrl = res.getString(R.string.streaming_media_ccc_url)
 
-        val client = OkHttpClient()
-        val gsonConverterFactory = GsonConverterFactory.create()
+        val client: OkHttpClient
+        if(BuildConfig.DEBUG){
+            client = OkHttpClient.Builder()
+                    .addNetworkInterceptor(StethoInterceptor())
+                    .build()
+        } else {
+            client = OkHttpClient()
+        }
+        val jacksonConverterFactory = JacksonConverterFactory.create(ObjectMapper().registerModule(KotlinModule()))
         val rxJava2CallAdapterFactory = RxJava2CallAdapterFactory.create()
 
         val retrofitRecordings = Retrofit.Builder()
                 .baseUrl(recordingUrl)
                 .client(client)
-                .addConverterFactory(gsonConverterFactory)
+                .addConverterFactory(jacksonConverterFactory)
                 .addCallAdapterFactory(rxJava2CallAdapterFactory)
                 .build()
         recordingApi = retrofitRecordings.create(RecordingService::class.java)
@@ -40,18 +51,21 @@ object ViewModelFactory: ViewModelProvider.Factory{
         val retrofigStreaming = Retrofit.Builder()
                 .baseUrl(streamingUrl)
                 .client(client)
-                .addConverterFactory(gsonConverterFactory)
+                .addConverterFactory(jacksonConverterFactory)
                 .addCallAdapterFactory(rxJava2CallAdapterFactory)
                 .build()
         streamingApi = retrofigStreaming.create(StreamingService::class.java)
 
-        database = Room.databaseBuilder(ChaosflixApplication.getContext(),
+        database = Room.databaseBuilder(ChaosflixApplication.APPLICATION_CONTEXT,
                 ChaosflixDatabase::class.java,"mediaccc.de").build()
     }
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if(modelClass.isAssignableFrom(BrowseViewModel::class.java)){
+        if(modelClass.isAssignableFrom(BrowseViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
             return BrowseViewModel(database, recordingApi, streamingApi) as T
+        } else if(modelClass.isAssignableFrom(PlayerViewModel::class.java)) {
+            return PlayerViewModel(database, recordingApi, streamingApi) as T
         } else {
             throw UnsupportedOperationException("The requested ViewModel is currently unsupported. " +
                     "Please make sure to implement are correct creation of it. " +

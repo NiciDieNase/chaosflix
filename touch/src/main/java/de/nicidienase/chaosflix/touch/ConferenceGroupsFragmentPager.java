@@ -45,12 +45,12 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 
 	@Override
 	public CharSequence getPageTitle(int position) {
-		return ConferencesWrapper.getStringForTag(orderedConferencesList.get(position));
+		return ConferencesWrapper.Companion.getStringForTag(orderedConferencesList.get(position));
 	}
 
 	public void setContent(Map<String, List<Conference>> conferenceMap) {
 		orderedConferencesList = new ArrayList<>();
-		for (String tag : ConferencesWrapper.getOrderedConferencesList()) {
+		for (String tag : ConferencesWrapper.Companion.getOrderedConferencesList()) {
 			if (conferenceMap.keySet().contains(tag)) {
 				orderedConferencesList.add(tag);
 			}

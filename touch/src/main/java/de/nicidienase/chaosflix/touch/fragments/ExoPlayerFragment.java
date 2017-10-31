@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,9 +45,11 @@ import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.common.entities.recording.Recording;
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgress;
+import io.reactivex.Flowable;
+import io.reactivex.disposables.CompositeDisposable;
 
-public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.PlayerStateChangeListener{
+public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStateChangeListener {
 	private static final String TAG = ExoPlayerFragment.class.getSimpleName();
 	public static final String PLAYBACK_STATE = "playback_state";
 	private static final String ARG_EVENT = "event";
@@ -54,6 +57,7 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 
 	private OnMediaPlayerInteractionListener mListener;
 	private final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
+	private CompositeDisposable disposable = new CompositeDisposable();
 
 	@BindView(R.id.video_view)
 	SimpleExoPlayerView videoView;
@@ -80,8 +84,8 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 	public static ExoPlayerFragment newInstance(Event event, Recording recording) {
 		ExoPlayerFragment fragment = new ExoPlayerFragment();
 		Bundle args = new Bundle();
-		args.putParcelable(ARG_EVENT,event);
-		args.putParcelable(ARG_RECORDING,recording);
+		args.putParcelable(ARG_EVENT, event);
+		args.putParcelable(ARG_RECORDING, recording);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -93,8 +97,8 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 			mEvent = getArguments().getParcelable(ARG_EVENT);
 			mRecording = getArguments().getParcelable(ARG_RECORDING);
 		}
-		if(savedInstanceState != null){
-			mPlaybackState = savedInstanceState.getBoolean(PLAYBACK_STATE,true);
+		if (savedInstanceState != null) {
+			mPlaybackState = savedInstanceState.getBoolean(PLAYBACK_STATE, true);
 		}
 	}
 
@@ -107,17 +111,17 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		ButterKnife.bind(this,view);
-		if(titleText != null)
+		ButterKnife.bind(this, view);
+		if (titleText != null)
 			titleText.setText(mEvent.getTitle());
-		if(subtitleText != null)
+		if (subtitleText != null)
 			subtitleText.setText(mEvent.getSubtitle());
 
-		if(exoPlayer == null){
+		if (exoPlayer == null) {
 			exoPlayer = setupPlayer();
 		} else {
 			exoPlayer = exoPlayer;
-			Log.d(TAG,"Player already set up.");
+			Log.d(TAG, "Player already set up.");
 		}
 
 	}
@@ -125,15 +129,14 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(exoPlayer != null){
+		if (exoPlayer != null) {
 			exoPlayer.setPlayWhenReady(mPlaybackState);
-//			getViewModel().getPlaybackProgress(mEvent.getApiID())
-//					.observe(this,
-//							playbackProgress -> {
-//						if(playbackProgress != null) {
-//							exoPlayer.seekTo(playbackProgress.getProgress());
-//						}
-//					});
+			disposable.add(mListener.getPlaybackProgress(mEvent.getApiID())
+					.subscribe(playbackProgress -> {
+						if (playbackProgress != null) {
+							exoPlayer.seekTo(playbackProgress.getProgress());
+						}
+					}));
 			videoView.setPlayer(exoPlayer);
 		}
 	}
@@ -148,10 +151,11 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 	@Override
 	public void onPause() {
 		super.onPause();
-		if(exoPlayer != null){
-			getViewModel().setPlaybackProgress(mEvent.getApiID(), exoPlayer.getCurrentPosition());
+		if (exoPlayer != null) {
+			mListener.setPlaybackProgress(mEvent.getApiID(), exoPlayer.getCurrentPosition());
 			exoPlayer.setPlayWhenReady(false);
 		}
+		disposable.clear();
 	}
 
 	@Override
@@ -164,13 +168,13 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		if(exoPlayer != null){
+		if (exoPlayer != null) {
 			outState.putBoolean(PLAYBACK_STATE, exoPlayer.getPlayWhenReady());
 		}
 	}
 
-	private SimpleExoPlayer setupPlayer(){
-		Log.d(TAG,"Setting up Player.");
+	private SimpleExoPlayer setupPlayer() {
+		Log.d(TAG, "Setting up Player.");
 		videoView.setKeepScreenOn(true);
 
 		mUserAgent = Util.getUserAgent(getContext(), getResources().getString(R.string.app_name));
@@ -190,7 +194,7 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 
 		exoPlayer.setPlayWhenReady(mPlaybackState);
 
-		exoPlayer.prepare(buildMediaSource(Uri.parse(mRecording.getRecordingUrl()),""));
+		exoPlayer.prepare(buildMediaSource(Uri.parse(mRecording.getRecordingUrl()), ""));
 		return exoPlayer;
 	}
 
@@ -213,14 +217,14 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 
 	@Override
 	public void notifyLoadingStart() {
-		if(mProgressBar != null){
+		if (mProgressBar != null) {
 			mProgressBar.setVisibility(View.VISIBLE);
 		}
 	}
 
 	@Override
 	public void notifyLoadingFinished() {
-		if(mProgressBar != null){
+		if (mProgressBar != null) {
 			mProgressBar.setVisibility(View.INVISIBLE);
 		}
 	}
@@ -231,6 +235,9 @@ public class ExoPlayerFragment extends ChaosflixFragment implements MyListener.P
 	}
 
 	public interface OnMediaPlayerInteractionListener {
+		Flowable<PlaybackProgress> getPlaybackProgress(long apiId);
+
+		void setPlaybackProgress(long apiId, long progress);
 	}
 
 	private MediaSource buildMediaSource(Uri uri, String overrideExtension) {

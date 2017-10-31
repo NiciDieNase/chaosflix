@@ -2,7 +2,6 @@ package de.nicidienase.chaosflix.touch.activities;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -14,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,8 +23,7 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.Event;
 import de.nicidienase.chaosflix.common.entities.recording.Recording;
-import de.nicidienase.chaosflix.touch.BrowseViewModel;
-import de.nicidienase.chaosflix.touch.ChaosflixViewModel;
+import de.nicidienase.chaosflix.touch.viewmodels.BrowseViewModel;
 import de.nicidienase.chaosflix.touch.ViewModelFactory;
 import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventDetailsFragment;
@@ -40,8 +39,7 @@ import io.reactivex.disposables.CompositeDisposable;
 public class BrowseActivity extends AppCompatActivity implements
 		ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener,
 		EventsFragment.OnEventsListFragmentInteractionListener,
-		EventDetailsFragment.OnEventDetailsFragmentInteractionListener,
-		ExoPlayerFragment.OnMediaPlayerInteractionListener {
+		EventDetailsFragment.OnEventDetailsFragmentInteractionListener{
 
 	private static final String TAG = BrowseActivity.class.getSimpleName();
 	CompositeDisposable mDisposables = new CompositeDisposable();
@@ -62,15 +60,18 @@ public class BrowseActivity extends AppCompatActivity implements
 //				ft.replace(R.id.fragment_container,browseFragment);
 //				ft.setReorderingAllowed(true);
 //				ft.commit();
-//			});
 			mDisposables.add(mViewModel.getConferencesWrapper()
 					.observeOn(AndroidSchedulers.mainThread())
 					.subscribe(conferencesWrapper -> {
-						FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-						ft.replace(R.id.fragment_container,browseFragment);
-						ft.setReorderingAllowed(true);
-						ft.commit();
-					}, throwable -> Snackbar.make(findViewById(R.id.fragment_container),throwable.getMessage(),Snackbar.LENGTH_INDEFINITE).show()));
+								FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+								ft.replace(R.id.fragment_container,browseFragment);
+								ft.setReorderingAllowed(true);
+								ft.commit();
+							}, throwable -> {
+								Snackbar.make(findViewById(R.id.fragment_container),throwable.getMessage(),Snackbar.LENGTH_INDEFINITE).show();
+								Log.d(TAG,throwable.getMessage(),throwable);
+							}));
+//			});
 		}
 	}
 

@@ -83,7 +83,7 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(conferencesWrapper -> {
-					fragmentPager.setContent(conferencesWrapper.getConferencesBySeries());
+					fragmentPager.setContent(conferencesWrapper.getConferenceMap());
 					mViewPager.setCurrentItem(mCurrentTab);
 						});
 
