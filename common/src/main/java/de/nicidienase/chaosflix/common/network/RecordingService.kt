@@ -14,11 +14,11 @@ import retrofit2.http.Path
 
 interface RecordingService {
 
-    @get:GET("public/conferences")
-    val conferences: Observable<ConferencesWrapper>
+    @GET("public/conferences")
+    fun getConferences(): Observable<ConferencesWrapper>
 
-    @get:GET("public/events")
-    val allEvents: Observable<List<Event>>
+    @GET("public/events")
+    fun getAllEvents(): Observable<List<Event>>
 
     @GET("public/conferences/{id}")
     fun getConference(@Path("id") id: Long): Observable<Conference>

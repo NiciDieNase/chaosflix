@@ -8,7 +8,7 @@ import java.util.Collections
 import java.util.HashMap
 
 
-class ConferencesWrapper(var conferences: List<Conference>){
+open class ConferencesWrapper(var conferences: List<Conference>){
     private val CONGRESS = "congress"
     private val EVENTS = "events"
     private val CONFERENCES = "conferences"
@@ -16,7 +16,7 @@ class ConferencesWrapper(var conferences: List<Conference>){
     private val EVENT_GROUP = "Events"
     private val MIN_NUM_CONS = 1
 
-    private var conferenceMap: MutableMap<String, MutableList<Conference>>
+    val conferenceMap: MutableMap<String, MutableList<Conference>>
 
     init {
         conferenceMap = HashMap()
@@ -50,22 +50,21 @@ class ConferencesWrapper(var conferences: List<Conference>){
         val removeList = ArrayList<String>()
         for (tag in keySet) {
             if (tag != DEFAULT_CONFERENCE_GROUP) {
-                val list = conferenceMap!![tag]
+                val list = conferenceMap[tag]
                 Collections.sort(list)
                 Collections.reverse(list)
                 if (list!!.size <= MIN_NUM_CONS) {
-                    Log.d(TAG, "To few conferences: " + tag)
-                    other!!.addAll(list)
+                    other?.addAll(list)
                     removeList.add(tag)
                 }
             }
         }
         for (key in removeList) {
-            conferenceMap!!.remove(key)
+            conferenceMap.remove(key)
         }
     }
 
-    private fun getListForTag(s: String): MutableList<Conference> {
+    fun getListForTag(s: String): MutableList<Conference> {
         if (conferenceMap.keys.contains(s)) {
             return conferenceMap[s]!!
         } else {
@@ -76,8 +75,6 @@ class ConferencesWrapper(var conferences: List<Conference>){
     }
 
     companion object {
-        private val TAG = ConferencesWrapper::class.java.simpleName
-
         fun getStringForTag(tag: String): String {
             when (tag) {
                 "congress" -> return "Congress"
@@ -103,8 +100,8 @@ class ConferencesWrapper(var conferences: List<Conference>){
             }
         }
 
-        val orderedConferencesList: List<String>
-            get() = Arrays.asList("congress", "sendezentrum", "camp",
+        val orderedConferencesList: List<String>  = Arrays.asList(
+                "congress", "sendezentrum", "camp",
                     "gpn", "mrmcd", "broadcast/chaosradio",
                     "eh", "froscon", "sigint",
                     "datenspuren", "fiffkon", "cryptocon")

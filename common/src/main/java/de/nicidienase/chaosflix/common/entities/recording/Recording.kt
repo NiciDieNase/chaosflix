@@ -3,32 +3,34 @@ package de.nicidienase.chaosflix.common.entities.recording
 import android.arch.persistence.room.Entity
 import android.os.Parcel
 import android.os.Parcelable
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 
-import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "recording")
-class Recording(
-    var size: Int = 0,
-    var length: Int = 0,
-    @SerializedName("mime_type")
-    var mimeType: String,
-    var language: String,
-    var filename: String,
-    var state: String,
-    var folder: String,
-    @SerializedName("high_quality")
-    var isHighQuality: Boolean = false,
-    var width: Int = 0,
-    var height: Int = 0,
-    @SerializedName("updated_at")
-    var updatedAt: String,
-    @SerializedName("recording_url")
-    var recordingUrl: String,
-    var url: String,
-    @SerializedName("event_url")
-    var eventUrl: String,
-    @SerializedName("conference_url")
-    var conferenceUrl: String
+@JsonIgnoreProperties(ignoreUnknown = true)
+open class Recording(
+    val size: Int = 0,
+    val length: Int = 0,
+    @JsonProperty("mime_type")
+    val mimeType: String,
+    val language: String,
+    val filename: String,
+    val state: String,
+    val folder: String,
+    @JsonProperty("high_quality")
+    val isHighQuality: Boolean = false,
+    val width: Int = 0,
+    val height: Int = 0,
+    @JsonProperty("updated_at")
+    val updatedAt: String,
+    @JsonProperty("recording_url")
+    val recordingUrl: String,
+    val url: String,
+    @JsonProperty("event_url")
+    val eventUrl: String,
+    @JsonProperty("conference_url")
+    val conferenceUrl: String
 ) : Parcelable {
 
     val apiID: Long

@@ -1,8 +1,6 @@
 package de.nicidienase.chaosflix.common.entities.userdata
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 import io.reactivex.Flowable
 
 /**
@@ -15,8 +13,8 @@ interface PlaybackProgressDao{
     fun getAll(): Flowable<List<PlaybackProgress>>
 
     @Query("SELECT * from playback_progress WHERE event_id = :id LIMIT 1")
-    fun getProgressForEvent(id:Int): Flowable<PlaybackProgress>
+    fun getProgressForEvent(id:Long): Flowable<PlaybackProgress>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveProgress(progress: PlaybackProgress)
 }

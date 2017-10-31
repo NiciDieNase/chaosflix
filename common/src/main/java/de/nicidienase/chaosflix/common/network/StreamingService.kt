@@ -10,6 +10,6 @@ import retrofit2.http.GET
 
 interface StreamingService {
 
-    @get:GET("streams/v2.json")
-    val streamingConferences: Observable<List<LiveConference>>
+    @GET("streams/v2.json")
+    fun getStreamingConferences(): Observable<List<LiveConference>>
 }

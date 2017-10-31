@@ -11,5 +11,5 @@ import android.arch.persistence.room.PrimaryKey
 @Entity(tableName = "playback_progress")
 class PlaybackProgress (@PrimaryKey
                         @ColumnInfo(name = "event_id")
-                        var eventId: Int,
+                        var eventId: Long,
                         var progress: Long)

@@ -36,10 +36,9 @@ group="de.nicidienase.chaosflix"
 version="1.1.0-SNAPSHOT"
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
 
-    implementation 'com.android.support:multidex:1.0.2'
+//    implementation 'com.android.support:multidex:1.0.2'
     implementation "android.arch.lifecycle:runtime:1.0.3"
 
     implementation "android.arch.lifecycle:extensions:${rootProject.ext.archCompVersion}"
@@ -52,14 +51,17 @@ dependencies {
     implementation "android.arch.persistence.room:rxjava2:${rootProject.ext.archCompVersion}"
 
     implementation 'io.reactivex.rxjava2:rxjava:2.1.3'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+
 
     implementation 'com.squareup.retrofit2:retrofit:2.2.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.2.0'
+    implementation 'com.squareup.retrofit2:converter-jackson:2.2.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0'
+
     implementation 'joda-time:joda-time:2.9.9'
     implementation 'org.joda:joda-convert:1.8'
 
+    testCompile "org.mockito:mockito-core:2.+"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'

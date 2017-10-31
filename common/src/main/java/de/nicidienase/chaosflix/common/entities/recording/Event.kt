@@ -5,48 +5,55 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 
-import com.google.gson.annotations.SerializedName
+import java.util.*
 
 @Entity(tableName = "event")
-class Event(@SerializedName("conference_id") var conferenceId: Long,
-            var guid: String,
-            var title: String,
-            var subtitle: String,
-            var slug: String,
-            var link: String,
-            var description: String,
-            @SerializedName("original_language") var originalLanguage: String,
-            var persons: List<String>,
-            var tags: List<String>,
-            var date: String,
-            @SerializedName("release_date") var releaseDate: String,
-            @SerializedName("updated_at") var updatedAt: String,
-            var length: Int = 0,
-            @SerializedName("thumb_url") var thumbUrl: String,
-            @SerializedName("poster_url") var posterUrl: String,
-            @SerializedName("frontend_link") var frontendLink: String,
-            var url: String,
-            @SerializedName("conference_url") var conferenceUrl: String,
-            var recordings: List<Recording>,
-            @Embedded var metadata: Metadata,
-            var isPromoted: Boolean = false
+@JsonIgnoreProperties(ignoreUnknown = true)
+open class Event(@JsonProperty("conference_id") var conferenceId: Long,
+                 val guid: String,
+                 val title: String,
+                 val subtitle: String?,
+                 val slug: String,
+                 val link: String,
+                 val description: String,
+                 @JsonProperty("original_language") val originalLanguage: String,
+                 val persons: List<String>,
+                 val tags: List<String>,
+                 val date: String,
+                 @JsonProperty("release_date") val releaseDate: String,
+                 @JsonProperty("updated_at") val updatedAt: String,
+                 val length: Long = 0,
+                 @JsonProperty("thumb_url") val thumbUrl: String,
+                 @JsonProperty("poster_url") val posterUrl: String,
+                 @JsonProperty("frontend_link") val frontendLink: String,
+                 val url: String,
+                 @JsonProperty("conference_url") val conferenceUrl: String,
+                 val recordings: List<Recording>?,
+                 @Embedded val metadata: Metadata,
+                 @JsonProperty("promoted") val isPromoted: Boolean = false
 ) : Parcelable, Comparable<Event> {
 
     @PrimaryKey
-    val apiID: Int
-    @SerializedName("view_count")
+    val apiID: Long
+    @JsonProperty("view_count")
     var viewCount: Int = 0
-
 
     init {
         val strings = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        apiID = strings[strings.size - 1].toInt()
+        apiID = strings[strings.size - 1].toLong()
 
         val split = conferenceUrl.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         conferenceId = (split[split.size - 1]).toLong()
     }
 
+    fun getExtendedDescription(): String
+        = "$description\n\nreleased at: $releaseDate\n\nTags: ${tags.joinToString(", ")}"
+
+    fun getSpeakerString(): String
+        = persons.joinToString(", ")
 
     protected constructor(`in`: Parcel) : this(
             conferenceId = `in`.readLong(),
@@ -62,7 +69,7 @@ class Event(@SerializedName("conference_id") var conferenceId: Long,
             date = `in`.readString(),
             releaseDate = `in`.readString(),
             updatedAt = `in`.readString(),
-            length = `in`.readInt(),
+            length = `in`.readLong(),
             thumbUrl = `in`.readString(),
             posterUrl = `in`.readString(),
             frontendLink = `in`.readString(),
@@ -86,7 +93,7 @@ class Event(@SerializedName("conference_id") var conferenceId: Long,
         dest.writeString(date)
         dest.writeString(releaseDate)
         dest.writeString(updatedAt)
-        dest.writeInt(length)
+        dest.writeLong(length)
         dest.writeString(thumbUrl)
         dest.writeString(posterUrl)
         dest.writeString(frontendLink)
@@ -111,6 +118,34 @@ class Event(@SerializedName("conference_id") var conferenceId: Long,
             super.equals(obj)
         }
 
+    }
+
+    fun getOptimalStream(): Recording {
+        recordings!!
+        val result = ArrayList<Recording>()
+        for (r in recordings) {
+            if (r.isHighQuality && r.mimeType == "video/mp4")
+                result.add(r)
+        }
+        if (result.size == 0) {
+            for (r in recordings) {
+                if (r.mimeType == "video/mp4")
+                    result.add(r)
+            }
+        }
+        if (result.size == 0) {
+            for (r in recordings) {
+                if (r.mimeType.startsWith("video/"))
+                    result.add(r)
+            }
+        }
+        // sort by length of language-string in decending order, so first item has most languages
+        Collections.sort(result) { o1, o2 -> o2.language.length - o1.language.length }
+        return if (result.size > 0) {
+            result[0]
+        } else {
+            recordings.get(0)
+        }
     }
 
     companion object {

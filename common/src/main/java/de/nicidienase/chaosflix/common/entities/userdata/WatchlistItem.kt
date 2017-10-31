@@ -14,5 +14,5 @@ import java.util.Date
 
 @Entity(tableName = "watchlist_item")
 data class WatchlistItem (@PrimaryKey
-                          var id: Int,
-                          var eventId: Int)
+                          var id: Long,
+                          var eventId: Long)

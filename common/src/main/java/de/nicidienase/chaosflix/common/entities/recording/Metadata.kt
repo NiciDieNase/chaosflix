@@ -2,20 +2,23 @@ package de.nicidienase.chaosflix.common.entities.recording
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 
-import com.google.gson.annotations.SerializedName
 
 /**
  * Created by felix on 06.04.17.
  */
 
-class Metadata(
-        var related: LongArray,
-        @SerializedName("remote_id") var remoteId: String) : Parcelable {
+@JsonIgnoreProperties(ignoreUnknown = true)
+open class Metadata(
+        var related: LongArray?,
+        @JsonProperty("remote_id") var remoteId: String?
+) : Parcelable {
 
     protected constructor(`in`: Parcel) : this(
-        related = `in`.createLongArray(),
-        remoteId = `in`.readString())
+            related = `in`.createLongArray(),
+            remoteId = `in`.readString())
 
     override fun describeContents(): Int {
         return 0
