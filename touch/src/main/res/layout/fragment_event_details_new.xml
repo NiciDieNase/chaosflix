@@ -105,8 +105,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/details_text_margin"
                     android:layout_marginRight="@dimen/details_text_margin"
-                    android:layout_marginLeft="@dimen/details_text_margin"/>
-                    <!--android:text="@{event.speakerString}"/>-->
+                    android:layout_marginLeft="@dimen/details_text_margin"
+                    android:text="@{event.speakerString}"/>
 
                 <TextView
                     android:id="@+id/description_text"
@@ -115,8 +115,8 @@
                     android:layout_marginTop="@dimen/details_text_margin"
                     android:layout_marginRight="@dimen/details_text_margin"
                     android:layout_marginLeft="@dimen/details_text_margin"
-                    android:layout_marginBottom="@dimen/details_text_margin"/>
-                    <!--android:text="@{event.extendedDescription}"/>-->
+                    android:layout_marginBottom="@dimen/details_text_margin"
+                    android:text="@{event.extendedDescription}"/>
 
                 <!--TODO Add list of related or other videos-->
             </LinearLayout>
