@@ -1,34 +1,48 @@
 package de.nicidienase.chaosflix.common.entities.recording
 
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
+import android.arch.persistence.room.Ignore
 import android.os.Parcel
 import android.os.Parcelable
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 
-@Entity(tableName = "conference")
 @JsonIgnoreProperties(ignoreUnknown = true)
 open class Conference(
-        val acronym: String,
+        var acronym: String = "",
+
         @JsonProperty("aspect_ratio")
-        val aspectRatio: String,
-        val title: String,
-        val slug: String,
-        @JsonProperty("webgen_location") val webgenLocation: String,
-        @JsonProperty("schedule_url") val scheduleUrl: String?,
-        @JsonProperty("logo_url") val logoUrl: String,
-        @JsonProperty("images_url") val imagesUrl: String,
+        var aspectRatio: String = "",
+
+        var title: String = "",
+
+        var slug: String = "",
+
+        @JsonProperty("webgen_location")
+        var webgenLocation: String = "",
+
+        @JsonProperty("schedule_url")
+        var scheduleUrl: String? = "",
+
+        @JsonProperty("logo_url")
+        var logoUrl: String = "",
+
+        @JsonProperty("images_url")
+        var imagesUrl: String = "",
+
         @JsonProperty("recordings_url")
-        val recordingsUrl: String,
-        val url: String,
+        var recordingsUrl: String = "",
+
+        var url: String = "",
+
         @JsonProperty("updated_at")
-        val updatedAt: String,
-        val events: List<Event>?
+        var updatedAt: String,
+
+        var events: List<Event>?
+
 ) : Parcelable, Comparable<Conference> {
 
-    @PrimaryKey
-    val apiID: Long
+    var conferenceID: Long
+
     val eventsByTags: HashMap<String, MutableList<Event>>
 
     val sensibleTags: MutableSet<String> = HashSet()
@@ -36,24 +50,23 @@ open class Conference(
     init {
         eventsByTags = HashMap<String, MutableList<Event>>()
         val untagged = ArrayList<Event>()
-        if(this.events != null){
-            for (event in this.events) {
+        val events = this.events
+        if (events != null) {
+            for (event in events) {
                 if (event.tags?.isNotEmpty() ?: false) {
-                    if(event.tags != null){
-                        for (tag in event.tags) {
-                            if (tag != null) {
+                    for (tag in event.tags!!) {
+                        if (tag != null) {
 
-                                val list: MutableList<Event>
-                                if (eventsByTags.keys.contains(tag)) {
-                                    list = eventsByTags[tag]!!
-                                } else {
-                                    list = ArrayList<Event>()
-                                    eventsByTags.put(tag, list)
-                                }
-                                list.add(event)
+                            val list: MutableList<Event>
+                            if (eventsByTags.keys.contains(tag)) {
+                                list = eventsByTags[tag]!!
                             } else {
-                                untagged.add(event)
+                                list = ArrayList<Event>()
+                                eventsByTags.put(tag, list)
                             }
+                            list.add(event)
+                        } else {
+                            untagged.add(event)
                         }
                     }
                 } else {
@@ -65,17 +78,20 @@ open class Conference(
             }
         }
         val strings = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        apiID = (strings[strings.size - 1]).toLong()
+        conferenceID = (strings[strings.size - 1]).toLong()
 
         for (s in eventsByTags.keys) {
             if (!(acronym.equals(s) || s.matches(Regex.fromLiteral("\\d+")))) {
                 sensibleTags.add(s)
             }
         }
+
+
     }
 
     fun areTagsUsefull(): Boolean = sensibleTags.size > 0
 
+    @Ignore
     protected constructor(`in`: Parcel) : this(
             `in`.readString(),
             `in`.readString(),

@@ -1,47 +1,44 @@
 package de.nicidienase.chaosflix.common.entities.recording
 
-import android.arch.persistence.room.Entity
 import android.os.Parcel
 import android.os.Parcelable
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 
 
-@Entity(tableName = "recording")
 @JsonIgnoreProperties(ignoreUnknown = true)
 open class Recording(
-    val size: Int = 0,
-    val length: Int = 0,
+    var size: Int = 0,
+    var length: Int = 0,
     @JsonProperty("mime_type")
-    val mimeType: String,
-    val language: String,
-    val filename: String,
-    val state: String,
-    val folder: String,
+    var mimeType: String = "",
+    var language: String = "",
+    var filename: String = "",
+    var state: String = "",
+    var folder: String = "",
     @JsonProperty("high_quality")
-    val isHighQuality: Boolean = false,
-    val width: Int = 0,
-    val height: Int = 0,
+    var isHighQuality: Boolean = false,
+    var width: Int = 0,
+    var height: Int = 0,
     @JsonProperty("updated_at")
-    val updatedAt: String,
+    var updatedAt: String = "",
     @JsonProperty("recording_url")
-    val recordingUrl: String,
-    val url: String,
+    var recordingUrl: String = "",
+    var url: String = "",
     @JsonProperty("event_url")
-    val eventUrl: String,
+    var eventUrl: String = "",
     @JsonProperty("conference_url")
-    val conferenceUrl: String
+    var conferenceUrl: String = ""
 ) : Parcelable {
 
-    val apiID: Long
-    val parentEventID: Long
+    var recordingID: Long
+    var eventID: Long
 
     init {
-        val strings = url!!.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        apiID = (strings[strings.size - 1]).toLong()
-        val split = eventUrl!!.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        parentEventID = (split[split.size - 1]).toLong()
-
+        val strings = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        recordingID = (strings[strings.size - 1]).toLong()
+        val split = eventUrl.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        eventID = (split[split.size - 1]).toLong()
     }
 
     protected constructor(`in`: Parcel) : this(

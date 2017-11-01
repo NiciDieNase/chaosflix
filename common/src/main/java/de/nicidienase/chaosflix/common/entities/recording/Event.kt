@@ -1,49 +1,75 @@
 package de.nicidienase.chaosflix.common.entities.recording
 
-import android.arch.persistence.room.Embedded
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import de.nicidienase.chaosflix.common.entities.recording.persistence.Metadata
 
 import java.util.*
 
-@Entity(tableName = "event")
 @JsonIgnoreProperties(ignoreUnknown = true)
-open class Event(@JsonProperty("conference_id") var conferenceId: Long,
-                 val guid: String,
-                 val title: String,
-                 val subtitle: String?,
-                 val slug: String,
-                 val link: String?,
-                 val description: String?,
-                 @JsonProperty("original_language") val originalLanguage: String,
-                 val persons: List<String>?,
-                 val tags: List<String>?,
-                 val date: String?,
-                 @JsonProperty("release_date") val releaseDate: String,
-                 @JsonProperty("updated_at") val updatedAt: String,
-                 val length: Long = 0,
-                 @JsonProperty("thumb_url") val thumbUrl: String,
-                 @JsonProperty("poster_url") val posterUrl: String,
-                 @JsonProperty("frontend_link") val frontendLink: String?,
-                 val url: String,
-                 @JsonProperty("conference_url") val conferenceUrl: String,
-                 val recordings: List<Recording>?,
-                 @Embedded val metadata: Metadata,
-                 @JsonProperty("promoted") val isPromoted: Boolean = false
+open class Event(@JsonProperty("conference_id")
+                 var conferenceId: Long = 0,
+
+                 var guid: String = "",
+
+                 var title: String = "",
+
+                 var subtitle: String? = "",
+
+                 var slug: String = "",
+
+                 var link: String? = "",
+
+                 var description: String? = "",
+
+                 @JsonProperty("original_language")
+                 var originalLanguage: String = "",
+
+                 var persons: Array<String>?,
+
+                 var tags: Array<String>?,
+
+                 var date: String? = "",
+
+                 @JsonProperty("release_date")
+                 var releaseDate: String = "",
+
+                 @JsonProperty("updated_at")
+                 var updatedAt: String = "",
+
+                 var length: Long = 0,
+
+                 @JsonProperty("thumb_url")
+                 var thumbUrl: String = "",
+
+                 @JsonProperty("poster_url")
+                 var posterUrl: String = "",
+
+                 @JsonProperty("frontend_link")
+                 var frontendLink: String? = "",
+
+                 var url: String = "",
+
+                 @JsonProperty("conference_url")
+                 var conferenceUrl: String = "",
+
+                 var recordings: List<Recording>?,
+
+                 var metadata: Metadata?,
+
+                 @JsonProperty("promoted")
+                 var isPromoted: Boolean = false
 ) : Parcelable, Comparable<Event> {
 
-    @PrimaryKey
-    val apiID: Long
+    var eventID: Long
     @JsonProperty("view_count")
     var viewCount: Int = 0
 
     init {
         val strings = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        apiID = strings[strings.size - 1].toLong()
+        eventID = strings[strings.size - 1].toLong()
 
         val split = conferenceUrl.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         conferenceId = (split[split.size - 1]).toLong()
@@ -64,8 +90,8 @@ open class Event(@JsonProperty("conference_id") var conferenceId: Long,
             link = `in`.readString(),
             description = `in`.readString(),
             originalLanguage = `in`.readString(),
-            persons = `in`.createStringArrayList(),
-            tags = `in`.createStringArrayList(),
+            persons = `in`.createStringArray(),
+            tags = `in`.createStringArray(),
             date = `in`.readString(),
             releaseDate = `in`.readString(),
             updatedAt = `in`.readString(),
@@ -88,8 +114,8 @@ open class Event(@JsonProperty("conference_id") var conferenceId: Long,
         dest.writeString(link)
         dest.writeString(description)
         dest.writeString(originalLanguage)
-        dest.writeStringList(persons)
-        dest.writeStringList(tags)
+        dest.writeStringArray(persons)
+        dest.writeStringArray(tags)
         dest.writeString(date)
         dest.writeString(releaseDate)
         dest.writeString(updatedAt)
@@ -121,7 +147,8 @@ open class Event(@JsonProperty("conference_id") var conferenceId: Long,
     }
 
     fun getOptimalStream(): Recording {
-        recordings!!
+        val recordings = recordings!!
+
         val result = ArrayList<Recording>()
         for (r in recordings) {
             if (r.isHighQuality && r.mimeType == "video/mp4")

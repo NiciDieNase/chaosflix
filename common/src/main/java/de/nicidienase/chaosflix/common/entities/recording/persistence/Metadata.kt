@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.common.entities.recording
+package de.nicidienase.chaosflix.common.entities.recording.persistence
 
 import android.os.Parcel
 import android.os.Parcelable
