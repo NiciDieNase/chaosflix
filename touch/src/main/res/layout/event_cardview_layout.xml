@@ -24,8 +24,8 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="@dimen/thumbnail_size"
-                android:layout_height="@dimen/thumbnail_size"
+                android:layout_width="@dimen/thumbnail_width"
+                android:layout_height="@dimen/thumbnail_height"
                 android:scaleType="fitCenter"/>
 
             <LinearLayout

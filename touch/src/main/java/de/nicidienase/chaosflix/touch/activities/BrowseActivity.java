@@ -27,8 +27,7 @@ import de.nicidienase.chaosflix.touch.viewmodels.BrowseViewModel;
 import de.nicidienase.chaosflix.touch.ViewModelFactory;
 import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventDetailsFragment;
-import de.nicidienase.chaosflix.touch.fragments.EventsFragment;
-import de.nicidienase.chaosflix.touch.fragments.ExoPlayerFragment;
+import de.nicidienase.chaosflix.touch.fragments.EventsListFragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 
@@ -38,7 +37,7 @@ import io.reactivex.disposables.CompositeDisposable;
 
 public class BrowseActivity extends AppCompatActivity implements
 		ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener,
-		EventsFragment.OnEventsListFragmentInteractionListener,
+		EventsListFragment.OnEventsListFragmentInteractionListener,
 		EventDetailsFragment.OnEventDetailsFragmentInteractionListener{
 
 	private static final String TAG = BrowseActivity.class.getSimpleName();
@@ -90,21 +89,21 @@ public class BrowseActivity extends AppCompatActivity implements
 		mDisposables.add(mViewModel.getConference(con.getApiID())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(conference -> {
-					EventsFragment eventsFragment = EventsFragment.newInstance(conference.getApiID(),getNumColumns());
+					EventsListFragment eventsListFragment = EventsListFragment.newInstance(conference.getApiID(),getNumColumns());
 					FragmentManager fm = getSupportFragmentManager();
 					Fragment oldFragment = fm.findFragmentById(R.id.fragment_container);
 
 					TransitionInflater transitionInflater = TransitionInflater.from(this);
 					oldFragment.setExitTransition(
 							transitionInflater.inflateTransition(android.R.transition.fade));
-					eventsFragment.setEnterTransition(
+					eventsListFragment.setEnterTransition(
 							transitionInflater.inflateTransition(android.R.transition.slide_right));
 
 					Slide slideTransition = new Slide(Gravity.RIGHT);
-					eventsFragment.setEnterTransition(slideTransition);
+					eventsListFragment.setEnterTransition(slideTransition);
 
 					FragmentTransaction ft = fm.beginTransaction();
-					ft.replace(R.id.fragment_container, eventsFragment);
+					ft.replace(R.id.fragment_container, eventsListFragment);
 					ft.setReorderingAllowed(true);
 					ft.addToBackStack(null);
 					ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

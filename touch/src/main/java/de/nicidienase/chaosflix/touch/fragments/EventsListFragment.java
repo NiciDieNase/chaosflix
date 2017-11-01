@@ -3,12 +3,14 @@ package de.nicidienase.chaosflix.touch.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,12 +24,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class EventsFragment extends ChaosflixFragment {
-
+public class EventsListFragment extends ChaosflixFragment {
 
 	private static final String ARG_COLUMN_COUNT = "column-count";
 	private static final String ARG_CONFERENCE = "conference";
 	private static final String LAYOUTMANAGER_STATE = "layoutmanager-state";
+	private static final String TAG = EventsListFragment.class.getSimpleName();
+
 	private int mColumnCount = 1;
 	private OnEventsListFragmentInteractionListener mListener;
 
@@ -39,8 +42,8 @@ public class EventsFragment extends ChaosflixFragment {
 	CompositeDisposable mDisposable = new CompositeDisposable();
 	private LinearLayoutManager layoutManager;
 
-	public static EventsFragment newInstance(long conferenceId, int columnCount) {
-		EventsFragment fragment = new EventsFragment();
+	public static EventsListFragment newInstance(long conferenceId, int columnCount) {
+		EventsListFragment fragment = new EventsListFragment();
 		Bundle args = new Bundle();
 		args.putInt(ARG_COLUMN_COUNT, columnCount);
 		args.putLong(ARG_CONFERENCE, conferenceId);
@@ -70,6 +73,11 @@ public class EventsFragment extends ChaosflixFragment {
 		}
 	}
 
+	@Override
+	public void onPause() {
+		super.onPause();
+		getArguments().putParcelable(LAYOUTMANAGER_STATE, layoutManager.onSaveInstanceState());
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -83,7 +91,6 @@ public class EventsFragment extends ChaosflixFragment {
 		} else {
 			layoutManager = new GridLayoutManager(context, mColumnCount);
 		}
-		layoutManager.onRestoreInstanceState(savedInstanceState);
 		recyclerView.setLayoutManager(layoutManager);
 
 		mAdapter = new EventRecyclerViewAdapter(mListener);
@@ -96,14 +103,23 @@ public class EventsFragment extends ChaosflixFragment {
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(conference -> {
-					if(savedInstanceState != null){
-						Parcelable parcelable = savedInstanceState.getParcelable(LAYOUTMANAGER_STATE);
-						layoutManager.onRestoreInstanceState(parcelable);
+					Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
+					if(layoutState != null){
+						layoutManager.onRestoreInstanceState(layoutState);
 					}
 					mAdapter.setItems(conference);
 					mToolbar.setTitle(conference.getTitle());
 				}, throwable -> Snackbar.make(container,throwable.getMessage(),Snackbar.LENGTH_INDEFINITE).show()));
 		return view;
+	}
+
+	@Override
+	public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+		super.onViewStateRestored(savedInstanceState);
+		if(savedInstanceState != null){
+			layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUTMANAGER_STATE));
+			Log.d(TAG,"Layout State restored");
+		}
 	}
 
 	@Override
@@ -116,6 +132,7 @@ public class EventsFragment extends ChaosflixFragment {
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putParcelable(LAYOUTMANAGER_STATE,layoutManager.onSaveInstanceState());
+		Log.d(TAG, "Layout state saved");
 	}
 
 	@Override

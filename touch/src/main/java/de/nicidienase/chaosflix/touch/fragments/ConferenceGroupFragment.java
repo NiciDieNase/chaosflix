@@ -2,6 +2,7 @@ package de.nicidienase.chaosflix.touch.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -76,9 +77,9 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 					.observeOn(AndroidSchedulers.mainThread())
 					.subscribe(conferences -> {
 						mAdapter.setItems(conferences);
-						if(savedInstanceState != null){
-							mLayoutManager.onRestoreInstanceState(
-									savedInstanceState.getParcelable(LAYOUTMANAGER_STATE));
+						Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
+						if(layoutState != null){
+							mLayoutManager.onRestoreInstanceState(layoutState);
 						}
 					}));
 		}
@@ -100,6 +101,12 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putParcelable(LAYOUTMANAGER_STATE,mLayoutManager.onSaveInstanceState());
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		getArguments().putParcelable(LAYOUTMANAGER_STATE, mLayoutManager.onSaveInstanceState());
 	}
 
 	@Override

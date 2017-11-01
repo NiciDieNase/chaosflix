@@ -28,11 +28,11 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 
 	private static final String ARG_COLUMN_COUNT = "column-count";
 	private static final String CURRENTTAB_KEY = "current_tab";
+	private static final String VIEWPAGER_STATE = "viewpager_state";
 	private int mColumnCount = 1;
 	private OnConferenceListFragmentInteractionListener mListener;
 	private Toolbar mToolbar;
 	private Context mContext;
-	private int mCurrentTab = -1;
 	private ViewPager mViewPager;
 
 	private final CompositeDisposable mDisposable = new CompositeDisposable();
@@ -62,10 +62,7 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Log.d(TAG,"onCreate");
-		if(savedInstanceState != null){
-			mCurrentTab = savedInstanceState.getInt(CURRENTTAB_KEY);
-		}
+		Log.d(TAG, "onCreate");
 		if (getArguments() != null) {
 			mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
 		}
@@ -77,15 +74,15 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_tab_pager_layout, container, false);
 		ConferenceGroupsFragmentPager fragmentPager
-				= new ConferenceGroupsFragmentPager(this.getContext(),getChildFragmentManager());
+				= new ConferenceGroupsFragmentPager(this.getContext(), getChildFragmentManager());
 
 		getViewModel().getConferencesWrapper()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(conferencesWrapper -> {
 					fragmentPager.setContent(conferencesWrapper.getConferenceMap());
-					mViewPager.setCurrentItem(mCurrentTab);
-						});
+					mViewPager.onRestoreInstanceState(getArguments().getParcelable(VIEWPAGER_STATE));
+				});
 
 		mViewPager = view.findViewById(R.id.viewpager);
 		mViewPager.setAdapter(fragmentPager);
@@ -93,15 +90,17 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 		TabLayout tabLayout = view.findViewById(R.id.sliding_tabs);
 		tabLayout.setupWithViewPager(mViewPager);
 
-		if(mCurrentTab != -1){
-			mViewPager.setCurrentItem(mCurrentTab);
-		}
-
 		mToolbar = view.findViewById(R.id.toolbar);
-		((AppCompatActivity)mContext).setSupportActionBar(mToolbar);
+		((AppCompatActivity) mContext).setSupportActionBar(mToolbar);
 //		mToolbar.setLogo(R.drawable.toolbar_icon);
 
 		return view;
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		getArguments().putParcelable(VIEWPAGER_STATE, mViewPager.onSaveInstanceState());
 	}
 
 	@Override
@@ -111,18 +110,12 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putInt(CURRENTTAB_KEY, mViewPager.getCurrentItem());
-	}
-
-	@Override
 	public void onDetach() {
 		super.onDetach();
 		mListener = null;
 	}
 
-	public interface OnConferenceListFragmentInteractionListener{
+	public interface OnConferenceListFragmentInteractionListener {
 		void onConferenceSelected(Conference conference);
 	}
 }
