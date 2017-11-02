@@ -8,6 +8,7 @@ buildscript {
         maven {
             url "https://maven.google.com"
         }
+        google()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.0'
@@ -23,7 +24,7 @@ allprojects {
         mavenLocal()
         jcenter()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "https://maven.google.com" }
+        google()
     }
 }
 

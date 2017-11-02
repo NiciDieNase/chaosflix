@@ -51,7 +51,7 @@ android {
 
 
 dependencies {
-    implementation 'de.nicidienase.chaosflix:common:1.1.0-SNAPSHOT'
+    implementation 'de.nicidienase.chaosflix:common:1.2.0-SNAPSHOT'
 
     implementation 'com.android.support:multidex:1.0.1'
 
@@ -61,14 +61,14 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
 
-    implementation "android.arch.lifecycle:runtime:1.0.3"
+//    implementation "android.arch.lifecycle:runtime:1.0.3"
     implementation "android.arch.lifecycle:extensions:${rootProject.ext.archCompVersion}"
     implementation "android.arch.lifecycle:common-java8:1.0.0-rc1"
     implementation "android.arch.persistence.room:runtime:${rootProject.ext.archCompVersion}"
     implementation "android.arch.persistence.room:rxjava2:${rootProject.ext.archCompVersion}"
     kapt 'com.android.databinding:compiler:3.1.0-alpha01'
     kapt "android.arch.lifecycle:compiler:${rootProject.ext.archCompVersion}"
-    kapt "android.arch.persistence.room:compiler:${rootProject.ext.archCompVersion}"
+//    kapt "android.arch.persistence.room:compiler:${rootProject.ext.archCompVersion}"
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.1.50"
 
     implementation 'com.squareup.retrofit2:retrofit:2.2.0'

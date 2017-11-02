@@ -13,6 +13,7 @@ import java.util.Map;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
 import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper;
+import de.nicidienase.chaosflix.common.entities.recording.persistence.ConferenceGroup;
 import de.nicidienase.chaosflix.touch.fragments.ConferenceGroupFragment;
 
 /**
@@ -22,7 +23,7 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 
 	private static final String TAG = ConferenceGroupsFragmentPager.class.getSimpleName();
 	private final Context mContext;
-	private List<String> orderedConferencesList = new ArrayList<>();
+	private List<ConferenceGroup> conferenceGroupList = new ArrayList<>();
 
 	public ConferenceGroupsFragmentPager(Context context, FragmentManager fm) {
 		super(fm);
@@ -31,7 +32,7 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 
 	@Override
 	public Fragment getItem(int position) {
-		String confKey = orderedConferencesList.get(position);
+		String confKey = conferenceGroupList.get(position);
 		ConferenceGroupFragment conferenceFragment = ConferenceGroupFragment.newInstance(confKey,1);
 		conferenceFragment.setRetainInstance(true);
 		Log.d(TAG,"Created Fragment for: " + confKey);

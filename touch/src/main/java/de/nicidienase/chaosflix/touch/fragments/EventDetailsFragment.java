@@ -18,9 +18,10 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.recording.Event;
-import de.nicidienase.chaosflix.common.entities.recording.Recording;
+import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
+import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording;
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsNewBinding;
+import de.nicidienase.chaosflix.touch.Util;
 import io.reactivex.disposables.CompositeDisposable;
 
 public class EventDetailsFragment extends ChaosflixFragment {
@@ -28,15 +29,15 @@ public class EventDetailsFragment extends ChaosflixFragment {
 	private static final String EVENT_PARAM = "event_param";
 
 	private OnEventDetailsFragmentInteractionListener mListener;
-	private Event mEvent;
+	private PersistentEvent mEvent;
 
 	private boolean appBarExpanded;
 	private CompositeDisposable disposable = new CompositeDisposable();
 
-	public static EventDetailsFragment newInstance(Event event) {
+	public static EventDetailsFragment newInstance(PersistentEvent event) {
 		EventDetailsFragment fragment = new EventDetailsFragment();
 		Bundle args = new Bundle();
-		args.putParcelable(EVENT_PARAM,event);
+		args.putParcelable(EVENT_PARAM, event);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -72,20 +73,20 @@ public class EventDetailsFragment extends ChaosflixFragment {
 			play();
 		});
 
-		if(mListener != null)
+		if (mListener != null)
 			mListener.setActionbar(binding.animToolbar);
 
 		binding.appbar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
 			double v = (double) Math.abs(verticalOffset) / appBarLayout.getTotalScrollRange();
-			if(appBarExpanded ^ v > 0.8){
-				if(mListener != null)
+			if (appBarExpanded ^ v > 0.8) {
+				if (mListener != null)
 					mListener.onToolbarStateChange();
 				appBarExpanded = v > 0.8;
 				binding.collapsingToolbar.setTitleEnabled(appBarExpanded);
 			}
 		});
 
-		binding.thumbImage.setTransitionName(getString(R.string.thumbnail)+mEvent.getApiID());
+		binding.thumbImage.setTransitionName(getString(R.string.thumbnail) + mEvent.getEventId());
 		Picasso.with(getContext())
 				.load(mEvent.getThumbUrl())
 				.noFade()
@@ -103,8 +104,11 @@ public class EventDetailsFragment extends ChaosflixFragment {
 	}
 
 	private void play() {
-		if(mListener != null){
-			mListener.playItem(mEvent,mEvent.getOptimalStream());
+		if (mListener != null) {
+			getViewModel().getRecordingForEvent(mEvent.getEventId())
+					.subscribe(persistentRecordings -> {
+						mListener.playItem(mEvent, Util.Companion.getOptimalStream(persistentRecordings));
+					});
 		}
 	}
 
@@ -134,7 +138,7 @@ public class EventDetailsFragment extends ChaosflixFragment {
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-		disposable.add(getViewModel().getBookmark(mEvent.getApiID())
+		disposable.add(getViewModel().getBookmark(mEvent.getEventId())
 				.subscribe(watchlistItem -> {
 					if (watchlistItem != null) {
 						menu.findItem(R.id.action_bookmark).setVisible(false);
@@ -146,24 +150,24 @@ public class EventDetailsFragment extends ChaosflixFragment {
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
-		if(appBarExpanded)
-			inflater.inflate(R.menu.details_menu,menu);
+		if (appBarExpanded)
+			inflater.inflate(R.menu.details_menu, menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()){
+		switch (item.getItemId()) {
 			case R.id.action_play:
 				play();
 				return true;
 			case R.id.action_bookmark:
-				getViewModel().createBookmark(mEvent.getApiID());
+				getViewModel().createBookmark(mEvent.getEventId());
 				return true;
 			case R.id.action_unbookmark:
-				getViewModel().removeBookmark(mEvent.getApiID());
+				getViewModel().removeBookmark(mEvent.getEventId());
 				return true;
 			case R.id.action_download:
-				Snackbar.make(item.getActionView(),"Start download",Snackbar.LENGTH_LONG).show();
+				Snackbar.make(item.getActionView(), "Start download", Snackbar.LENGTH_LONG).show();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -172,7 +176,9 @@ public class EventDetailsFragment extends ChaosflixFragment {
 
 	public interface OnEventDetailsFragmentInteractionListener {
 		void onToolbarStateChange();
+
 		void setActionbar(Toolbar toolbar);
-		void playItem(Event event, Recording recording);
+
+		void playItem(PersistentEvent event, PersistentRecording recording);
 	}
 }

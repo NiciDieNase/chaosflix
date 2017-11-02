@@ -4,7 +4,7 @@
         <import type="android.text.TextUtils"/>
         <variable
             name="event"
-            type="de.nicidienase.chaosflix.common.entities.recording.Event"/>
+            type="de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout

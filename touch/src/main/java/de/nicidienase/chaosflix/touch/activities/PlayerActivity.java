@@ -9,8 +9,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.recording.Event;
-import de.nicidienase.chaosflix.common.entities.recording.Recording;
+import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
+import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording;
 import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgress;
 import de.nicidienase.chaosflix.touch.ViewModelFactory;
 import de.nicidienase.chaosflix.touch.fragments.ExoPlayerFragment;
@@ -35,7 +35,7 @@ public class PlayerActivity extends AppCompatActivity implements ExoPlayerFragme
 		long eventId = getIntent().getExtras().getLong(EVENT_ID);
 		long recordingId = getIntent().getExtras().getLong(RECORDING_ID);
 
-		if(savedInstanceState == null){
+		if (savedInstanceState == null) {
 			loadFragment(eventId, recordingId);
 		}
 	}
@@ -47,19 +47,21 @@ public class PlayerActivity extends AppCompatActivity implements ExoPlayerFragme
 		int eventId = intent.getExtras().getInt(EVENT_ID);
 		int recordingId = intent.getExtras().getInt(RECORDING_ID);
 
-		loadFragment(eventId,recordingId);
+		loadFragment(eventId, recordingId);
 	}
 
 	private void loadFragment(long eventId, long recordingId) {
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		Observable.zip(viewModel.getEvent(eventId),viewModel.getRecording(recordingId),
-				(event, recording) -> new Object[]{event,recording})
+		Flowable.zip(viewModel.getEvent(eventId), viewModel.getRecording(recordingId),
+				(event, recording) -> new Object[]{event, recording})
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(objects -> {
+					PersistentEvent event = (PersistentEvent) objects[0];
+					PersistentRecording recording = (PersistentRecording) objects[1];
 					Fragment playerFragment =
-							ExoPlayerFragment.newInstance((Event)objects[0],(Recording) objects[1]);
-					ft.replace(R.id.fragment_container,playerFragment);
+							ExoPlayerFragment.newInstance(event, recording);
+					ft.replace(R.id.fragment_container, playerFragment);
 					ft.commit();
 				});
 	}
@@ -71,6 +73,6 @@ public class PlayerActivity extends AppCompatActivity implements ExoPlayerFragme
 
 	@Override
 	public void setPlaybackProgress(long apiId, long progress) {
-		viewModel.setPlaybackProgress(apiId,progress);
+		viewModel.setPlaybackProgress(apiId, progress);
 	}
 }

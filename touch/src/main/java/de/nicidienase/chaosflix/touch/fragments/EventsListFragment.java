@@ -17,9 +17,13 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.recording.Event;
+import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentConference;
+import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.touch.adapters.EventRecyclerViewAdapter;
+import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -97,41 +101,36 @@ public class EventsListFragment extends ChaosflixFragment {
 		recyclerView.setAdapter(mAdapter);
 
 		mToolbar = view.findViewById(R.id.toolbar);
-		((AppCompatActivity)mContext).setSupportActionBar(mToolbar);
+		((AppCompatActivity) mContext).setSupportActionBar(mToolbar);
 
 		mDisposable.add(getViewModel().getConference(mConferenceId)
-				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(conference -> {
-					Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
-					if(layoutState != null){
-						layoutManager.onRestoreInstanceState(layoutState);
-					}
-					mAdapter.setItems(conference);
-					mToolbar.setTitle(conference.getTitle());
-				}, throwable -> Snackbar.make(container,throwable.getMessage(),Snackbar.LENGTH_INDEFINITE).show()));
+				.subscribe(conference -> mToolbar.setTitle(conference.getTitle())));
+
+		mDisposable.add(getViewModel().getEventsforConference(mConferenceId).subscribe(
+				persistentEvent -> mAdapter.addItem(persistentEvent)));
 		return view;
 	}
 
 	@Override
 	public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
 		super.onViewStateRestored(savedInstanceState);
-		if(savedInstanceState != null){
+		if (savedInstanceState != null) {
 			layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUTMANAGER_STATE));
-			Log.d(TAG,"Layout State restored");
+			Log.d(TAG, "Layout State restored");
 		}
 	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.events_menu,menu);
+		inflater.inflate(R.menu.events_menu, menu);
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putParcelable(LAYOUTMANAGER_STATE,layoutManager.onSaveInstanceState());
+		outState.putParcelable(LAYOUTMANAGER_STATE, layoutManager.onSaveInstanceState());
 		Log.d(TAG, "Layout state saved");
 	}
 
@@ -147,8 +146,8 @@ public class EventsListFragment extends ChaosflixFragment {
 		mDisposable.clear();
 	}
 
-	public interface OnEventsListFragmentInteractionListener{
-		void onEventSelected(Event event, View v);
+	public interface OnEventsListFragmentInteractionListener {
+		void onEventSelected(PersistentEvent event, View v);
 	}
 
 }

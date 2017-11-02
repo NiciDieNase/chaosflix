@@ -12,15 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.recording.Conference;
+import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentConference;
 import de.nicidienase.chaosflix.touch.ConferenceGroupsFragmentPager;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-/**
- * Created by felix on 19.09.17.
- */
 
 public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 
@@ -36,7 +33,6 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 	private ViewPager mViewPager;
 
 	private final CompositeDisposable mDisposable = new CompositeDisposable();
-
 
 	public static ConferencesTabBrowseFragment newInstance(int columnCount) {
 		ConferencesTabBrowseFragment fragment = new ConferencesTabBrowseFragment();
@@ -76,7 +72,7 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 		ConferenceGroupsFragmentPager fragmentPager
 				= new ConferenceGroupsFragmentPager(this.getContext(), getChildFragmentManager());
 
-		getViewModel().getConferencesWrapper()
+		getViewModel().getConferencesMap()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(conferencesWrapper -> {
@@ -116,6 +112,6 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 	}
 
 	public interface OnConferenceListFragmentInteractionListener {
-		void onConferenceSelected(Conference conference);
+		void onConferenceSelected(PersistentConference conference);
 	}
 }

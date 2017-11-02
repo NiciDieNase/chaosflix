@@ -43,8 +43,8 @@ import com.google.android.exoplayer2.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.recording.Event;
-import de.nicidienase.chaosflix.common.entities.recording.Recording;
+import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
+import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording;
 import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgress;
 import io.reactivex.Flowable;
 import io.reactivex.disposables.CompositeDisposable;
@@ -74,14 +74,14 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	private String mUserAgent;
 	private Handler mainHandler = new Handler();
 	private boolean mPlaybackState = true;
-	private Event mEvent;
-	private Recording mRecording;
+	private PersistentEvent mEvent;
+	private PersistentRecording mRecording;
 	private SimpleExoPlayer exoPlayer;
 
 	public ExoPlayerFragment() {
 	}
 
-	public static ExoPlayerFragment newInstance(Event event, Recording recording) {
+	public static ExoPlayerFragment newInstance(PersistentEvent event, PersistentRecording recording) {
 		ExoPlayerFragment fragment = new ExoPlayerFragment();
 		Bundle args = new Bundle();
 		args.putParcelable(ARG_EVENT, event);
@@ -131,7 +131,7 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 		super.onResume();
 		if (exoPlayer != null) {
 			exoPlayer.setPlayWhenReady(mPlaybackState);
-			disposable.add(mListener.getPlaybackProgress(mEvent.getApiID())
+			disposable.add(mListener.getPlaybackProgress(mEvent.getEventId())
 					.subscribe(playbackProgress -> {
 						if (playbackProgress != null) {
 							exoPlayer.seekTo(playbackProgress.getProgress());
@@ -152,7 +152,7 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	public void onPause() {
 		super.onPause();
 		if (exoPlayer != null) {
-			mListener.setPlaybackProgress(mEvent.getApiID(), exoPlayer.getCurrentPosition());
+			mListener.setPlaybackProgress(mEvent.getEventId(), exoPlayer.getCurrentPosition());
 			exoPlayer.setPlayWhenReady(false);
 		}
 		disposable.clear();

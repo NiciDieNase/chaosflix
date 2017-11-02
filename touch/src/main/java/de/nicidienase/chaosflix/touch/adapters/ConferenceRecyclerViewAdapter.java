@@ -7,9 +7,10 @@ import java.util.List;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.Conference;
+import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentConference;
 import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 
-public class ConferenceRecyclerViewAdapter extends ItemRecyclerViewAdapter<Conference> {
+public class ConferenceRecyclerViewAdapter extends ItemRecyclerViewAdapter<PersistentConference> {
 
 	private final ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener mListener;
 
@@ -17,7 +18,7 @@ public class ConferenceRecyclerViewAdapter extends ItemRecyclerViewAdapter<Confe
 		this(new ArrayList<>(),listener);
 	}
 
-	public ConferenceRecyclerViewAdapter(List<Conference> items, ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener listener) {
+	public ConferenceRecyclerViewAdapter(List<PersistentConference> items, ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener listener) {
 		super(items);
 		mListener = listener;
 	}
@@ -35,7 +36,7 @@ public class ConferenceRecyclerViewAdapter extends ItemRecyclerViewAdapter<Confe
 
 		holder.mView.setOnClickListener(v -> {
 			if (null != mListener) {
-				mListener.onConferenceSelected((Conference) holder.mItem);
+				mListener.onConferenceSelected((PersistentConference) holder.mItem);
 			}
 		});
 	}

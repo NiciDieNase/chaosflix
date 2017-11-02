@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.common.entities.recording.persistence.ConferenceGroup;
 import de.nicidienase.chaosflix.touch.adapters.ConferenceRecyclerViewAdapter;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -21,7 +22,7 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 	private static final String TAG = ConferenceGroupFragment.class.getSimpleName();
 
 	private static final String ARG_COLUMN_COUNT = "column-count";
-	private static final String ARG_GROUP_NAME = "group-name";
+	private static final String ARG_GROUP = "group-name";
 	private static final String LAYOUTMANAGER_STATE = "layoutmanager-state";
 	private ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener mListener;
 
@@ -36,11 +37,11 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 	public ConferenceGroupFragment() {
 	}
 
-	public static ConferenceGroupFragment newInstance(String group,int columnCount) {
+	public static ConferenceGroupFragment newInstance(ConferenceGroup group, int columnCount) {
 		ConferenceGroupFragment fragment = new ConferenceGroupFragment();
 		Bundle args = new Bundle();
 		args.putInt(ARG_COLUMN_COUNT, columnCount);
-		args.putString(ARG_GROUP_NAME, group);
+		args.putParcelable(ARG_GROUP, group);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -50,7 +51,7 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 		super.onCreate(savedInstanceState);
 		if (getArguments() != null) {
 			mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-			mGroupName = getArguments().getString(ARG_GROUP_NAME);
+			mGroupName = getArguments().getString(ARG_GROUP);
 		}
 
 	}

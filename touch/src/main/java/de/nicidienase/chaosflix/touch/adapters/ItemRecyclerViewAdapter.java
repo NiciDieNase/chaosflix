@@ -29,6 +29,17 @@ public abstract class ItemRecyclerViewAdapter<T> extends RecyclerView.Adapter<It
 		notifyDataSetChanged();
 	}
 
+	public void addItem(T item){
+		if(mItems.contains(item)){
+			int index = mItems.indexOf(item);
+			mItems.set(index,item);
+			notifyItemChanged(index);
+		} else {
+			mItems.add(item);
+			notifyItemInserted(mItems.size()-1);
+		}
+	}
+
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		View view = LayoutInflater.from(parent.getContext())

@@ -10,9 +10,7 @@ class ChaosflixApplication: Application(){
     override fun onCreate() {
         super.onCreate()
         APPLICATION_CONTEXT = this
-        if(BuildConfig.DEBUG){
-            Stetho.initializeWithDefaults(this);
-        }
+        Stetho.initializeWithDefaults(this);
     }
 
     companion object {
