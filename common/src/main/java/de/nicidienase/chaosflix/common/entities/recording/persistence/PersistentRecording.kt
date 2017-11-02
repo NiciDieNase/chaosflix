@@ -4,6 +4,8 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
+import android.os.Parcel
+import android.os.Parcelable
 import de.nicidienase.chaosflix.common.entities.recording.Recording
 
 @Entity(tableName = "recording",
@@ -30,7 +32,8 @@ open class PersistentRecording(
         var url: String = "",
         var eventUrl: String = "",
         var conferenceUrl: String = ""
-) {
+): Parcelable {
+
     @Ignore
     constructor(rec: Recording) : this(rec.recordingID, rec.eventID,
             rec.size, rec.length, rec.mimeType,
@@ -41,4 +44,66 @@ open class PersistentRecording(
     fun toRecording(): Recording = Recording(size, length, mimeType, language,
             filename, state, folder, isHighQuality, width, height, updatedAt,
             recordingUrl, url, eventUrl, conferenceUrl)
+
+    override fun equals(other: Any?): Boolean {
+        if(other is PersistentRecording)
+            return filename.equals(other.filename)
+        else
+            return super.equals(other)
+    }
+
+    @Ignore
+    constructor(parcel: Parcel) : this(
+            parcel.readLong(),
+            parcel.readLong(),
+            parcel.readInt(),
+            parcel.readInt(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readByte() != 0.toByte(),
+            parcel.readInt(),
+            parcel.readInt(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString()) {
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeLong(recordingId)
+        parcel.writeLong(eventId)
+        parcel.writeInt(size)
+        parcel.writeInt(length)
+        parcel.writeString(mimeType)
+        parcel.writeString(language)
+        parcel.writeString(filename)
+        parcel.writeString(state)
+        parcel.writeString(folder)
+        parcel.writeByte(if (isHighQuality) 1 else 0)
+        parcel.writeInt(width)
+        parcel.writeInt(height)
+        parcel.writeString(updatedAt)
+        parcel.writeString(recordingUrl)
+        parcel.writeString(url)
+        parcel.writeString(eventUrl)
+        parcel.writeString(conferenceUrl)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<PersistentRecording> {
+        override fun createFromParcel(parcel: Parcel): PersistentRecording {
+            return PersistentRecording(parcel)
+        }
+
+        override fun newArray(size: Int): Array<PersistentRecording?> {
+            return arrayOfNulls(size)
+        }
+    }
 }

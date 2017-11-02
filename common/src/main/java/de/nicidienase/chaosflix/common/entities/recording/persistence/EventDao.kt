@@ -10,20 +10,17 @@ import io.reactivex.Flowable
 @Dao
 interface EventDao{
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertEvent(vararg events: PersistentEvent)
+    fun insertEvent(vararg events: PersistentEvent): LongArray
 
     @Query("SELECT * FROM event")
-    fun getAllEvents(): Flowable<List<PersistentEvent>>
+    fun getAllEvents(): Flowable<PersistentEvent>
 
     @Query("SELECT * FROM event WHERE title LIKE :search")
-    fun findEventByTitle(search: String): Flowable<List<PersistentEvent>>
+    fun findEventByTitle(search: String): Flowable<PersistentEvent>
 
     @Query("SELECT * FROM event WHERE eventId = :id")
-    fun findEventById(id: Long): Flowable<List<PersistentEvent>>
+    fun findEventById(id: Long): Flowable<PersistentEvent>
 
     @Query("SELECT * FROM event WHERE conferenceId = :id")
-    fun getEventsForConference(id: Long):Flowable<List<PersistentEvent>>
-
-    @Query("SELECT * FROM speaker_relation INNER JOIN event on speaker_relation.eventId = event.eventId WHERE speaker_relation.personID = :id")
-    fun getEventsBySpeakerId(id: Long): Flowable<List<PersistentEvent>>
+    fun findEventsByConference(id: Long):Flowable<PersistentEvent>
 }

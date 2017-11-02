@@ -64,7 +64,7 @@ open class ConferencesWrapper(var conferences: List<Conference>){
         }
     }
 
-    fun getListForTag(s: String): MutableList<Conference> {
+    private fun getListForTag(s: String): MutableList<Conference> {
         if (conferenceMap.keys.contains(s)) {
             return conferenceMap[s]!!
         } else {

@@ -18,16 +18,16 @@ import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItemDao
         PersistentEvent::class,
         PersistentRecording::class,
         ConferenceGroup::class,
-        SpeakerRelation::class,
-        Person::class,
-        Tag::class,
         PlaybackProgress::class,
         WatchlistItem::class), version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ChaosflixDatabase : RoomDatabase() {
     abstract fun playbackProgressDao(): PlaybackProgressDao
     abstract fun watchlistItemDao(): WatchlistItemDao
+
     abstract fun conferenceDao(): ConferenceDao
     abstract fun eventDao(): EventDao
     abstract fun recordingDao(): RecordingDao
+
+    abstract fun conferenceGroupDao(): ConferenceGroupDao
 }

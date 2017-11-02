@@ -4,29 +4,25 @@ import de.nicidienase.chaosflix.common.entities.recording.Conference
 import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.entities.recording.Event
 import de.nicidienase.chaosflix.common.entities.recording.Recording
-import io.reactivex.Observable
+import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
-
-/**
- * Created by felix on 17.03.17.
- */
 
 interface RecordingService {
 
     @GET("public/conferences")
-    fun getConferences(): Observable<ConferencesWrapper>
+    fun getConferencesWrapper(): Single<ConferencesWrapper>
 
     @GET("public/events")
-    fun getAllEvents(): Observable<List<Event>>
+    fun getAllEvents(): Single<List<Event>>
 
     @GET("public/conferences/{id}")
-    fun getConference(@Path("id") id: Long): Observable<Conference>
+    fun getConference(@Path("id") id: Long): Single<Conference>
 
     @GET("public/events/{id}")
-    fun getEvent(@Path("id") id: Long): Observable<Event>
+    fun getEvent(@Path("id") id: Long): Single<Event>
 
     @GET("public/recordings/{id}")
-    fun getRecording(@Path("id") id: Long): Observable<Recording>
+    fun getRecording(@Path("id") id: Long): Single<Recording>
 
 }

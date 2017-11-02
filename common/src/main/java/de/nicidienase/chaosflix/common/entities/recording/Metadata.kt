@@ -1,14 +1,9 @@
-package de.nicidienase.chaosflix.common.entities.recording.persistence
+package de.nicidienase.chaosflix.common.entities.recording
 
 import android.os.Parcel
 import android.os.Parcelable
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-
-
-/**
- * Created by felix on 06.04.17.
- */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 open class Metadata(

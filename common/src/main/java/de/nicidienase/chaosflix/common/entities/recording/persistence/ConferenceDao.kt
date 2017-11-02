@@ -9,7 +9,7 @@ import io.reactivex.Flowable
 @Dao
 interface ConferenceDao{
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertConferences(vararg conferences: PersistentConference)
+    fun insertConferences(vararg conferences: PersistentConference): LongArray
 
     @Query("SELECT * FROM conference")
     fun getAllConferences(): Flowable<List<PersistentConference>>
@@ -17,6 +17,9 @@ interface ConferenceDao{
     @Query("SELECT * FROM conference WHERE title LIKE :search")
     fun findConferenceByTitle(search: String): Flowable<List<PersistentConference>>
 
-    @Query("SELECT * FROM conference WHERE conferenceId = :id")
-    fun findConferenceById(id: Long): Flowable<List<PersistentConference>>
+    @Query("SELECT * FROM conference WHERE conferenceId = :id LIMIT 1")
+    fun findConferenceById(id: Long): Flowable<PersistentConference>
+
+    @Query("SELECT * FROM conference WHERE conferenceGroupId = :id")
+    fun findConferenceByGroup(id: Long): Flowable<List<PersistentConference>>
 }

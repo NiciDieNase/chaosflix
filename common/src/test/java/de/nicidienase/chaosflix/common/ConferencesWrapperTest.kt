@@ -3,7 +3,7 @@ package de.nicidienase.chaosflix.common
 import de.nicidienase.chaosflix.common.entities.recording.Conference
 import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.entities.recording.Event
-import de.nicidienase.chaosflix.common.entities.recording.persistence.Metadata
+import de.nicidienase.chaosflix.common.entities.recording.Metadata
 import de.nicidienase.chaosflix.common.entities.recording.Recording
 import org.junit.Test
 import org.mockito.Mockito.*

@@ -39,13 +39,15 @@ open class Conference(
 
         var events: List<Event>?
 
-) : Parcelable, Comparable<Conference> {
+) : Comparable<Conference> {
 
     var conferenceID: Long
 
     val eventsByTags: HashMap<String, MutableList<Event>>
 
     val sensibleTags: MutableSet<String> = HashSet()
+
+    var tagsUsefull: Boolean;
 
     init {
         eventsByTags = HashMap<String, MutableList<Event>>()
@@ -85,61 +87,10 @@ open class Conference(
                 sensibleTags.add(s)
             }
         }
-
-
+        tagsUsefull = sensibleTags.size > 0
     }
-
-    fun areTagsUsefull(): Boolean = sensibleTags.size > 0
-
-    @Ignore
-    protected constructor(`in`: Parcel) : this(
-            `in`.readString(),
-            `in`.readString(),
-            `in`.readString(),
-            `in`.readString(),
-            `in`.readString(),
-            `in`.readString(),
-            `in`.readString(),
-            `in`.readString(),
-            `in`.readString(),
-            `in`.readString(),
-            `in`.readString(),
-            `in`.createTypedArrayList(Event.CREATOR)
-    )
 
     override fun compareTo(conference: Conference): Int {
         return slug.compareTo(conference.slug)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    override fun writeToParcel(parcel: Parcel, i: Int) {
-        parcel.writeString(acronym)
-        parcel.writeString(aspectRatio)
-        parcel.writeString(title)
-        parcel.writeString(slug)
-        parcel.writeString(webgenLocation)
-        parcel.writeString(scheduleUrl)
-        parcel.writeString(logoUrl)
-        parcel.writeString(imagesUrl)
-        parcel.writeString(recordingsUrl)
-        parcel.writeString(url)
-        parcel.writeString(updatedAt)
-        parcel.writeTypedList(events)
-    }
-
-    companion object {
-
-        val CREATOR: Parcelable.Creator<Conference> = object : Parcelable.Creator<Conference> {
-            override fun createFromParcel(`in`: Parcel): Conference {
-                return Conference(`in`)
-            }
-
-            override fun newArray(size: Int): Array<Conference?> {
-                return arrayOfNulls(size)
-            }
-        }
     }
 }

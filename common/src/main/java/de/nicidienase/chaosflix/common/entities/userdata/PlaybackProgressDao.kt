@@ -16,5 +16,5 @@ interface PlaybackProgressDao{
     fun getProgressForEvent(id:Long): Flowable<PlaybackProgress>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveProgress(progress: PlaybackProgress)
+    fun saveProgress(progress: PlaybackProgress): Long
 }

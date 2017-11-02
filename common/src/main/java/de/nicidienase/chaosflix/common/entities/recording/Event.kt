@@ -4,7 +4,6 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import de.nicidienase.chaosflix.common.entities.recording.persistence.Metadata
 
 import java.util.*
 
@@ -61,7 +60,7 @@ open class Event(@JsonProperty("conference_id")
 
                  @JsonProperty("promoted")
                  var isPromoted: Boolean = false
-) : Parcelable, Comparable<Event> {
+) : Comparable<Event> {
 
     var eventID: Long
     @JsonProperty("view_count")
@@ -80,58 +79,6 @@ open class Event(@JsonProperty("conference_id")
 
     fun getSpeakerString(): String?
         = persons?.joinToString(", ")
-
-    protected constructor(`in`: Parcel) : this(
-            conferenceId = `in`.readLong(),
-            guid = `in`.readString(),
-            title = `in`.readString(),
-            subtitle = `in`.readString(),
-            slug = `in`.readString(),
-            link = `in`.readString(),
-            description = `in`.readString(),
-            originalLanguage = `in`.readString(),
-            persons = `in`.createStringArray(),
-            tags = `in`.createStringArray(),
-            date = `in`.readString(),
-            releaseDate = `in`.readString(),
-            updatedAt = `in`.readString(),
-            length = `in`.readLong(),
-            thumbUrl = `in`.readString(),
-            posterUrl = `in`.readString(),
-            frontendLink = `in`.readString(),
-            url = `in`.readString(),
-            conferenceUrl = `in`.readString(),
-            recordings = `in`.createTypedArrayList(Recording.CREATOR),
-            metadata = `in`.readParcelable(Metadata::class.java.classLoader)
-    )
-
-    override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeLong(conferenceId)
-        dest.writeString(guid)
-        dest.writeString(title)
-        dest.writeString(subtitle)
-        dest.writeString(slug)
-        dest.writeString(link)
-        dest.writeString(description)
-        dest.writeString(originalLanguage)
-        dest.writeStringArray(persons)
-        dest.writeStringArray(tags)
-        dest.writeString(date)
-        dest.writeString(releaseDate)
-        dest.writeString(updatedAt)
-        dest.writeLong(length)
-        dest.writeString(thumbUrl)
-        dest.writeString(posterUrl)
-        dest.writeString(frontendLink)
-        dest.writeString(url)
-        dest.writeString(conferenceUrl)
-        dest.writeTypedList(recordings)
-        dest.writeParcelable(metadata, flags)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
 
     override fun compareTo(event: Event): Int {
         return slug.compareTo(event.slug)
@@ -172,19 +119,6 @@ open class Event(@JsonProperty("conference_id")
             result[0]
         } else {
             recordings.get(0)
-        }
-    }
-
-    companion object {
-
-        val CREATOR: Parcelable.Creator<Event> = object : Parcelable.Creator<Event> {
-            override fun createFromParcel(`in`: Parcel): Event {
-                return Event(`in`)
-            }
-
-            override fun newArray(size: Int): Array<Event?> {
-                return arrayOfNulls(size)
-            }
         }
     }
 }
