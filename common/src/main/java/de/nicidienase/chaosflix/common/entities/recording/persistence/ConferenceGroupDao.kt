@@ -8,7 +8,7 @@ import io.reactivex.Flowable
 
 @Dao
 interface ConferenceGroupDao{
-    @Query("SELECT * FROM conference_group")
+    @Query("SELECT * FROM conference_group ORDER BY order_index")
     fun getAll(): Flowable<List<ConferenceGroup>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

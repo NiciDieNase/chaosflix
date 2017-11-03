@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.common.entities.recording.persistence
 
+import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
@@ -12,6 +13,7 @@ class ConferenceGroup(
 ): Parcelable {
     @PrimaryKey(autoGenerate = true)
     var conferenceGroupId: Long = 0
+    @ColumnInfo(name = "order_index")
     var index: Int = 1_000_000
 
     constructor(parcel: Parcel) : this(parcel.readString()) {
