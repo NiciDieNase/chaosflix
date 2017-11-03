@@ -52,11 +52,6 @@ public class BrowseActivity extends AppCompatActivity implements
 		if (savedInstanceState == null) {
 			ConferencesTabBrowseFragment browseFragment
 					= ConferencesTabBrowseFragment.newInstance(getNumColumns());
-//			mViewModel.getConferencesWrapperAsLiveData().observe(browseFragment,conferencesWrapper -> {
-//				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//				ft.replace(R.id.fragment_container,browseFragment);
-//				ft.setReorderingAllowed(true);
-//				ft.commit();
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			ft.replace(R.id.fragment_container, browseFragment);
 			ft.setReorderingAllowed(true);
@@ -137,12 +132,6 @@ public class BrowseActivity extends AppCompatActivity implements
 		i.putExtra(PlayerActivity.EVENT_ID, event.getEventId());
 		i.putExtra(PlayerActivity.RECORDING_ID, recording.getEventId());
 		startActivity(i);
-
-//		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//		Fragment playerFragment = ExoPlayerFragment.newInstance(event,recording);
-//		ft.replace(R.id.fragment_container,playerFragment);
-//		ft.addToBackStack(null);
-//		ft.commit();
 	}
 
 	@Override
@@ -168,9 +157,5 @@ public class BrowseActivity extends AppCompatActivity implements
 	private void showAboutPage() {
 		Intent intent = new Intent(this, AboutActivity.class);
 		startActivity(intent);
-//		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//		ft.replace(R.id.fragment_container,new AboutFragment());
-//		ft.addToBackStack(null);
-//		ft.commit();
 	}
 }

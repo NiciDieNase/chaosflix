@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentConference;
-import de.nicidienase.chaosflix.touch.ConferenceGroupsFragmentPager;
+import de.nicidienase.chaosflix.touch.adapters.ConferenceGroupsFragmentPager;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -57,7 +57,6 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		Log.d(TAG, "onCreate");
 		if (getArguments() != null) {
 			mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -72,16 +71,16 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 		ConferenceGroupsFragmentPager fragmentPager
 				= new ConferenceGroupsFragmentPager(this.getContext(), getChildFragmentManager());
 
-		getViewModel().getConferencesMap()
+		getViewModel().getConferenceGroups()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(conferencesWrapper -> {
-					fragmentPager.setContent(conferencesWrapper.getConferenceMap());
-					mViewPager.onRestoreInstanceState(getArguments().getParcelable(VIEWPAGER_STATE));
-				});
+				.subscribe(conferenceGroups -> fragmentPager.setContent(conferenceGroups),
+						throwable -> Log.d(TAG,"onError: " + throwable.getMessage(),throwable),
+						() -> Log.d(TAG,"onComplete"));
 
 		mViewPager = view.findViewById(R.id.viewpager);
 		mViewPager.setAdapter(fragmentPager);
+		mViewPager.onRestoreInstanceState(getArguments().getParcelable(VIEWPAGER_STATE));
 
 		TabLayout tabLayout = view.findViewById(R.id.sliding_tabs);
 		tabLayout.setupWithViewPager(mViewPager);

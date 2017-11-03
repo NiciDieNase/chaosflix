@@ -43,9 +43,16 @@ object Util {
         }
     }
 
-    val orderedConferencesList: List<String> = Arrays.asList(
-            "congress", "sendezentrum", "camp",
-            "gpn", "mrmcd", "broadcast/chaosradio",
-            "eh", "froscon", "sigint",
-            "datenspuren", "fiffkon", "cryptocon")
+    val orderedConferencesList: List<String> = Arrays.asList("congress",
+            "gpn",
+            "mrmcd",
+            "broadcast/chaosradio",
+            "eh",
+            "camp",
+            "froscon",
+            "sendezentrum",
+            "sigint",
+            "datenspuren",
+            "fiffkon",
+            "cryptocon")
 }

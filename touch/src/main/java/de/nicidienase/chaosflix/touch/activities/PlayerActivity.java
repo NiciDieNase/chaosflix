@@ -52,18 +52,18 @@ public class PlayerActivity extends AppCompatActivity implements ExoPlayerFragme
 
 	private void loadFragment(long eventId, long recordingId) {
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		Flowable.zip(viewModel.getEvent(eventId), viewModel.getRecording(recordingId),
-				(event, recording) -> new Object[]{event, recording})
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(objects -> {
-					PersistentEvent event = (PersistentEvent) objects[0];
-					PersistentRecording recording = (PersistentRecording) objects[1];
-					Fragment playerFragment =
-							ExoPlayerFragment.newInstance(event, recording);
-					ft.replace(R.id.fragment_container, playerFragment);
-					ft.commit();
-				});
+//		Flowable.zip(viewModel.getEvent(eventId), viewModel.getRecording(recordingId),
+//				(event, recording) -> new Object[]{event, recording})
+//				.subscribeOn(Schedulers.io())
+//				.observeOn(AndroidSchedulers.mainThread())
+//				.subscribe(objects -> {
+//					PersistentEvent event = (PersistentEvent) objects[0];
+//					PersistentRecording recording = (PersistentRecording) objects[1];
+//					Fragment playerFragment =
+//							ExoPlayerFragment.newInstance(event, recording);
+//					ft.replace(R.id.fragment_container, playerFragment);
+//					ft.commit();
+//				});
 	}
 
 	@Override

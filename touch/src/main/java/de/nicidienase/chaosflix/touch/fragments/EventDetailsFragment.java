@@ -107,7 +107,7 @@ public class EventDetailsFragment extends ChaosflixFragment {
 		if (mListener != null) {
 			getViewModel().getRecordingForEvent(mEvent.getEventId())
 					.subscribe(persistentRecordings -> {
-						mListener.playItem(mEvent, Util.Companion.getOptimalStream(persistentRecordings));
+						mListener.playItem(mEvent, Util.INSTANCE.getOptimalStream(persistentRecordings));
 					});
 		}
 	}

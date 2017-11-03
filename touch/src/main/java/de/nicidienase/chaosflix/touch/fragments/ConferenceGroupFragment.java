@@ -24,15 +24,15 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 	private static final String ARG_COLUMN_COUNT = "column-count";
 	private static final String ARG_GROUP = "group-name";
 	private static final String LAYOUTMANAGER_STATE = "layoutmanager-state";
-	private ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener mListener;
+	private ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener listener;
 
-	private int mColumnCount = 1;
-	private String mGroupName;
+	private int columnCount = 1;
+	private ConferenceGroup conferenceGroup;
 
-	private ConferenceRecyclerViewAdapter mAdapter;
+	private ConferenceRecyclerViewAdapter conferencesAdapter;
 
-	CompositeDisposable mDisposable = new CompositeDisposable();
-	private RecyclerView.LayoutManager mLayoutManager;
+	CompositeDisposable disposable = new CompositeDisposable();
+	private RecyclerView.LayoutManager layoutManager;
 
 	public ConferenceGroupFragment() {
 	}
@@ -50,8 +50,8 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (getArguments() != null) {
-			mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-			mGroupName = getArguments().getString(ARG_GROUP);
+			columnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+			conferenceGroup = getArguments().getParcelable(ARG_GROUP);
 		}
 
 	}
@@ -63,26 +63,24 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 
 		if (view instanceof RecyclerView) {
 			Context context = view.getContext();
-			RecyclerView mRecyclerView = (RecyclerView) view;
-			if (mColumnCount <= 1) {
-				mLayoutManager = new LinearLayoutManager(context);
+			RecyclerView recyclerView = (RecyclerView) view;
+			if (columnCount <= 1) {
+				layoutManager = new LinearLayoutManager(context);
 			} else {
-				mLayoutManager = new GridLayoutManager(context, mColumnCount);
+				layoutManager = new GridLayoutManager(context, columnCount);
 			}
-			mRecyclerView.setLayoutManager(mLayoutManager);
+			recyclerView.setLayoutManager(layoutManager);
 
-			mAdapter = new ConferenceRecyclerViewAdapter(mListener);
-			mRecyclerView.setAdapter(mAdapter);
-			mDisposable.add(getViewModel().getConferencesByGroup(mGroupName)
+			conferencesAdapter = new ConferenceRecyclerViewAdapter(listener);
+			recyclerView.setAdapter(conferencesAdapter);
+			disposable.add(getViewModel().getConferencesByGroup(conferenceGroup.getConferenceGroupId())
 					.subscribeOn(Schedulers.io())
 					.observeOn(AndroidSchedulers.mainThread())
-					.subscribe(conferences -> {
-						mAdapter.setItems(conferences);
-						Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
-						if(layoutState != null){
-							mLayoutManager.onRestoreInstanceState(layoutState);
-						}
-					}));
+					.subscribe(conferenceList -> conferencesAdapter.setItems(conferenceList)));
+		}
+		Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
+		if (layoutState != null) {
+			layoutManager.onRestoreInstanceState(layoutState);
 		}
 		return view;
 	}
@@ -91,7 +89,7 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 	public void onAttach(Context context) {
 		super.onAttach(context);
 		if (context instanceof ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener) {
-			mListener = (ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener) context;
+			listener = (ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener) context;
 		} else {
 			throw new RuntimeException(context.toString()
 					+ " must implement OnListFragmentInteractionListener");
@@ -101,24 +99,24 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putParcelable(LAYOUTMANAGER_STATE,mLayoutManager.onSaveInstanceState());
+		outState.putParcelable(LAYOUTMANAGER_STATE, layoutManager.onSaveInstanceState());
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		getArguments().putParcelable(LAYOUTMANAGER_STATE, mLayoutManager.onSaveInstanceState());
+		getArguments().putParcelable(LAYOUTMANAGER_STATE, layoutManager.onSaveInstanceState());
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
-		mDisposable.clear();
+		disposable.clear();
 	}
 
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		mListener = null;
+		listener = null;
 	}
 }
