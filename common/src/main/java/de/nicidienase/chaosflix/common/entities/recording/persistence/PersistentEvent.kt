@@ -14,7 +14,7 @@ import java.util.*
                 parentColumns = (arrayOf("conferenceId")),
                 childColumns = arrayOf("conferenceId"))))
 
-open class PersistentEvent(@PrimaryKey(autoGenerate = false)
+data class PersistentEvent(@PrimaryKey(autoGenerate = false)
                            var eventId: Long = 0,
                            var conferenceId: Long = 0,
                            var guid: String = "",
@@ -44,17 +44,6 @@ open class PersistentEvent(@PrimaryKey(autoGenerate = false)
                            @Ignore
                            var recordings: List<Recording>? = null
 ): Parcelable {
-//    @Relation(parentColumn = "eventId", entityColumn = "recordingId")
-//    @Ignore
-//    var recordings: List<PersistentRecording>? = recordings?.map { PersistentRecording(it) }
-
-//    @Relation(parentColumn = "eventId", entityColumn = "personID")
-//    @Ignore
-//    var persons: List<Person>? = persons?.map { Person(it) }
-
-//    @Relation(parentColumn = "eventId", entityColumn = "tagID")
-//    @Ignore
-//    var tags: List<Tag>? = tags?.map { Tag(it) }
 
     constructor(parcel: Parcel) : this(
             parcel.readLong(),
@@ -87,12 +76,6 @@ open class PersistentEvent(@PrimaryKey(autoGenerate = false)
     fun getSpeakerString(): String?
             = persons?.joinToString(", ")
 
-    override fun equals(other: Any?): Boolean {
-        if(other is PersistentEvent)
-            return guid.equals(other.guid)
-        else
-            return super.equals(other)
-    }
     @Ignore
     constructor(event: Event) : this(event.eventID,
             event.conferenceId, event.guid, event.title,
@@ -146,6 +129,4 @@ open class PersistentEvent(@PrimaryKey(autoGenerate = false)
             return arrayOfNulls(size)
         }
     }
-
-
 }

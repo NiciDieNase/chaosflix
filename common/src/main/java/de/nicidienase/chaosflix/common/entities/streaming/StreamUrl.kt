@@ -3,7 +3,7 @@ package de.nicidienase.chaosflix.common.entities.streaming
 import android.os.Parcel
 import android.os.Parcelable
 
-class StreamUrl(var display: String,
+data class StreamUrl(var display: String,
     var tech: String,
     var url: String) : Parcelable {
 

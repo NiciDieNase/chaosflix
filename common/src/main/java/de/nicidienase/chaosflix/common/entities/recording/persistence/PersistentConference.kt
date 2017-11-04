@@ -7,7 +7,7 @@ import de.nicidienase.chaosflix.common.entities.recording.Conference
 import de.nicidienase.chaosflix.common.entities.recording.Event
 
 @Entity(tableName = "conference")
-open class PersistentConference(
+data class PersistentConference(
         @PrimaryKey
         var conferenceId: Long = 0,
         var conferenceGroupId: Long = 0,
@@ -23,14 +23,7 @@ open class PersistentConference(
         var url: String = "",
         var updatedAt: String = "",
         var tagsUsefull: Boolean = false
-//        events: List<Event>? = null
 ) : Parcelable {
-//    @Relation(parentColumn = "conferenceId", entityColumn = "eventId")
-//    var events: List<PersistentEvent>?
-
-//    init {
-//        this.events = events?.map { PersistentEvent(it) }
-//    }
 
     @Ignore
     constructor(con: Conference) : this(con.conferenceID,0,
@@ -40,14 +33,6 @@ open class PersistentConference(
 
     fun toConference() = Conference(acronym, aspectRatio, title, slug, webgenLocation,
             scheduleUrl, logoUrl, imagesUrl, recordingsUrl, url, updatedAt, null)
-
-    override fun equals(other: Any?): Boolean {
-        if(other is PersistentConference){
-            return title.equals(other.title)
-        } else {
-            return super.equals(other)
-        }
-    }
 
     @Ignore
     constructor(parcel: Parcel) : this(

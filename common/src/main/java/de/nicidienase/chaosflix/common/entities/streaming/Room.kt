@@ -10,7 +10,7 @@ import java.util.ArrayList
  * Created by felix on 23.03.17.
  */
 
-class Room (var slug: String,
+data class Room (var slug: String,
     var shedulename: String,
     var thumb: String,
     var link: String,

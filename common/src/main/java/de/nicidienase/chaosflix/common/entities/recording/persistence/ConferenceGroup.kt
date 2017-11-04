@@ -8,7 +8,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 @Entity(tableName = "conference_group", indices = arrayOf(Index(value = "name", unique = true)))
-class ConferenceGroup(
+data class ConferenceGroup(
     var name: String = ""
 ): Parcelable {
     @PrimaryKey(autoGenerate = true)

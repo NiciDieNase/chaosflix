@@ -9,7 +9,7 @@ import kotlin.collections.HashMap
  * Created by felix on 23.03.17.
  */
 
-class Stream(
+data class Stream(
         var slug: String,
         var display: String,
         var type: String,

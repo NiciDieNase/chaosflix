@@ -5,7 +5,7 @@ import android.arch.persistence.room.Entity
 import java.util.ArrayList
 
 @Entity(tableName = "group")
-class Group(
+data class Group(
     var group: String,
     internal var rooms: MutableList<Room>){
 

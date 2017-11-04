@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-open class Conference(
+data class Conference(
         var acronym: String = "",
 
         @JsonProperty("aspect_ratio")

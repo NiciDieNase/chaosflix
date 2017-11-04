@@ -8,56 +8,35 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.*
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-open class Event(@JsonProperty("conference_id")
+data class Event(@JsonProperty("conference_id")
                  var conferenceId: Long = 0,
-
                  var guid: String = "",
-
                  var title: String = "",
-
                  var subtitle: String? = "",
-
                  var slug: String = "",
-
                  var link: String? = "",
-
                  var description: String? = "",
-
                  @JsonProperty("original_language")
                  var originalLanguage: String = "",
-
                  var persons: Array<String>?,
-
                  var tags: Array<String>?,
-
                  var date: String? = "",
-
                  @JsonProperty("release_date")
                  var releaseDate: String = "",
-
                  @JsonProperty("updated_at")
                  var updatedAt: String = "",
-
                  var length: Long = 0,
-
                  @JsonProperty("thumb_url")
                  var thumbUrl: String = "",
-
                  @JsonProperty("poster_url")
                  var posterUrl: String = "",
-
                  @JsonProperty("frontend_link")
                  var frontendLink: String? = "",
-
                  var url: String = "",
-
                  @JsonProperty("conference_url")
                  var conferenceUrl: String = "",
-
                  var recordings: List<Recording>?,
-
                  var metadata: Metadata?,
-
                  @JsonProperty("promoted")
                  var isPromoted: Boolean = false
 ) : Comparable<Event> {
@@ -91,34 +70,5 @@ open class Event(@JsonProperty("conference_id")
             super.equals(obj)
         }
 
-    }
-
-    fun getOptimalStream(): Recording {
-        val recordings = recordings!!
-
-        val result = ArrayList<Recording>()
-        for (r in recordings) {
-            if (r.isHighQuality && r.mimeType == "video/mp4")
-                result.add(r)
-        }
-        if (result.size == 0) {
-            for (r in recordings) {
-                if (r.mimeType == "video/mp4")
-                    result.add(r)
-            }
-        }
-        if (result.size == 0) {
-            for (r in recordings) {
-                if (r.mimeType.startsWith("video/"))
-                    result.add(r)
-            }
-        }
-        // sort by length of language-string in decending order, so first item has most languages
-        Collections.sort(result) { o1, o2 -> o2.language.length - o1.language.length }
-        return if (result.size > 0) {
-            result[0]
-        } else {
-            recordings.get(0)
-        }
     }
 }

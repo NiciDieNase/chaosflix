@@ -13,7 +13,7 @@ import de.nicidienase.chaosflix.common.entities.recording.Recording
             entity = PersistentEvent::class,
             parentColumns = (arrayOf("eventId")),
             childColumns = arrayOf("eventId"))))
-open class PersistentRecording(
+data class PersistentRecording(
         @PrimaryKey
         var recordingId: Long,
         var eventId: Long,
@@ -44,13 +44,6 @@ open class PersistentRecording(
     fun toRecording(): Recording = Recording(size, length, mimeType, language,
             filename, state, folder, isHighQuality, width, height, updatedAt,
             recordingUrl, url, eventUrl, conferenceUrl)
-
-    override fun equals(other: Any?): Boolean {
-        if(other is PersistentRecording)
-            return filename.equals(other.filename)
-        else
-            return super.equals(other)
-    }
 
     @Ignore
     constructor(parcel: Parcel) : this(

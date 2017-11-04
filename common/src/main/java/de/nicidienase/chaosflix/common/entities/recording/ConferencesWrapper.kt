@@ -1,14 +1,9 @@
 package de.nicidienase.chaosflix.common.entities.recording
 
-import android.util.Log
-
-import java.util.ArrayList
-import java.util.Arrays
-import java.util.Collections
-import java.util.HashMap
+import java.util.*
 
 
-open class ConferencesWrapper(var conferences: List<Conference>){
+data class ConferencesWrapper(var conferences: List<Conference>) {
     private val CONGRESS = "congress"
     private val EVENTS = "events"
     private val CONFERENCES = "conferences"
@@ -100,10 +95,10 @@ open class ConferencesWrapper(var conferences: List<Conference>){
             }
         }
 
-        val orderedConferencesList: List<String>  = Arrays.asList(
+        val orderedConferencesList: List<String> = Arrays.asList(
                 "congress", "sendezentrum", "camp",
-                    "gpn", "mrmcd", "broadcast/chaosradio",
-                    "eh", "froscon", "sigint",
-                    "datenspuren", "fiffkon", "cryptocon")
+                "gpn", "mrmcd", "broadcast/chaosradio",
+                "eh", "froscon", "sigint",
+                "datenspuren", "fiffkon", "cryptocon")
     }
 }
