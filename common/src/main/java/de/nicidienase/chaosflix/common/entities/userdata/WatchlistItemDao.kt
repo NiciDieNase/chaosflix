@@ -1,16 +1,16 @@
 package de.nicidienase.chaosflix.common.entities.userdata
 
+import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
-import io.reactivex.Flowable
 
 
 @Dao
 interface WatchlistItemDao {
     @Query("SELECT * from watchlist_item")
-    fun getAll(): Flowable<List<WatchlistItem>>
+    fun getAll(): LiveData<List<WatchlistItem>>
 
     @Query("SELECT * from watchlist_item WHERE id = :id LIMIT 1")
-    fun getItemForEvent(id: Long): Flowable<WatchlistItem>
+    fun getItemForEvent(id: Long): LiveData<WatchlistItem>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveItem(item: WatchlistItem)
