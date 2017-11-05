@@ -54,13 +54,13 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	private static final String ARG_EVENT = "event";
 	private static final String ARG_RECORDING = "recording";
 
-	private OnMediaPlayerInteractionListener mListener;
+	private OnMediaPlayerInteractionListener listener;
 	private final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
 	@BindView(R.id.video_view)
 	SimpleExoPlayerView videoView;
 	@BindView(R.id.progressBar)
-	ProgressBar mProgressBar;
+	ProgressBar progressBar;
 
 	@Nullable
 	@BindView(R.id.title_text)
@@ -69,11 +69,11 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	@BindView(R.id.subtitle_text)
 	TextView subtitleText;
 
-	private String mUserAgent;
+	private String userAgent;
 	private Handler mainHandler = new Handler();
-	private boolean mPlaybackState = true;
-	private PersistentEvent mEvent;
-	private PersistentRecording mRecording;
+	private boolean playbackState = true;
+	private PersistentEvent event;
+	private PersistentRecording recording;
 	private SimpleExoPlayer exoPlayer;
 
 	public ExoPlayerFragment() {
@@ -92,11 +92,11 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (getArguments() != null) {
-			mEvent = getArguments().getParcelable(ARG_EVENT);
-			mRecording = getArguments().getParcelable(ARG_RECORDING);
+			event = getArguments().getParcelable(ARG_EVENT);
+			recording = getArguments().getParcelable(ARG_RECORDING);
 		}
 		if (savedInstanceState != null) {
-			mPlaybackState = savedInstanceState.getBoolean(PLAYBACK_STATE, true);
+			playbackState = savedInstanceState.getBoolean(PLAYBACK_STATE, true);
 		}
 	}
 
@@ -110,16 +110,14 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		ButterKnife.bind(this, view);
-		if (mEvent != null) {
-			if (titleText != null) {
-				titleText.setText(mEvent.getTitle());
-			}
-			if (subtitleText != null) {
-				subtitleText.setText(mEvent.getSubtitle());
-			}
-			if (exoPlayer == null) {
-				exoPlayer = setupPlayer();
-			}
+		if (titleText != null) {
+			titleText.setText(event.getTitle());
+		}
+		if (subtitleText != null) {
+			subtitleText.setText(event.getSubtitle());
+		}
+		if (exoPlayer == null) {
+			exoPlayer = setupPlayer();
 		}
 	}
 
@@ -127,8 +125,8 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	public void onResume() {
 		super.onResume();
 		if (exoPlayer != null) {
-			exoPlayer.setPlayWhenReady(mPlaybackState);
-			mListener.getPlaybackProgress(mEvent.getEventId())
+			exoPlayer.setPlayWhenReady(playbackState);
+			listener.getPlaybackProgress(event.getEventId())
 					.observe(this, playbackProgress -> {
 						if (playbackProgress != null) {
 							exoPlayer.seekTo(playbackProgress.getProgress());
@@ -149,7 +147,7 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	public void onPause() {
 		super.onPause();
 		if (exoPlayer != null) {
-			mListener.setPlaybackProgress(mEvent.getEventId(), exoPlayer.getCurrentPosition());
+			listener.setPlaybackProgress(event.getEventId(), exoPlayer.getCurrentPosition());
 			exoPlayer.setPlayWhenReady(false);
 		}
 	}
@@ -173,7 +171,7 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 		Log.d(TAG, "Setting up Player.");
 		videoView.setKeepScreenOn(true);
 
-		mUserAgent = Util.getUserAgent(getContext(), getResources().getString(R.string.app_name));
+		userAgent = Util.getUserAgent(getContext(), getResources().getString(R.string.app_name));
 
 		AdaptiveTrackSelection.Factory trackSelectorFactory
 				= new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
@@ -188,9 +186,9 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 		exoPlayer.addVideoListener(listener);
 		exoPlayer.addListener(listener);
 
-		exoPlayer.setPlayWhenReady(mPlaybackState);
+		exoPlayer.setPlayWhenReady(playbackState);
 
-		exoPlayer.prepare(buildMediaSource(Uri.parse(mRecording.getRecordingUrl()), ""));
+		exoPlayer.prepare(buildMediaSource(Uri.parse(recording.getRecordingUrl()), ""));
 		return exoPlayer;
 	}
 
@@ -198,7 +196,7 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	public void onAttach(Context context) {
 		super.onAttach(context);
 		if (context instanceof OnMediaPlayerInteractionListener) {
-			mListener = (OnMediaPlayerInteractionListener) context;
+			listener = (OnMediaPlayerInteractionListener) context;
 		} else {
 			throw new RuntimeException(context.toString()
 					+ " must implement OnFragmentInteractionListener");
@@ -208,20 +206,20 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		mListener = null;
+		listener = null;
 	}
 
 	@Override
 	public void notifyLoadingStart() {
-		if (mProgressBar != null) {
-			mProgressBar.setVisibility(View.VISIBLE);
+		if (progressBar != null) {
+			progressBar.setVisibility(View.VISIBLE);
 		}
 	}
 
 	@Override
 	public void notifyLoadingFinished() {
-		if (mProgressBar != null) {
-			mProgressBar.setVisibility(View.INVISIBLE);
+		if (progressBar != null) {
+			progressBar.setVisibility(View.INVISIBLE);
 		}
 	}
 
@@ -268,6 +266,6 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	}
 
 	private HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
-		return new DefaultHttpDataSourceFactory(mUserAgent, bandwidthMeter);
+		return new DefaultHttpDataSourceFactory(userAgent, bandwidthMeter);
 	}
 }

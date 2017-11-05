@@ -15,27 +15,26 @@ import io.reactivex.schedulers.Schedulers
 class Downloader(val recordingApi: RecordingService,
                  val database: ChaosflixDatabase) {
 
-    fun updateEverything() {
-
-        val eventIdListener: (LongArray) -> Unit = { eventIds: LongArray ->
-            eventIds.map { updateRecordingsForEvent(it) }
+    private fun updateEverything() {
+        updateConferencesAndGroups { conferenceIds ->
+            for(id in conferenceIds){
+                updateEventsForConference(id){ eventIds ->
+                    for(id in eventIds){
+                        updateRecordingsForEvent(id)
+                    }
+                }
+            }
         }
-
-        val conferenceIdListerner: (LongArray) -> Unit = {conferenceIds: LongArray ->
-            conferenceIds.map { updateEventsForConference(it,eventIdListener) }
-        }
-
-        updateConferencesAndGroups(conferenceIdListerner)
     }
 
-    fun updateConferencesAndGroups(listener: ((LongArray) -> Unit)? = null) {
+    fun updateConferencesAndGroups(listener: ((List<Long>) -> Unit)? = null) {
         recordingApi.getConferencesWrapper()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe { con: ConferencesWrapper? -> saveConferences(con, listener) }
     }
 
-    fun updateEventsForConference(conferenceId: Long, listener: ((LongArray) -> Unit)? = null) {
+    fun updateEventsForConference(conferenceId: Long, listener: ((List<Long>) -> Unit)? = null) {
         if(conferenceId < 0)
             return
         recordingApi.getConference(conferenceId)
@@ -47,7 +46,7 @@ class Downloader(val recordingApi: RecordingService,
 
     }
 
-    fun updateRecordingsForEvent(eventId: Long, listener: ((LongArray) -> Unit)? = null) {
+    fun updateRecordingsForEvent(eventId: Long, listener: ((List<Long>) -> Unit)? = null) {
         if(eventId < 0)
             return
         recordingApi.getEvent(eventId)
@@ -58,7 +57,7 @@ class Downloader(val recordingApi: RecordingService,
                 }
     }
 
-    fun saveConferences(con: ConferencesWrapper?, listener: ((LongArray) -> Unit)?) {
+    fun saveConferences(con: ConferencesWrapper?, listener: ((List<Long>) -> Unit)?) {
         if (con != null) {
             con.conferenceMap.map { entry ->
                 val conferenceGroup: ConferenceGroup?
@@ -79,29 +78,29 @@ class Downloader(val recordingApi: RecordingService,
                         .map { PersistentConference(it) }
                         .map { it.conferenceGroupId = groupId; it }.toTypedArray()
                 val insertConferences = database.conferenceDao().insertConferences(*conferenceList)
-                listener?.invoke(insertConferences)
+                listener?.invoke(con.conferences.map { it.conferenceID })
             }
         }
     }
 
-    private fun saveEvents(conference: Conference?, listener: ((LongArray) -> Unit)?) {
+    private fun saveEvents(conference: Conference?, listener: ((List<Long>) -> Unit)?) {
         conference?.events.let {
             val events = conference?.events
                     ?.map { PersistentEvent(it) }?.toTypedArray()
             if (events != null) {
                 val insertEvents = database.eventDao().insertEvent(*events)
-                listener?.invoke(insertEvents)
+                listener?.invoke(events.map { it.eventId })
             }
         }
     }
 
-    private fun saveRecordings(event: Event?, listener: ((LongArray) -> Unit)?) {
+    private fun saveRecordings(event: Event?, listener: ((List<Long>) -> Unit)?) {
         val recordings = event?.recordings
                 ?.map { PersistentRecording(it) }
                 ?.toTypedArray()
         if (recordings != null) {
             val insertRecordings = database.recordingDao().insertRecording(*recordings)
-            listener?.invoke(insertRecordings)
+            listener?.invoke(recordings.map { it.recordingId })
         }
     }
 

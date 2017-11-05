@@ -11,7 +11,6 @@ import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
 import de.nicidienase.chaosflix.common.network.RecordingService
 import de.nicidienase.chaosflix.common.network.StreamingService
 import de.nicidienase.chaosflix.touch.sync.Downloader
-import io.reactivex.Completable
 
 class BrowseViewModel(
         val database: ChaosflixDatabase,
@@ -20,10 +19,6 @@ class BrowseViewModel(
 ) : ViewModel() {
 
     val downloader = Downloader(recordingApi, database)
-
-    fun updateEverything(){
-        Completable.fromAction { downloader.updateEverything() }
-    }
 
     fun getConferenceGroups(): LiveData<List<ConferenceGroup>> {
         downloader.updateConferencesAndGroups()
