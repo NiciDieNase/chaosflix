@@ -10,7 +10,7 @@
         android:id="@+id/video_view"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        app:controller_layout_id="@layout/exo_playback_controls"/>
+        app:controller_layout_id="@layout/exo_playback_controlsoverlay"/>
 
     <ProgressBar
         android:id="@+id/progressBar"
