@@ -12,11 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentConference;
 import de.nicidienase.chaosflix.touch.adapters.ConferenceGroupsFragmentPager;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 
 
 public class ConferencesTabBrowseFragment extends ChaosflixFragment {
@@ -27,12 +23,10 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 	private static final String CURRENTTAB_KEY = "current_tab";
 	private static final String VIEWPAGER_STATE = "viewpager_state";
 	private int mColumnCount = 1;
-	private OnConferenceListFragmentInteractionListener mListener;
+	private OnConferenceListFragmentInteractionListener listener;
 	private Toolbar mToolbar;
 	private Context mContext;
 	private ViewPager mViewPager;
-
-	private final CompositeDisposable mDisposable = new CompositeDisposable();
 
 	public static ConferencesTabBrowseFragment newInstance(int columnCount) {
 		ConferencesTabBrowseFragment fragment = new ConferencesTabBrowseFragment();
@@ -47,7 +41,7 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 		super.onAttach(context);
 		mContext = context;
 		if (context instanceof OnConferenceListFragmentInteractionListener) {
-			mListener = (OnConferenceListFragmentInteractionListener) context;
+			listener = (OnConferenceListFragmentInteractionListener) context;
 		} else {
 			throw new RuntimeException(context.toString()
 					+ " must implement OnListFragmentInteractionListener");
@@ -72,11 +66,7 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 				= new ConferenceGroupsFragmentPager(this.getContext(), getChildFragmentManager());
 
 		getViewModel().getConferenceGroups()
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(conferenceGroups -> fragmentPager.setContent(conferenceGroups),
-						throwable -> Log.d(TAG,"onError: " + throwable.getMessage(),throwable),
-						() -> Log.d(TAG,"onComplete"));
+				.observe(this,conferenceGroups -> fragmentPager.setContent(conferenceGroups));
 
 		mViewPager = view.findViewById(R.id.viewpager);
 		mViewPager.setAdapter(fragmentPager);
@@ -99,18 +89,12 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 	}
 
 	@Override
-	public void onStop() {
-		super.onStop();
-		mDisposable.clear();
-	}
-
-	@Override
 	public void onDetach() {
 		super.onDetach();
-		mListener = null;
+		listener = null;
 	}
 
 	public interface OnConferenceListFragmentInteractionListener {
-		void onConferenceSelected(PersistentConference conference);
+		void onConferenceSelected(long conferenceId);
 	}
 }

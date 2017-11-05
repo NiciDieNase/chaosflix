@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.touch.fragments;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -46,8 +47,6 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording;
 import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgress;
-import io.reactivex.Flowable;
-import io.reactivex.disposables.CompositeDisposable;
 
 public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStateChangeListener {
 	private static final String TAG = ExoPlayerFragment.class.getSimpleName();
@@ -57,7 +56,6 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 
 	private OnMediaPlayerInteractionListener mListener;
 	private final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
-	private CompositeDisposable disposable = new CompositeDisposable();
 
 	@BindView(R.id.video_view)
 	SimpleExoPlayerView videoView;
@@ -112,18 +110,17 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		ButterKnife.bind(this, view);
-		if (titleText != null)
-			titleText.setText(mEvent.getTitle());
-		if (subtitleText != null)
-			subtitleText.setText(mEvent.getSubtitle());
-
-		if (exoPlayer == null) {
-			exoPlayer = setupPlayer();
-		} else {
-			exoPlayer = exoPlayer;
-			Log.d(TAG, "Player already set up.");
+		if (mEvent != null) {
+			if (titleText != null) {
+				titleText.setText(mEvent.getTitle());
+			}
+			if (subtitleText != null) {
+				subtitleText.setText(mEvent.getSubtitle());
+			}
+			if (exoPlayer == null) {
+				exoPlayer = setupPlayer();
+			}
 		}
-
 	}
 
 	@Override
@@ -131,12 +128,12 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 		super.onResume();
 		if (exoPlayer != null) {
 			exoPlayer.setPlayWhenReady(mPlaybackState);
-			disposable.add(mListener.getPlaybackProgress(mEvent.getEventId())
-					.subscribe(playbackProgress -> {
+			mListener.getPlaybackProgress(mEvent.getEventId())
+					.observe(this, playbackProgress -> {
 						if (playbackProgress != null) {
 							exoPlayer.seekTo(playbackProgress.getProgress());
 						}
-					}));
+					});
 			videoView.setPlayer(exoPlayer);
 		}
 	}
@@ -155,7 +152,6 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 			mListener.setPlaybackProgress(mEvent.getEventId(), exoPlayer.getCurrentPosition());
 			exoPlayer.setPlayWhenReady(false);
 		}
-		disposable.clear();
 	}
 
 	@Override
@@ -235,7 +231,7 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	}
 
 	public interface OnMediaPlayerInteractionListener {
-		Flowable<PlaybackProgress> getPlaybackProgress(long apiId);
+		LiveData<PlaybackProgress> getPlaybackProgress(long apiId);
 
 		void setPlaybackProgress(long apiId, long progress);
 	}

@@ -36,7 +36,7 @@ public class ConferenceRecyclerViewAdapter extends ItemRecyclerViewAdapter<Persi
 
 		holder.mView.setOnClickListener(v -> {
 			if (null != mListener) {
-				mListener.onConferenceSelected((PersistentConference) holder.mItem);
+				mListener.onConferenceSelected(((PersistentConference) holder.mItem).getConferenceId());
 			}
 		});
 	}

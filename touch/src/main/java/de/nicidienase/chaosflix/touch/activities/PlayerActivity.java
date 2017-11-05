@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.touch.activities;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,20 +10,18 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.common.entities.recording.Recording;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording;
 import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgress;
 import de.nicidienase.chaosflix.touch.ViewModelFactory;
 import de.nicidienase.chaosflix.touch.fragments.ExoPlayerFragment;
 import de.nicidienase.chaosflix.touch.viewmodels.PlayerViewModel;
-import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.disposables.CompositeDisposable;
 
 public class PlayerActivity extends AppCompatActivity implements ExoPlayerFragment.OnMediaPlayerInteractionListener {
-	public static final String EVENT_ID = "event_id";
-	public static final String RECORDING_ID = "recording_id";
+	public static final String EVENT_KEY = "event";
+	public static final String RECORDING_KEY = "recording";
 	private PlayerViewModel viewModel;
 
 	@Override
@@ -32,42 +31,24 @@ public class PlayerActivity extends AppCompatActivity implements ExoPlayerFragme
 
 		viewModel = ViewModelProviders.of(this, ViewModelFactory.INSTANCE).get(PlayerViewModel.class);
 
-		long eventId = getIntent().getExtras().getLong(EVENT_ID);
-		long recordingId = getIntent().getExtras().getLong(RECORDING_ID);
+		PersistentEvent event = getIntent().getExtras().getParcelable(EVENT_KEY);
+		PersistentRecording recording = getIntent().getExtras().getParcelable(RECORDING_KEY);
 
 		if (savedInstanceState == null) {
-			loadFragment(eventId, recordingId);
+			loadFragment(event,recording);
 		}
 	}
 
-	@Override
-	protected void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
-
-		int eventId = intent.getExtras().getInt(EVENT_ID);
-		int recordingId = intent.getExtras().getInt(RECORDING_ID);
-
-		loadFragment(eventId, recordingId);
-	}
-
-	private void loadFragment(long eventId, long recordingId) {
+	private void loadFragment(PersistentEvent event, PersistentRecording recording) {
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//		Flowable.zip(viewModel.getEvent(eventId), viewModel.getRecording(recordingId),
-//				(event, recording) -> new Object[]{event, recording})
-//				.subscribeOn(Schedulers.io())
-//				.observeOn(AndroidSchedulers.mainThread())
-//				.subscribe(objects -> {
-//					PersistentEvent event = (PersistentEvent) objects[0];
-//					PersistentRecording recording = (PersistentRecording) objects[1];
-//					Fragment playerFragment =
-//							ExoPlayerFragment.newInstance(event, recording);
-//					ft.replace(R.id.fragment_container, playerFragment);
-//					ft.commit();
-//				});
+		Fragment playerFragment =
+				ExoPlayerFragment.newInstance(event, recording);
+		ft.replace(R.id.fragment_container, playerFragment);
+		ft.commit();
 	}
 
 	@Override
-	public Flowable<PlaybackProgress> getPlaybackProgress(long apiId) {
+	public LiveData<PlaybackProgress> getPlaybackProgress(long apiId) {
 		return viewModel.getPlaybackProgress(apiId);
 	}
 

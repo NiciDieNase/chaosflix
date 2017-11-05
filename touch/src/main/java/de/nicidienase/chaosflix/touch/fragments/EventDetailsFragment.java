@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.touch.fragments;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,22 +23,21 @@ import de.nicidienase.chaosflix.common.entities.recording.persistence.Persistent
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording;
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsNewBinding;
 import de.nicidienase.chaosflix.touch.Util;
-import io.reactivex.disposables.CompositeDisposable;
 
 public class EventDetailsFragment extends ChaosflixFragment {
 	private static final String TAG = EventDetailsFragment.class.getSimpleName();
 	private static final String EVENT_PARAM = "event_param";
 
 	private OnEventDetailsFragmentInteractionListener mListener;
-	private PersistentEvent mEvent;
+	private long eventId;
 
 	private boolean appBarExpanded;
-	private CompositeDisposable disposable = new CompositeDisposable();
+	private LiveData<PersistentEvent> eventLiveData;
 
-	public static EventDetailsFragment newInstance(PersistentEvent event) {
+	public static EventDetailsFragment newInstance(long eventId) {
 		EventDetailsFragment fragment = new EventDetailsFragment();
 		Bundle args = new Bundle();
-		args.putParcelable(EVENT_PARAM, event);
+		args.putLong(EVENT_PARAM, eventId);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -53,7 +53,7 @@ public class EventDetailsFragment extends ChaosflixFragment {
 		setSharedElementEnterTransition(transition);
 
 		if (getArguments() != null) {
-			mEvent = getArguments().getParcelable(EVENT_PARAM);
+			eventId = getArguments().getLong(EVENT_PARAM);
 		}
 	}
 
@@ -67,48 +67,52 @@ public class EventDetailsFragment extends ChaosflixFragment {
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		FragmentEventDetailsNewBinding binding = FragmentEventDetailsNewBinding.bind(view);
-		binding.setEvent(mEvent);
-
 		binding.playFab.setOnClickListener(v -> {
 			play();
 		});
-
 		if (mListener != null)
 			mListener.setActionbar(binding.animToolbar);
 
 		binding.appbar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
 			double v = (double) Math.abs(verticalOffset) / appBarLayout.getTotalScrollRange();
 			if (appBarExpanded ^ v > 0.8) {
-				if (mListener != null)
+				if (mListener != null) {
 					mListener.onToolbarStateChange();
+				}
 				appBarExpanded = v > 0.8;
 				binding.collapsingToolbar.setTitleEnabled(appBarExpanded);
 			}
 		});
 
-		binding.thumbImage.setTransitionName(getString(R.string.thumbnail) + mEvent.getEventId());
-		Picasso.with(getContext())
-				.load(mEvent.getThumbUrl())
-				.noFade()
-				.into(binding.thumbImage, new Callback() {
-					@Override
-					public void onSuccess() {
-						startPostponedEnterTransition();
-					}
+		eventLiveData = getViewModel().getEventById(eventId);
 
-					@Override
-					public void onError() {
-						startPostponedEnterTransition();
-					}
-				});
+		eventLiveData.observe(this, event -> {
+			binding.setEvent(event);
+			binding.thumbImage.setTransitionName(getString(R.string.thumbnail) + event.getEventId());
+			Picasso.with(getContext())
+					.load(event.getThumbUrl())
+					.noFade()
+					.into(binding.thumbImage, new Callback() {
+						@Override
+						public void onSuccess() {
+							startPostponedEnterTransition();
+						}
+
+						@Override
+						public void onError() {
+							startPostponedEnterTransition();
+						}
+					});
+		});
 	}
 
 	private void play() {
 		if (mListener != null) {
-			getViewModel().getRecordingForEvent(mEvent.getEventId())
-					.subscribe(persistentRecordings -> {
-						mListener.playItem(mEvent, Util.INSTANCE.getOptimalStream(persistentRecordings));
-					});
+			getViewModel().getRecordingForEvent(eventId)
+					.observe(this, persistentRecordings
+							-> mListener.playItem(
+							eventLiveData.getValue(),
+							Util.INSTANCE.getOptimalStream(persistentRecordings)));
 		}
 	}
 
@@ -124,12 +128,6 @@ public class EventDetailsFragment extends ChaosflixFragment {
 	}
 
 	@Override
-	public void onStop() {
-		super.onStop();
-		disposable.clear();
-	}
-
-	@Override
 	public void onDetach() {
 		super.onDetach();
 		mListener = null;
@@ -138,13 +136,13 @@ public class EventDetailsFragment extends ChaosflixFragment {
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-		disposable.add(getViewModel().getBookmark(mEvent.getEventId())
-				.subscribe(watchlistItem -> {
+		getViewModel().getBookmark(eventId)
+				.observe(this, watchlistItem -> {
 					if (watchlistItem != null) {
 						menu.findItem(R.id.action_bookmark).setVisible(false);
 						menu.findItem(R.id.action_unbookmark).setVisible(true);
 					}
-				}));
+				});
 	}
 
 	@Override
@@ -161,10 +159,10 @@ public class EventDetailsFragment extends ChaosflixFragment {
 				play();
 				return true;
 			case R.id.action_bookmark:
-				getViewModel().createBookmark(mEvent.getEventId());
+				getViewModel().createBookmark(eventId);
 				return true;
 			case R.id.action_unbookmark:
-				getViewModel().removeBookmark(mEvent.getEventId());
+				getViewModel().removeBookmark(eventId);
 				return true;
 			case R.id.action_download:
 				Snackbar.make(item.getActionView(), "Start download", Snackbar.LENGTH_LONG).show();

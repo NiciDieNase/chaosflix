@@ -70,35 +70,31 @@ public class BrowseActivity extends AppCompatActivity implements
 	}
 
 	@Override
-	public void onConferenceSelected(PersistentConference con) {
-		mDisposables.add(mViewModel.getConference(con.getConferenceId())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(conference -> {
-					EventsListFragment eventsListFragment = EventsListFragment.newInstance(conference.getConferenceId(), getNumColumns());
-					FragmentManager fm = getSupportFragmentManager();
-					Fragment oldFragment = fm.findFragmentById(R.id.fragment_container);
+	public void onConferenceSelected(long conferenceId) {
+		EventsListFragment eventsListFragment = EventsListFragment.newInstance(conferenceId, getNumColumns());
+		FragmentManager fm = getSupportFragmentManager();
+		Fragment oldFragment = fm.findFragmentById(R.id.fragment_container);
 
-					TransitionInflater transitionInflater = TransitionInflater.from(this);
-					oldFragment.setExitTransition(
-							transitionInflater.inflateTransition(android.R.transition.fade));
-					eventsListFragment.setEnterTransition(
-							transitionInflater.inflateTransition(android.R.transition.slide_right));
+		TransitionInflater transitionInflater = TransitionInflater.from(this);
+		oldFragment.setExitTransition(
+				transitionInflater.inflateTransition(android.R.transition.fade));
+		eventsListFragment.setEnterTransition(
+				transitionInflater.inflateTransition(android.R.transition.slide_right));
 
-					Slide slideTransition = new Slide(Gravity.RIGHT);
-					eventsListFragment.setEnterTransition(slideTransition);
+		Slide slideTransition = new Slide(Gravity.RIGHT);
+		eventsListFragment.setEnterTransition(slideTransition);
 
-					FragmentTransaction ft = fm.beginTransaction();
-					ft.replace(R.id.fragment_container, eventsListFragment);
-					ft.setReorderingAllowed(true);
-					ft.addToBackStack(null);
-					ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-					ft.commit();
-				}));
+		FragmentTransaction ft = fm.beginTransaction();
+		ft.replace(R.id.fragment_container, eventsListFragment);
+		ft.setReorderingAllowed(true);
+		ft.addToBackStack(null);
+		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+		ft.commit();
 	}
 
 	@Override
 	public void onEventSelected(PersistentEvent event, View v) {
-		EventDetailsFragment detailsFragment = EventDetailsFragment.newInstance(event);
+		EventDetailsFragment detailsFragment = EventDetailsFragment.newInstance(event.getEventId());
 		FragmentManager fm = getSupportFragmentManager();
 
 		detailsFragment.setAllowEnterTransitionOverlap(true);
@@ -129,8 +125,8 @@ public class BrowseActivity extends AppCompatActivity implements
 	@Override
 	public void playItem(PersistentEvent event, PersistentRecording recording) {
 		Intent i = new Intent(this, PlayerActivity.class);
-		i.putExtra(PlayerActivity.EVENT_ID, event.getEventId());
-		i.putExtra(PlayerActivity.RECORDING_ID, recording.getEventId());
+		i.putExtra(PlayerActivity.EVENT_KEY, event);
+		i.putExtra(PlayerActivity.RECORDING_KEY, recording);
 		startActivity(i);
 	}
 

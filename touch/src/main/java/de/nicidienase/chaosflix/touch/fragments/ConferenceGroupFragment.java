@@ -31,7 +31,6 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 
 	private ConferenceRecyclerViewAdapter conferencesAdapter;
 
-	CompositeDisposable disposable = new CompositeDisposable();
 	private RecyclerView.LayoutManager layoutManager;
 
 	public ConferenceGroupFragment() {
@@ -73,14 +72,14 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 
 			conferencesAdapter = new ConferenceRecyclerViewAdapter(listener);
 			recyclerView.setAdapter(conferencesAdapter);
-			disposable.add(getViewModel().getConferencesByGroup(conferenceGroup.getConferenceGroupId())
-					.subscribeOn(Schedulers.io())
-					.observeOn(AndroidSchedulers.mainThread())
-					.subscribe(conferenceList -> conferencesAdapter.setItems(conferenceList)));
-		}
-		Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
-		if (layoutState != null) {
-			layoutManager.onRestoreInstanceState(layoutState);
+			getViewModel().getConferencesByGroup(conferenceGroup.getConferenceGroupId())
+					.observe(this,conferenceList -> {
+						conferencesAdapter.setItems(conferenceList);
+						Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
+						if (layoutState != null) {
+							layoutManager.onRestoreInstanceState(layoutState);
+						}
+					});
 		}
 		return view;
 	}
@@ -106,12 +105,6 @@ public class ConferenceGroupFragment extends ChaosflixFragment {
 	public void onPause() {
 		super.onPause();
 		getArguments().putParcelable(LAYOUTMANAGER_STATE, layoutManager.onSaveInstanceState());
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		disposable.clear();
 	}
 
 	@Override

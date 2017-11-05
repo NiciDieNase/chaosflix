@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import de.nicidienase.chaosflix.touch.ViewModelFactory;
 import de.nicidienase.chaosflix.touch.viewmodels.BrowseViewModel;
 
 /**
@@ -18,7 +19,7 @@ public class ChaosflixFragment extends Fragment {
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mViewModel = ViewModelProviders.of(getActivity()).get(BrowseViewModel.class);
+		mViewModel = ViewModelProviders.of(getActivity(), ViewModelFactory.INSTANCE).get(BrowseViewModel.class);
 	}
 
 
