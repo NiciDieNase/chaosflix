@@ -1,16 +1,15 @@
 package de.nicidienase.chaosflix.touch
 
+//import com.facebook.stetho.Stetho
 import android.app.Application
 import android.content.Context
-import com.facebook.stetho.Stetho
-import de.nicidienase.chaosflix.BuildConfig
 
-class ChaosflixApplication: Application(){
+class ChaosflixApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
         APPLICATION_CONTEXT = this
-        Stetho.initializeWithDefaults(this);
+//        Stetho.initializeWithDefaults(this);
     }
 
     companion object {

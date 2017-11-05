@@ -35,7 +35,7 @@ ext{
     constraintLayoutVersion = "1.0.2"
     archCompVersion = "1.0.0-rc1"
     minSDK = 22
-    targetSDK = 26
+    targetSDK = 27
 }
 
 task clean(type: Delete) {
