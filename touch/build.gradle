@@ -72,9 +72,9 @@ dependencies {
 //    kapt "android.arch.persistence.room:compiler:${rootProject.ext.archCompVersion}"
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.1.50"
 
-    implementation 'com.squareup.retrofit2:retrofit:2.2.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-jackson:2.2.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0'
 
     implementation 'com.google.android.exoplayer:exoplayer:r2.5.2'
