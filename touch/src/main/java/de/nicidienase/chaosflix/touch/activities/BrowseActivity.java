@@ -45,7 +45,7 @@ public class BrowseActivity extends AppCompatActivity implements
 					= ConferencesTabBrowseFragment.newInstance(getNumColumns());
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			ft.replace(R.id.fragment_container, browseFragment);
-			ft.setReorderingAllowed(true);
+//			ft.setReorderingAllowed(true);
 			ft.commit();
 		}
 

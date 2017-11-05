@@ -8,10 +8,6 @@ import android.support.v4.app.Fragment;
 import de.nicidienase.chaosflix.touch.ViewModelFactory;
 import de.nicidienase.chaosflix.touch.viewmodels.BrowseViewModel;
 
-/**
- * Created by felix on 25.09.17.
- */
-
 public class ChaosflixFragment extends Fragment {
 
 	private BrowseViewModel mViewModel;

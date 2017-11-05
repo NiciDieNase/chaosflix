@@ -62,18 +62,22 @@ public class ConferencesTabBrowseFragment extends ChaosflixFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_tab_pager_layout, container, false);
-		ConferenceGroupsFragmentPager fragmentPager
-				= new ConferenceGroupsFragmentPager(this.getContext(), getChildFragmentManager());
 
-		getViewModel().getConferenceGroups()
-				.observe(this,conferenceGroups -> fragmentPager.setContent(conferenceGroups));
 
 		mViewPager = view.findViewById(R.id.viewpager);
-		mViewPager.setAdapter(fragmentPager);
-		mViewPager.onRestoreInstanceState(getArguments().getParcelable(VIEWPAGER_STATE));
 
-		TabLayout tabLayout = view.findViewById(R.id.sliding_tabs);
-		tabLayout.setupWithViewPager(mViewPager);
+		getViewModel().getConferenceGroups()
+				.observe(this,conferenceGroups -> {
+					ConferenceGroupsFragmentPager fragmentPager
+						= new ConferenceGroupsFragmentPager(this.getContext(), getChildFragmentManager());
+					fragmentPager.setContent(conferenceGroups);
+					mViewPager.setAdapter(fragmentPager);
+					mViewPager.onRestoreInstanceState(getArguments().getParcelable(VIEWPAGER_STATE));
+					TabLayout tabLayout = view.findViewById(R.id.sliding_tabs);
+					tabLayout.setupWithViewPager(mViewPager);
+				});
+
+
 
 		mToolbar = view.findViewById(R.id.toolbar);
 		((AppCompatActivity) mContext).setSupportActionBar(mToolbar);
