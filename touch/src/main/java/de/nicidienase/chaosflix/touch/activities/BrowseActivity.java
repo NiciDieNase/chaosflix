@@ -129,13 +129,6 @@ public class BrowseActivity extends AppCompatActivity implements
 			case R.id.action_about:
 				showAboutPage();
 				return true;
-			case R.id.action_update_database:
-				Intent i = new Intent(this, DownloadJobService.class);
-				i.putExtra(DownloadJobService.Companion.getENTITY_KEY(),
-						DownloadJobService.Companion.getENTITY_KEY_EVERYTHING());
-				startService(i);
-//				viewModel.updateEverything();
-				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}

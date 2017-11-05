@@ -4,7 +4,4 @@
     <item android:id="@+id/action_about"
           app:showAsAction="never"
           android:title="About"/>
-    <item android:id="@+id/action_update_database"
-          android:title="@string/update_database"/>
-
 </menu>
