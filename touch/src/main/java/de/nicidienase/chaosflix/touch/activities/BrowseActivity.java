@@ -18,20 +18,14 @@ import android.view.MenuItem;
 import android.view.View;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentConference;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording;
 import de.nicidienase.chaosflix.touch.ViewModelFactory;
 import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventDetailsFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventsListFragment;
+import de.nicidienase.chaosflix.touch.sync.DownloadJobService;
 import de.nicidienase.chaosflix.touch.viewmodels.BrowseViewModel;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-
-/**
- * Created by felix on 17.09.17.
- */
 
 public class BrowseActivity extends AppCompatActivity implements
 		ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener,
@@ -39,15 +33,12 @@ public class BrowseActivity extends AppCompatActivity implements
 		EventDetailsFragment.OnEventDetailsFragmentInteractionListener {
 
 	private static final String TAG = BrowseActivity.class.getSimpleName();
-	CompositeDisposable mDisposables = new CompositeDisposable();
-	private BrowseViewModel mViewModel;
+	private BrowseViewModel viewModel;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_container_layout);
-
-		mViewModel = ViewModelProviders.of(this, ViewModelFactory.INSTANCE).get(BrowseViewModel.class);
 
 		if (savedInstanceState == null) {
 			ConferencesTabBrowseFragment browseFragment
@@ -57,12 +48,8 @@ public class BrowseActivity extends AppCompatActivity implements
 			ft.setReorderingAllowed(true);
 			ft.commit();
 		}
-	}
 
-	@Override
-	protected void onStop() {
-		super.onStop();
-		mDisposables.clear();
+		viewModel = ViewModelProviders.of(this, ViewModelFactory.INSTANCE).get(BrowseViewModel.class);
 	}
 
 	private int getNumColumns() {
@@ -143,7 +130,11 @@ public class BrowseActivity extends AppCompatActivity implements
 				showAboutPage();
 				return true;
 			case R.id.action_update_database:
-//				mViewModel.updateDatabase();
+				Intent i = new Intent(this, DownloadJobService.class);
+				i.putExtra(DownloadJobService.Companion.getENTITY_KEY(),
+						DownloadJobService.Companion.getENTITY_KEY_EVERYTHING());
+				startService(i);
+//				viewModel.updateEverything();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
