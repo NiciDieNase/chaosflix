@@ -7,7 +7,7 @@ import android.arch.persistence.room.PrimaryKey
 
 @Entity(tableName = "watchlist_item",
         indices = arrayOf(Index(value = "event_id",unique = true)))
-data class WatchlistItem(@PrimaryKey
-                         var id: Long,
+data class WatchlistItem(@PrimaryKey(autoGenerate = true)
+                         var id: Long = 0,
                          @ColumnInfo(name = "event_id")
                          var eventId: Long)
