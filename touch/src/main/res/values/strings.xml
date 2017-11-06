@@ -11,4 +11,5 @@
     <string name="play">Play</string>
     <string name="titleimage">TitleImage</string>
     <string name="update_database">Update Database</string>
+	<string name="bookmarks">Bookmarks</string>
 </resources>

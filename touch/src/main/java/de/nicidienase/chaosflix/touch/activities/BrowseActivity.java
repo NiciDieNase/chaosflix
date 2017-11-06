@@ -24,7 +24,6 @@ import de.nicidienase.chaosflix.touch.ViewModelFactory;
 import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventDetailsFragment;
 import de.nicidienase.chaosflix.touch.fragments.EventsListFragment;
-import de.nicidienase.chaosflix.touch.sync.DownloadJobService;
 import de.nicidienase.chaosflix.touch.viewmodels.BrowseViewModel;
 
 public class BrowseActivity extends AppCompatActivity implements
@@ -56,9 +55,18 @@ public class BrowseActivity extends AppCompatActivity implements
 		return getResources().getInteger(R.integer.num_columns);
 	}
 
+	private void showBookmarksFragment(){
+		EventsListFragment bookmarksFragment = EventsListFragment.newInstance(EventsListFragment.BOOKMARKS_LIST_ID, getNumColumns());
+		showEventsFragment(bookmarksFragment);
+	}
+
 	@Override
 	public void onConferenceSelected(long conferenceId) {
 		EventsListFragment eventsListFragment = EventsListFragment.newInstance(conferenceId, getNumColumns());
+		showEventsFragment(eventsListFragment);
+	}
+
+	private void showEventsFragment(EventsListFragment eventsListFragment) {
 		FragmentManager fm = getSupportFragmentManager();
 		Fragment oldFragment = fm.findFragmentById(R.id.fragment_container);
 
@@ -126,6 +134,9 @@ public class BrowseActivity extends AppCompatActivity implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+			case R.id.action_show_bookmarks:
+				showBookmarksFragment();
+				return true;
 			case R.id.action_about:
 				showAboutPage();
 				return true;
