@@ -10,7 +10,7 @@ android {
         applicationId "de.nicidienase.chaosflix"
         minSdkVersion rootProject.ext.minSDK
         targetSdkVersion rootProject.ext.targetSDK
-        versionCode 6
+        versionCode 7
         versionName "0.2.0"
         multiDexEnabled true
     }
