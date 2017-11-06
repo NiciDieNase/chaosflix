@@ -22,6 +22,12 @@ interface EventDao{
     @Query("SELECT * FROM event WHERE eventId = :id ORDER BY title ASC")
     fun findEventById(id: Long): LiveData<PersistentEvent>
 
+    @Query("SELECT * FROM event WHERE eventId in (:ids)")
+    fun findEventsByIds(ids: LongArray): LiveData<List<PersistentEvent>>
+
     @Query("SELECT * FROM event WHERE conferenceId = :id ORDER BY title ASC")
     fun findEventsByConference(id: Long):LiveData<List<PersistentEvent>>
+
+    @Query("SELECT * FROM event INNER JOIN watchlist_item WHERE event.eventId = watchlist_item.event_id")
+    fun findBookmarkedEvents(): LiveData<List<PersistentEvent>>
 }

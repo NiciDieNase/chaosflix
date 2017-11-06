@@ -18,6 +18,6 @@ interface WatchlistItemDao {
     @Delete
     fun deleteItem(item: WatchlistItem)
 
-    @Query("DELETE from watchlist_item WHERE id = :id")
+    @Query("DELETE from watchlist_item WHERE event_id = :id")
     fun deleteItem(id: Long)
 }
