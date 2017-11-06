@@ -10,7 +10,7 @@ android {
         applicationId "de.nicidienase.chaosflix"
         minSdkVersion rootProject.ext.minSDK
         targetSdkVersion rootProject.ext.targetSDK
-        versionCode 5
+        versionCode 6
         versionName "0.2.0"
         multiDexEnabled true
     }
@@ -54,7 +54,7 @@ android {
 dependencies {
     implementation 'de.nicidienase.chaosflix:common:1.2.0-SNAPSHOT'
 
-    implementation 'com.android.support:multidex:1.0.1'
+    implementation 'com.android.support:multidex:1.0.2'
 
     implementation "com.android.support:support-v4:${rootProject.ext.supportLibraryVersion}"
     implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
