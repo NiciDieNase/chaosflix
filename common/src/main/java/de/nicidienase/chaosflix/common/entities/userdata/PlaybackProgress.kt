@@ -2,13 +2,11 @@ package de.nicidienase.chaosflix.common.entities.userdata
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 
-/**
- * Created by felix on 06.04.17.
- */
-
-@Entity(tableName = "playback_progress")
+@Entity(tableName = "playback_progress",
+        indices = arrayOf(Index(value = "event_id",unique = true)))
 data class PlaybackProgress (@PrimaryKey
                         @ColumnInfo(name = "event_id")
                         var eventId: Long,

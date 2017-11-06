@@ -10,30 +10,27 @@ open class Metadata(
         var related: LongArray?,
         @JsonProperty("remote_id") var remoteId: String?
 ) : Parcelable {
+    constructor(parcel: Parcel) : this(
+            parcel.createLongArray(),
+            parcel.readString()) {
+    }
 
-    protected constructor(`in`: Parcel) : this(
-            related = `in`.createLongArray(),
-            remoteId = `in`.readString())
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeLongArray(related)
+        parcel.writeString(remoteId)
+    }
 
     override fun describeContents(): Int {
         return 0
     }
 
-    override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeLongArray(related)
-        dest.writeString(remoteId)
-    }
+    companion object CREATOR : Parcelable.Creator<Metadata> {
+        override fun createFromParcel(parcel: Parcel): Metadata {
+            return Metadata(parcel)
+        }
 
-    companion object {
-
-        val CREATOR: Parcelable.Creator<Metadata> = object : Parcelable.Creator<Metadata> {
-            override fun createFromParcel(`in`: Parcel): Metadata {
-                return Metadata(`in`)
-            }
-
-            override fun newArray(size: Int): Array<Metadata?> {
-                return arrayOfNulls(size)
-            }
+        override fun newArray(size: Int): Array<Metadata?> {
+            return arrayOfNulls(size)
         }
     }
 }

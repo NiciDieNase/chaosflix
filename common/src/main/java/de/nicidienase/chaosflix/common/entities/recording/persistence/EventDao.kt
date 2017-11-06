@@ -1,10 +1,7 @@
 package de.nicidienase.chaosflix.common.entities.recording.persistence
 
 import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 import de.nicidienase.chaosflix.common.entities.recording.Conference
 import io.reactivex.Flowable
 
@@ -12,6 +9,9 @@ import io.reactivex.Flowable
 interface EventDao{
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertEvent(vararg events: PersistentEvent): LongArray
+
+    @Update
+    fun updateEvent(vararg events: PersistentEvent)
 
     @Query("SELECT * FROM event")
     fun getAllEvents(): LiveData<PersistentEvent>
