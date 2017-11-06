@@ -24,8 +24,7 @@ class PersistenceTest {
     fun test1() {
         val playbackProgressDao = ViewModelFactory.database.playbackProgressDao()
         playbackProgressDao.saveProgress(PlaybackProgress(23,1337))
-        playbackProgressDao.getProgressForEvent(23).subscribe({
-            assert(it.eventId == 23L && it.progress == 1337L)
-        })
+        playbackProgressDao.getProgressForEvent(23)
+                .observeForever { it -> assert(it?.eventId == 23L && it?.progress == 1337L) }
     }
 }
