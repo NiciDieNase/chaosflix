@@ -53,7 +53,7 @@ public class PlayerActivity extends AppCompatActivity implements ExoPlayerFragme
 	}
 
 	@Override
-	public void setPlaybackProgress(long apiId, long progress) {
-		viewModel.setPlaybackProgress(apiId, progress);
+	public void setPlaybackProgress(PersistentEvent event, long progress) {
+		viewModel.setPlaybackProgress(event, progress);
 	}
 }

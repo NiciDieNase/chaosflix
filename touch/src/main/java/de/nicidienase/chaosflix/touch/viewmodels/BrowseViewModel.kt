@@ -11,6 +11,8 @@ import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
 import de.nicidienase.chaosflix.common.network.RecordingService
 import de.nicidienase.chaosflix.common.network.StreamingService
 import de.nicidienase.chaosflix.touch.sync.Downloader
+import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 
 class BrowseViewModel(
         val database: ChaosflixDatabase,
@@ -46,21 +48,17 @@ class BrowseViewModel(
         return database.recordingDao().findRecordingByEvent(id)
     }
 
-    fun createBookmark(apiId: Long) {
-        database.watchlistItemDao().getItemForEvent(apiId)
-                .observeForever { watchlistItem: WatchlistItem? ->
-                    if (watchlistItem == null) {
-                        database.watchlistItemDao()
-                                .saveItem(WatchlistItem(apiId, apiId))
-                    }
-                }
-    }
+    fun getBookmarkForEvent(id: Long): LiveData<WatchlistItem> = database.watchlistItemDao().getItemForEvent(id)
 
-    fun getBookmark(apiId: Long): LiveData<WatchlistItem> {
-        return database.watchlistItemDao().getItemForEvent(apiId)
+    fun createBookmark(apiId: Long) {
+        Completable.fromAction {
+            database.watchlistItemDao().saveItem(WatchlistItem(eventId = apiId))
+        }.subscribeOn(Schedulers.io()).subscribe()
     }
 
     fun removeBookmark(apiID: Long) {
-        database.watchlistItemDao().deleteItem(apiID)
+        Completable.fromAction {
+            database.watchlistItemDao().deleteItem(apiID)
+        }.subscribeOn(Schedulers.io()).subscribe()
     }
 }

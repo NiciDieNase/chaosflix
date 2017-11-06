@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.touch.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
 import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase
+import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgress
 import de.nicidienase.chaosflix.common.network.RecordingService
 import de.nicidienase.chaosflix.common.network.StreamingService
@@ -16,9 +17,13 @@ internal class PlayerViewModel(val database: ChaosflixDatabase,
     fun getPlaybackProgress(apiID: Long): LiveData<PlaybackProgress>
             = database.playbackProgressDao().getProgressForEvent(apiID)
 
-    fun setPlaybackProgress(apiId: Long, progress: Long) {
+    fun setPlaybackProgress(event: PersistentEvent, progress: Long) {
         Single.fromCallable {
-            database.playbackProgressDao().saveProgress(PlaybackProgress(apiId, progress))
+            if(event.length- progress > 10){
+                database.playbackProgressDao().saveProgress(PlaybackProgress(event.eventId, progress))
+            } else {
+                database.playbackProgressDao().saveProgress(PlaybackProgress(event.eventId, 0))
+            }
         }.subscribeOn(Schedulers.io()).subscribe()
     }
 }

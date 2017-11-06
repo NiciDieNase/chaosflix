@@ -147,7 +147,7 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	public void onPause() {
 		super.onPause();
 		if (exoPlayer != null) {
-			listener.setPlaybackProgress(event.getEventId(), exoPlayer.getCurrentPosition());
+			listener.setPlaybackProgress(event, exoPlayer.getCurrentPosition());
 			exoPlayer.setPlayWhenReady(false);
 		}
 	}
@@ -231,7 +231,7 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	public interface OnMediaPlayerInteractionListener {
 		LiveData<PlaybackProgress> getPlaybackProgress(long apiId);
 
-		void setPlaybackProgress(long apiId, long progress);
+		void setPlaybackProgress(PersistentEvent event, long progress);
 	}
 
 	private MediaSource buildMediaSource(Uri uri, String overrideExtension) {
