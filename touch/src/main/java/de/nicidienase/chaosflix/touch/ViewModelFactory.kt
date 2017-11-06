@@ -3,7 +3,6 @@ package de.nicidienase.chaosflix.touch
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.persistence.room.Room
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import de.nicidienase.chaosflix.BuildConfig
@@ -32,7 +31,6 @@ object ViewModelFactory: ViewModelProvider.Factory{
         val client: OkHttpClient
         if(BuildConfig.DEBUG){
             client = OkHttpClient.Builder()
-                    .addNetworkInterceptor(StethoInterceptor())
                     .build()
         } else {
             client = OkHttpClient()
