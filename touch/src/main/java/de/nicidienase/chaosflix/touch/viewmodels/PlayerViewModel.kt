@@ -7,7 +7,6 @@ import de.nicidienase.chaosflix.common.entities.recording.persistence.Persistent
 import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgress
 import de.nicidienase.chaosflix.common.network.RecordingService
 import de.nicidienase.chaosflix.common.network.StreamingService
-import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 
@@ -19,11 +18,13 @@ internal class PlayerViewModel(val database: ChaosflixDatabase,
 
     fun setPlaybackProgress(event: PersistentEvent, progress: Long) {
         Single.fromCallable {
-            if(event.length- progress > 10){
-                database.playbackProgressDao().saveProgress(PlaybackProgress(event.eventId, progress))
-            } else {
-                database.playbackProgressDao().saveProgress(PlaybackProgress(event.eventId, 0))
-            }
+            database.playbackProgressDao().saveProgress(PlaybackProgress(event.eventId, progress))
         }.subscribeOn(Schedulers.io()).subscribe()
+    }
+
+    fun deletePlaybackProgress(event: PersistentEvent){
+        Single.fromCallable {
+            database.playbackProgressDao().deleteItem(event.eventId)
+        }
     }
 }

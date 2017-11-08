@@ -54,7 +54,7 @@ class MyListener implements Player.EventListener, SimpleExoPlayer.VideoListener 
 				break;
 			case Player.STATE_ENDED:
 				Log.d(TAG, "Finished Playback");
-
+				listener.notifyEnd();
 				break;
 			case Player.STATE_IDLE:
 			case Player.STATE_READY:
@@ -99,5 +99,6 @@ class MyListener implements Player.EventListener, SimpleExoPlayer.VideoListener 
 		void notifyLoadingStart();
 		void notifyLoadingFinished();
 		void notifyError(String errorMessage);
+		void notifyEnd();
 	}
 }

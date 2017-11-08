@@ -233,6 +233,11 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 		Snackbar.make(videoView, errorMessage, Snackbar.LENGTH_LONG).show();
 	}
 
+	@Override
+	public void notifyEnd() {
+		viewModel.deletePlaybackProgress(event);
+	}
+
 	public interface OnMediaPlayerInteractionListener {}
 
 	private MediaSource buildMediaSource(Uri uri, String overrideExtension) {
