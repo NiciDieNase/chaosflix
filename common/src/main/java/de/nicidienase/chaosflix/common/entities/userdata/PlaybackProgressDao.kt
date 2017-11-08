@@ -16,4 +16,7 @@ interface PlaybackProgressDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveProgress(progress: PlaybackProgress): Long
+
+    @Query("DELETE from playback_progress WHERE event_id = :id")
+    fun deleteItem(id: Long)
 }

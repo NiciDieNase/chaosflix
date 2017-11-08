@@ -30,4 +30,7 @@ interface EventDao{
 
     @Query("SELECT * FROM event INNER JOIN watchlist_item WHERE event.eventId = watchlist_item.event_id")
     fun findBookmarkedEvents(): LiveData<List<PersistentEvent>>
+
+    @Query("SELECT * FROM event INNER JOIN playback_progress WHERE event.eventId = playback_progress.event_id")
+    fun findInProgressEvents(): LiveData<List<PersistentEvent>>
 }
