@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix.touch.fragments;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -47,6 +48,8 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording;
 import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgress;
+import de.nicidienase.chaosflix.touch.ViewModelFactory;
+import de.nicidienase.chaosflix.touch.viewmodels.PlayerViewModel;
 
 public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStateChangeListener {
 	private static final String TAG = ExoPlayerFragment.class.getSimpleName();
@@ -75,6 +78,7 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	private PersistentEvent event;
 	private PersistentRecording recording;
 	private SimpleExoPlayer exoPlayer;
+	private PlayerViewModel viewModel;
 
 	public ExoPlayerFragment() {
 	}
@@ -98,6 +102,7 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 		if (savedInstanceState != null) {
 			playbackState = savedInstanceState.getBoolean(PLAYBACK_STATE, true);
 		}
+		viewModel = ViewModelProviders.of(this, ViewModelFactory.INSTANCE).get(PlayerViewModel.class);
 	}
 
 	@Override
@@ -126,7 +131,7 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 		super.onResume();
 		if (exoPlayer != null) {
 			exoPlayer.setPlayWhenReady(playbackState);
-			listener.getPlaybackProgress(event.getEventId())
+			viewModel.getPlaybackProgress(event.getEventId())
 					.observe(this, playbackProgress -> {
 						if (playbackProgress != null) {
 							exoPlayer.seekTo(playbackProgress.getProgress());
@@ -147,7 +152,7 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	public void onPause() {
 		super.onPause();
 		if (exoPlayer != null) {
-			listener.setPlaybackProgress(event, exoPlayer.getCurrentPosition());
+			viewModel.setPlaybackProgress(event, exoPlayer.getCurrentPosition());
 			exoPlayer.setPlayWhenReady(false);
 		}
 	}
@@ -228,11 +233,7 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 		Snackbar.make(videoView, errorMessage, Snackbar.LENGTH_LONG).show();
 	}
 
-	public interface OnMediaPlayerInteractionListener {
-		LiveData<PlaybackProgress> getPlaybackProgress(long apiId);
-
-		void setPlaybackProgress(PersistentEvent event, long progress);
-	}
+	public interface OnMediaPlayerInteractionListener {}
 
 	private MediaSource buildMediaSource(Uri uri, String overrideExtension) {
 		DataSource.Factory mediaDataSourceFactory = buildDataSourceFactory(true);

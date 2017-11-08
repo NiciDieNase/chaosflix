@@ -22,14 +22,12 @@ import io.reactivex.disposables.CompositeDisposable;
 public class PlayerActivity extends AppCompatActivity implements ExoPlayerFragment.OnMediaPlayerInteractionListener {
 	public static final String EVENT_KEY = "event";
 	public static final String RECORDING_KEY = "recording";
-	private PlayerViewModel viewModel;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_container_layout);
 
-		viewModel = ViewModelProviders.of(this, ViewModelFactory.INSTANCE).get(PlayerViewModel.class);
 
 		PersistentEvent event = getIntent().getExtras().getParcelable(EVENT_KEY);
 		PersistentRecording recording = getIntent().getExtras().getParcelable(RECORDING_KEY);
@@ -45,15 +43,5 @@ public class PlayerActivity extends AppCompatActivity implements ExoPlayerFragme
 				ExoPlayerFragment.newInstance(event, recording);
 		ft.replace(R.id.fragment_container, playerFragment);
 		ft.commit();
-	}
-
-	@Override
-	public LiveData<PlaybackProgress> getPlaybackProgress(long apiId) {
-		return viewModel.getPlaybackProgress(apiId);
-	}
-
-	@Override
-	public void setPlaybackProgress(PersistentEvent event, long progress) {
-		viewModel.setPlaybackProgress(event, progress);
 	}
 }
