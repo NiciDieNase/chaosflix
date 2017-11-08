@@ -2,8 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/action_show_bookmarks"
-          android:title="Bookmarks"/>
+          android:title="@string/bookmarks"/>
+    <item android:id="@+id/action_show_inprogress"
+          android:title="@string/continue_watching"/>
     <item android:id="@+id/action_about"
           app:showAsAction="never"
-          android:title="About"/>
+          android:title="@string/about"/>
 </menu>

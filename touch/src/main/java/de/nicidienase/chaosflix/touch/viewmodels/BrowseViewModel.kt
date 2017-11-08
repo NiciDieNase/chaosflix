@@ -52,6 +52,8 @@ class BrowseViewModel(
 
     fun getBookmarkedEvents(): LiveData<List<PersistentEvent>> = database.eventDao().findBookmarkedEvents()
 
+    fun getInProgressEvents(): LiveData<List<PersistentEvent>> = database.eventDao().findInProgressEvents()
+
     fun createBookmark(apiId: Long) {
         Completable.fromAction {
             database.watchlistItemDao().saveItem(WatchlistItem(eventId = apiId))

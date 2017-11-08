@@ -137,12 +137,20 @@ public class BrowseActivity extends AppCompatActivity implements
 			case R.id.action_show_bookmarks:
 				showBookmarksFragment();
 				return true;
+			case R.id.action_show_inprogress:
+				showInProgressFragment();
+				return true;
 			case R.id.action_about:
 				showAboutPage();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+	}
+
+	private void showInProgressFragment() {
+		EventsListFragment bookmarksFragment = EventsListFragment.newInstance(EventsListFragment.IN_PROGRESS_LIST_ID, getNumColumns());
+		showEventsFragment(bookmarksFragment);
 	}
 
 	private void showAboutPage() {

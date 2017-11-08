@@ -14,6 +14,8 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.touch.adapters.EventRecyclerViewAdapter;
@@ -25,6 +27,7 @@ public class EventsListFragment extends ChaosflixFragment {
 	private static final String LAYOUTMANAGER_STATE = "layoutmanager-state";
 	private static final String TAG                 = EventsListFragment.class.getSimpleName();
 	public static final long   BOOKMARKS_LIST_ID   = -1;
+	public static final long   IN_PROGRESS_LIST_ID   = -2;
 
 	private int columnCount = 1;
 	private OnEventsListFragmentInteractionListener listener;
@@ -84,23 +87,33 @@ public class EventsListFragment extends ChaosflixFragment {
 		toolbar = view.findViewById(R.id.toolbar);
 		((AppCompatActivity) this.context).setSupportActionBar(toolbar);
 
-		Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
 		if (conferenceId == BOOKMARKS_LIST_ID) {
 			toolbar.setTitle(R.string.bookmarks);
 			getViewModel().getBookmarkedEvents().observe(this, persistentEvents -> {
-				eventAdapter.setItems(persistentEvents);
-				if(layoutState != null)
-					layoutManager.onRestoreInstanceState(layoutState);
+				setEvents(persistentEvents);
+			});
+		} else if(conferenceId == IN_PROGRESS_LIST_ID) {
+			toolbar.setTitle(R.string.continue_watching);
+			getViewModel().getInProgressEvents().observe(this, persistentEvents -> {
+				setEvents(persistentEvents);
 			});
 		} else {
-			getViewModel().getConference(conferenceId).observe(this, conference -> toolbar.setTitle(conference.getTitle()));
-			getViewModel().getEventsforConference(conferenceId).observe(this, persistentEvents -> {
-				eventAdapter.setItems(persistentEvents);
-				if(layoutState != null)
-					layoutManager.onRestoreInstanceState(layoutState);
-			});
+			{
+				getViewModel().getConference(conferenceId).observe(this, conference -> toolbar.setTitle(conference.getTitle()));
+				getViewModel().getEventsforConference(conferenceId).observe(this, persistentEvents -> {
+					setEvents(persistentEvents);
+				});
+			}
 		}
 		return view;
+	}
+
+	private void setEvents(List<PersistentEvent> persistentEvents) {
+		Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
+
+		eventAdapter.setItems(persistentEvents);
+		if(layoutState != null)
+			layoutManager.onRestoreInstanceState(layoutState);
 	}
 
 	@Override
