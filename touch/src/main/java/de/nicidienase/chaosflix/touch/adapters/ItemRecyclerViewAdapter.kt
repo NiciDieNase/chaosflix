@@ -33,7 +33,9 @@ abstract class ItemRecyclerViewAdapter<T>()
         get() = filteredItems
         set(value) {
             _items = value
-            Collections.sort(_items,getComparator())
+            if(getComparator() != null){
+                Collections.sort(_items,getComparator())
+            }
             filteredItems = _items
             notifyDataSetChanged()
         }
