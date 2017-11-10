@@ -38,6 +38,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
@@ -267,11 +268,18 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 	}
 
 	private DataSource.Factory buildDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
-		return new DefaultDataSourceFactory(getContext(), bandwidthMeter,
+		return new DefaultDataSourceFactory(
+				getContext(),
+				bandwidthMeter,
 				buildHttpDataSourceFactory(bandwidthMeter));
 	}
 
 	private HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
-		return new DefaultHttpDataSourceFactory(userAgent, bandwidthMeter);
+		return new DefaultHttpDataSourceFactory(userAgent,
+				bandwidthMeter,
+				DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+				DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
+				true
+		);
 	}
 }
