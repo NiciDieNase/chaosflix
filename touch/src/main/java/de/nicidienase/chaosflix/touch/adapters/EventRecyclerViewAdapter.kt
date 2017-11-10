@@ -13,6 +13,9 @@ import de.nicidienase.chaosflix.touch.fragments.EventsListFragment
 
 class EventRecyclerViewAdapter(val listener: EventsListFragment.OnEventsListFragmentInteractionListener) :
         ItemRecyclerViewAdapter<PersistentEvent>() {
+    override fun getFilteredProperty(item: PersistentEvent): String {
+        return item.title
+    }
 
     override val layout = R.layout.event_cardview_layout
     var showTags: Boolean = false
@@ -22,7 +25,7 @@ class EventRecyclerViewAdapter(val listener: EventsListFragment.OnEventsListFrag
 
     }
 
-    override fun onBindViewHolder(holder: ItemRecyclerViewAdapter.ViewHolder<PersistentEvent>, position: Int) {
+    override fun onBindViewHolder(holder: ItemRecyclerViewAdapter<PersistentEvent>.ViewHolder, position: Int) {
         val event = items[position]
 
         holder.mItem = event

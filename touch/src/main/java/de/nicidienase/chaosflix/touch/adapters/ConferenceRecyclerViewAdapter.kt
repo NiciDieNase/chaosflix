@@ -11,9 +11,13 @@ import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment
 
 class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener?) : ItemRecyclerViewAdapter<PersistentConference>() {
 
+    override fun getFilteredProperty(item: PersistentConference): String {
+        return item.title
+    }
+
     override val layout = R.layout.conference_cardview_item
 
-    override fun onBindViewHolder(holder: ItemRecyclerViewAdapter.ViewHolder<PersistentConference>, position: Int) {
+    override fun onBindViewHolder(holder: ItemRecyclerViewAdapter<PersistentConference>.ViewHolder, position: Int) {
         holder.mItem = items[position]
         holder.mTitleText.setText(items[position].title)
         holder.mSubtitle.setText(items[position].acronym)

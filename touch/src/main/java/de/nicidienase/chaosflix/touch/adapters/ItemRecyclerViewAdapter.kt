@@ -4,20 +4,31 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
 import de.nicidienase.chaosflix.R
 import java.util.*
 
 abstract class ItemRecyclerViewAdapter<T>()
-    : RecyclerView.Adapter<ItemRecyclerViewAdapter.ViewHolder<T>>() {
+    : RecyclerView.Adapter<ItemRecyclerViewAdapter<T>.ViewHolder>(), Filterable {
 
     internal abstract val layout: Int
-    //    internal abstract val filteredProperty: String
+
+    internal abstract fun getFilteredProperty(item: T): String
+
+    private val filter by lazy { ItemFilter()}
+
+    override fun getFilter(): Filter {
+        return filter
+    }
+
     private var _items: MutableList<T> = ArrayList<T>()
+    private var filteredItems: MutableList<T> = _items
 
     var items: MutableList<T>
-        get() = _items
+        get() = filteredItems
         set(value) {
             _items = value
             notifyDataSetChanged()
@@ -34,17 +45,17 @@ abstract class ItemRecyclerViewAdapter<T>()
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<T> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
                 .inflate(layout, parent, false)
         return ViewHolder(view)
     }
 
     override fun getItemCount(): Int {
-        return items.size
+        return filteredItems.size
     }
 
-    class ViewHolder<T>(val mView: View) : RecyclerView.ViewHolder(mView) {
+    inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         var mItem: T? = null
         val mIcon: ImageView
         val mTitleText: TextView
@@ -57,9 +68,25 @@ abstract class ItemRecyclerViewAdapter<T>()
             mSubtitle = mView.findViewById<View>(R.id.acronym_text) as TextView
             mTag = mView.findViewById<View>(R.id.tag_text) as TextView
         }
+    }
 
-        override fun toString(): String {
-            return "super.toString() '$mTitleText.text'"
+    inner class ItemFilter: Filter(){
+        override fun performFiltering(filterText: CharSequence?): FilterResults {
+            val filterResults = FilterResults()
+            filterText?.let { text: CharSequence ->
+                if(text.length > 0){
+                    val list = items.filter { getFilteredProperty(it).contains(text, true) }
+                    filterResults.values = list
+                    filterResults.count = list.size
+                }
+            }
+            return filterResults
         }
+
+        override fun publishResults(filterText: CharSequence?, filterResults: FilterResults?) {
+            filteredItems = filterResults?.values as MutableList<T>
+            notifyDataSetChanged()
+        }
+
     }
 }
