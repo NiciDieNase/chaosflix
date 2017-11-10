@@ -16,12 +16,12 @@ abstract class ItemRecyclerViewAdapter<T>()
 
     internal abstract val layout: Int
 
-    internal abstract fun getFilteredProperty(item: T): String
+    internal abstract fun getFilteredProperties(item: T): List<String>
 
-    private val filter by lazy { ItemFilter()}
+    private val _filter by lazy { ItemFilter()}
 
     override fun getFilter(): Filter {
-        return filter
+        return _filter
     }
 
     private var _items: MutableList<T> = ArrayList<T>()
@@ -31,6 +31,7 @@ abstract class ItemRecyclerViewAdapter<T>()
         get() = filteredItems
         set(value) {
             _items = value
+            filteredItems = value
             notifyDataSetChanged()
         }
 
@@ -56,18 +57,10 @@ abstract class ItemRecyclerViewAdapter<T>()
     }
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        var mItem: T? = null
-        val mIcon: ImageView
-        val mTitleText: TextView
-        val mSubtitle: TextView
-        val mTag: TextView
-
-        init {
-            mIcon = mView.findViewById<View>(R.id.imageView) as ImageView
-            mTitleText = mView.findViewById<View>(R.id.title_text) as TextView
-            mSubtitle = mView.findViewById<View>(R.id.acronym_text) as TextView
-            mTag = mView.findViewById<View>(R.id.tag_text) as TextView
-        }
+        val mIcon: ImageView = mView.findViewById<View>(R.id.imageView) as ImageView
+        val mTitleText: TextView = mView.findViewById<View>(R.id.title_text) as TextView
+        val mSubtitle: TextView = mView.findViewById<View>(R.id.acronym_text) as TextView
+        val mTag: TextView = mView.findViewById<View>(R.id.tag_text) as TextView
     }
 
     inner class ItemFilter: Filter(){
@@ -75,7 +68,7 @@ abstract class ItemRecyclerViewAdapter<T>()
             val filterResults = FilterResults()
             filterText?.let { text: CharSequence ->
                 if(text.length > 0){
-                    val list = items.filter { getFilteredProperty(it).contains(text, true) }
+                    val list = _items.filter { getFilteredProperties(it).any { it.contains(text, true)} }
                     filterResults.values = list
                     filterResults.count = list.size
                 }
@@ -84,7 +77,11 @@ abstract class ItemRecyclerViewAdapter<T>()
         }
 
         override fun publishResults(filterText: CharSequence?, filterResults: FilterResults?) {
-            filteredItems = filterResults?.values as MutableList<T>
+            if(filterResults?.values != null){
+                filteredItems = filterResults?.values as MutableList<T>
+            } else {
+                filteredItems = _items
+            }
             notifyDataSetChanged()
         }
 

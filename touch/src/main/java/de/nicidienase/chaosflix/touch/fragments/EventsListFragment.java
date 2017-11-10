@@ -1,5 +1,7 @@
 package de.nicidienase.chaosflix.touch.fragments;
 
+import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -11,8 +13,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import java.util.List;
 
@@ -20,7 +24,7 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.touch.adapters.EventRecyclerViewAdapter;
 
-public class EventsListFragment extends ChaosflixFragment {
+public class EventsListFragment extends ChaosflixFragment implements SearchView.OnQueryTextListener {
 
 	private static final String ARG_COLUMN_COUNT = "column-count";
 	private static final String ARG_CONFERENCE = "conference";
@@ -89,23 +93,19 @@ public class EventsListFragment extends ChaosflixFragment {
 
 		if (conferenceId == BOOKMARKS_LIST_ID) {
 			toolbar.setTitle(R.string.bookmarks);
-			getViewModel().getBookmarkedEvents().observe(this, persistentEvents -> {
-				setEvents(persistentEvents);
-			});
+			getViewModel().getBookmarkedEvents().observe(this, this::setEvents);
 		} else if (conferenceId == IN_PROGRESS_LIST_ID) {
 			toolbar.setTitle(R.string.continue_watching);
-			getViewModel().getInProgressEvents().observe(this, persistentEvents -> {
-				setEvents(persistentEvents);
-			});
+			getViewModel().getInProgressEvents().observe(this, this::setEvents);
 		} else {
 			{
 				getViewModel().getConference(conferenceId).observe(this, conference -> {
-							toolbar.setTitle(conference.getTitle());
-							eventAdapter.setShowTags(conference.getTagsUsefull());
-						});
-				getViewModel().getEventsforConference(conferenceId).observe(this, persistentEvents -> {
-					setEvents(persistentEvents);
+					if (conference != null) {
+						toolbar.setTitle(conference.getTitle());
+						eventAdapter.setShowTags(conference.getTagsUsefull());
+					}
 				});
+				getViewModel().getEventsforConference(conferenceId).observe(this, this::setEvents);
 			}
 		}
 		return view;
@@ -129,12 +129,33 @@ public class EventsListFragment extends ChaosflixFragment {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.events_menu, menu);
+
+		SearchManager searchManager = (SearchManager)
+				((Activity)context).getSystemService(Context.SEARCH_SERVICE);
+		MenuItem searchMenuItem = menu.findItem(R.id.search);
+		SearchView searchView = (SearchView) searchMenuItem.getActionView();
+
+		searchView.setSearchableInfo(searchManager.
+				getSearchableInfo(((Activity)context).getComponentName()));
+		searchView.setSubmitButtonEnabled(true);
+		searchView.setOnQueryTextListener(this);
 	}
 
 	@Override
 	public void onDetach() {
 		super.onDetach();
 		listener = null;
+	}
+
+	@Override
+	public boolean onQueryTextSubmit(String query) {
+		return false;
+	}
+
+	@Override
+	public boolean onQueryTextChange(String newText) {
+		eventAdapter.getFilter().filter(newText);
+		return true;
 	}
 
 	public interface OnEventsListFragmentInteractionListener {

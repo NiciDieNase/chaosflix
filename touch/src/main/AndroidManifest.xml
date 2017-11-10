@@ -23,7 +23,11 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".touch.activities.BrowseActivity" />
+        <activity android:name=".touch.activities.BrowseActivity">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+        </activity>
         <activity android:name=".touch.activities.AboutActivity"/>
 
         <activity android:name=".touch.activities.PlayerActivity"

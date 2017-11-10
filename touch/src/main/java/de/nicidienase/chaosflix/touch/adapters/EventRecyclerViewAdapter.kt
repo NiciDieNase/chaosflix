@@ -13,9 +13,14 @@ import de.nicidienase.chaosflix.touch.fragments.EventsListFragment
 
 class EventRecyclerViewAdapter(val listener: EventsListFragment.OnEventsListFragmentInteractionListener) :
         ItemRecyclerViewAdapter<PersistentEvent>() {
-    override fun getFilteredProperty(item: PersistentEvent): String {
-        return item.title
+    override fun getFilteredProperties(item: PersistentEvent): List<String> {
+        return listOf(item.title,
+                item.subtitle,
+                item.description,
+                item.getSpeakerString()
+                ).filterNotNull()
     }
+
 
     override val layout = R.layout.event_cardview_layout
     var showTags: Boolean = false
@@ -28,9 +33,8 @@ class EventRecyclerViewAdapter(val listener: EventsListFragment.OnEventsListFrag
     override fun onBindViewHolder(holder: ItemRecyclerViewAdapter<PersistentEvent>.ViewHolder, position: Int) {
         val event = items[position]
 
-        holder.mItem = event
-        holder.mTitleText.setText(event.title)
-        holder.mSubtitle.setText(event.subtitle)
+        holder.mTitleText.text = event.title
+        holder.mSubtitle.text = event.subtitle
         if (showTags) {
             val tagString = StringBuilder()
             for (tag in event.tags!!) {
@@ -39,16 +43,16 @@ class EventRecyclerViewAdapter(val listener: EventsListFragment.OnEventsListFrag
                 }
                 tagString.append(tag)
             }
-            holder.mTag.setText(tagString)
+            holder.mTag.text = tagString
         }
-        Picasso.with(holder.mIcon.getContext())
+        Picasso.with(holder.mIcon.context)
                 .load(event.thumbUrl)
                 .noFade()
                 .fit()
                 .centerInside()
                 .into(holder.mIcon)
 
-        val resources = holder.mTitleText.getContext().getResources()
+        val resources = holder.mTitleText.context.getResources()
         ViewCompat.setTransitionName(holder.mTitleText,
                 resources.getString(R.string.title) + event.eventId)
         ViewCompat.setTransitionName(holder.mSubtitle,
@@ -56,6 +60,6 @@ class EventRecyclerViewAdapter(val listener: EventsListFragment.OnEventsListFrag
         ViewCompat.setTransitionName(holder.mIcon,
                 resources.getString(R.string.thumbnail) + event.eventId)
 
-        holder.mView.setOnClickListener({ v: View -> listener.onEventSelected(holder.mItem as PersistentEvent, v) })
+        holder.mView.setOnClickListener({ v: View -> listener.onEventSelected(items[position], v) })
     }
 }

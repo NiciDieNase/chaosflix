@@ -1,6 +1,8 @@
 package de.nicidienase.chaosflix.touch.activities;
 
+import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -55,7 +57,7 @@ public class BrowseActivity extends AppCompatActivity implements
 		return getResources().getInteger(R.integer.num_columns);
 	}
 
-	private void showBookmarksFragment(){
+	private void showBookmarksFragment() {
 		EventsListFragment bookmarksFragment = EventsListFragment.newInstance(EventsListFragment.BOOKMARKS_LIST_ID, getNumColumns());
 		showEventsFragment(bookmarksFragment);
 	}
