@@ -22,20 +22,20 @@ import de.nicidienase.chaosflix.touch.adapters.EventRecyclerViewAdapter;
 
 public class EventsListFragment extends ChaosflixFragment {
 
-	private static final String ARG_COLUMN_COUNT    = "column-count";
-	private static final String ARG_CONFERENCE      = "conference";
+	private static final String ARG_COLUMN_COUNT = "column-count";
+	private static final String ARG_CONFERENCE = "conference";
 	private static final String LAYOUTMANAGER_STATE = "layoutmanager-state";
-	private static final String TAG                 = EventsListFragment.class.getSimpleName();
-	public static final long   BOOKMARKS_LIST_ID   = -1;
-	public static final long   IN_PROGRESS_LIST_ID   = -2;
+	private static final String TAG = EventsListFragment.class.getSimpleName();
+	public static final long BOOKMARKS_LIST_ID = -1;
+	public static final long IN_PROGRESS_LIST_ID = -2;
 
 	private int columnCount = 1;
 	private OnEventsListFragmentInteractionListener listener;
 
-	private Toolbar                  toolbar;
-	private Context                  context;
+	private Toolbar toolbar;
+	private Context context;
 	private EventRecyclerViewAdapter eventAdapter;
-	private long                     conferenceId;
+	private long conferenceId;
 
 	private LinearLayoutManager layoutManager;
 
@@ -92,14 +92,17 @@ public class EventsListFragment extends ChaosflixFragment {
 			getViewModel().getBookmarkedEvents().observe(this, persistentEvents -> {
 				setEvents(persistentEvents);
 			});
-		} else if(conferenceId == IN_PROGRESS_LIST_ID) {
+		} else if (conferenceId == IN_PROGRESS_LIST_ID) {
 			toolbar.setTitle(R.string.continue_watching);
 			getViewModel().getInProgressEvents().observe(this, persistentEvents -> {
 				setEvents(persistentEvents);
 			});
 		} else {
 			{
-				getViewModel().getConference(conferenceId).observe(this, conference -> toolbar.setTitle(conference.getTitle()));
+				getViewModel().getConference(conferenceId).observe(this, conference -> {
+							toolbar.setTitle(conference.getTitle());
+							eventAdapter.setShowTags(conference.getTagsUsefull());
+						});
 				getViewModel().getEventsforConference(conferenceId).observe(this, persistentEvents -> {
 					setEvents(persistentEvents);
 				});
@@ -112,7 +115,7 @@ public class EventsListFragment extends ChaosflixFragment {
 		Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
 
 		eventAdapter.setItems(persistentEvents);
-		if(layoutState != null)
+		if (layoutState != null)
 			layoutManager.onRestoreInstanceState(layoutState);
 	}
 
