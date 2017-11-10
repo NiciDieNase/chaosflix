@@ -28,7 +28,7 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 	@Override
 	public Fragment getItem(int position) {
 		ConferenceGroup conferenceGroup = conferenceGroupList.get(position);
-		ConferenceGroupFragment conferenceFragment = ConferenceGroupFragment.newInstance(conferenceGroup, 1);
+		ConferenceGroupFragment conferenceFragment = ConferenceGroupFragment.newInstance(conferenceGroup, getNumColumns());
 		Log.d(TAG, "Created Fragment for: " + conferenceGroup.getName());
 		return conferenceFragment;
 	}
@@ -46,12 +46,6 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 	@Override
 	public CharSequence getPageTitle(int position) {
 		return conferenceGroupList.get(position).getName();
-	}
-
-	@Override
-	public float getPageWidth(int position) {
-		int integer = getNumColumns();
-		return 1f / integer;
 	}
 
 	private int getNumColumns() {
