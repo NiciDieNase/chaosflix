@@ -16,6 +16,8 @@ abstract class ItemRecyclerViewAdapter<T>()
 
     internal abstract val layout: Int
 
+    abstract fun getComparator(): Comparator<in T>?
+
     internal abstract fun getFilteredProperties(item: T): List<String>
 
     private val _filter by lazy { ItemFilter()}
@@ -23,15 +25,16 @@ abstract class ItemRecyclerViewAdapter<T>()
     override fun getFilter(): Filter {
         return _filter
     }
-
     private var _items: MutableList<T> = ArrayList<T>()
+
     private var filteredItems: MutableList<T> = _items
 
     var items: MutableList<T>
         get() = filteredItems
         set(value) {
             _items = value
-            filteredItems = value
+            Collections.sort(_items,getComparator())
+            filteredItems = _items
             notifyDataSetChanged()
         }
 

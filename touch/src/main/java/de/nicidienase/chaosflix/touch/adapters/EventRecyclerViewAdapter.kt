@@ -10,9 +10,15 @@ import java.util.Collections
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.touch.fragments.EventsListFragment
+import java.util.Comparator
 
 class EventRecyclerViewAdapter(val listener: EventsListFragment.OnEventsListFragmentInteractionListener) :
         ItemRecyclerViewAdapter<PersistentEvent>() {
+
+    override fun getComparator(): Comparator<in PersistentEvent>? {
+        return Comparator { o1, o2 -> o1.title.compareTo(o2.title) }
+    }
+
     override fun getFilteredProperties(item: PersistentEvent): List<String> {
         return listOf(item.title,
                 item.subtitle,
@@ -24,11 +30,6 @@ class EventRecyclerViewAdapter(val listener: EventsListFragment.OnEventsListFrag
 
     override val layout = R.layout.event_cardview_layout
     var showTags: Boolean = false
-
-    init {
-        Collections.sort(items) { o1, o2 -> o1.title.compareTo(o2.title) }
-
-    }
 
     override fun onBindViewHolder(holder: ItemRecyclerViewAdapter<PersistentEvent>.ViewHolder, position: Int) {
         val event = items[position]

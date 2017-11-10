@@ -8,14 +8,18 @@ import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.entities.recording.Conference
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentConference
 import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment
+import java.util.Comparator
 
 class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener?) : ItemRecyclerViewAdapter<PersistentConference>() {
-
     override fun getFilteredProperties(item: PersistentConference): List<String> {
         return listOf(item.title)
     }
 
     override val layout = R.layout.conference_cardview_item
+
+    override fun getComparator(): Comparator<in PersistentConference>? {
+        return kotlin.Comparator { o1, o2 -> o1.acronym.compareTo(o2.acronym) }
+    }
 
     override fun onBindViewHolder(holder: ItemRecyclerViewAdapter<PersistentConference>.ViewHolder, position: Int) {
         holder.mTitleText.setText(items[position].title)
