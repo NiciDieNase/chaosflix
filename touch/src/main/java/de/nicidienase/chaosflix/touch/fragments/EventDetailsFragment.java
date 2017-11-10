@@ -180,7 +180,7 @@ public class EventDetailsFragment extends ChaosflixFragment {
 				listener.invalidateOptionsMenu();
 				return true;
 			case R.id.action_download:
-				Snackbar.make(item.getActionView(), "Start download", Snackbar.LENGTH_LONG).show();
+				Snackbar.make(getView(), "Download not yet implemented", Snackbar.LENGTH_LONG).show();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
