@@ -14,14 +14,16 @@
         android:supportsRtl="true"
         android:name=".touch.ChaosflixApplication"
         android:theme="@style/AppTheme">
-        <activity android:name=".touch.activities.BrowseActivity"
-                  android:label="@string/app_name">
+        <activity
+            android:name=".touch.activities.SplashActivity"
+            android:label="@string/app_name"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
+        <activity android:name=".touch.activities.BrowseActivity" />
         <activity android:name=".touch.activities.AboutActivity"/>
 
         <activity android:name=".touch.activities.PlayerActivity"
