@@ -42,6 +42,7 @@ public class EventsListFragment extends ChaosflixFragment implements SearchView.
 	private long conferenceId;
 
 	private LinearLayoutManager layoutManager;
+	private SearchView searchView;
 
 	public static EventsListFragment newInstance(long conferenceId, int columnCount) {
 		EventsListFragment fragment = new EventsListFragment();
@@ -130,14 +131,15 @@ public class EventsListFragment extends ChaosflixFragment implements SearchView.
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.events_menu, menu);
 
+		MenuItem searchMenuItem = menu.findItem(R.id.search);
+		searchView = (SearchView) searchMenuItem.getActionView();
 		SearchManager searchManager = (SearchManager)
 				((Activity)context).getSystemService(Context.SEARCH_SERVICE);
-		MenuItem searchMenuItem = menu.findItem(R.id.search);
-		SearchView searchView = (SearchView) searchMenuItem.getActionView();
 
 		searchView.setSearchableInfo(searchManager.
 				getSearchableInfo(((Activity)context).getComponentName()));
 		searchView.setSubmitButtonEnabled(true);
+		searchView.setIconified(false);
 		searchView.setOnQueryTextListener(this);
 	}
 
