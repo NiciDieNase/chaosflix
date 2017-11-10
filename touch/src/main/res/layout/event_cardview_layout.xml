@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:card_view="http://schemas.android.com/tools"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
 
@@ -45,6 +46,7 @@
                     android:layout_marginTop="4dp"
                     android:layout_weight="1"
                     android:text=""
+                    tools:text="Title"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
                 <TextView
@@ -53,6 +55,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text=""
+                    tools:text="Subtitle"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"/>
 
                 <TextView
@@ -61,7 +64,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="bottom|right"
-                    android:text=""/>
+                    android:text=""
+                    tools:text="Tag"/>
             </LinearLayout>
 
         </LinearLayout>
