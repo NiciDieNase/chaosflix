@@ -10,6 +10,7 @@ android {
         applicationId "de.nicidienase.chaosflix"
         minSdkVersion rootProject.ext.minSDK
         targetSdkVersion rootProject.ext.targetSDK
+        // odd for touch, even for leanback
         versionCode 7
         versionName "0.2.0"
         multiDexEnabled true
