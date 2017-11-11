@@ -2,6 +2,7 @@ package de.nicidienase.chaosflix.touch.fragments;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -92,12 +93,17 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		toolbar = view.findViewById(R.id.toolbar);
 		((AppCompatActivity) this.context).setSupportActionBar(toolbar);
 
+		Observer<List<PersistentEvent>> listObserver = persistentEvents -> {
+			setEvents(persistentEvents);
+			this.finishLoading();
+		};
+
 		if (conferenceId == BOOKMARKS_LIST_ID) {
 			toolbar.setTitle(R.string.bookmarks);
-			getViewModel().getBookmarkedEvents().observe(this, this::setEvents);
+			getViewModel().getBookmarkedEvents().observe(this, listObserver);
 		} else if (conferenceId == IN_PROGRESS_LIST_ID) {
 			toolbar.setTitle(R.string.continue_watching);
-			getViewModel().getInProgressEvents().observe(this, this::setEvents);
+			getViewModel().getInProgressEvents().observe(this, listObserver);
 		} else {
 			{
 				getViewModel().getConference(conferenceId).observe(this, conference -> {
@@ -106,7 +112,8 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 						eventAdapter.setShowTags(conference.getTagsUsefull());
 					}
 				});
-				getViewModel().getEventsforConference(conferenceId).observe(this, this::setEvents);
+
+				getViewModel().getEventsforConference(conferenceId).observe(this, listObserver);
 			}
 		}
 		return view;

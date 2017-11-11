@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.touch.sync
 
+import android.util.Log
 import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.entities.recording.Conference
 import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper
@@ -31,8 +32,12 @@ class Downloader(val recordingApi: RecordingService,
         recordingApi.getConferencesWrapper()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe { con: ConferencesWrapper? -> saveConferences(con, listener) }
+                .subscribe( { con: ConferencesWrapper? -> saveConferences(con, listener) },{
+                    t: Throwable? -> Log.d(TAG,t?.message,t)
+                })
     }
+
+    private val TAG: String? = Downloader::class.simpleName
 
     fun updateEventsForConference(conferenceId: Long, listener: ((List<Long>) -> Unit)? = null) {
         if(conferenceId < 0)
@@ -40,9 +45,11 @@ class Downloader(val recordingApi: RecordingService,
         recordingApi.getConference(conferenceId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe { conference: Conference? ->
+                .subscribe({ conference: Conference? ->
                     saveEvents(conference, listener)
-                }
+                }, {
+                    t: Throwable? -> Log.d(TAG,t?.message,t)
+                })
 
     }
 
@@ -52,9 +59,11 @@ class Downloader(val recordingApi: RecordingService,
         recordingApi.getEvent(eventId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe { event: Event? ->
+                .subscribe ({ event: Event? ->
                     saveRecordings(event, listener)
-                }
+                }, {
+                    t: Throwable? -> Log.d(TAG,t?.message,t)
+                })
     }
 
     fun saveConferences(con: ConferencesWrapper?, listener: ((List<Long>) -> Unit)?) {

@@ -26,6 +26,7 @@ public class BrowseFragment extends Fragment {
 	@Override
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		progressOverlay = view.findViewById(R.id.progress_overlay);
 	}
 
 	public void finishLoading(){

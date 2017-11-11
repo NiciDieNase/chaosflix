@@ -15,4 +15,5 @@
         android:paddingBottom="4dp"
         tools:listitem="@layout/conference_cardview_item"/>
 
+    <include layout="@layout/loading_overlay"/>
 </LinearLayout>
