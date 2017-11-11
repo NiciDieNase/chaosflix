@@ -16,6 +16,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.util.concurrent.TimeUnit
 
 object ViewModelFactory: ViewModelProvider.Factory{
 
@@ -28,13 +29,10 @@ object ViewModelFactory: ViewModelProvider.Factory{
         val recordingUrl = res.getString(R.string.api_media_ccc_url)
         val streamingUrl = res.getString(R.string.streaming_media_ccc_url)
 
-        val client: OkHttpClient
-        if(BuildConfig.DEBUG){
-            client = OkHttpClient.Builder()
+        val client = OkHttpClient.Builder()
+                    .connectTimeout(60,TimeUnit.SECONDS)
+                    .readTimeout(60,TimeUnit.SECONDS)
                     .build()
-        } else {
-            client = OkHttpClient()
-        }
         val jacksonConverterFactory = JacksonConverterFactory.create(ObjectMapper().registerModule(KotlinModule()))
         val rxJava2CallAdapterFactory = RxJava2CallAdapterFactory.create()
 
