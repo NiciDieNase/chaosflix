@@ -24,7 +24,7 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.touch.adapters.EventRecyclerViewAdapter;
 
-public class EventsListFragment extends ChaosflixFragment implements SearchView.OnQueryTextListener {
+public class EventsListFragment extends BrowseFragment implements SearchView.OnQueryTextListener {
 
 	private static final String ARG_COLUMN_COUNT = "column-count";
 	private static final String ARG_CONFERENCE = "conference";

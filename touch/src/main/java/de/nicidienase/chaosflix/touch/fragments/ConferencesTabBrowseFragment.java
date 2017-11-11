@@ -15,7 +15,7 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.touch.adapters.ConferenceGroupsFragmentPager;
 
 
-public class ConferencesTabBrowseFragment extends ChaosflixFragment {
+public class ConferencesTabBrowseFragment extends BrowseFragment {
 
 	private static final String TAG = ConferencesTabBrowseFragment.class.getSimpleName();
 

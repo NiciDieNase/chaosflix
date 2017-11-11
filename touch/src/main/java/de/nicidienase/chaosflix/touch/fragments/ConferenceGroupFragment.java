@@ -13,11 +13,8 @@ import android.view.ViewGroup;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.ConferenceGroup;
 import de.nicidienase.chaosflix.touch.adapters.ConferenceRecyclerViewAdapter;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 
-public class ConferenceGroupFragment extends ChaosflixFragment {
+public class ConferenceGroupFragment extends BrowseFragment {
 
 	private static final String TAG = ConferenceGroupFragment.class.getSimpleName();
 

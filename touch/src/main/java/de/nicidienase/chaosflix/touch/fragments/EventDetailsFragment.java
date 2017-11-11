@@ -25,7 +25,7 @@ import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem;
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsNewBinding;
 import de.nicidienase.chaosflix.touch.Util;
 
-public class EventDetailsFragment extends ChaosflixFragment {
+public class EventDetailsFragment extends BrowseFragment {
 	private static final String TAG = EventDetailsFragment.class.getSimpleName();
 	private static final String EVENT_PARAM = "event_param";
 
