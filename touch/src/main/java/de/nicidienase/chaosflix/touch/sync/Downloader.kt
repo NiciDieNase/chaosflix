@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix.touch.sync
 
 import android.util.Log
+import de.nicidienase.chaosflix.common.Util
 import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.entities.recording.Conference
 import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper
@@ -10,7 +11,6 @@ import de.nicidienase.chaosflix.common.entities.recording.persistence.Persistent
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording
 import de.nicidienase.chaosflix.common.network.RecordingService
-import de.nicidienase.chaosflix.touch.Util
 import io.reactivex.schedulers.Schedulers
 
 class Downloader(val recordingApi: RecordingService,

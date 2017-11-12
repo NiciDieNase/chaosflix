@@ -12,11 +12,11 @@ import android.view.*
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import de.nicidienase.chaosflix.R
+import de.nicidienase.chaosflix.common.Util
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording
 import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsNewBinding
-import de.nicidienase.chaosflix.touch.Util
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 
 class EventDetailsFragment : BrowseFragment() {

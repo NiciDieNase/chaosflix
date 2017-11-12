@@ -11,8 +11,8 @@ android {
         minSdkVersion rootProject.ext.minSDK
         targetSdkVersion rootProject.ext.targetSDK
         // odd for touch, even for leanback
-        versionCode 9
-        versionName "0.2.1"
+        versionCode 11
+        versionName "0.2.2"
         multiDexEnabled true
     }
     buildTypes {
