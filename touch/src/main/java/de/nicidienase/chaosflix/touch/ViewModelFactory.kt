@@ -52,8 +52,11 @@ object ViewModelFactory: ViewModelProvider.Factory{
                 .build()
         streamingApi = retrofigStreaming.create(StreamingService::class.java)
 
-        database = Room.databaseBuilder(ChaosflixApplication.APPLICATION_CONTEXT,
-                ChaosflixDatabase::class.java,"mediaccc.de").build()
+        database = Room.databaseBuilder(
+                ChaosflixApplication.APPLICATION_CONTEXT,
+                ChaosflixDatabase::class.java,"mediaccc.de")
+                .fallbackToDestructiveMigration()
+                .build()
     }
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
