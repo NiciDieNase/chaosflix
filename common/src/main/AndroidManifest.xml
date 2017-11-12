@@ -1,5 +1,4 @@
 <manifest package="de.nicidienase.chaosflix"
-<<<<<<< HEAD
           xmlns:android="http://schemas.android.com/apk/res/android">
 
     <meta-data android:name="DATABASE" android:value="mediaccc.db" />
@@ -7,6 +6,3 @@
     <meta-data android:name="QUERY_LOG" android:value="false" />
     <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="de.nicidienase.chaosflix" />
 </manifest>
-=======
-          xmlns:android="http://schemas.android.com/apk/res/android"/>
->>>>>>> extracte module common
