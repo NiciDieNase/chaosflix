@@ -59,11 +59,11 @@ class EventDetailsFragment : BrowseFragment() {
         if (listener != null)
             listener!!.setActionbar(binding.animToolbar)
 
-        eventSelectedListener?.let{
-            relatedEventsAdapter = RelatedEventsRecyclerViewAdapter(eventSelectedListener!!)
-            binding.relatedItemsList.adapter = relatedEventsAdapter
-            binding.relatedItemsList.layoutManager = GridLayoutManager(context,2)
-        }
+//        eventSelectedListener?.let{
+//            relatedEventsAdapter = RelatedEventsRecyclerViewAdapter(eventSelectedListener!!)
+//            binding.relatedItemsList.adapter = relatedEventsAdapter
+//            binding.relatedItemsList.layoutManager = GridLayoutManager(context,2)
+//        }
 
         binding.appbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             val v = Math.abs(verticalOffset).toDouble() / appBarLayout.totalScrollRange
@@ -97,12 +97,12 @@ class EventDetailsFragment : BrowseFragment() {
                                 })
 
 
-                            val relatedIds: LongArray = event.metadata?.related?.keys?.toLongArray() ?: longArrayOf()
-
-                            viewModel.getEventsByIds(relatedIds)
-                                    .observe(this, Observer { events ->
-                                        relatedEventsAdapter.items = ArrayList(events)
-                                    })
+//                            val relatedIds: LongArray = event.metadata?.related?.keys?.toLongArray() ?: longArrayOf()
+//
+//                            viewModel.getEventsByIds(relatedIds)
+//                                    .observe(this, Observer { events ->
+//                                        relatedEventsAdapter.items = ArrayList(events)
+//                                    })
 
                     }
                 })
