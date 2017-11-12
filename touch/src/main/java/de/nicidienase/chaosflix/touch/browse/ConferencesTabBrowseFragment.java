@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.touch.fragments;
+package de.nicidienase.chaosflix.touch.browse;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.touch.adapters.ConferenceGroupsFragmentPager;
+import de.nicidienase.chaosflix.touch.browse.adapters.ConferenceGroupsFragmentPager;
 
 
 public class ConferencesTabBrowseFragment extends BrowseFragment {

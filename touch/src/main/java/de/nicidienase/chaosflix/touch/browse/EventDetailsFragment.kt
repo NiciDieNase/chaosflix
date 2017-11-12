@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.touch.fragments
+package de.nicidienase.chaosflix.touch.browse
 
 import android.arch.lifecycle.Observer
 import android.content.Context
@@ -17,7 +17,7 @@ import de.nicidienase.chaosflix.common.entities.recording.persistence.Persistent
 import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsNewBinding
 import de.nicidienase.chaosflix.touch.Util
-import de.nicidienase.chaosflix.touch.adapters.EventRecyclerViewAdapter
+import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 
 class EventDetailsFragment : BrowseFragment() {
 

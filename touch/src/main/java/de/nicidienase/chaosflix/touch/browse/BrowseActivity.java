@@ -1,8 +1,6 @@
-package de.nicidienase.chaosflix.touch.activities;
+package de.nicidienase.chaosflix.touch.browse;
 
-import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,10 +21,8 @@ import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording;
 import de.nicidienase.chaosflix.touch.ViewModelFactory;
-import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment;
-import de.nicidienase.chaosflix.touch.fragments.EventDetailsFragment;
-import de.nicidienase.chaosflix.touch.fragments.EventsListFragment;
-import de.nicidienase.chaosflix.touch.viewmodels.BrowseViewModel;
+import de.nicidienase.chaosflix.touch.activities.AboutActivity;
+import de.nicidienase.chaosflix.touch.playback.PlayerActivity;
 
 public class BrowseActivity extends AppCompatActivity implements
 		ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener,

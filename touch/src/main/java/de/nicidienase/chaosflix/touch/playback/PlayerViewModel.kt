@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.touch.viewmodels
+package de.nicidienase.chaosflix.touch.playback
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel

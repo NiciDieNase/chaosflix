@@ -1,6 +1,5 @@
-package de.nicidienase.chaosflix.touch.fragments;
+package de.nicidienase.chaosflix.touch.playback;
 
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -14,12 +13,12 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 /**
  * Created by felix on 27.09.17.
  */
-class MyListener implements Player.EventListener, SimpleExoPlayer.VideoListener {
-	private static final String TAG = MyListener.class.getSimpleName();
+class PlayerEventListener implements Player.EventListener, SimpleExoPlayer.VideoListener {
+	private static final String TAG = PlayerEventListener.class.getSimpleName();
 	private SimpleExoPlayer player;
 	private PlayerStateChangeListener listener;
 
-	public MyListener(SimpleExoPlayer player, PlayerStateChangeListener listener) {
+	public PlayerEventListener(SimpleExoPlayer player, PlayerStateChangeListener listener) {
 		this.player = player;
 		this.listener = listener;
 	}

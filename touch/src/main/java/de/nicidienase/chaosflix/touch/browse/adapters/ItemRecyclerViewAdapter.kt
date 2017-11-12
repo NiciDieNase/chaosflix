@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.touch.adapters
+package de.nicidienase.chaosflix.touch.browse.adapters
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater

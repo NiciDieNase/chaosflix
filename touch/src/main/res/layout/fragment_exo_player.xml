@@ -4,7 +4,7 @@
              android:layout_height="match_parent"
              xmlns:app="http://schemas.android.com/apk/res-auto"
              android:background="@color/black"
-             tools:context="de.nicidienase.chaosflix.touch.fragments.ExoPlayerFragment">
+             tools:context="de.nicidienase.chaosflix.touch.playback.ExoPlayerFragment">
 
     <com.google.android.exoplayer2.ui.SimpleExoPlayerView
         android:id="@+id/video_view"

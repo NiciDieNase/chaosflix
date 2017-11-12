@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.touch.fragments;
+package de.nicidienase.chaosflix.touch.browse;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -9,7 +9,6 @@ import android.view.View;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.touch.ViewModelFactory;
-import de.nicidienase.chaosflix.touch.viewmodels.BrowseViewModel;
 
 public class BrowseFragment extends Fragment {
 

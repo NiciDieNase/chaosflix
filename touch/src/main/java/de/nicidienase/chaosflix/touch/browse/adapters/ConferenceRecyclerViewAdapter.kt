@@ -1,13 +1,10 @@
-package de.nicidienase.chaosflix.touch.adapters
+package de.nicidienase.chaosflix.touch.browse.adapters
 
 import com.squareup.picasso.Picasso
 
-import java.util.ArrayList
-
 import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.common.entities.recording.Conference
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentConference
-import de.nicidienase.chaosflix.touch.fragments.ConferencesTabBrowseFragment
+import de.nicidienase.chaosflix.touch.browse.ConferencesTabBrowseFragment
 import java.util.Comparator
 
 class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener?) : ItemRecyclerViewAdapter<PersistentConference>() {

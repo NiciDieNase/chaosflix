@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.touch.fragments;
+package de.nicidienase.chaosflix.touch.browse;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.ConferenceGroup;
-import de.nicidienase.chaosflix.touch.adapters.ConferenceRecyclerViewAdapter;
+import de.nicidienase.chaosflix.touch.browse.adapters.ConferenceRecyclerViewAdapter;
 
 public class ConferenceGroupFragment extends BrowseFragment {
 

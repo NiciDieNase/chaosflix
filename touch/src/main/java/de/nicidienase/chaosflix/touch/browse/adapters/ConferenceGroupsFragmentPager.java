@@ -1,10 +1,9 @@
-package de.nicidienase.chaosflix.touch.adapters;
+package de.nicidienase.chaosflix.touch.browse.adapters;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.List;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.ConferenceGroup;
-import de.nicidienase.chaosflix.touch.fragments.ConferenceGroupFragment;
+import de.nicidienase.chaosflix.touch.browse.ConferenceGroupFragment;
 
 public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 

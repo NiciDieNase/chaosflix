@@ -1,6 +1,5 @@
-package de.nicidienase.chaosflix.touch.fragments;
+package de.nicidienase.chaosflix.touch.playback;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
@@ -48,11 +47,9 @@ import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording;
-import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgress;
 import de.nicidienase.chaosflix.touch.ViewModelFactory;
-import de.nicidienase.chaosflix.touch.viewmodels.PlayerViewModel;
 
-public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStateChangeListener {
+public class ExoPlayerFragment extends Fragment implements PlayerEventListener.PlayerStateChangeListener {
 	private static final String TAG = ExoPlayerFragment.class.getSimpleName();
 	public static final String PLAYBACK_STATE = "playback_state";
 	private static final String ARG_EVENT = "event";
@@ -188,7 +185,7 @@ public class ExoPlayerFragment extends Fragment implements MyListener.PlayerStat
 
 
 		exoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
-		MyListener listener = new MyListener(exoPlayer, this);
+		PlayerEventListener listener = new PlayerEventListener(exoPlayer, this);
 		exoPlayer.addVideoListener(listener);
 		exoPlayer.addListener(listener);
 

@@ -1,15 +1,13 @@
-package de.nicidienase.chaosflix.touch.adapters
+package de.nicidienase.chaosflix.touch.browse.adapters
 
 import android.support.v4.view.ViewCompat
 import android.view.View
 
 import com.squareup.picasso.Picasso
 
-import java.util.Collections
-
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.touch.fragments.EventsListFragment
+import de.nicidienase.chaosflix.touch.browse.EventsListFragment
 import java.util.Comparator
 
 class EventRecyclerViewAdapter(val listener: EventsListFragment.OnEventsListFragmentInteractionListener) :

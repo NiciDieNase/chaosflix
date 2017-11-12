@@ -5,13 +5,12 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.persistence.room.Room
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import de.nicidienase.chaosflix.BuildConfig
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.network.RecordingService
 import de.nicidienase.chaosflix.common.network.StreamingService
-import de.nicidienase.chaosflix.touch.viewmodels.PlayerViewModel
-import de.nicidienase.chaosflix.touch.viewmodels.BrowseViewModel
+import de.nicidienase.chaosflix.touch.playback.PlayerViewModel
+import de.nicidienase.chaosflix.touch.browse.BrowseViewModel
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
