@@ -9,7 +9,7 @@ object Util {
         val result = ArrayList<PersistentRecording>()
 
         result.addAll(recordings.filter { it.isHighQuality && it.mimeType == "video/mp4" }.sortedBy { it.language.length })
-        result.addAll(recordings.filter { it.mimeType == "video/mp4" }.sortedBy { it.language.length })
+        result.addAll(recordings.filter { !it.isHighQuality && it.mimeType == "video/mp4" }.sortedBy { it.language.length })
         result.addAll(recordings.filter { it.mimeType.startsWith("video/") }.sortedBy { it.language.length })
 
         when {

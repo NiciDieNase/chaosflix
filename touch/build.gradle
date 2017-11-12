@@ -65,10 +65,10 @@ dependencies {
 
 //    implementation "android.arch.lifecycle:runtime:1.0.3"
     implementation "android.arch.lifecycle:extensions:${rootProject.ext.archCompVersion}"
-    implementation "android.arch.lifecycle:common-java8:1.0.0-rc1"
+    implementation "android.arch.lifecycle:common-java8:1.0.0"
     implementation "android.arch.persistence.room:runtime:${rootProject.ext.archCompVersion}"
     implementation "android.arch.persistence.room:rxjava2:${rootProject.ext.archCompVersion}"
-    kapt 'com.android.databinding:compiler:3.1.0-alpha01'
+    kapt 'com.android.databinding:compiler:3.1.0-alpha03'
     kapt "android.arch.lifecycle:compiler:${rootProject.ext.archCompVersion}"
 //    kapt "android.arch.persistence.room:compiler:${rootProject.ext.archCompVersion}"
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.1.50"
