@@ -38,6 +38,8 @@ class BrowseViewModel(
         return database.eventDao().findEventById(eventId)
     }
 
+    fun getEventsByIds(ids: LongArray) = database.eventDao().findEventsByIds(ids)
+
     fun getEventsforConference(conferenceId: Long): LiveData<List<PersistentEvent>> {
         downloader.updateEventsForConference(conferenceId)
         return database.eventDao().findEventsByConference(conferenceId)

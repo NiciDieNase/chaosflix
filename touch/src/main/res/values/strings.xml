@@ -16,4 +16,5 @@
     <string name="about">About</string>
     <string name="search_events">Search Events</string>
     <string name="search_talks">Search Talks</string>
+    <string name="event_details_image_thumbnail_description">Thumbnail-picture for this event</string>
 </resources>

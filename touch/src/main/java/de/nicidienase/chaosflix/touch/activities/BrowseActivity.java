@@ -91,7 +91,7 @@ public class BrowseActivity extends AppCompatActivity implements
 
 	@Override
 	public void onEventSelected(PersistentEvent event, View v) {
-		EventDetailsFragment detailsFragment = EventDetailsFragment.newInstance(event.getEventId());
+		EventDetailsFragment detailsFragment = EventDetailsFragment.Companion.newInstance(event.getEventId());
 		FragmentManager fm = getSupportFragmentManager();
 
 		detailsFragment.setAllowEnterTransitionOverlap(true);
