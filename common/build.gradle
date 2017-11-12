@@ -31,7 +31,7 @@ android {
 }
 
 group="de.nicidienase.chaosflix"
-version="1.0.0"
+version="1.0.1-SNAPSHOT"
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -44,6 +44,7 @@ dependencies {
     implementation 'com.github.satyan:sugar:1.4'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.3'
+    compile 'com.github.satyan:sugar:1.4'
 
     implementation 'com.squareup.retrofit2:retrofit:2.2.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.2.0'
