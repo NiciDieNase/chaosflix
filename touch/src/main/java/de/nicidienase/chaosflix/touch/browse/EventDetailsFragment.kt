@@ -53,7 +53,7 @@ class EventDetailsFragment : BrowseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentEventDetailsNewBinding.bind(view)
-        binding.playFab.setOnClickListener { v -> play() }
+        binding.playFab.setOnClickListener { _ -> play() }
         if (listener != null)
             listener!!.setActionbar(binding.animToolbar)
 

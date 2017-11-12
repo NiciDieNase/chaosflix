@@ -28,7 +28,7 @@ class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseF
                 .centerInside()
                 .into(holder.mIcon)
 
-        holder.mView.setOnClickListener { v ->
+        holder.mView.setOnClickListener { _ ->
             mListener?.onConferenceSelected((items[position]).conferenceId)
         }
     }

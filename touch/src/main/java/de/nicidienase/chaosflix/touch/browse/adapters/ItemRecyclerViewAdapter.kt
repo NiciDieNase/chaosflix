@@ -83,7 +83,7 @@ abstract class ItemRecyclerViewAdapter<T>()
 
         override fun publishResults(filterText: CharSequence?, filterResults: FilterResults?) {
             if(filterResults?.values != null){
-                filteredItems = filterResults?.values as MutableList<T>
+                filteredItems = filterResults.values as MutableList<T>
             } else {
                 filteredItems = _items
             }

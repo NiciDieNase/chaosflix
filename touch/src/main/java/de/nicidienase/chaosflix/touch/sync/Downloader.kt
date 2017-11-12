@@ -86,7 +86,7 @@ class Downloader(val recordingApi: RecordingService,
                 val conferenceList = entry.value
                         .map { PersistentConference(it) }
                         .map { it.conferenceGroupId = groupId; it }.toTypedArray()
-                val insertConferences = database.conferenceDao().insertConferences(*conferenceList)
+                database.conferenceDao().insertConferences(*conferenceList)
                 listener?.invoke(con.conferences.map { it.conferenceID })
             }
         }
@@ -97,7 +97,7 @@ class Downloader(val recordingApi: RecordingService,
             val events = conference?.events
                     ?.map { PersistentEvent(it) }?.toTypedArray()
             if (events != null) {
-                val insertEvents = database.eventDao().insertEvent(*events)
+                database.eventDao().insertEvent(*events)
                 listener?.invoke(events.map { it.eventId })
             }
         }
@@ -108,7 +108,7 @@ class Downloader(val recordingApi: RecordingService,
                 ?.map { PersistentRecording(it) }
                 ?.toTypedArray()
         if (recordings != null) {
-            val insertRecordings = database.recordingDao().insertRecording(*recordings)
+            database.recordingDao().insertRecording(*recordings)
             listener?.invoke(recordings.map { it.recordingId })
         }
     }
