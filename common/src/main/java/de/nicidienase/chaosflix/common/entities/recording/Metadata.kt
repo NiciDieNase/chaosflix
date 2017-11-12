@@ -7,17 +7,24 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 open class Metadata(
-        var related: LongArray?,
+        var related: Map<Long,Long>?,
         @JsonProperty("remote_id") var remoteId: String?
 ) : Parcelable {
-    constructor(parcel: Parcel) : this(
-            parcel.createLongArray(),
-            parcel.readString()) {
+    constructor(parcel: Parcel) : this(null,parcel.readString()) {
+        val mapSize = parcel.readInt()
+        val map = HashMap<Long,Long>()
+        for (i in 0..mapSize){
+            map.put(parcel.readLong(),parcel.readLong())
+        }
+        related = map
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeLongArray(related)
         parcel.writeString(remoteId)
+        related?.run {
+            parcel.writeInt(this.size)
+            this.map { entry -> parcel.writeLong(entry.key); parcel.writeLong(entry.value) }
+        }
     }
 
     override fun describeContents(): Int {

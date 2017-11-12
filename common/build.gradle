@@ -33,7 +33,7 @@ android {
 }
 
 group="de.nicidienase.chaosflix"
-version="1.2.0-SNAPSHOT"
+version="1.2.1-SNAPSHOT"
 
 dependencies {
     api 'com.android.support:appcompat-v7:27.0.0'

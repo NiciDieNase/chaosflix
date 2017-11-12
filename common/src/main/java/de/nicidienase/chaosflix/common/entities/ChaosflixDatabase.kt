@@ -9,17 +9,13 @@ import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgressDao
 import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
 import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItemDao
 
-/**
- * Created by felix on 04.10.17.
- */
-
 @Database(entities = arrayOf(
         PersistentConference::class,
         PersistentEvent::class,
         PersistentRecording::class,
         ConferenceGroup::class,
         PlaybackProgress::class,
-        WatchlistItem::class), version = 1, exportSchema = false)
+        WatchlistItem::class), version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ChaosflixDatabase : RoomDatabase() {
     abstract fun playbackProgressDao(): PlaybackProgressDao
