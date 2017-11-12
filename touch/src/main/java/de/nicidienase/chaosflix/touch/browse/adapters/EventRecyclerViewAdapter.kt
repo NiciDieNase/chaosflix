@@ -10,7 +10,7 @@ import de.nicidienase.chaosflix.common.entities.recording.persistence.Persistent
 import de.nicidienase.chaosflix.touch.browse.EventsListFragment
 import java.util.Comparator
 
-class EventRecyclerViewAdapter(val listener: EventsListFragment.OnEventsListFragmentInteractionListener) :
+open class EventRecyclerViewAdapter(val listener: EventsListFragment.OnEventsListFragmentInteractionListener) :
         ItemRecyclerViewAdapter<PersistentEvent>() {
 
     override fun getComparator(): Comparator<in PersistentEvent>? {

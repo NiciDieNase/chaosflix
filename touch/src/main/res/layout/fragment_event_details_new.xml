@@ -137,7 +137,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:paddingBottom="4dp"
-                    tools:listitem="@layout/event_cardview_layout"/>
+                    tools:listitem="@layout/related_event_cardview_layout"/>
 
                 <!--TODO Add list of related or other videos-->
             </LinearLayout>

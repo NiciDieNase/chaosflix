@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import android.transition.TransitionInflater
@@ -18,6 +19,7 @@ import de.nicidienase.chaosflix.common.entities.recording.persistence.Persistent
 import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsNewBinding
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
+import de.nicidienase.chaosflix.touch.browse.adapters.RelatedEventsRecyclerViewAdapter
 
 class EventDetailsFragment : BrowseFragment() {
 
@@ -58,9 +60,9 @@ class EventDetailsFragment : BrowseFragment() {
             listener!!.setActionbar(binding.animToolbar)
 
         eventSelectedListener?.let{
-            relatedEventsAdapter = EventRecyclerViewAdapter(eventSelectedListener!!)
+            relatedEventsAdapter = RelatedEventsRecyclerViewAdapter(eventSelectedListener!!)
             binding.relatedItemsList.adapter = relatedEventsAdapter
-            binding.relatedItemsList.layoutManager = LinearLayoutManager(this.context)
+            binding.relatedItemsList.layoutManager = GridLayoutManager(context,2)
         }
 
         binding.appbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->

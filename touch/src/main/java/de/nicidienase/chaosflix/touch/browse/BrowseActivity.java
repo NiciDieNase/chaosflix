@@ -53,15 +53,20 @@ public class BrowseActivity extends AppCompatActivity implements
 		return getResources().getInteger(R.integer.num_columns);
 	}
 
+	@Override
+	public void onConferenceSelected(long conferenceId) {
+		EventsListFragment eventsListFragment = EventsListFragment.newInstance(conferenceId, getNumColumns());
+		showEventsFragment(eventsListFragment);
+	}
+
 	private void showBookmarksFragment() {
 		EventsListFragment bookmarksFragment = EventsListFragment.newInstance(EventsListFragment.BOOKMARKS_LIST_ID, getNumColumns());
 		showEventsFragment(bookmarksFragment);
 	}
 
-	@Override
-	public void onConferenceSelected(long conferenceId) {
-		EventsListFragment eventsListFragment = EventsListFragment.newInstance(conferenceId, getNumColumns());
-		showEventsFragment(eventsListFragment);
+	private void showInProgressFragment() {
+		EventsListFragment progressEventsFragment = EventsListFragment.newInstance(EventsListFragment.IN_PROGRESS_LIST_ID, getNumColumns());
+		showEventsFragment(progressEventsFragment);
 	}
 
 	private void showEventsFragment(EventsListFragment eventsListFragment) {
@@ -144,11 +149,6 @@ public class BrowseActivity extends AppCompatActivity implements
 			default:
 				return super.onOptionsItemSelected(item);
 		}
-	}
-
-	private void showInProgressFragment() {
-		EventsListFragment bookmarksFragment = EventsListFragment.newInstance(EventsListFragment.IN_PROGRESS_LIST_ID, getNumColumns());
-		showEventsFragment(bookmarksFragment);
 	}
 
 	private void showAboutPage() {
