@@ -16,7 +16,7 @@ class ConferencesWrapperTest{
         val wrapper = ConferencesWrapper(listOf(Conference("42c3", "16:9", "42c3,", "42c3",
                 "foo", "", "", "", "", "foo/42", "",
                 listOf(Event(1, "", "", "", "", "", "", "",
-                        listOf(""), listOf("foo", "bar"), "", "", "", 1, "",
+                        arrayOf(""), arrayOf("foo", "bar"), "", "", "", 1, "",
                         "", "", "foo/42", "foo/42", listOf(mock(Recording::class.java)), mock(Metadata::class.java), false)))))
         assert(wrapper.conferenceMap.keys.size == 2)
     }
