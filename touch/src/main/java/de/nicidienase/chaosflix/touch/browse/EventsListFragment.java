@@ -120,9 +120,9 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 	}
 
 	private void setEvents(List<PersistentEvent> persistentEvents) {
-		Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
-
 		eventAdapter.setItems(persistentEvents);
+
+		Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
 		if (layoutState != null)
 			layoutManager.onRestoreInstanceState(layoutState);
 	}

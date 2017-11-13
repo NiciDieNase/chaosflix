@@ -4,8 +4,6 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import android.transition.TransitionInflater
 import android.util.Log
@@ -19,7 +17,6 @@ import de.nicidienase.chaosflix.common.entities.recording.persistence.Persistent
 import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsNewBinding
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
-import de.nicidienase.chaosflix.touch.browse.adapters.RelatedEventsRecyclerViewAdapter
 
 class EventDetailsFragment : BrowseFragment() {
 
@@ -123,7 +120,7 @@ class EventDetailsFragment : BrowseFragment() {
 
                 viewModel.getRecordingForEvent(eventId)
                         .observe(this, Observer { persistentRecordings ->
-                            if(persistentRecordings != null){
+                            if (persistentRecordings != null) {
                                 listener!!.playItem(event, Util.getOptimalStream(persistentRecordings))
                             }
                         })
@@ -133,7 +130,7 @@ class EventDetailsFragment : BrowseFragment() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if (context is EventsListFragment.OnEventsListFragmentInteractionListener){
+        if (context is EventsListFragment.OnEventsListFragmentInteractionListener) {
             eventSelectedListener = context
         }
         if (context is OnEventDetailsFragmentInteractionListener) {
