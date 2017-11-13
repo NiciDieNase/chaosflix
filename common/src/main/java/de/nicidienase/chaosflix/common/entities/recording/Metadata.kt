@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import de.nicidienase.chaosflix.common.entities.Converters
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 open class Metadata(
@@ -12,19 +13,31 @@ open class Metadata(
 ) : Parcelable {
     constructor(parcel: Parcel) : this(null,parcel.readString()) {
         val mapSize = parcel.readInt()
-        val map = HashMap<Long,Long>()
-        for (i in 0..mapSize){
-            map.put(parcel.readLong(),parcel.readLong())
+        val stringRepresentation = parcel.readString()
+        if(stringRepresentation.isNotEmpty()){
+            related = Converters().stringToLongMap(stringRepresentation)
+        } else {
+            related = HashMap<Long,Long>()
         }
-        related = map
+//        for (i in 0..mapSize){
+//            map.put(parcel.readLong(),parcel.readLong())
+//        }
+//        related = map
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(remoteId)
-        related?.run {
-            parcel.writeInt(this.size)
-            this.map { entry -> parcel.writeLong(entry.key); parcel.writeLong(entry.value) }
+        if(related!=null){
+            related?.let {
+                parcel.writeString(Converters().longMapToString(it))
+            }
+        } else {
+            parcel.writeString("")
         }
+//        related?.run {
+//            parcel.writeInt(this.size)
+//            this.map { entry -> parcel.writeLong(entry.key); parcel.writeLong(entry.value) }
+//        }
     }
 
     override fun describeContents(): Int {
