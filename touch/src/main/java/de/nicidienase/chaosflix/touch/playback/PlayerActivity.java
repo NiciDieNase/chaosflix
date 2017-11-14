@@ -17,22 +17,18 @@ public class PlayerActivity extends AppCompatActivity implements ExoPlayerFragme
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragment_container_layout);
-
+		setContentView(R.layout.activity_player);
 
 		PersistentEvent event = getIntent().getExtras().getParcelable(EVENT_KEY);
 		PersistentRecording recording = getIntent().getExtras().getParcelable(RECORDING_KEY);
 
 		if (savedInstanceState == null) {
-			loadFragment(event,recording);
+			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			Fragment playerFragment =
+					ExoPlayerFragment.newInstance(event, recording);
+			ft.replace(R.id.fragment_container, playerFragment);
+			ft.commit();
 		}
 	}
 
-	private void loadFragment(PersistentEvent event, PersistentRecording recording) {
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		Fragment playerFragment =
-				ExoPlayerFragment.newInstance(event, recording);
-		ft.replace(R.id.fragment_container, playerFragment);
-		ft.commit();
-	}
 }

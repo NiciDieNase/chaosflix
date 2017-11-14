@@ -63,7 +63,6 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_tab_pager_layout, container, false);
 
-
 		mViewPager = view.findViewById(R.id.viewpager);
 
 		getViewModel().getConferenceGroups()
@@ -77,13 +76,6 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 					tabLayout.setupWithViewPager(mViewPager);
 					finishLoading();
 				});
-
-
-
-		mToolbar = view.findViewById(R.id.toolbar);
-		((AppCompatActivity) mContext).setSupportActionBar(mToolbar);
-//		mToolbar.setLogo(R.drawable.toolbar_icon);
-
 		return view;
 	}
 

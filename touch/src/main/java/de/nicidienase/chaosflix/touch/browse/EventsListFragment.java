@@ -4,13 +4,12 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +22,7 @@ import java.util.List;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
+import de.nicidienase.chaosflix.touch.OnEventSelectedListener;
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter;
 
 public class EventsListFragment extends BrowseFragment implements SearchView.OnQueryTextListener {
@@ -37,7 +37,6 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 	private int columnCount = 1;
 	private OnEventsListFragmentInteractionListener listener;
 
-	private Toolbar toolbar;
 	private Context context;
 	private EventRecyclerViewAdapter eventAdapter;
 	private long conferenceId;
@@ -90,25 +89,23 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		eventAdapter = new EventRecyclerViewAdapter(listener);
 		recyclerView.setAdapter(eventAdapter);
 
-		toolbar = view.findViewById(R.id.toolbar);
-		((AppCompatActivity) this.context).setSupportActionBar(toolbar);
-
 		Observer<List<PersistentEvent>> listObserver = persistentEvents -> {
 			setEvents(persistentEvents);
 			this.finishLoading();
 		};
 
+		Resources resources = getResources();
 		if (conferenceId == BOOKMARKS_LIST_ID) {
-			toolbar.setTitle(R.string.bookmarks);
+			listener.setToolbarTitle(resources.getString(R.string.bookmarks));
 			getViewModel().getBookmarkedEvents().observe(this, listObserver);
 		} else if (conferenceId == IN_PROGRESS_LIST_ID) {
-			toolbar.setTitle(R.string.continue_watching);
+			listener.setToolbarTitle(resources.getString(R.string.continue_watching));
 			getViewModel().getInProgressEvents().observe(this, listObserver);
 		} else {
 			{
 				getViewModel().getConference(conferenceId).observe(this, conference -> {
 					if (conference != null) {
-						toolbar.setTitle(conference.getTitle());
+						listener.setToolbarTitle(conference.getTitle());
 						eventAdapter.setShowTags(conference.getTagsUsefull());
 					}
 				});
@@ -141,7 +138,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		MenuItem searchMenuItem = menu.findItem(R.id.search);
 		searchView = (SearchView) searchMenuItem.getActionView();
 		SearchManager searchManager = (SearchManager)
-				((Activity)context).getSystemService(Context.SEARCH_SERVICE);
+				context.getSystemService(Context.SEARCH_SERVICE);
 
 		searchView.setSearchableInfo(searchManager.
 				getSearchableInfo(((Activity)context).getComponentName()));
@@ -167,8 +164,8 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		return true;
 	}
 
-	public interface OnEventsListFragmentInteractionListener {
-		void onEventSelected(PersistentEvent event, View v);
+	public interface OnEventsListFragmentInteractionListener extends OnEventSelectedListener {
+		void setToolbarTitle(String title);
 	}
 
 }

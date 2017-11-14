@@ -28,6 +28,7 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
         </activity>
+        <activity android:name=".touch.eventdetails.EventDetailsActivity"/>
         <activity android:name=".touch.activities.AboutActivity"/>
 
         <activity android:name=".touch.playback.PlayerActivity"

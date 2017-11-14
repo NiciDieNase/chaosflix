@@ -1,13 +1,11 @@
 package de.nicidienase.chaosflix.touch.browse;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
@@ -19,34 +17,63 @@ import android.view.View;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording;
-import de.nicidienase.chaosflix.touch.ViewModelFactory;
+import de.nicidienase.chaosflix.touch.OnEventSelectedListener;
 import de.nicidienase.chaosflix.touch.activities.AboutActivity;
-import de.nicidienase.chaosflix.touch.playback.PlayerActivity;
+import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity;
 
 public class BrowseActivity extends AppCompatActivity implements
 		ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener,
 		EventsListFragment.OnEventsListFragmentInteractionListener,
-		EventDetailsFragment.OnEventDetailsFragmentInteractionListener {
+		OnEventSelectedListener {
 
 	private static final String TAG = BrowseActivity.class.getSimpleName();
-	private BrowseViewModel viewModel;
+	private Toolbar toolbar;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragment_container_layout);
+		setContentView(R.layout.activity_browse);
+
+		toolbar = findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		getSupportActionBar().setLogo(R.drawable.icon_notext);
+		getSupportActionBar().setDisplayUseLogoEnabled(true);
+		getSupportActionBar().setTitle(R.string.app_name);
+
 
 		if (savedInstanceState == null) {
 			ConferencesTabBrowseFragment browseFragment
 					= ConferencesTabBrowseFragment.newInstance(getNumColumns());
-			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.fragment_container, browseFragment);
-//			ft.setReorderingAllowed(true);
-			ft.commit();
+			getSupportFragmentManager()
+					.beginTransaction()
+					.replace(R.id.fragment_container, browseFragment)
+					.commit();
 		}
+	}
 
-		viewModel = ViewModelProviders.of(this, ViewModelFactory.INSTANCE).get(BrowseViewModel.class);
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.browse_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.action_show_bookmarks:
+				showBookmarksFragment();
+				return true;
+			case R.id.action_show_inprogress:
+				showInProgressFragment();
+				return true;
+			case R.id.action_about:
+				showAboutPage();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 
 	private int getNumColumns() {
@@ -92,63 +119,27 @@ public class BrowseActivity extends AppCompatActivity implements
 
 	@Override
 	public void onEventSelected(PersistentEvent event, View v) {
-		EventDetailsFragment detailsFragment = EventDetailsFragment.Companion.newInstance(event.getEventId());
-		FragmentManager fm = getSupportFragmentManager();
-
-		detailsFragment.setAllowEnterTransitionOverlap(true);
-		detailsFragment.setAllowReturnTransitionOverlap(true);
-
-		FragmentTransaction ft = fm.beginTransaction();
-		ft.replace(R.id.fragment_container, detailsFragment);
-		ft.addToBackStack(null);
-		ft.setReorderingAllowed(true);
-
-		View thumb = v.findViewById(R.id.imageView);
-		ft.addSharedElement(thumb, ViewCompat.getTransitionName(thumb));
-
-		ft.commit();
+		EventDetailsActivity.Companion.launch(this, event.getEventId());
+//		EventDetailsFragment detailsFragment = EventDetailsFragment.Companion.newInstance(event.getEventId());
+//		FragmentManager fm = getSupportFragmentManager();
+//
+//		detailsFragment.setAllowEnterTransitionOverlap(true);
+//		detailsFragment.setAllowReturnTransitionOverlap(true);
+//
+//		FragmentTransaction ft = fm.beginTransaction();
+//		ft.replace(R.id.fragment_container, detailsFragment);
+//		ft.addToBackStack(null);
+//		ft.setReorderingAllowed(true);
+//
+//		View thumb = v.findViewById(R.id.imageView);
+//		ft.addSharedElement(thumb, ViewCompat.getTransitionName(thumb));
+//
+//		ft.commit();
 	}
 
 	@Override
-	public void onToolbarStateChange() {
-		invalidateOptionsMenu();
-	}
-
-	@Override
-	public void setActionbar(Toolbar toolbar) {
-		setSupportActionBar(toolbar);
-		toolbar.setTitle("");
-	}
-
-	@Override
-	public void playItem(PersistentEvent event, PersistentRecording recording) {
-		Intent i = new Intent(this, PlayerActivity.class);
-		i.putExtra(PlayerActivity.EVENT_KEY, event);
-		i.putExtra(PlayerActivity.RECORDING_KEY, recording);
-		startActivity(i);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.browse_menu, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.action_show_bookmarks:
-				showBookmarksFragment();
-				return true;
-			case R.id.action_show_inprogress:
-				showInProgressFragment();
-				return true;
-			case R.id.action_about:
-				showAboutPage();
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
-		}
+	public void setToolbarTitle(String title) {
+		toolbar.setTitle(title);
 	}
 
 	private void showAboutPage() {

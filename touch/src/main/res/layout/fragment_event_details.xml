@@ -121,23 +121,23 @@
                     android:text="@{event.extendedDescription}"
                     tools:text="description text"/>
 
-                <!--<TextView-->
-                    <!--android:id="@+id/related_items_text"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_marginBottom="@dimen/details_text_margin"-->
-                    <!--android:layout_marginLeft="@dimen/details_text_margin"-->
-                    <!--android:layout_marginRight="@dimen/details_text_margin"-->
-                    <!--android:layout_marginTop="@dimen/details_text_margin"-->
-                    <!--android:text="Related Events"-->
-                    <!--android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"/>-->
+                <TextView
+                    android:id="@+id/related_items_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/details_text_margin"
+                    android:layout_marginLeft="@dimen/details_text_margin"
+                    android:layout_marginRight="@dimen/details_text_margin"
+                    android:layout_marginTop="@dimen/details_text_margin"
+                    android:text="Related Events"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"/>
 
-                <!--<android.support.v7.widget.RecyclerView-->
-                    <!--android:id="@+id/related_items_list"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:paddingBottom="4dp"-->
-                    <!--tools:listitem="@layout/related_event_cardview_layout"/>-->
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/related_items_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="4dp"
+                    tools:listitem="@layout/related_event_cardview_layout"/>
                 
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>

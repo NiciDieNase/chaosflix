@@ -7,10 +7,11 @@ import com.squareup.picasso.Picasso
 
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.browse.EventsListFragment
 import java.util.Comparator
 
-open class EventRecyclerViewAdapter(val listener: EventsListFragment.OnEventsListFragmentInteractionListener) :
+open class EventRecyclerViewAdapter(val listener: OnEventSelectedListener) :
         ItemRecyclerViewAdapter<PersistentEvent>() {
 
     override fun getComparator(): Comparator<in PersistentEvent>? {

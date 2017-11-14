@@ -1,9 +1,10 @@
-package de.nicidienase.chaosflix.touch.browse
+package de.nicidienase.chaosflix.touch.eventdetails
 
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.Toolbar
 import android.transition.TransitionInflater
 import android.util.Log
@@ -15,7 +16,10 @@ import de.nicidienase.chaosflix.common.Util
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording
 import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
-import de.nicidienase.chaosflix.databinding.FragmentEventDetailsNewBinding
+import de.nicidienase.chaosflix.databinding.FragmentEventDetailsBinding
+import de.nicidienase.chaosflix.touch.OnEventSelectedListener
+import de.nicidienase.chaosflix.touch.browse.BrowseFragment
+import de.nicidienase.chaosflix.touch.browse.EventsListFragment
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 
 class EventDetailsFragment : BrowseFragment() {
@@ -26,16 +30,16 @@ class EventDetailsFragment : BrowseFragment() {
     private var appBarExpanded: Boolean = false
     private var event: PersistentEvent? = null
     private var watchlistItem: WatchlistItem? = null
-    private var eventSelectedListener: EventsListFragment.OnEventsListFragmentInteractionListener? = null
+    private var eventSelectedListener: OnEventSelectedListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        postponeEnterTransition()
-        val transition = TransitionInflater.from(context)
-                .inflateTransition(android.R.transition.move)
-        //		transition.setDuration(getResources().getInteger(R.integer.anim_duration));
-        sharedElementEnterTransition = transition
+//        postponeEnterTransition()
+//        val transition = TransitionInflater.from(context)
+//                .inflateTransition(android.R.transition.move)
+//        //		transition.setDuration(getResources().getInteger(R.integer.anim_duration));
+//        sharedElementEnterTransition = transition
 
         if (arguments != null) {
             eventId = arguments!!.getLong(EVENT_PARAM)
@@ -44,23 +48,23 @@ class EventDetailsFragment : BrowseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_event_details_new, container, false)
+        return inflater.inflate(R.layout.fragment_event_details, container, false)
     }
 
     private lateinit var relatedEventsAdapter: EventRecyclerViewAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentEventDetailsNewBinding.bind(view)
+        val binding = FragmentEventDetailsBinding.bind(view)
         binding.playFab.setOnClickListener { _ -> play() }
         if (listener != null)
             listener!!.setActionbar(binding.animToolbar)
 
-//        eventSelectedListener?.let{
-//            relatedEventsAdapter = RelatedEventsRecyclerViewAdapter(eventSelectedListener!!)
-//            binding.relatedItemsList.adapter = relatedEventsAdapter
-//            binding.relatedItemsList.layoutManager = GridLayoutManager(context,2)
-//        }
+        eventSelectedListener?.let{
+            relatedEventsAdapter = RelatedEventsRecyclerViewAdapter(eventSelectedListener!!)
+            binding.relatedItemsList.adapter = relatedEventsAdapter
+            binding.relatedItemsList.layoutManager = GridLayoutManager(context,2)
+        }
 
         binding.appbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             val v = Math.abs(verticalOffset).toDouble() / appBarLayout.totalScrollRange
@@ -85,21 +89,21 @@ class EventDetailsFragment : BrowseFragment() {
                                 .noFade()
                                 .into(binding.thumbImage, object : Callback {
                                     override fun onSuccess() {
-                                        startPostponedEnterTransition()
+//                                        startPostponedEnterTransition()
                                     }
 
                                     override fun onError() {
-                                        startPostponedEnterTransition()
+//                                        startPostponedEnterTransition()
                                     }
                                 })
 
 
-//                            val relatedIds: LongArray = event.metadata?.related?.keys?.toLongArray() ?: longArrayOf()
-//
-//                            viewModel.getEventsByIds(relatedIds)
-//                                    .observe(this, Observer { events ->
-//                                        relatedEventsAdapter.items = ArrayList(events)
-//                                    })
+                            val relatedIds: LongArray = event.metadata?.related?.keys?.toLongArray() ?: longArrayOf()
+
+                            viewModel.getEventsByIds(relatedIds)
+                                    .observe(this, Observer { events ->
+                                        relatedEventsAdapter.items = ArrayList(events)
+                                    })
 
                     }
                 })
@@ -130,7 +134,7 @@ class EventDetailsFragment : BrowseFragment() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if (context is EventsListFragment.OnEventsListFragmentInteractionListener) {
+        if (context is OnEventSelectedListener) {
             eventSelectedListener = context
         }
         if (context is OnEventDetailsFragmentInteractionListener) {
