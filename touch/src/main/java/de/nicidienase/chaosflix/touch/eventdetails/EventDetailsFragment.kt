@@ -1,9 +1,11 @@
 package de.nicidienase.chaosflix.touch.eventdetails
 
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.Toolbar
 import android.transition.TransitionInflater
@@ -18,11 +20,13 @@ import de.nicidienase.chaosflix.common.entities.recording.persistence.Persistent
 import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
+import de.nicidienase.chaosflix.touch.ViewModelFactory
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment
+import de.nicidienase.chaosflix.touch.browse.BrowseViewModel
 import de.nicidienase.chaosflix.touch.browse.EventsListFragment
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 
-class EventDetailsFragment : BrowseFragment() {
+class EventDetailsFragment : Fragment() {
 
     private var listener: OnEventDetailsFragmentInteractionListener? = null
 
@@ -53,6 +57,8 @@ class EventDetailsFragment : BrowseFragment() {
 
     private lateinit var relatedEventsAdapter: EventRecyclerViewAdapter
 
+    private lateinit var viewModel: DetailsViewModel
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentEventDetailsBinding.bind(view)
@@ -76,6 +82,9 @@ class EventDetailsFragment : BrowseFragment() {
                 binding.collapsingToolbar.isTitleEnabled = appBarExpanded
             }
         }
+
+        viewModel = ViewModelProviders.of(activity!!, ViewModelFactory).get(DetailsViewModel::class.java)
+
 
         viewModel.getEventById(eventId)
                 .observe(this, Observer { event: PersistentEvent? ->

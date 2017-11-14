@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.touch.browse
+package de.nicidienase.chaosflix.touch.eventdetails
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
@@ -14,7 +14,7 @@ import de.nicidienase.chaosflix.touch.sync.Downloader
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 
-class BrowseViewModel(
+class DetailsViewModel(
         val database: ChaosflixDatabase,
         val recordingApi: RecordingService,
         val streamingApi: StreamingService
@@ -22,24 +22,29 @@ class BrowseViewModel(
 
     val downloader = Downloader(recordingApi, database)
 
-    fun getConferenceGroups(): LiveData<List<ConferenceGroup>> {
-        downloader.updateConferencesAndGroups()
-        return database.conferenceGroupDao().getAll()
+    fun getEventById(eventId: Long): LiveData<PersistentEvent> {
+        downloader.updateRecordingsForEvent(eventId)
+        return database.eventDao().findEventById(eventId)
     }
 
-    fun getConference(conferenceId: Long): LiveData<PersistentConference>
-            = database.conferenceDao().findConferenceById(conferenceId)
+    fun getEventsByIds(ids: LongArray) = database.eventDao().findEventsByIds(ids)
 
-    fun getConferencesByGroup(groupId: Long): LiveData<List<PersistentConference>>
-            = database.conferenceDao().findConferenceByGroup(groupId)
-
-    fun getEventsforConference(conferenceId: Long): LiveData<List<PersistentEvent>> {
-        downloader.updateEventsForConference(conferenceId)
-        return database.eventDao().findEventsByConference(conferenceId)
+    fun getRecordingForEvent(id: Long): LiveData<List<PersistentRecording>> {
+        downloader.updateRecordingsForEvent(id)
+        return database.recordingDao().findRecordingByEvent(id)
     }
 
-    fun getBookmarkedEvents(): LiveData<List<PersistentEvent>> = database.eventDao().findBookmarkedEvents()
+    fun getBookmarkForEvent(id: Long): LiveData<WatchlistItem> = database.watchlistItemDao().getItemForEvent(id)
 
-    fun getInProgressEvents(): LiveData<List<PersistentEvent>> = database.eventDao().findInProgressEvents()
+    fun createBookmark(apiId: Long) {
+        Completable.fromAction {
+            database.watchlistItemDao().saveItem(WatchlistItem(eventId = apiId))
+        }.subscribeOn(Schedulers.io()).subscribe()
+    }
 
+    fun removeBookmark(apiID: Long) {
+        Completable.fromAction {
+            database.watchlistItemDao().deleteItem(apiID)
+        }.subscribeOn(Schedulers.io()).subscribe()
+    }
 }
