@@ -21,8 +21,8 @@ class Converters {
             = string.split("|$|").toTypedArray()
 
     @TypeConverter
-    fun longMapToString(map: Map<Long, Long>): String {
-        if (map.isNotEmpty()) {
+    fun longMapToString(map: Map<Long, Long>?): String {
+        if (map != null && map.isNotEmpty()) {
             return map.map { "${it.key}|${it.value}" }.reduce { acc, s -> "$acc|$s" }
         } else {
             return ""

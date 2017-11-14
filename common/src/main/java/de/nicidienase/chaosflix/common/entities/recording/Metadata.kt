@@ -12,7 +12,7 @@ open class Metadata(
         @JsonProperty("remote_id") var remoteId: String?
 ) : Parcelable {
     constructor(parcel: Parcel) : this(null,parcel.readString()) {
-        val mapSize = parcel.readInt()
+//        val mapSize = parcel.readInt()
         val stringRepresentation = parcel.readString()
         if(stringRepresentation.isNotEmpty()){
             related = Converters().stringToLongMap(stringRepresentation)
