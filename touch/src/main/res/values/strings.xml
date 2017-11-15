@@ -12,9 +12,15 @@
     <string name="titleimage">TitleImage</string>
     <string name="update_database">Update Database</string>
     <string name="bookmarks">Bookmarks</string>
-    <string name="continue_watching">Continue Watching</string>
-    <string name="about">About</string>
     <string name="search_events">Search Events</string>
     <string name="search_talks">Search Talks</string>
     <string name="event_details_image_thumbnail_description">Thumbnail-picture for this event</string>
+    <string name="recordings">Recordings</string>
+    <string name="livestreams">Livestreams</string>
+    <string name="watchlist">Watchlist</string>
+    <string name="continue_watching">Continue Watching</string>
+    <string name="about">About</string>
+    <string name="preferences">Preferences</string>
+    <string name="drawer_open">Drawer open</string>
+    <string name="drawer_close">Drawer closed</string>
 </resources>

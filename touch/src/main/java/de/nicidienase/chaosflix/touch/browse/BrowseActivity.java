@@ -1,17 +1,23 @@
 package de.nicidienase.chaosflix.touch.browse;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
 import android.transition.TransitionInflater;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -28,6 +34,8 @@ public class BrowseActivity extends AppCompatActivity implements
 
 	private static final String TAG = BrowseActivity.class.getSimpleName();
 	private Toolbar toolbar;
+	private ActionBarDrawerToggle drawerToggle;
+	private DrawerLayout drawerLayout;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,31 +45,70 @@ public class BrowseActivity extends AppCompatActivity implements
 		toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
-		getSupportActionBar().setDisplayShowHomeEnabled(true);
-		getSupportActionBar().setLogo(R.drawable.icon_notext);
-		getSupportActionBar().setDisplayUseLogoEnabled(true);
-		getSupportActionBar().setTitle(R.string.app_name);
+		drawerLayout = findViewById(R.id.drawer_layout);
+		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
+		drawerLayout.addDrawerListener(drawerToggle);
+		drawerToggle.syncState();
 
+		resetToolbar();
+
+		NavigationView navigationView = findViewById(R.id.navigation_view);
+		navigationView.setNavigationItemSelectedListener(item -> {
+			switch (item.getItemId()) {
+				case R.id.nav_recordings:
+					showConferencesFragment();
+					break;
+				case R.id.nav_bookmarks:
+					showBookmarksFragment();
+					break;
+				case R.id.nav_inprogress:
+					showInProgressFragment();
+					break;
+				case R.id.nav_about:
+					showAboutPage();
+					break;
+				case R.id.nav_streams:
+				case R.id.nav_preferences:
+				default:
+					Snackbar.make(drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show();
+					break;
+			}
+			drawerLayout.closeDrawers();
+			return true;
+		});
 
 		if (savedInstanceState == null) {
-			ConferencesTabBrowseFragment browseFragment
-					= ConferencesTabBrowseFragment.newInstance(getNumColumns());
-			getSupportFragmentManager()
-					.beginTransaction()
-					.replace(R.id.fragment_container, browseFragment)
-					.commit();
+			showConferencesFragment();
 		}
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.browse_menu, menu);
-		return true;
+	public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+		super.onPostCreate(savedInstanceState, persistentState);
+		drawerToggle.syncState();
 	}
 
 	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawerToggle.onConfigurationChanged(newConfig);
+	}
+
+	//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		getMenuInflater().inflate(R.menu.browse_menu, menu);
+//		return true;
+//	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		if (drawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
 		switch (item.getItemId()) {
+			case android.R.id.home:
+				drawerLayout.openDrawer(GravityCompat.START);
+				return true;
 			case R.id.action_show_bookmarks:
 				showBookmarksFragment();
 				return true;
@@ -80,10 +127,27 @@ public class BrowseActivity extends AppCompatActivity implements
 		return getResources().getInteger(R.integer.num_columns);
 	}
 
+	private int showConferencesFragment() {
+		resetToolbar();
+		return getSupportFragmentManager()
+				.beginTransaction()
+				.replace(R.id.fragment_container, ConferencesTabBrowseFragment.newInstance(getNumColumns()))
+				.commit();
+	}
+
+	private void resetToolbar() {
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		getSupportActionBar().setTitle(R.string.app_name);
+//		getSupportActionBar().setLogo(R.drawable.icon_notext);
+//		getSupportActionBar().setDisplayUseLogoEnabled(true);
+
+	}
+
 	@Override
 	public void onConferenceSelected(long conferenceId) {
 		EventsListFragment eventsListFragment = EventsListFragment.newInstance(conferenceId, getNumColumns());
 		showEventsFragment(eventsListFragment);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	private void showBookmarksFragment() {
@@ -115,6 +179,7 @@ public class BrowseActivity extends AppCompatActivity implements
 		ft.addToBackStack(null);
 		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 		ft.commit();
+		resetToolbar();
 	}
 
 	@Override
@@ -145,5 +210,11 @@ public class BrowseActivity extends AppCompatActivity implements
 	private void showAboutPage() {
 		Intent intent = new Intent(this, AboutActivity.class);
 		startActivity(intent);
+	}
+
+	@Override
+	public void onBackPressed() {
+		resetToolbar();
+		super.onBackPressed();
 	}
 }

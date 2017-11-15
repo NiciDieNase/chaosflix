@@ -2,9 +2,10 @@
 <resources>
     <color name="primary">#ee4c4c</color>
     <color name="primary_dark">#dc4646</color>
-    <color name="accent">#fff642</color>
+    <color name="accent">#f3b500</color>
 
     <color name="primary_500">#3F51B5</color>
     <color name="black_trans80">#33000000</color>
+    <color name="inactive_tab_color">#e3e9e9e9</color>
     <color name="black">#000</color>
 </resources>

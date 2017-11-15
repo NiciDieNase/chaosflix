@@ -28,10 +28,15 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
         </activity>
-        <activity android:name=".touch.eventdetails.EventDetailsActivity"/>
-        <activity android:name=".touch.activities.AboutActivity"/>
+
+        <activity android:name=".touch.eventdetails.EventDetailsActivity"
+            android:parentActivityName=".touch.browse.BrowseActivity"/>
+
+        <activity android:name=".touch.activities.AboutActivity"
+            android:parentActivityName=".touch.browse.BrowseActivity"/>
 
         <activity android:name=".touch.playback.PlayerActivity"
+                  android:parentActivityName=".touch.eventdetails.EventDetailsActivity"
                   android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
                   android:launchMode="singleTop"/>
 
