@@ -2,7 +2,6 @@ package de.nicidienase.chaosflix.touch.eventdetails
 
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
-import de.nicidienase.chaosflix.touch.browse.EventsListFragment
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 
 class RelatedEventsRecyclerViewAdapter(listener: OnEventSelectedListener): EventRecyclerViewAdapter(listener){

@@ -8,7 +8,6 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.Toolbar
-import android.transition.TransitionInflater
 import android.util.Log
 import android.view.*
 import com.squareup.picasso.Callback
@@ -21,9 +20,6 @@ import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.ViewModelFactory
-import de.nicidienase.chaosflix.touch.browse.BrowseFragment
-import de.nicidienase.chaosflix.touch.browse.BrowseViewModel
-import de.nicidienase.chaosflix.touch.browse.EventsListFragment
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 
 class EventDetailsFragment : Fragment() {

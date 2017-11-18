@@ -29,8 +29,11 @@
                 android:resource="@xml/searchable"/>
         </activity>
 
+        <activity android:name=".touch.browse.eventslist.EventsListActivity"
+                  android:parentActivityName=".touch.browse.BrowseActivity"/>
+
         <activity android:name=".touch.eventdetails.EventDetailsActivity"
-            android:parentActivityName=".touch.browse.BrowseActivity"/>
+            android:parentActivityName="de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity"/>
 
         <activity android:name=".touch.activities.AboutActivity"
             android:parentActivityName=".touch.browse.BrowseActivity"/>

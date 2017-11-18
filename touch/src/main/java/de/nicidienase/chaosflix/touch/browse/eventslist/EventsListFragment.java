@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.touch.browse;
+package de.nicidienase.chaosflix.touch.browse.eventslist;
 
 import android.app.Activity;
 import android.app.SearchManager;
@@ -23,6 +23,7 @@ import java.util.List;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener;
+import de.nicidienase.chaosflix.touch.browse.BrowseFragment;
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter;
 
 public class EventsListFragment extends BrowseFragment implements SearchView.OnQueryTextListener {
@@ -91,7 +92,6 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 
 		Observer<List<PersistentEvent>> listObserver = persistentEvents -> {
 			setEvents(persistentEvents);
-			this.finishLoading();
 		};
 
 		Resources resources = getResources();
