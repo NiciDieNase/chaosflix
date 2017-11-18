@@ -54,10 +54,7 @@ class EventDetailsActivity: AppCompatActivity(),
     }
 
     override fun playItem(event: PersistentEvent, recording: PersistentRecording) {
-        val i = Intent(this, PlayerActivity::class.java)
-        i.putExtra(PlayerActivity.EVENT_KEY, event)
-        i.putExtra(PlayerActivity.RECORDING_KEY, recording)
-        startActivity(i)
+        PlayerActivity.launch(this,event,recording)
     }
 
     companion object {
