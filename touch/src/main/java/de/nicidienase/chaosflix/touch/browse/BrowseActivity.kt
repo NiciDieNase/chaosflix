@@ -12,10 +12,13 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import de.nicidienase.chaosflix.R
+import de.nicidienase.chaosflix.common.entities.streaming.LiveConference
+import de.nicidienase.chaosflix.common.entities.streaming.Stream
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.activities.AboutActivity
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListFragment
+import de.nicidienase.chaosflix.touch.browse.streaming.LivestreamListFragment
 
 class BrowseActivity : BrowseBaseActivity(),
         ConferencesTabBrowseFragment.OnInteractionListener,
@@ -23,10 +26,10 @@ class BrowseActivity : BrowseBaseActivity(),
         LivestreamListFragment.InteractionListener,
         OnEventSelectedListener {
     private var drawerOpen: Boolean = false
+
     private lateinit var toolbar: Toolbar
     private lateinit var drawerToggle: ActionBarDrawerToggle
     private lateinit var drawerLayout: DrawerLayout
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_browse)
@@ -58,7 +61,8 @@ class BrowseActivity : BrowseBaseActivity(),
                 R.id.nav_bookmarks -> showBookmarksFragment()
                 R.id.nav_inprogress -> showInProgressFragment()
                 R.id.nav_about -> showAboutPage()
-                R.id.nav_streams, R.id.nav_preferences -> Snackbar.make(drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
+                R.id.nav_streams -> showStreamsFragmen()
+                R.id.nav_preferences -> Snackbar.make(drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
                 else -> Snackbar.make(drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
             }
             drawerLayout.closeDrawers()
@@ -110,6 +114,12 @@ class BrowseActivity : BrowseBaseActivity(),
         toolbar.setTitle(R.string.continue_watching)
         val progressEventsFragment = EventsListFragment.newInstance(EventsListFragment.IN_PROGRESS_LIST_ID, numColumns)
         showFragment(progressEventsFragment)
+    }
+
+    private fun showStreamsFragmen() {
+        toolbar.setTitle(getString(R.string.livestreams))
+        val fragment = LivestreamListFragment()
+        showFragment(fragment)
     }
 
     private fun showAboutPage() {

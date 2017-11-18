@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.common.entities.streaming.Stream
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment
@@ -23,7 +24,7 @@ class LivestreamListFragment : BrowseFragment(){
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
+        return inflater.inflate(R.layout.fragment_livestreams,null)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

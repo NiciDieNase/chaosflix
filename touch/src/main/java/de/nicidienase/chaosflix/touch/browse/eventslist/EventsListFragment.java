@@ -1,6 +1,5 @@
 package de.nicidienase.chaosflix.touch.browse.eventslist;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.arch.lifecycle.Observer;
 import android.content.Context;

@@ -3,7 +3,6 @@ package de.nicidienase.chaosflix.touch.browse.eventslist
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.widget.Toolbar
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.touch.browse.BrowseBaseActivity

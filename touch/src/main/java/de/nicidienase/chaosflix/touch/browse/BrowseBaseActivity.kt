@@ -1,7 +1,6 @@
 package de.nicidienase.chaosflix.touch.browse
 
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import android.transition.Slide
@@ -24,6 +23,9 @@ abstract class BrowseBaseActivity : AppCompatActivity(), EventsListFragment.OnIn
 
         val transitionInflater = TransitionInflater.from(this)
         if (oldFragment != null) {
+            if(fragment::class == oldFragment::class){
+                return
+            }
             oldFragment.exitTransition = transitionInflater.inflateTransition(android.R.transition.fade)
         }
         fragment.enterTransition = transitionInflater.inflateTransition(android.R.transition.slide_right)
