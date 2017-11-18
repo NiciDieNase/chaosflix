@@ -38,7 +38,6 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 	private int columnCount = 1;
 	private OnEventsListFragmentInteractionListener listener;
 
-	private Context context;
 	private EventRecyclerViewAdapter eventAdapter;
 	private long conferenceId;
 
@@ -58,7 +57,6 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 	public void onAttach(Context context) {
 		super.onAttach(context);
 		setHasOptionsMenu(true);
-		this.context = context;
 		if (context instanceof OnEventsListFragmentInteractionListener) {
 			listener = (OnEventsListFragmentInteractionListener) context;
 		} else {
@@ -137,11 +135,10 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 
 		MenuItem searchMenuItem = menu.findItem(R.id.search);
 		searchView = (SearchView) searchMenuItem.getActionView();
-		SearchManager searchManager = (SearchManager)
-				context.getSystemService(Context.SEARCH_SERVICE);
+		SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
 
 		searchView.setSearchableInfo(searchManager.
-				getSearchableInfo(((Activity)context).getComponentName()));
+				getSearchableInfo(getActivity().getComponentName()));
 		searchView.setSubmitButtonEnabled(true);
 		searchView.setIconified(false);
 		searchView.setOnQueryTextListener(this);
