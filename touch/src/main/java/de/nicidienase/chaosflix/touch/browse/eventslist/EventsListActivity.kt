@@ -8,7 +8,7 @@ import android.support.v7.widget.Toolbar
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.touch.browse.BrowseBaseActivity
 
-class EventsListActivity : BrowseBaseActivity(), EventsListFragment.OnEventsListFragmentInteractionListener {
+class EventsListActivity : BrowseBaseActivity(), EventsListFragment.OnInteractionListener {
 
     private lateinit var toolbar: Toolbar
 

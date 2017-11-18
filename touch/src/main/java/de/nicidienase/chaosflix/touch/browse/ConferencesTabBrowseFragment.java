@@ -23,7 +23,7 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 	private static final String CURRENTTAB_KEY = "current_tab";
 	private static final String VIEWPAGER_STATE = "viewpager_state";
 	private int mColumnCount = 1;
-	private OnConferenceListFragmentInteractionListener listener;
+	private OnInteractionListener listener;
 	private Toolbar mToolbar;
 	private Context mContext;
 	private ViewPager mViewPager;
@@ -40,8 +40,8 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 	public void onAttach(Context context) {
 		super.onAttach(context);
 		mContext = context;
-		if (context instanceof OnConferenceListFragmentInteractionListener) {
-			listener = (OnConferenceListFragmentInteractionListener) context;
+		if (context instanceof OnInteractionListener) {
+			listener = (OnInteractionListener) context;
 		} else {
 			throw new RuntimeException(context.toString()
 					+ " must implement OnListFragmentInteractionListener");
@@ -90,7 +90,7 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 		listener = null;
 	}
 
-	public interface OnConferenceListFragmentInteractionListener {
+	public interface OnInteractionListener {
 		void onConferenceSelected(long conferenceId);
 	}
 }

@@ -21,7 +21,7 @@ public class ConferenceGroupFragment extends BrowseFragment {
 	private static final String ARG_COLUMN_COUNT = "column-count";
 	private static final String ARG_GROUP = "group-name";
 	private static final String LAYOUTMANAGER_STATE = "layoutmanager-state";
-	private ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener listener;
+	private ConferencesTabBrowseFragment.OnInteractionListener listener;
 
 	private int columnCount = 1;
 	private ConferenceGroup conferenceGroup;
@@ -84,8 +84,8 @@ public class ConferenceGroupFragment extends BrowseFragment {
 	@Override
 	public void onAttach(Context context) {
 		super.onAttach(context);
-		if (context instanceof ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener) {
-			listener = (ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener) context;
+		if (context instanceof ConferencesTabBrowseFragment.OnInteractionListener) {
+			listener = (ConferencesTabBrowseFragment.OnInteractionListener) context;
 		} else {
 			throw new RuntimeException(context.toString()
 					+ " must implement OnListFragmentInteractionListener");

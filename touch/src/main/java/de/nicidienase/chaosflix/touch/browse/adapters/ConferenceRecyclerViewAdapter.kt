@@ -7,7 +7,7 @@ import de.nicidienase.chaosflix.common.entities.recording.persistence.Persistent
 import de.nicidienase.chaosflix.touch.browse.ConferencesTabBrowseFragment
 import java.util.Comparator
 
-class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener?) : ItemRecyclerViewAdapter<PersistentConference>() {
+class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseFragment.OnInteractionListener?) : ItemRecyclerViewAdapter<PersistentConference>() {
     override fun getFilteredProperties(item: PersistentConference): List<String> {
         return listOf(item.title)
     }

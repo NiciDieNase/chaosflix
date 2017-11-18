@@ -36,7 +36,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 	public static final long IN_PROGRESS_LIST_ID = -2;
 
 	private int columnCount = 1;
-	private OnEventsListFragmentInteractionListener listener;
+	private OnInteractionListener listener;
 
 	private EventRecyclerViewAdapter eventAdapter;
 	private long conferenceId;
@@ -57,8 +57,8 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 	public void onAttach(Context context) {
 		super.onAttach(context);
 		setHasOptionsMenu(true);
-		if (context instanceof OnEventsListFragmentInteractionListener) {
-			listener = (OnEventsListFragmentInteractionListener) context;
+		if (context instanceof OnInteractionListener) {
+			listener = (OnInteractionListener) context;
 		} else {
 			throw new RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener");
 		}
@@ -161,7 +161,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		return true;
 	}
 
-	public interface OnEventsListFragmentInteractionListener extends OnEventSelectedListener {
+	public interface OnInteractionListener extends OnEventSelectedListener {
 		void setToolbarTitle(String title);
 	}
 

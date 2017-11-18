@@ -14,7 +14,7 @@ import de.nicidienase.chaosflix.common.entities.recording.persistence.Persistent
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListFragment
 import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
 
-abstract class BrowseBaseActivity : AppCompatActivity(), EventsListFragment.OnEventsListFragmentInteractionListener {
+abstract class BrowseBaseActivity : AppCompatActivity(), EventsListFragment.OnInteractionListener {
     protected val numColumns: Int
         get() = resources.getInteger(R.integer.num_columns)
 

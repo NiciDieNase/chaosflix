@@ -17,8 +17,11 @@ import de.nicidienase.chaosflix.touch.activities.AboutActivity
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListFragment
 
-class BrowseActivity : BrowseBaseActivity(), ConferencesTabBrowseFragment.OnConferenceListFragmentInteractionListener, EventsListFragment.OnEventsListFragmentInteractionListener, OnEventSelectedListener {
-
+class BrowseActivity : BrowseBaseActivity(),
+        ConferencesTabBrowseFragment.OnInteractionListener,
+        EventsListFragment.OnInteractionListener,
+        LivestreamListFragment.InteractionListener,
+        OnEventSelectedListener {
     private var drawerOpen: Boolean = false
     private lateinit var toolbar: Toolbar
     private lateinit var drawerToggle: ActionBarDrawerToggle
@@ -86,6 +89,10 @@ class BrowseActivity : BrowseBaseActivity(), ConferencesTabBrowseFragment.OnConf
 
     override fun onConferenceSelected(conferenceId: Long) {
         EventsListActivity.start(this, conferenceId)
+    }
+
+    override fun onStreamSelected(conference: LiveConference, stream: Stream) {
+        TODO("not implemented")
     }
 
     private fun showConferencesFragment() {
