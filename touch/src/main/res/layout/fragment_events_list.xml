@@ -10,4 +10,4 @@
     app:layout_anchor="@id/toolbar"
     app:layout_anchorGravity="bottom|end"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:listitem="@layout/conference_cardview_item"/>
+    tools:listitem="@layout/item_conference_cardview"/>

@@ -26,7 +26,7 @@ open class EventRecyclerViewAdapter(val listener: OnEventSelectedListener) :
     }
 
 
-    override val layout = R.layout.event_cardview_layout
+    override val layout = R.layout.item_event_cardview
     var showTags: Boolean = false
 
     override fun onBindViewHolder(holder: ItemRecyclerViewAdapter<PersistentEvent>.ViewHolder, position: Int) {

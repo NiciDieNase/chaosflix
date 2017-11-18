@@ -12,7 +12,7 @@ class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseF
         return listOf(item.title)
     }
 
-    override val layout = R.layout.conference_cardview_item
+    override val layout = R.layout.item_conference_cardview
 
     override fun getComparator(): Comparator<in PersistentConference>? {
 //        return Comparator { o1, o2 -> o1.acronym.compareTo(o2.acronym) * -1 }

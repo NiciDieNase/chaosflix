@@ -77,7 +77,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.events_list_layout, container, false);
+		View view = inflater.inflate(R.layout.fragment_events_list, container, false);
 		Context context = view.getContext();
 		RecyclerView recyclerView = view.findViewById(R.id.list);
 		if (columnCount <= 1) {
