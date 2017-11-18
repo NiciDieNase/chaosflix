@@ -42,4 +42,5 @@ class BrowseViewModel(
 
     fun getInProgressEvents(): LiveData<List<PersistentEvent>> = database.eventDao().findInProgressEvents()
 
+    fun getLivestreams() = streamingApi.getStreamingConferences()
 }
