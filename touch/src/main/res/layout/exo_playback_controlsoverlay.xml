@@ -1,46 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/player_controls_background"
         android:layout_alignParentTop="true"
-        android:orientation="vertical"
-        android:paddingBottom="16dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp">
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/title_text"
-            android:layout_width="wrap_content"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/details_text_margin"
-            android:layout_marginRight="@dimen/details_text_margin"
-            android:layout_marginTop="@dimen/details_text_margin"
-            android:text="Title"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/subtitle_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/details_text_margin"
-            android:layout_marginRight="@dimen/details_text_margin"
-            android:layout_marginTop="@dimen/details_text_margin"
-            android:layout_marginBottom="@dimen/details_text_margin"
-            android:text="Subtitle"
-            android:textColor="@color/white"
-            android:textSize="14sp"/>
+            android:background="@android:color/transparent"
+            android:minHeight="?attr/actionBarSize"
+            style="@style/ToolbarStyle"
+            app:title="Title"
+            app:titleTextColor="@color/white"
+            app:subtitle="subtitle"
+            app:subtitleTextColor="@color/white"/>
 
     </LinearLayout>
 

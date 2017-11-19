@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,8 +66,8 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	ProgressBar progressBar;
 
 	@Nullable
-	@BindView(R.id.title_text)
-	TextView titleText;
+	@BindView(R.id.toolbar)
+	Toolbar toolbar;
 	@Nullable
 	@BindView(R.id.subtitle_text)
 	TextView subtitleText;
@@ -113,11 +115,11 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		ButterKnife.bind(this, view);
-		if (titleText != null) {
-			titleText.setText(event.getTitle());
-		}
-		if (subtitleText != null) {
-			subtitleText.setText(event.getSubtitle());
+		if (toolbar != null) {
+			toolbar.setTitle(event.getTitle());
+			toolbar.setSubtitle(event.getSubtitle());
+			((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+			((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 		if (exoPlayer == null) {
 			exoPlayer = setupPlayer();

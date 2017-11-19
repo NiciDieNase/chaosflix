@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.MenuItem
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording
@@ -31,6 +32,14 @@ class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInter
         } else if (contentType.equals(CONTENT_STREAM)){
             // TODO implement Player for Stream
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if(item?.itemId == android.R.id.home){
+            finish()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {
