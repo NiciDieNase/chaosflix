@@ -28,10 +28,10 @@ abstract class BrowseBaseActivity : AppCompatActivity(), EventsListFragment.OnIn
             }
             oldFragment.exitTransition = transitionInflater.inflateTransition(android.R.transition.fade)
         }
-        fragment.enterTransition = transitionInflater.inflateTransition(android.R.transition.slide_right)
+        fragment.enterTransition = transitionInflater.inflateTransition(android.R.transition.fade)
 
-        val slideTransition = Slide(Gravity.RIGHT)
-        fragment.enterTransition = slideTransition
+//        val slideTransition = Slide(Gravity.RIGHT)
+//        fragment.enterTransition = slideTransition
 
         val ft = fm.beginTransaction()
         ft.replace(R.id.fragment_container, fragment)
