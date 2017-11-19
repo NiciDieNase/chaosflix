@@ -62,6 +62,7 @@ class BrowseActivity : BrowseBaseActivity(),
                 R.id.nav_inprogress -> showInProgressFragment()
                 R.id.nav_about -> showAboutPage()
                 R.id.nav_streams -> showStreamsFragmen()
+                R.id.nav_downloads -> Snackbar.make(drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
                 R.id.nav_preferences -> Snackbar.make(drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
                 else -> Snackbar.make(drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
             }
