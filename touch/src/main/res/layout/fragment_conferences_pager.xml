@@ -7,6 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="4dp"
-    app:layout_anchor="@id/collapsing_toolbar"
+    app:layout_anchor="@id/sliding_tabs"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:listitem="@layout/item_conference_cardview"/>
+    tools:listitem="@layout/item_conference_cardview"
+    app:layout_anchorGravity="bottom"
+    android:layout_marginBottom="?attr/actionBarSize"/>
