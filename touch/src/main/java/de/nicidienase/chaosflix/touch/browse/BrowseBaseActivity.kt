@@ -17,13 +17,13 @@ abstract class BrowseBaseActivity : AppCompatActivity(), EventsListFragment.OnIn
     protected val numColumns: Int
         get() = resources.getInteger(R.integer.num_columns)
 
-    protected fun showFragment(fragment: Fragment) {
+    protected fun showFragment(fragment: Fragment, tag: String) {
         val fm = supportFragmentManager
         val oldFragment = fm.findFragmentById(R.id.fragment_container)
 
         val transitionInflater = TransitionInflater.from(this)
         if (oldFragment != null) {
-            if(fragment::class == oldFragment::class){
+            if(oldFragment.tag.equals(tag)){
                 return
             }
             oldFragment.exitTransition = transitionInflater.inflateTransition(android.R.transition.fade)
@@ -34,7 +34,7 @@ abstract class BrowseBaseActivity : AppCompatActivity(), EventsListFragment.OnIn
 //        fragment.enterTransition = slideTransition
 
         val ft = fm.beginTransaction()
-        ft.replace(R.id.fragment_container, fragment)
+        ft.replace(R.id.fragment_container, fragment,tag)
         ft.setReorderingAllowed(true)
         ft.addToBackStack(null)
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)

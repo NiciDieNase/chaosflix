@@ -102,25 +102,25 @@ class BrowseActivity : BrowseBaseActivity(),
 
     private fun showConferencesFragment() {
         toolbar.setTitle(R.string.app_name)
-        showFragment(ConferencesTabBrowseFragment.newInstance(numColumns))
+        showFragment(ConferencesTabBrowseFragment.newInstance(numColumns), "conferences")
     }
 
     private fun showBookmarksFragment() {
         toolbar.setTitle(R.string.bookmarks)
         val bookmarksFragment = EventsListFragment.newInstance(EventsListFragment.BOOKMARKS_LIST_ID, numColumns)
-        showFragment(bookmarksFragment)
+        showFragment(bookmarksFragment, "bookmarks")
     }
 
     private fun showInProgressFragment() {
         toolbar.setTitle(R.string.continue_watching)
         val progressEventsFragment = EventsListFragment.newInstance(EventsListFragment.IN_PROGRESS_LIST_ID, numColumns)
-        showFragment(progressEventsFragment)
+        showFragment(progressEventsFragment, "in_progress")
     }
 
     private fun showStreamsFragmen() {
         toolbar.setTitle(getString(R.string.livestreams))
         val fragment = LivestreamListFragment()
-        showFragment(fragment)
+        showFragment(fragment, "streams")
     }
 
     private fun showAboutPage() {
