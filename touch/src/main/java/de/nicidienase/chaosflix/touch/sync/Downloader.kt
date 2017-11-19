@@ -1,5 +1,7 @@
 package de.nicidienase.chaosflix.touch.sync
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.util.Log
 import de.nicidienase.chaosflix.common.Util
 import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase
@@ -18,9 +20,9 @@ class Downloader(val recordingApi: RecordingService,
 
     private fun updateEverything() {
         updateConferencesAndGroups { conferenceIds ->
-            for(id in conferenceIds){
-                updateEventsForConference(id){ eventIds ->
-                    for(id in eventIds){
+            for (id in conferenceIds) {
+                updateEventsForConference(id) { eventIds ->
+                    for (id in eventIds) {
                         updateRecordingsForEvent(id)
                     }
                 }
@@ -28,41 +30,50 @@ class Downloader(val recordingApi: RecordingService,
         }
     }
 
-    fun updateConferencesAndGroups(listener: ((List<Long>) -> Unit)? = null) {
+    fun updateConferencesAndGroups(listener: ((List<Long>) -> Unit)? = null): LiveData<Boolean> {
+        val updateFinished = MutableLiveData<Boolean>()
+        updateFinished.value = false
         recordingApi.getConferencesWrapper()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe( { con: ConferencesWrapper? -> saveConferences(con, listener) },{
-                    t: Throwable? -> Log.d(TAG,t?.message,t)
+                .subscribe({ con: ConferencesWrapper? ->
+                    saveConferences(con, listener)
+                    updateFinished.postValue(true)
+                }, { t: Throwable? ->
+                    Log.d(TAG, t?.message, t)
                 })
+        return updateFinished
     }
 
     private val TAG: String? = Downloader::class.simpleName
 
     fun updateEventsForConference(conferenceId: Long, listener: ((List<Long>) -> Unit)? = null) {
-        if(conferenceId < 0)
+        if (conferenceId < 0)
             return
+        val updateFinished = MutableLiveData<Boolean>()
+        updateFinished.value = false
         recordingApi.getConference(conferenceId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe({ conference: Conference? ->
                     saveEvents(conference, listener)
-                }, {
-                    t: Throwable? -> Log.d(TAG,t?.message,t)
+                    updateFinished.postValue(true)
+                }, { t: Throwable? ->
+                    Log.d(TAG, t?.message, t)
                 })
 
     }
 
     fun updateRecordingsForEvent(eventId: Long, listener: ((List<Long>) -> Unit)? = null) {
-        if(eventId < 0)
+        if (eventId < 0)
             return
         recordingApi.getEvent(eventId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe ({ event: Event? ->
+                .subscribe({ event: Event? ->
                     saveRecordings(event, listener)
-                }, {
-                    t: Throwable? -> Log.d(TAG,t?.message,t)
+                }, { t: Throwable? ->
+                    Log.d(TAG, t?.message, t)
                 })
     }
 

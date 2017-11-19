@@ -74,6 +74,7 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 					TabLayout tabLayout = view.findViewById(R.id.sliding_tabs);
 					tabLayout.setupWithViewPager(mViewPager);
 				});
+		getViewModel().updateConferences(); // TODO show and dismiss loading-spinner
 		return view;
 	}
 

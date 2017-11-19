@@ -108,6 +108,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 				});
 
 				getViewModel().getEventsforConference(conferenceId).observe(this, listObserver);
+				getViewModel().updateEventsForConference(conferenceId); // TODO show/dismiss loading-spinner
 			}
 		}
 		return view;
