@@ -100,9 +100,11 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		if (conferenceId == BOOKMARKS_LIST_ID) {
 			listener.setToolbarTitle(resources.getString(R.string.bookmarks));
 			getViewModel().getBookmarkedEvents().observe(this, listObserver);
+			setLoadingOverlayVisibility(false);
 		} else if (conferenceId == IN_PROGRESS_LIST_ID) {
 			listener.setToolbarTitle(resources.getString(R.string.continue_watching));
 			getViewModel().getInProgressEvents().observe(this, listObserver);
+			setLoadingOverlayVisibility(false);
 		} else {
 			{
 				getViewModel().getConference(conferenceId).observe(this, conference -> {
