@@ -76,7 +76,9 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 					mViewPager.onRestoreInstanceState(getArguments().getParcelable(VIEWPAGER_STATE));
 					TabLayout tabLayout = view.findViewById(R.id.sliding_tabs);
 					tabLayout.setupWithViewPager(mViewPager);
-					setLoadingOverlayVisibility(false);
+					if(conferenceGroups.size() > 0){
+						setLoadingOverlayVisibility(false);
+					}
 				});
 		getViewModel().updateConferences().observe(this,
 				loadingFinished -> setLoadingOverlayVisibility(!loadingFinished));

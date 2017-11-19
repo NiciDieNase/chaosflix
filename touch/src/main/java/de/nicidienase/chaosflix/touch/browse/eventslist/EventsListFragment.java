@@ -91,7 +91,9 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 
 		Observer<List<PersistentEvent>> listObserver = persistentEvents -> {
 			setEvents(persistentEvents);
-			setLoadingOverlayVisibility(false);
+			if(persistentEvents.size() > 0){
+				setLoadingOverlayVisibility(false);
+			}
 		};
 
 		Resources resources = getResources();

@@ -4,73 +4,36 @@ package de.nicidienase.chaosflix.touch.activities;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-
-import org.apache.commons.io.IOUtils;
-
-import java.io.InputStream;
-import java.nio.charset.Charset;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import de.nicidienase.chaosflix.R;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import mehdi.sakout.aboutpage.AboutPage;
+import mehdi.sakout.aboutpage.Element;
 
 public class AboutActivity extends AppCompatActivity {
-
-	private static final String TAG = AboutActivity.class.getSimpleName();
-	private int depth = 0;
-	private WebView webView;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragment_about);
+		setContentView(R.layout.activity_about);
 
-		webView = findViewById(R.id.web_view);
-		webView.setNetworkAvailable(false);
-		webView.setWebViewClient(new WebViewClient() {
-			@Override
-			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-				if (url.startsWith("http")) {
-					depth++;
-					return false;
-				} else {
-					url = url.replace("file:///android_asset/", "");
-					loadAsset(url);
-					return true;
-				}
-			}
-		});
-		loadAsset("file:///android_asset/about.html");
-	}
+		Toolbar toolbar = findViewById(R.id.toolbar);
+		toolbar.setTitle("About Chaosflix");
+		setSupportActionBar(toolbar);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-	private void loadAsset(String filename) {
-		Observable.fromCallable(() -> {
-			InputStream input = getAssets().open(filename);
-			String webViewData = IOUtils.toString(input, Charset.defaultCharset());
-			if (webViewData.startsWith("<!DOCTYPE html>")) {
-				depth = 0;
-			}
-			return webViewData;
-		}).subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(
-						s -> webView.loadDataWithBaseURL("file:///android_asset/", s, "text/html", "utf-8", "about:blank"),
-						error -> Log.d(TAG, Log.getStackTraceString(error))
-				);
-	}
+		View aboutView = new AboutPage(this)
+				.setImage(R.drawable.icon_notext_144x144)
+				.setDescription("This is Chaosflix!")
+				.addItem(new Element().setTitle("Title"))
+				.addItem(new Element().setTitle("Version 0.2.4"))
+				.addPlayStore("de.nicidienase.chaosflix")
+				.addGitHub("nicidienase/chaosflix")
+				.create();
 
-	@Override
-	public void onBackPressed() {
-		if (depth == 1) {
-			loadAsset("about.html");
-		} else if (depth > 1) {
-			webView.goBack();
-		} else {
-			super.onBackPressed();
-		}
+		FrameLayout frame = findViewById(R.id.container);
+		frame.addView(aboutView);
 	}
 }

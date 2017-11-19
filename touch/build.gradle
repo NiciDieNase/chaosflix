@@ -78,6 +78,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0'
 
+    implementation 'com.github.medyo:android-about-page:1.2.2'
     implementation 'com.google.android.exoplayer:exoplayer:r2.5.2'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.jakewharton:butterknife:8.5.1'
