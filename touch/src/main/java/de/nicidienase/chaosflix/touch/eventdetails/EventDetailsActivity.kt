@@ -49,10 +49,6 @@ class EventDetailsActivity: AppCompatActivity(),
         invalidateOptionsMenu()
     }
 
-    override fun setActionbar(toolbar: Toolbar) {
-        setSupportActionBar(toolbar)
-    }
-
     override fun playItem(event: PersistentEvent, recording: PersistentRecording) {
         PlayerActivity.launch(this,event,recording)
     }

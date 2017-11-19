@@ -21,16 +21,18 @@
             android:fitsSystemWindows="true"
             android:theme="@style/AppTheme">
 
-            <android.support.design.widget.CollapsingToolbarLayout
+            <net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout
                 android:id="@+id/collapsing_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
                 android:title="@{event.title}"
+                app:titleEnabled="true"
                 app:contentScrim="@color/primary"
                 app:statusBarScrim="@color/primary"
                 app:expandedTitleMarginStart="25dp"
-                app:titleEnabled="false"
+                app:collapsedTitleTextAppearance="@style/DetailsTitleStyleCollapsed"
+                app:expandedTitleTextAppearance="@style/DetailsTitleStyleExpanded"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
                 <ImageView
@@ -45,35 +47,38 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="160dp"
+                    android:layout_height="match_parent"
                     android:layout_gravity="bottom"
                     android:background="@drawable/scrim"/>
 
-                <TextView
-                    android:id="@+id/title_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/details_title_margin"
-                    android:layout_marginLeft="@dimen/details_title_margin"
-                    android:layout_marginRight="@dimen/details_title_margin"
-                    android:layout_marginTop="@dimen/details_title_margin"
-                    android:text="@{event.title}"
-                    android:visibility="visible"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                    android:textColor="@color/white"
-                    android:maxLines="2"
-                    android:ellipsize="end"
-                    app:layout_collapseParallaxMultiplier="1.0"/>
+                <!--<TextView-->
+                    <!--android:id="@+id/title_text"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="bottom"-->
+                    <!--android:layout_marginBottom="@dimen/details_title_margin"-->
+                    <!--android:layout_marginLeft="@dimen/details_title_margin"-->
+                    <!--android:layout_marginRight="@dimen/details_title_margin"-->
+                    <!--android:layout_marginTop="@dimen/details_title_margin"-->
+                    <!--android:text="@{event.title}"-->
+                    <!--android:visibility="visible"-->
+                    <!--android:textAppearance="@style/TextAppearance.AppCompat.Display1"-->
+                    <!--android:textColor="@color/white"-->
+                    <!--android:maxLines="2"-->
+                    <!--android:ellipsize="end"-->
+                    <!--app:layout_collapseParallaxMultiplier="1.0"/>-->
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/anim_toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
+                    style="@style/ToolbarStyle"
+                    app:titleTextColor="@color/white"
+                    app:subtitleTextColor="@color/white"
                     app:layout_collapseMode="pin"
                     app:popupTheme="@style/AppTheme"/>
 
-            </android.support.design.widget.CollapsingToolbarLayout>
+            </net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout>
 
         </android.support.design.widget.AppBarLayout>
 

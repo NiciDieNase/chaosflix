@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.Toolbar
 import android.util.Log
@@ -21,6 +22,7 @@ import de.nicidienase.chaosflix.databinding.FragmentEventDetailsBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.ViewModelFactory
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
+import kotlinx.android.synthetic.main.toolbar.*
 
 class EventDetailsFragment : Fragment() {
 
@@ -31,6 +33,9 @@ class EventDetailsFragment : Fragment() {
     private var event: PersistentEvent? = null
     private var watchlistItem: WatchlistItem? = null
     private var eventSelectedListener: OnEventSelectedListener? = null
+
+    private lateinit var viewModel: DetailsViewModel
+    private lateinit var relatedEventsAdapter: EventRecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,16 +56,14 @@ class EventDetailsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_event_details, container, false)
     }
 
-    private lateinit var relatedEventsAdapter: EventRecyclerViewAdapter
-
-    private lateinit var viewModel: DetailsViewModel
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentEventDetailsBinding.bind(view)
         binding.playFab.setOnClickListener { _ -> play() }
-        if (listener != null)
-            listener!!.setActionbar(binding.animToolbar)
+        if (listener != null){
+            (activity as AppCompatActivity).setSupportActionBar(binding.animToolbar)
+            (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        }
 
         eventSelectedListener?.let{
             relatedEventsAdapter = RelatedEventsRecyclerViewAdapter(eventSelectedListener!!)
@@ -75,7 +78,7 @@ class EventDetailsFragment : Fragment() {
                     listener!!.onToolbarStateChange()
                 }
                 appBarExpanded = v > 0.8
-                binding.collapsingToolbar.isTitleEnabled = appBarExpanded
+//                binding.collapsingToolbar.isTitleEnabled = appBarExpanded
             }
         }
 
@@ -154,16 +157,17 @@ class EventDetailsFragment : Fragment() {
         listener = null
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
+    override fun onPrepareOptionsMenu(menu: Menu) {
         Log.d(TAG, "OnPrepareOptionsMenu")
         super.onPrepareOptionsMenu(menu)
         if (watchlistItem != null) {
-            menu!!.findItem(R.id.action_bookmark).isVisible = false
+            menu.findItem(R.id.action_bookmark).isVisible = false
             menu.findItem(R.id.action_unbookmark).isVisible = true
         } else {
-            menu!!.findItem(R.id.action_bookmark).isVisible = true
+            menu.findItem(R.id.action_bookmark).isVisible = true
             menu.findItem(R.id.action_unbookmark).isVisible = false
         }
+        menu.findItem(R.id.action_play).isVisible = appBarExpanded
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -175,6 +179,10 @@ class EventDetailsFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item!!.itemId) {
+            android.R.id.home -> {
+                activity?.finish()
+                return true
+            }
             R.id.action_play -> {
                 play()
                 return true
@@ -200,7 +208,6 @@ class EventDetailsFragment : Fragment() {
 
     interface OnEventDetailsFragmentInteractionListener {
         fun onToolbarStateChange()
-        fun setActionbar(toolbar: Toolbar)
         fun invalidateOptionsMenu()
         fun playItem(event: PersistentEvent, recording: PersistentRecording)
     }
