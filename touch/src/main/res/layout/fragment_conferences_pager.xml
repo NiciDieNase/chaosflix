@@ -6,9 +6,6 @@
     android:id="@+id/list"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="4dp"
     app:layout_anchor="@id/sliding_tabs"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:listitem="@layout/item_conference_cardview"
-    app:layout_anchorGravity="bottom"
-    android:layout_marginBottom="?attr/actionBarSize"/>
+    tools:listitem="@layout/item_conference_cardview"/>
