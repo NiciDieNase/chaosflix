@@ -42,6 +42,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 
 	private LinearLayoutManager layoutManager;
 	private SearchView searchView;
+	private View loadingOverlay;
 
 	public static EventsListFragment newInstance(long conferenceId, int columnCount) {
 		EventsListFragment fragment = new EventsListFragment();
@@ -75,6 +76,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_events_list, container, false);
+		loadingOverlay = view.findViewById(R.id.loading_overlay);
 		Context context = view.getContext();
 		RecyclerView recyclerView = view.findViewById(R.id.list);
 		if (columnCount <= 1) {
@@ -89,6 +91,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 
 		Observer<List<PersistentEvent>> listObserver = persistentEvents -> {
 			setEvents(persistentEvents);
+			setLoadingOverlayVisibility(false);
 		};
 
 		Resources resources = getResources();
@@ -108,7 +111,9 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 				});
 
 				getViewModel().getEventsforConference(conferenceId).observe(this, listObserver);
-				getViewModel().updateEventsForConference(conferenceId); // TODO show/dismiss loading-spinner
+				getViewModel().updateEventsForConference(conferenceId).observe(this,
+						loadingFinished -> setLoadingOverlayVisibility(!loadingFinished)
+				);
 			}
 		}
 		return view;
@@ -159,6 +164,16 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 	public boolean onQueryTextChange(String newText) {
 		eventAdapter.getFilter().filter(newText);
 		return true;
+	}
+
+	private void setLoadingOverlayVisibility(boolean visible){
+		if(loadingOverlay != null){
+			if(visible){
+				loadingOverlay.setVisibility(View.VISIBLE);
+			} else {
+				loadingOverlay.setVisibility(View.INVISIBLE);
+			}
+		}
 	}
 
 	public interface OnInteractionListener extends OnEventSelectedListener {

@@ -26,6 +26,7 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 	private Toolbar mToolbar;
 	private Context mContext;
 	private ViewPager mViewPager;
+	private View loadingOverlay;
 
 	public static ConferencesTabBrowseFragment newInstance(int columnCount) {
 		ConferencesTabBrowseFragment fragment = new ConferencesTabBrowseFragment();
@@ -64,17 +65,21 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 
 		mViewPager = view.findViewById(R.id.viewpager);
 
+		loadingOverlay = view.findViewById(R.id.loading_overlay);
+
 		getViewModel().getConferenceGroups()
-				.observe(this,conferenceGroups -> {
+				.observe(this, conferenceGroups -> {
 					ConferenceGroupsFragmentPager fragmentPager
-						= new ConferenceGroupsFragmentPager(this.getContext(), getChildFragmentManager());
+							= new ConferenceGroupsFragmentPager(this.getContext(), getChildFragmentManager());
 					fragmentPager.setContent(conferenceGroups);
 					mViewPager.setAdapter(fragmentPager);
 					mViewPager.onRestoreInstanceState(getArguments().getParcelable(VIEWPAGER_STATE));
 					TabLayout tabLayout = view.findViewById(R.id.sliding_tabs);
 					tabLayout.setupWithViewPager(mViewPager);
+					setLoadingOverlayVisibility(false);
 				});
-		getViewModel().updateConferences(); // TODO show and dismiss loading-spinner
+		getViewModel().updateConferences().observe(this,
+				loadingFinished -> setLoadingOverlayVisibility(!loadingFinished));
 		return view;
 	}
 
@@ -88,6 +93,16 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 	public void onDetach() {
 		super.onDetach();
 		listener = null;
+	}
+
+	private void setLoadingOverlayVisibility(boolean visible) {
+		if (loadingOverlay != null) {
+			if (visible) {
+				loadingOverlay.setVisibility(View.VISIBLE);
+			} else {
+				loadingOverlay.setVisibility(View.INVISIBLE);
+			}
+		}
 	}
 
 	public interface OnInteractionListener {

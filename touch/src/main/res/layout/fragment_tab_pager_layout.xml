@@ -38,4 +38,5 @@
         app:layout_anchorGravity="bottom"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
+    <include layout="@layout/loading_overlay"/>
 </android.support.design.widget.CoordinatorLayout>

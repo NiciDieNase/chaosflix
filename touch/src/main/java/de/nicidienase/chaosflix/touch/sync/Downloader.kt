@@ -47,9 +47,7 @@ class Downloader(val recordingApi: RecordingService,
 
     private val TAG: String? = Downloader::class.simpleName
 
-    fun updateEventsForConference(conferenceId: Long, listener: ((List<Long>) -> Unit)? = null) {
-        if (conferenceId < 0)
-            return
+    fun updateEventsForConference(conferenceId: Long, listener: ((List<Long>) -> Unit)? = null): MutableLiveData<Boolean> {
         val updateFinished = MutableLiveData<Boolean>()
         updateFinished.value = false
         recordingApi.getConference(conferenceId)
@@ -61,7 +59,7 @@ class Downloader(val recordingApi: RecordingService,
                 }, { t: Throwable? ->
                     Log.d(TAG, t?.message, t)
                 })
-
+        return updateFinished
     }
 
     fun updateRecordingsForEvent(eventId: Long, listener: ((List<Long>) -> Unit)? = null) {
