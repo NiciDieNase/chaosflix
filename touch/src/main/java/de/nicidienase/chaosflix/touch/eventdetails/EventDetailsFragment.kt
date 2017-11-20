@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.*
@@ -68,7 +69,7 @@ class EventDetailsFragment : Fragment() {
         eventSelectedListener?.let{
             relatedEventsAdapter = RelatedEventsRecyclerViewAdapter(eventSelectedListener!!)
             binding.relatedItemsList.adapter = relatedEventsAdapter
-            binding.relatedItemsList.layoutManager = GridLayoutManager(context,2)
+            binding.relatedItemsList.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
         }
 
         binding.appbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->

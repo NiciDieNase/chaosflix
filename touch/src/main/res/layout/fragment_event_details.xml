@@ -33,7 +33,7 @@
                 app:expandedTitleMarginStart="25dp"
                 app:collapsedTitleTextAppearance="@style/DetailsTitleStyleCollapsed"
                 app:expandedTitleTextAppearance="@style/DetailsTitleStyleExpanded"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap|enterAlwaysCollapsed">
 
                 <ImageView
                     android:id="@+id/thumb_image"
@@ -141,9 +141,9 @@
                     android:id="@+id/related_items_list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingBottom="4dp"
+                    android:orientation="horizontal"
                     tools:listitem="@layout/related_event_cardview_layout"/>
-                
+
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 
