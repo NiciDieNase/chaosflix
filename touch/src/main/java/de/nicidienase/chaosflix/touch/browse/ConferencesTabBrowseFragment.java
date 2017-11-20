@@ -2,15 +2,13 @@ package de.nicidienase.chaosflix.touch.browse;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.databinding.FragmentTabPagerLayoutBinding;
 import de.nicidienase.chaosflix.touch.browse.adapters.ConferenceGroupsFragmentPager;
 
 
@@ -23,10 +21,7 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 	private static final String VIEWPAGER_STATE = "viewpager_state";
 	private int mColumnCount = 1;
 	private OnInteractionListener listener;
-	private Toolbar mToolbar;
-	private Context mContext;
-	private ViewPager mViewPager;
-	private View loadingOverlay;
+	private FragmentTabPagerLayoutBinding binding;
 
 	public static ConferencesTabBrowseFragment newInstance(int columnCount) {
 		ConferencesTabBrowseFragment fragment = new ConferencesTabBrowseFragment();
@@ -39,12 +34,11 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 	@Override
 	public void onAttach(Context context) {
 		super.onAttach(context);
-		mContext = context;
 		if (context instanceof OnInteractionListener) {
 			listener = (OnInteractionListener) context;
 		} else {
 			throw new RuntimeException(context.toString()
-					+ " must implement OnListFragmentInteractionListener");
+					+ " must implement OnInteractionListener");
 		}
 	}
 
@@ -61,50 +55,39 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_tab_pager_layout, container, false);
+		binding = FragmentTabPagerLayoutBinding.inflate(inflater, container, false);
 
-		mViewPager = view.findViewById(R.id.viewpager);
-
-		loadingOverlay = view.findViewById(R.id.loading_overlay);
+		setupToolbar(binding.incToolbar.toolbar, R.string.app_name);
+		setOverlay(binding.incOverlay.loadingOverlay);
 
 		getViewModel().getConferenceGroups()
 				.observe(this, conferenceGroups -> {
 					ConferenceGroupsFragmentPager fragmentPager
 							= new ConferenceGroupsFragmentPager(this.getContext(), getChildFragmentManager());
 					fragmentPager.setContent(conferenceGroups);
-					mViewPager.setAdapter(fragmentPager);
-					mViewPager.onRestoreInstanceState(getArguments().getParcelable(VIEWPAGER_STATE));
-					TabLayout tabLayout = view.findViewById(R.id.sliding_tabs);
-					tabLayout.setupWithViewPager(mViewPager);
-					if(conferenceGroups.size() > 0){
+					binding.viewpager.setAdapter(fragmentPager);
+					binding.viewpager.onRestoreInstanceState(getArguments().getParcelable(VIEWPAGER_STATE));
+
+					binding.slidingTabs.setupWithViewPager(binding.viewpager);
+					if (conferenceGroups.size() > 0) {
 						setLoadingOverlayVisibility(false);
 					}
 				});
 		getViewModel().updateConferences().observe(this,
 				loadingFinished -> setLoadingOverlayVisibility(!loadingFinished));
-		return view;
+		return binding.getRoot();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		getArguments().putParcelable(VIEWPAGER_STATE, mViewPager.onSaveInstanceState());
+		getArguments().putParcelable(VIEWPAGER_STATE,binding.viewpager.onSaveInstanceState());
 	}
 
 	@Override
 	public void onDetach() {
 		super.onDetach();
 		listener = null;
-	}
-
-	private void setLoadingOverlayVisibility(boolean visible) {
-		if (loadingOverlay != null) {
-			if (visible) {
-				loadingOverlay.setVisibility(View.VISIBLE);
-			} else {
-				loadingOverlay.setVisibility(View.INVISIBLE);
-			}
-		}
 	}
 
 	public interface OnInteractionListener {

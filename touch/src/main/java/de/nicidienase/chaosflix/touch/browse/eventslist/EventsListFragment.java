@@ -6,9 +6,9 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +21,7 @@ import java.util.List;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
+import de.nicidienase.chaosflix.databinding.FragmentEventsListBinding;
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener;
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment;
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter;
@@ -35,14 +36,14 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 	public static final long IN_PROGRESS_LIST_ID = -2;
 
 	private int columnCount = 1;
-	private OnInteractionListener listener;
+	private OnEventSelectedListener listener;
 
 	private EventRecyclerViewAdapter eventAdapter;
 	private long conferenceId;
 
 	private LinearLayoutManager layoutManager;
 	private SearchView searchView;
-	private View loadingOverlay;
+	private FragmentEventsListBinding binding;
 
 	public static EventsListFragment newInstance(long conferenceId, int columnCount) {
 		EventsListFragment fragment = new EventsListFragment();
@@ -57,8 +58,8 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 	public void onAttach(Context context) {
 		super.onAttach(context);
 		setHasOptionsMenu(true);
-		if (context instanceof OnInteractionListener) {
-			listener = (OnInteractionListener) context;
+		if (context instanceof OnEventSelectedListener) {
+			listener = (OnEventSelectedListener) context;
 		} else {
 			throw new RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener");
 		}
@@ -75,41 +76,43 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_events_list, container, false);
-		loadingOverlay = view.findViewById(R.id.loading_overlay);
-		Context context = view.getContext();
-		RecyclerView recyclerView = view.findViewById(R.id.list);
+		binding = FragmentEventsListBinding.inflate(inflater, container, false);
+
+		AppCompatActivity activity = (AppCompatActivity) getActivity();
+		activity.setSupportActionBar(binding.incToolbar.toolbar);
+		setOverlay(binding.incOverlay.loadingOverlay);
+
 		if (columnCount <= 1) {
-			layoutManager = new LinearLayoutManager(context);
+			layoutManager = new LinearLayoutManager(getContext());
 		} else {
-			layoutManager = new GridLayoutManager(context, columnCount);
+			layoutManager = new GridLayoutManager(getContext(), columnCount);
 		}
-		recyclerView.setLayoutManager(layoutManager);
+		binding.list.setLayoutManager(layoutManager);
 
 		eventAdapter = new EventRecyclerViewAdapter(listener);
-		recyclerView.setAdapter(eventAdapter);
+		binding.list.setAdapter(eventAdapter);
 
 		Observer<List<PersistentEvent>> listObserver = persistentEvents -> {
 			setEvents(persistentEvents);
-			if(persistentEvents.size() > 0){
+			if (persistentEvents.size() > 0) {
 				setLoadingOverlayVisibility(false);
 			}
 		};
 
 		Resources resources = getResources();
 		if (conferenceId == BOOKMARKS_LIST_ID) {
-			listener.setToolbarTitle(resources.getString(R.string.bookmarks));
+			setupToolbar(binding.incToolbar.toolbar, R.string.bookmarks);
 			getViewModel().getBookmarkedEvents().observe(this, listObserver);
 			setLoadingOverlayVisibility(false);
 		} else if (conferenceId == IN_PROGRESS_LIST_ID) {
-			listener.setToolbarTitle(resources.getString(R.string.continue_watching));
+			setupToolbar(binding.incToolbar.toolbar, R.string.continue_watching);
 			getViewModel().getInProgressEvents().observe(this, listObserver);
 			setLoadingOverlayVisibility(false);
 		} else {
 			{
 				getViewModel().getConference(conferenceId).observe(this, conference -> {
 					if (conference != null) {
-						listener.setToolbarTitle(conference.getTitle());
+						setupToolbar(binding.incToolbar.toolbar, conference.getTitle(), false);
 						eventAdapter.setShowTags(conference.getTagsUsefull());
 					}
 				});
@@ -120,7 +123,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 				);
 			}
 		}
-		return view;
+		return binding.getRoot();
 	}
 
 	private void setEvents(List<PersistentEvent> persistentEvents) {
@@ -169,19 +172,4 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		eventAdapter.getFilter().filter(newText);
 		return true;
 	}
-
-	private void setLoadingOverlayVisibility(boolean visible){
-		if(loadingOverlay != null){
-			if(visible){
-				loadingOverlay.setVisibility(View.VISIBLE);
-			} else {
-				loadingOverlay.setVisibility(View.INVISIBLE);
-			}
-		}
-	}
-
-	public interface OnInteractionListener extends OnEventSelectedListener {
-		void setToolbarTitle(String title);
-	}
-
 }

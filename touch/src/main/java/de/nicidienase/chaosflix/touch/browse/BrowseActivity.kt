@@ -2,14 +2,13 @@ package de.nicidienase.chaosflix.touch.browse
 
 import android.content.Intent
 import android.content.res.Configuration
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.support.design.widget.AppBarLayout
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
-import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -20,8 +19,10 @@ import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.common.entities.streaming.Stream
+import de.nicidienase.chaosflix.databinding.ActivityBrowseBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.activities.AboutActivity
+import de.nicidienase.chaosflix.touch.browse.download.DownloadsListFragment
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListFragment
 import de.nicidienase.chaosflix.touch.browse.streaming.LivestreamListFragment
@@ -29,44 +30,20 @@ import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
 
 class BrowseActivity : AppCompatActivity(),
         ConferencesTabBrowseFragment.OnInteractionListener,
-        EventsListFragment.OnInteractionListener,
         LivestreamListFragment.InteractionListener,
+        DownloadsListFragment.InteractionListener,
         OnEventSelectedListener {
     private var drawerOpen: Boolean = false
 
-    private lateinit var toolbar: Toolbar
     private lateinit var drawerToggle: ActionBarDrawerToggle
-    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var appBarLayout: AppBarLayout
+    private lateinit var binding: ActivityBrowseBinding
 
     protected val numColumns: Int
         get() = resources.getInteger(R.integer.num_columns)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_browse)
-
-        toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-
-        appBarLayout = findViewById(R.id.app_bar_layout)
-
-        drawerLayout = findViewById(R.id.drawer_layout)
-        drawerToggle = object : ActionBarDrawerToggle(this, drawerLayout,
-                toolbar, R.string.drawer_open, R.string.drawer_close) {
-            override fun onDrawerOpened(drawerView: View) {
-                super.onDrawerOpened(drawerView)
-                drawerOpen = true
-            }
-
-            override fun onDrawerClosed(drawerView: View) {
-                super.onDrawerClosed(drawerView)
-                drawerOpen = false
-            }
-        }
-        drawerLayout.addDrawerListener(drawerToggle)
-        drawerToggle.syncState()
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_browse)
 
         val navigationView = findViewById<NavigationView>(R.id.navigation_view)
         navigationView.setNavigationItemSelectedListener { item ->
@@ -75,18 +52,50 @@ class BrowseActivity : AppCompatActivity(),
                 R.id.nav_bookmarks -> showBookmarksFragment()
                 R.id.nav_inprogress -> showInProgressFragment()
                 R.id.nav_about -> showAboutPage()
-                R.id.nav_streams -> showStreamsFragmen()
-                R.id.nav_downloads -> Snackbar.make(drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
-                R.id.nav_preferences -> Snackbar.make(drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
-                else -> Snackbar.make(drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
+                R.id.nav_streams -> showStreamsFragment()
+                R.id.nav_downloads -> showDownloadsFragment()
+                R.id.nav_preferences -> Snackbar.make(binding.drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
+                else -> Snackbar.make(binding.drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
             }
-            drawerLayout.closeDrawers()
+            binding.drawerLayout.closeDrawers()
             true
         }
 
         if (savedInstanceState == null) {
             showConferencesFragment()
         }
+    }
+
+    fun setupDrawerToggle(toolbar: Toolbar?) {
+        if(toolbar != null){
+            drawerToggle = object : ActionBarDrawerToggle(this, binding.drawerLayout,
+                    toolbar, R.string.drawer_open, R.string.drawer_close) {
+                override fun onDrawerOpened(drawerView: View) {
+                    super.onDrawerOpened(drawerView)
+                    drawerOpen = true
+                }
+
+                override fun onDrawerClosed(drawerView: View) {
+                    super.onDrawerClosed(drawerView)
+                    drawerOpen = false
+                }
+            }
+        } else {
+            drawerToggle = object : ActionBarDrawerToggle(this, binding.drawerLayout,
+                    R.string.drawer_open, R.string.drawer_close) {
+                override fun onDrawerOpened(drawerView: View) {
+                    super.onDrawerOpened(drawerView)
+                    drawerOpen = true
+                }
+
+                override fun onDrawerClosed(drawerView: View) {
+                    super.onDrawerClosed(drawerView)
+                    drawerOpen = false
+                }
+            }
+        }
+        binding.drawerLayout.addDrawerListener(drawerToggle)
+        drawerToggle.syncState()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
@@ -115,26 +124,26 @@ class BrowseActivity : AppCompatActivity(),
     }
 
     private fun showConferencesFragment() {
-        toolbar.setTitle(R.string.app_name)
         showFragment(ConferencesTabBrowseFragment.newInstance(numColumns), "conferences")
     }
 
     private fun showBookmarksFragment() {
-        toolbar.setTitle(R.string.bookmarks)
         val bookmarksFragment = EventsListFragment.newInstance(EventsListFragment.BOOKMARKS_LIST_ID, numColumns)
         showFragment(bookmarksFragment, "bookmarks")
     }
 
     private fun showInProgressFragment() {
-        toolbar.setTitle(R.string.continue_watching)
         val progressEventsFragment = EventsListFragment.newInstance(EventsListFragment.IN_PROGRESS_LIST_ID, numColumns)
         showFragment(progressEventsFragment, "in_progress")
     }
 
-    private fun showStreamsFragmen() {
-        toolbar.setTitle(getString(R.string.livestreams))
+    private fun showStreamsFragment() {
         val fragment = LivestreamListFragment()
         showFragment(fragment, "streams")
+    }
+
+    private fun showDownloadsFragment() {
+        showFragment(DownloadsListFragment(),"downloads")
     }
 
     private fun showAboutPage() {
@@ -142,17 +151,9 @@ class BrowseActivity : AppCompatActivity(),
         startActivity(intent)
     }
 
-    fun showToolbar(){
-        appBarLayout.setExpanded(true)
-    }
-
-    override fun setToolbarTitle(title: String) {
-        toolbar.title = title
-    }
-
     override fun onBackPressed() {
         if (drawerOpen) {
-            drawerLayout.closeDrawers()
+            binding.drawerLayout.closeDrawers()
         } else {
             super.onBackPressed()
         }
@@ -180,7 +181,6 @@ class BrowseActivity : AppCompatActivity(),
         ft.addToBackStack(null)
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
         ft.commit()
-        showToolbar()
     }
 
     override fun onEventSelected(event: PersistentEvent, v: View) {
