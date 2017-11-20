@@ -178,7 +178,6 @@ class BrowseActivity : AppCompatActivity(),
         val ft = fm.beginTransaction()
         ft.replace(R.id.fragment_container, fragment,tag)
         ft.setReorderingAllowed(true)
-        ft.addToBackStack(null)
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
         ft.commit()
     }
