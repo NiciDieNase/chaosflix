@@ -4,14 +4,20 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.support.design.widget.AppBarLayout
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentTransaction
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.transition.TransitionInflater
 import android.view.MenuItem
 import android.view.View
 import de.nicidienase.chaosflix.R
+import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.common.entities.streaming.Stream
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
@@ -19,8 +25,9 @@ import de.nicidienase.chaosflix.touch.activities.AboutActivity
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListFragment
 import de.nicidienase.chaosflix.touch.browse.streaming.LivestreamListFragment
+import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
 
-class BrowseActivity : BrowseBaseActivity(),
+class BrowseActivity : AppCompatActivity(),
         ConferencesTabBrowseFragment.OnInteractionListener,
         EventsListFragment.OnInteractionListener,
         LivestreamListFragment.InteractionListener,
@@ -30,6 +37,11 @@ class BrowseActivity : BrowseBaseActivity(),
     private lateinit var toolbar: Toolbar
     private lateinit var drawerToggle: ActionBarDrawerToggle
     private lateinit var drawerLayout: DrawerLayout
+    private lateinit var appBarLayout: AppBarLayout
+
+    protected val numColumns: Int
+        get() = resources.getInteger(R.integer.num_columns)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_browse)
@@ -37,6 +49,8 @@ class BrowseActivity : BrowseBaseActivity(),
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        appBarLayout = findViewById(R.id.app_bar_layout)
 
         drawerLayout = findViewById(R.id.drawer_layout)
         drawerToggle = object : ActionBarDrawerToggle(this, drawerLayout,
@@ -128,6 +142,10 @@ class BrowseActivity : BrowseBaseActivity(),
         startActivity(intent)
     }
 
+    fun showToolbar(){
+        appBarLayout.setExpanded(true)
+    }
+
     override fun setToolbarTitle(title: String) {
         toolbar.title = title
     }
@@ -138,5 +156,34 @@ class BrowseActivity : BrowseBaseActivity(),
         } else {
             super.onBackPressed()
         }
+    }
+
+    protected fun showFragment(fragment: Fragment, tag: String) {
+        val fm = supportFragmentManager
+        val oldFragment = fm.findFragmentById(R.id.fragment_container)
+
+        val transitionInflater = TransitionInflater.from(this)
+        if (oldFragment != null) {
+            if(oldFragment.tag.equals(tag)){
+                return
+            }
+            oldFragment.exitTransition = transitionInflater.inflateTransition(android.R.transition.fade)
+        }
+        fragment.enterTransition = transitionInflater.inflateTransition(android.R.transition.fade)
+
+//        val slideTransition = Slide(Gravity.RIGHT)
+//        fragment.enterTransition = slideTransition
+
+        val ft = fm.beginTransaction()
+        ft.replace(R.id.fragment_container, fragment,tag)
+        ft.setReorderingAllowed(true)
+        ft.addToBackStack(null)
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+        ft.commit()
+        showToolbar()
+    }
+
+    override fun onEventSelected(event: PersistentEvent, v: View) {
+        EventDetailsActivity.launch(this, event.eventId)
     }
 }
