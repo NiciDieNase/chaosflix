@@ -28,7 +28,7 @@ class DownloadsListFragment : BrowseFragment(){
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentDownloadsBinding.inflate(inflater, container, false)
-        setupToolbar(binding.incToolbar?.toolbar!!, R.string.livestreams)
+        setupToolbar(binding.incToolbar?.toolbar!!, R.string.downloads)
         overlay = binding.incOverlay?.loadingOverlay
         return binding.root
     }
