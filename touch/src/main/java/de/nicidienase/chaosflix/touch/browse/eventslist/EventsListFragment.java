@@ -28,21 +28,21 @@ import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter;
 
 public class EventsListFragment extends BrowseFragment implements SearchView.OnQueryTextListener {
 
-	private static final String ARG_COLUMN_COUNT = "column-count";
-	private static final String ARG_CONFERENCE = "conference";
+	private static final String ARG_COLUMN_COUNT    = "column-count";
+	private static final String ARG_CONFERENCE      = "conference";
 	private static final String LAYOUTMANAGER_STATE = "layoutmanager-state";
-	private static final String TAG = EventsListFragment.class.getSimpleName();
-	public static final long BOOKMARKS_LIST_ID = -1;
-	public static final long IN_PROGRESS_LIST_ID = -2;
+	private static final String TAG                 = EventsListFragment.class.getSimpleName();
+	public static final  long   BOOKMARKS_LIST_ID   = -1;
+	public static final  long   IN_PROGRESS_LIST_ID = -2;
 
 	private int columnCount = 1;
 	private OnEventSelectedListener listener;
 
 	private EventRecyclerViewAdapter eventAdapter;
-	private long conferenceId;
+	private long                     conferenceId;
 
-	private LinearLayoutManager layoutManager;
-	private SearchView searchView;
+	private LinearLayoutManager       layoutManager;
+	private SearchView                searchView;
 	private FragmentEventsListBinding binding;
 
 	public static EventsListFragment newInstance(long conferenceId, int columnCount) {
@@ -118,9 +118,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 				});
 
 				getViewModel().getEventsforConference(conferenceId).observe(this, listObserver);
-				getViewModel().updateEventsForConference(conferenceId).observe(this,
-						loadingFinished -> setLoadingOverlayVisibility(!loadingFinished)
-				);
+				getViewModel().updateEventsForConference(conferenceId).observe(this, loadingFinished -> setLoadingOverlayVisibility(!loadingFinished));
 			}
 		}
 		return binding.getRoot();
@@ -130,8 +128,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		eventAdapter.setItems(persistentEvents);
 
 		Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
-		if (layoutState != null)
-			layoutManager.onRestoreInstanceState(layoutState);
+		if (layoutState != null) { layoutManager.onRestoreInstanceState(layoutState); }
 	}
 
 	@Override
@@ -150,7 +147,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
 
 		searchView.setSearchableInfo(searchManager.
-				getSearchableInfo(getActivity().getComponentName()));
+				                                          getSearchableInfo(getActivity().getComponentName()));
 		searchView.setSubmitButtonEnabled(true);
 		searchView.setIconified(false);
 		searchView.setOnQueryTextListener(this);

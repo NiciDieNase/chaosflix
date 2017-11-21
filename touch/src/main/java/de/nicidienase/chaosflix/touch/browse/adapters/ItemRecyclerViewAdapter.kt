@@ -12,83 +12,84 @@ import de.nicidienase.chaosflix.R
 import java.util.*
 
 abstract class ItemRecyclerViewAdapter<T>()
-    : RecyclerView.Adapter<ItemRecyclerViewAdapter<T>.ViewHolder>(), Filterable {
+	: RecyclerView.Adapter<ItemRecyclerViewAdapter<T>.ViewHolder>(), Filterable {
 
-    internal abstract val layout: Int
+	internal abstract val layout: Int
 
-    abstract fun getComparator(): Comparator<in T>?
+	abstract fun getComparator(): Comparator<in T>?
 
-    internal abstract fun getFilteredProperties(item: T): List<String>
+	internal abstract fun getFilteredProperties(item: T): List<String>
 
-    private val _filter by lazy { ItemFilter()}
+	private val _filter by lazy { ItemFilter() }
 
-    override fun getFilter(): Filter {
-        return _filter
-    }
-    private var _items: MutableList<T> = ArrayList<T>()
+	override fun getFilter(): Filter {
+		return _filter
+	}
 
-    private var filteredItems: MutableList<T> = _items
+	private var _items: MutableList<T> = ArrayList<T>()
 
-    var items: MutableList<T>
-        get() = filteredItems
-        set(value) {
-            _items = value
-            if(getComparator() != null){
-                Collections.sort(_items,getComparator())
-            }
-            filteredItems = _items
-            notifyDataSetChanged()
-        }
+	private var filteredItems: MutableList<T> = _items
 
-    fun addItem(item: T) {
-        if (items.contains(item)) {
-            val index = items.indexOf(item)
-            items[index] = item
-            notifyItemChanged(index)
-        } else {
-            items.add(item)
-            notifyItemInserted(items.size - 1)
-        }
-    }
+	var items: MutableList<T>
+		get() = filteredItems
+		set(value) {
+			_items = value
+			if (getComparator() != null) {
+				Collections.sort(_items, getComparator())
+			}
+			filteredItems = _items
+			notifyDataSetChanged()
+		}
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-                .inflate(layout, parent, false)
-        return ViewHolder(view)
-    }
+	fun addItem(item: T) {
+		if (items.contains(item)) {
+			val index = items.indexOf(item)
+			items[index] = item
+			notifyItemChanged(index)
+		} else {
+			items.add(item)
+			notifyItemInserted(items.size - 1)
+		}
+	}
 
-    override fun getItemCount(): Int {
-        return filteredItems.size
-    }
+	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+		val view = LayoutInflater.from(parent.context)
+				.inflate(layout, parent, false)
+		return ViewHolder(view)
+	}
 
-    inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mIcon: ImageView = mView.findViewById<View>(R.id.imageView) as ImageView
-        val mTitleText: TextView = mView.findViewById<View>(R.id.title_text) as TextView
-        val mSubtitle: TextView = mView.findViewById<View>(R.id.acronym_text) as TextView
-        val mTag: TextView = mView.findViewById<View>(R.id.tag_text) as TextView
-    }
+	override fun getItemCount(): Int {
+		return filteredItems.size
+	}
 
-    inner class ItemFilter: Filter(){
-        override fun performFiltering(filterText: CharSequence?): FilterResults {
-            val filterResults = FilterResults()
-            filterText?.let { text: CharSequence ->
-                if(text.length > 0){
-                    val list = _items.filter { getFilteredProperties(it).any { it.contains(text, true)} }
-                    filterResults.values = list
-                    filterResults.count = list.size
-                }
-            }
-            return filterResults
-        }
+	inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
+		val mIcon: ImageView = mView.findViewById<View>(R.id.imageView) as ImageView
+		val mTitleText: TextView = mView.findViewById<View>(R.id.title_text) as TextView
+		val mSubtitle: TextView = mView.findViewById<View>(R.id.acronym_text) as TextView
+		val mTag: TextView = mView.findViewById<View>(R.id.tag_text) as TextView
+	}
 
-        override fun publishResults(filterText: CharSequence?, filterResults: FilterResults?) {
-            if(filterResults?.values != null){
-                filteredItems = filterResults.values as MutableList<T>
-            } else {
-                filteredItems = _items
-            }
-            notifyDataSetChanged()
-        }
+	inner class ItemFilter : Filter() {
+		override fun performFiltering(filterText: CharSequence?): FilterResults {
+			val filterResults = FilterResults()
+			filterText?.let { text: CharSequence ->
+				if (text.length > 0) {
+					val list = _items.filter { getFilteredProperties(it).any { it.contains(text, true) } }
+					filterResults.values = list
+					filterResults.count = list.size
+				}
+			}
+			return filterResults
+		}
 
-    }
+		override fun publishResults(filterText: CharSequence?, filterResults: FilterResults?) {
+			if (filterResults?.values != null) {
+				filteredItems = filterResults.values as MutableList<T>
+			} else {
+				filteredItems = _items
+			}
+			notifyDataSetChanged()
+		}
+
+	}
 }

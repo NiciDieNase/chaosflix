@@ -52,10 +52,10 @@ import de.nicidienase.chaosflix.common.entities.recording.persistence.Persistent
 import de.nicidienase.chaosflix.touch.ViewModelFactory;
 
 public class ExoPlayerFragment extends Fragment implements PlayerEventListener.PlayerStateChangeListener {
-	private static final String TAG = ExoPlayerFragment.class.getSimpleName();
-	public static final String PLAYBACK_STATE = "playback_state";
-	private static final String ARG_EVENT = "event";
-	private static final String ARG_RECORDING = "recording";
+	private static final String TAG            = ExoPlayerFragment.class.getSimpleName();
+	public static final  String PLAYBACK_STATE = "playback_state";
+	private static final String ARG_EVENT      = "event";
+	private static final String ARG_RECORDING  = "recording";
 
 	private OnMediaPlayerInteractionListener listener;
 	private final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
@@ -63,22 +63,22 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	@BindView(R.id.video_view)
 	SimpleExoPlayerView videoView;
 	@BindView(R.id.progressBar)
-	ProgressBar progressBar;
+	ProgressBar         progressBar;
 
 	@Nullable
 	@BindView(R.id.toolbar)
-	Toolbar toolbar;
+	Toolbar  toolbar;
 	@Nullable
 	@BindView(R.id.subtitle_text)
 	TextView subtitleText;
 
 	private String userAgent;
-	private Handler mainHandler = new Handler();
+	private Handler mainHandler   = new Handler();
 	private boolean playbackState = true;
-	private PersistentEvent event;
+	private PersistentEvent     event;
 	private PersistentRecording recording;
-	private SimpleExoPlayer exoPlayer;
-	private PlayerViewModel viewModel;
+	private SimpleExoPlayer     exoPlayer;
+	private PlayerViewModel     viewModel;
 
 	public ExoPlayerFragment() {
 	}
@@ -106,8 +106,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.fragment_exo_player, container, false);
 	}
 
@@ -118,8 +117,8 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 		if (toolbar != null) {
 			toolbar.setTitle(event.getTitle());
 			toolbar.setSubtitle(event.getSubtitle());
-			((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-			((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+			((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+			((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 		if (exoPlayer == null) {
 			exoPlayer = setupPlayer();
@@ -131,12 +130,11 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 		super.onResume();
 		if (exoPlayer != null) {
 			exoPlayer.setPlayWhenReady(playbackState);
-			viewModel.getPlaybackProgress(event.getEventId())
-					.observe(this, playbackProgress -> {
-						if (playbackProgress != null) {
-							exoPlayer.seekTo(playbackProgress.getProgress());
-						}
-					});
+			viewModel.getPlaybackProgress(event.getEventId()).observe(this, playbackProgress -> {
+				if (playbackProgress != null) {
+					exoPlayer.seekTo(playbackProgress.getProgress());
+				}
+			});
 			videoView.setPlayer(exoPlayer);
 		}
 	}
@@ -178,12 +176,10 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 
 		userAgent = Util.getUserAgent(getContext(), getResources().getString(R.string.app_name));
 
-		AdaptiveTrackSelection.Factory trackSelectorFactory
-				= new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
+		AdaptiveTrackSelection.Factory trackSelectorFactory = new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
 		DefaultTrackSelector trackSelector = new DefaultTrackSelector(trackSelectorFactory);
 		LoadControl loadControl = new DefaultLoadControl();
-		DefaultRenderersFactory renderersFactory
-				= new DefaultRenderersFactory(getContext(), null, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+		DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(getContext(), null, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
 
 
 		exoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
@@ -203,8 +199,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 		if (context instanceof OnMediaPlayerInteractionListener) {
 			listener = (OnMediaPlayerInteractionListener) context;
 		} else {
-			throw new RuntimeException(context.toString()
-					+ " must implement OnFragmentInteractionListener");
+			throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
 		}
 	}
 
@@ -242,20 +237,16 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 
 	private MediaSource buildMediaSource(Uri uri, String overrideExtension) {
 		DataSource.Factory mediaDataSourceFactory = buildDataSourceFactory(true);
-		int type = TextUtils.isEmpty(overrideExtension) ? Util.inferContentType(uri)
-				: Util.inferContentType("." + overrideExtension);
+		int type = TextUtils.isEmpty(overrideExtension) ? Util.inferContentType(uri) : Util.inferContentType("." + overrideExtension);
 		switch (type) {
 			case C.TYPE_SS:
-				return new SsMediaSource(uri, buildDataSourceFactory(false),
-						new DefaultSsChunkSource.Factory(mediaDataSourceFactory), mainHandler, null);
+				return new SsMediaSource(uri, buildDataSourceFactory(false), new DefaultSsChunkSource.Factory(mediaDataSourceFactory), mainHandler, null);
 			case C.TYPE_DASH:
-				return new DashMediaSource(uri, buildDataSourceFactory(false),
-						new DefaultDashChunkSource.Factory(mediaDataSourceFactory), mainHandler, null);
+				return new DashMediaSource(uri, buildDataSourceFactory(false), new DefaultDashChunkSource.Factory(mediaDataSourceFactory), mainHandler, null);
 			case C.TYPE_HLS:
 				return new HlsMediaSource(uri, mediaDataSourceFactory, mainHandler, null);
 			case C.TYPE_OTHER:
-				return new ExtractorMediaSource(uri, mediaDataSourceFactory, new DefaultExtractorsFactory(),
-						mainHandler, null);
+				return new ExtractorMediaSource(uri, mediaDataSourceFactory, new DefaultExtractorsFactory(), mainHandler, null);
 			default: {
 				throw new IllegalStateException("Unsupported type: " + type);
 			}
@@ -267,18 +258,14 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	}
 
 	private DataSource.Factory buildDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
-		return new DefaultDataSourceFactory(
-				getContext(),
-				bandwidthMeter,
-				buildHttpDataSourceFactory(bandwidthMeter));
+		return new DefaultDataSourceFactory(getContext(), bandwidthMeter, buildHttpDataSourceFactory(bandwidthMeter));
 	}
 
 	private HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
 		return new DefaultHttpDataSourceFactory(userAgent,
-				bandwidthMeter,
-				DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
-				DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
-				true
-		);
+		                                        bandwidthMeter,
+		                                        DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+		                                        DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
+		                                        true);
 	}
 }

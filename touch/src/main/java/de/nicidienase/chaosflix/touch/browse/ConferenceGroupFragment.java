@@ -18,8 +18,8 @@ public class ConferenceGroupFragment extends BrowseFragment {
 
 	private static final String TAG = ConferenceGroupFragment.class.getSimpleName();
 
-	private static final String ARG_COLUMN_COUNT = "column-count";
-	private static final String ARG_GROUP = "group-name";
+	private static final String ARG_COLUMN_COUNT    = "column-count";
+	private static final String ARG_GROUP           = "group-name";
 	private static final String LAYOUTMANAGER_STATE = "layoutmanager-state";
 	private ConferencesTabBrowseFragment.OnInteractionListener listener;
 
@@ -53,8 +53,7 @@ public class ConferenceGroupFragment extends BrowseFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_conferences_page, container, false);
 
 		if (view instanceof RecyclerView) {
@@ -69,14 +68,13 @@ public class ConferenceGroupFragment extends BrowseFragment {
 
 			conferencesAdapter = new ConferenceRecyclerViewAdapter(listener);
 			recyclerView.setAdapter(conferencesAdapter);
-			getViewModel().getConferencesByGroup(conferenceGroup.getConferenceGroupId())
-					.observe(this,conferenceList -> {
-						conferencesAdapter.setItems(conferenceList);
-						Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
-						if (layoutState != null) {
-							layoutManager.onRestoreInstanceState(layoutState);
-						}
-					});
+			getViewModel().getConferencesByGroup(conferenceGroup.getConferenceGroupId()).observe(this, conferenceList -> {
+				conferencesAdapter.setItems(conferenceList);
+				Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
+				if (layoutState != null) {
+					layoutManager.onRestoreInstanceState(layoutState);
+				}
+			});
 		}
 		return view;
 	}
@@ -87,8 +85,7 @@ public class ConferenceGroupFragment extends BrowseFragment {
 		if (context instanceof ConferencesTabBrowseFragment.OnInteractionListener) {
 			listener = (ConferencesTabBrowseFragment.OnInteractionListener) context;
 		} else {
-			throw new RuntimeException(context.toString()
-					+ " must implement OnListFragmentInteractionListener");
+			throw new RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener");
 		}
 	}
 

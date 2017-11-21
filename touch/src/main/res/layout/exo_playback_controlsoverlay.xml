@@ -1,103 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  xmlns:app="http://schemas.android.com/apk/res-auto"
+			  xmlns:tools="http://schemas.android.com/tools"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/player_controls_background"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@drawable/player_controls_background"
+		android:layout_alignParentTop="true"
+		android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:minHeight="?attr/actionBarSize"
-            style="@style/ToolbarStyle"
-            app:title="Title"
-            app:titleTextColor="@color/white"
-            app:subtitle="subtitle"
-            app:subtitleTextColor="@color/white"/>
+		<android.support.v7.widget.Toolbar
+			android:id="@+id/toolbar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="@android:color/transparent"
+			android:minHeight="?attr/actionBarSize"
+			style="@style/ToolbarStyle"
+			app:title="Title"
+			app:titleTextColor="@color/white"
+			app:subtitle="subtitle"
+			app:subtitleTextColor="@color/white"/>
 
-    </LinearLayout>
+	</LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@drawable/player_controls_background"
-        android:gravity="center_horizontal|center_vertical"
-        android:orientation="horizontal">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:background="@drawable/player_controls_background"
+		android:gravity="center_horizontal|center_vertical"
+		android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@id/exo_play"
-            android:scaleX="2"
-            android:scaleY="2"
-            style="@style/ExoMediaButton.Play"/>
+		<ImageButton
+			android:id="@id/exo_play"
+			android:scaleX="2"
+			android:scaleY="2"
+			style="@style/ExoMediaButton.Play"/>
 
-        <ImageButton
-            android:id="@id/exo_pause"
-            android:scaleX="2"
-            android:scaleY="2"
-            style="@style/ExoMediaButton.Pause"/>
+		<ImageButton
+			android:id="@id/exo_pause"
+			android:scaleX="2"
+			android:scaleY="2"
+			style="@style/ExoMediaButton.Pause"/>
 
-    </LinearLayout>
+	</LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="@drawable/player_controls_background"
-        android:orientation="vertical"
-        android:paddingBottom="16dp"
-        android:paddingTop="16dp">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
+		android:background="@drawable/player_controls_background"
+		android:orientation="vertical"
+		android:paddingBottom="16dp"
+		android:paddingTop="16dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:orientation="horizontal">
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="8dp"
+			android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
+			android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/exo_position"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
-                android:textColor="@android:color/white"
-                tools:ignore="RtlHardcoded"
-                tools:text="1:06:29"/>
+			<TextView
+				android:id="@+id/exo_position"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:paddingLeft="2dp"
+				android:paddingRight="2dp"
+				android:textColor="@android:color/white"
+				tools:ignore="RtlHardcoded"
+				tools:text="1:06:29"/>
 
-            <com.google.android.exoplayer2.ui.DefaultTimeBar
-                android:id="@+id/exo_progress"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+			<com.google.android.exoplayer2.ui.DefaultTimeBar
+				android:id="@+id/exo_progress"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"/>
 
-            <TextView
-                android:id="@+id/exo_duration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
-                android:textColor="@android:color/white"
-                tools:ignore="RtlHardcoded"
-                tools:text="1:23:49"/>
+			<TextView
+				android:id="@+id/exo_duration"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:paddingLeft="2dp"
+				android:paddingRight="2dp"
+				android:textColor="@android:color/white"
+				tools:ignore="RtlHardcoded"
+				tools:text="1:23:49"/>
 
-        </LinearLayout>
-
+		</LinearLayout>
 
 
-    </LinearLayout>
+	</LinearLayout>
 </LinearLayout>

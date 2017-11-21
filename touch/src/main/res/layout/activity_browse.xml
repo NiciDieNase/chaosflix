@@ -1,55 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <android.support.v4.widget.DrawerLayout
-        android:id="@+id/drawer_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+	<android.support.v4.widget.DrawerLayout
+		android:id="@+id/drawer_layout"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
-        <!--<android.support.design.widget.CoordinatorLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:orientation="vertical">-->
+		<!--<android.support.design.widget.CoordinatorLayout-->
+		<!--android:layout_width="match_parent"-->
+		<!--android:layout_height="match_parent"-->
+		<!--android:orientation="vertical">-->
 
-        <!--<android.support.design.widget.AppBarLayout-->
-        <!--android:id="@+id/app_bar_layout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content">-->
+		<!--<android.support.design.widget.AppBarLayout-->
+		<!--android:id="@+id/app_bar_layout"-->
+		<!--android:layout_width="match_parent"-->
+		<!--android:layout_height="wrap_content">-->
 
-        <!--<include layout="@layout/toolbar"/>-->
+		<!--<include layout="@layout/toolbar"/>-->
 
 
-        <!--<android.support.design.widget.TabLayout-->
-        <!--android:id="@+id/sliding_tabs"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="@color/primary"-->
-        <!--app:layout_anchor="@id/toolbar"-->
-        <!--app:tabIndicatorColor="@color/white"-->
-        <!--app:tabMode="scrollable"-->
-        <!--app:tabSelectedTextColor="@color/white"-->
-        <!--app:tabTextColor="@color/inactive_tab_color"/>-->
+		<!--<android.support.design.widget.TabLayout-->
+		<!--android:id="@+id/sliding_tabs"-->
+		<!--android:layout_width="match_parent"-->
+		<!--android:layout_height="wrap_content"-->
+		<!--android:background="@color/primary"-->
+		<!--app:layout_anchor="@id/toolbar"-->
+		<!--app:tabIndicatorColor="@color/white"-->
+		<!--app:tabMode="scrollable"-->
+		<!--app:tabSelectedTextColor="@color/white"-->
+		<!--app:tabTextColor="@color/inactive_tab_color"/>-->
 
-        <!--</android.support.design.widget.AppBarLayout>-->
+		<!--</android.support.design.widget.AppBarLayout>-->
 
-        <FrameLayout
-            android:id="@+id/fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+		<FrameLayout
+			android:id="@+id/fragment_container"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-        <!--</android.support.design.widget.CoordinatorLayout>-->
+		<!--</android.support.design.widget.CoordinatorLayout>-->
 
-        <android.support.design.widget.NavigationView
-            android:id="@+id/navigation_view"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            app:headerLayout="@layout/nav_header"
-            app:menu="@menu/navigation_menu"/>
+		<android.support.design.widget.NavigationView
+			android:id="@+id/navigation_view"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_gravity="start"
+			app:headerLayout="@layout/nav_header"
+			app:menu="@menu/navigation_menu"/>
 
-    </android.support.v4.widget.DrawerLayout>
+	</android.support.v4.widget.DrawerLayout>
 
 </layout>

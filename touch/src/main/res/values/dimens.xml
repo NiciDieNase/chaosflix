@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="thumbnail_width">120dp</dimen>
-    <dimen name="thumbnail_height">68dp</dimen>
-    <dimen name="appbar_header_height">256dp</dimen>
-    <dimen name="margin_content">120dp</dimen>
-    <dimen name="details_text_margin">8dp</dimen>
-    <dimen name="details_title_margin">25dp</dimen>
+	<dimen name="thumbnail_width">120dp</dimen>
+	<dimen name="thumbnail_height">68dp</dimen>
+	<dimen name="appbar_header_height">256dp</dimen>
+	<dimen name="margin_content">120dp</dimen>
+	<dimen name="details_text_margin">8dp</dimen>
+	<dimen name="details_title_margin">25dp</dimen>
 </resources>

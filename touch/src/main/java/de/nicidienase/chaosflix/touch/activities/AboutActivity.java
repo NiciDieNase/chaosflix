@@ -24,14 +24,13 @@ public class AboutActivity extends AppCompatActivity {
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		View aboutView = new AboutPage(this)
-				.setImage(R.drawable.icon_notext_144x144)
-				.setDescription("This is Chaosflix!")
-				.addItem(new Element().setTitle("Title"))
-				.addItem(new Element().setTitle("Version 0.2.4"))
-				.addPlayStore("de.nicidienase.chaosflix")
-				.addGitHub("nicidienase/chaosflix")
-				.create();
+		View aboutView = new AboutPage(this).setImage(R.drawable.icon_notext_144x144)
+		                                    .setDescription("This is Chaosflix!")
+		                                    .addItem(new Element().setTitle("Title"))
+		                                    .addItem(new Element().setTitle("Version 0.2.4"))
+		                                    .addPlayStore("de.nicidienase.chaosflix")
+		                                    .addGitHub("nicidienase/chaosflix")
+		                                    .create();
 
 		FrameLayout frame = findViewById(R.id.container);
 		frame.addView(aboutView);

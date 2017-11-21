@@ -12,35 +12,35 @@ import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
 
 class EventsListActivity : AppCompatActivity(), OnEventSelectedListener {
 
-    protected val numColumns: Int
-        get() = resources.getInteger(R.integer.num_columns)
+	protected val numColumns: Int
+		get() = resources.getInteger(R.integer.num_columns)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_events_list)
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		setContentView(R.layout.activity_events_list)
 
-        val conferenceId = intent.getLongExtra(CONFERENCE_ID_KEY, 0)
+		val conferenceId = intent.getLongExtra(CONFERENCE_ID_KEY, 0)
 
-        if (savedInstanceState == null) {
-            val eventsListFragment = EventsListFragment.newInstance(conferenceId, numColumns)
+		if (savedInstanceState == null) {
+			val eventsListFragment = EventsListFragment.newInstance(conferenceId, numColumns)
 
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, eventsListFragment)
-                    .commit();
-        }
-    }
+			supportFragmentManager.beginTransaction()
+					.replace(R.id.fragment_container, eventsListFragment)
+					.commit();
+		}
+	}
 
-    override fun onEventSelected(event: PersistentEvent, v: View) {
-        EventDetailsActivity.launch(this, event.eventId)
-    }
+	override fun onEventSelected(event: PersistentEvent, v: View) {
+		EventDetailsActivity.launch(this, event.eventId)
+	}
 
-    companion object {
-        val CONFERENCE_ID_KEY = "conference_id"
+	companion object {
+		val CONFERENCE_ID_KEY = "conference_id"
 
-        fun start(context: Context, conferenceId: Long) {
-            val i = Intent(context, EventsListActivity::class.java)
-            i.putExtra(CONFERENCE_ID_KEY, conferenceId)
-            context.startActivity(i)
-        }
-    }
+		fun start(context: Context, conferenceId: Long) {
+			val i = Intent(context, EventsListActivity::class.java)
+			i.putExtra(CONFERENCE_ID_KEY, conferenceId)
+			context.startActivity(i)
+		}
+	}
 }

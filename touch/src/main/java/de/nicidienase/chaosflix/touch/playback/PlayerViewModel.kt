@@ -13,18 +13,18 @@ import io.reactivex.schedulers.Schedulers
 internal class PlayerViewModel(val database: ChaosflixDatabase,
                                val recordingApi: RecordingService,
                                val streamingApi: StreamingService) : ViewModel() {
-    fun getPlaybackProgress(apiID: Long): LiveData<PlaybackProgress>
-            = database.playbackProgressDao().getProgressForEvent(apiID)
+	fun getPlaybackProgress(apiID: Long): LiveData<PlaybackProgress>
+			= database.playbackProgressDao().getProgressForEvent(apiID)
 
-    fun setPlaybackProgress(event: PersistentEvent, progress: Long) {
-        Single.fromCallable {
-            database.playbackProgressDao().saveProgress(PlaybackProgress(event.eventId, progress))
-        }.subscribeOn(Schedulers.io()).subscribe()
-    }
+	fun setPlaybackProgress(event: PersistentEvent, progress: Long) {
+		Single.fromCallable {
+			database.playbackProgressDao().saveProgress(PlaybackProgress(event.eventId, progress))
+		}.subscribeOn(Schedulers.io()).subscribe()
+	}
 
-    fun deletePlaybackProgress(event: PersistentEvent){
-        Single.fromCallable {
-            database.playbackProgressDao().deleteItem(event.eventId)
-        }
-    }
+	fun deletePlaybackProgress(event: PersistentEvent) {
+		Single.fromCallable {
+			database.playbackProgressDao().deleteItem(event.eventId)
+		}
+	}
 }

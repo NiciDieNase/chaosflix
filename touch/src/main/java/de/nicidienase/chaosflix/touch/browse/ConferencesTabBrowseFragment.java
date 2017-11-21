@@ -17,10 +17,10 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 	private static final String TAG = ConferencesTabBrowseFragment.class.getSimpleName();
 
 	private static final String ARG_COLUMN_COUNT = "column-count";
-	private static final String CURRENTTAB_KEY = "current_tab";
-	private static final String VIEWPAGER_STATE = "viewpager_state";
-	private int mColumnCount = 1;
-	private OnInteractionListener listener;
+	private static final String CURRENTTAB_KEY   = "current_tab";
+	private static final String VIEWPAGER_STATE  = "viewpager_state";
+	private              int    mColumnCount     = 1;
+	private OnInteractionListener         listener;
 	private FragmentTabPagerLayoutBinding binding;
 
 	public static ConferencesTabBrowseFragment newInstance(int columnCount) {
@@ -37,8 +37,7 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 		if (context instanceof OnInteractionListener) {
 			listener = (OnInteractionListener) context;
 		} else {
-			throw new RuntimeException(context.toString()
-					+ " must implement OnInteractionListener");
+			throw new RuntimeException(context.toString() + " must implement OnInteractionListener");
 		}
 	}
 
@@ -53,35 +52,31 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		binding = FragmentTabPagerLayoutBinding.inflate(inflater, container, false);
 
 		setupToolbar(binding.incToolbar.toolbar, R.string.app_name);
 		setOverlay(binding.incOverlay.loadingOverlay);
 
-		getViewModel().getConferenceGroups()
-				.observe(this, conferenceGroups -> {
-					ConferenceGroupsFragmentPager fragmentPager
-							= new ConferenceGroupsFragmentPager(this.getContext(), getChildFragmentManager());
-					fragmentPager.setContent(conferenceGroups);
-					binding.viewpager.setAdapter(fragmentPager);
-					binding.viewpager.onRestoreInstanceState(getArguments().getParcelable(VIEWPAGER_STATE));
+		getViewModel().getConferenceGroups().observe(this, conferenceGroups -> {
+			ConferenceGroupsFragmentPager fragmentPager = new ConferenceGroupsFragmentPager(this.getContext(), getChildFragmentManager());
+			fragmentPager.setContent(conferenceGroups);
+			binding.viewpager.setAdapter(fragmentPager);
+			binding.viewpager.onRestoreInstanceState(getArguments().getParcelable(VIEWPAGER_STATE));
 
-					binding.slidingTabs.setupWithViewPager(binding.viewpager);
-					if (conferenceGroups.size() > 0) {
-						setLoadingOverlayVisibility(false);
-					}
-				});
-		getViewModel().updateConferences().observe(this,
-				loadingFinished -> setLoadingOverlayVisibility(!loadingFinished));
+			binding.slidingTabs.setupWithViewPager(binding.viewpager);
+			if (conferenceGroups.size() > 0) {
+				setLoadingOverlayVisibility(false);
+			}
+		});
+		getViewModel().updateConferences().observe(this, loadingFinished -> setLoadingOverlayVisibility(!loadingFinished));
 		return binding.getRoot();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		getArguments().putParcelable(VIEWPAGER_STATE,binding.viewpager.onSaveInstanceState());
+		getArguments().putParcelable(VIEWPAGER_STATE, binding.viewpager.onSaveInstanceState());
 	}
 
 	@Override

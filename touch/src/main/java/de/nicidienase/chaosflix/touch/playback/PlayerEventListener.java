@@ -15,7 +15,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
  */
 class PlayerEventListener implements Player.EventListener, SimpleExoPlayer.VideoListener {
 	private static final String TAG = PlayerEventListener.class.getSimpleName();
-	private SimpleExoPlayer player;
+	private SimpleExoPlayer           player;
 	private PlayerStateChangeListener listener;
 
 	public PlayerEventListener(SimpleExoPlayer player, PlayerStateChangeListener listener) {
@@ -94,10 +94,13 @@ class PlayerEventListener implements Player.EventListener, SimpleExoPlayer.Video
 		listener.notifyLoadingFinished();
 	}
 
-	public interface PlayerStateChangeListener{
+	public interface PlayerStateChangeListener {
 		void notifyLoadingStart();
+
 		void notifyLoadingFinished();
+
 		void notifyError(String errorMessage);
+
 		void notifyEnd();
 	}
 }

@@ -53,7 +53,7 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 
 	public void addGroup(ConferenceGroup conferenceGroup) {
 		conferenceGroupList.add(conferenceGroup);
-//		Collections.sort(conferenceGroupList,(g1, g2) -> g1.getIndex()-g2.getIndex());
+		//		Collections.sort(conferenceGroupList,(g1, g2) -> g1.getIndex()-g2.getIndex());
 		notifyDataSetChanged();
 	}
 

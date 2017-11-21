@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="title">title</string>
-    <string name="subtitle">subtitle</string>
-    <string name="thumbnail">thumbnail</string>
-    <string name="card">card</string>
-    <string name="select_option">Select Media Option</string>
-    <string name="search_title">Search</string>
+	<string name="title">title</string>
+	<string name="subtitle">subtitle</string>
+	<string name="thumbnail">thumbnail</string>
+	<string name="card">card</string>
+	<string name="select_option">Select Media Option</string>
+	<string name="search_title">Search</string>
 
-    <string name="download">Download</string>
-    <string name="bookmark">Bookmark</string>
+	<string name="download">Download</string>
+	<string name="bookmark">Bookmark</string>
 
-    <string name="play">Play</string>
-    <string name="titleimage">TitleImage</string>
-    <string name="update_database">Update Database</string>
-    <string name="search_events">Search Events</string>
-    <string name="search_talks">Search Talks</string>
-    <string name="event_details_image_thumbnail_description">Thumbnail-picture for this event</string>
+	<string name="play">Play</string>
+	<string name="titleimage">TitleImage</string>
+	<string name="update_database">Update Database</string>
+	<string name="search_events">Search Events</string>
+	<string name="search_talks">Search Talks</string>
+	<string name="event_details_image_thumbnail_description">Thumbnail-picture for this event</string>
 
-    <string name="bookmarks">Bookmarks</string>
-    <string name="recordings">Recordings</string>
-    <string name="livestreams">Livestreams</string>
-    <string name="watchlist">Watchlist</string>
-    <string name="continue_watching">Continue Watching</string>
-    <string name="about">About</string>
-    <string name="downloads">Downloads</string>
+	<string name="bookmarks">Bookmarks</string>
+	<string name="recordings">Recordings</string>
+	<string name="livestreams">Livestreams</string>
+	<string name="watchlist">Watchlist</string>
+	<string name="continue_watching">Continue Watching</string>
+	<string name="about">About</string>
+	<string name="downloads">Downloads</string>
 
-    <string name="preferences">Preferences</string>
-    <string name="drawer_open">Drawer open</string>
-    <string name="drawer_close">Drawer closed</string>
+	<string name="preferences">Preferences</string>
+	<string name="drawer_open">Drawer open</string>
+	<string name="drawer_close">Drawer closed</string>
 </resources>

@@ -11,33 +11,33 @@ import de.nicidienase.chaosflix.common.entities.streaming.Stream
 import de.nicidienase.chaosflix.databinding.FragmentLivestreamsBinding
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment
 
-class LivestreamListFragment : BrowseFragment(){
+class LivestreamListFragment : BrowseFragment() {
 
-    private lateinit var listener: InteractionListener
-    private lateinit var binding: FragmentLivestreamsBinding
+	private lateinit var listener: InteractionListener
+	private lateinit var binding: FragmentLivestreamsBinding
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        if (context is InteractionListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement LivestreamListFragment.InteractionListener")
-        }
-    }
+	override fun onAttach(context: Context?) {
+		super.onAttach(context)
+		if (context is InteractionListener) {
+			listener = context
+		} else {
+			throw RuntimeException(context.toString() + " must implement LivestreamListFragment.InteractionListener")
+		}
+	}
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentLivestreamsBinding.inflate(inflater, container, false)
-        setupToolbar(binding.incToolbar?.toolbar!!, R.string.livestreams)
-        overlay = binding.incOverlay?.loadingOverlay
-        return binding.root
-    }
+	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+		binding = FragmentLivestreamsBinding.inflate(inflater, container, false)
+		setupToolbar(binding.incToolbar?.toolbar!!, R.string.livestreams)
+		overlay = binding.incOverlay?.loadingOverlay
+		return binding.root
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setLoadingOverlayVisibility(false)
-    }
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		setLoadingOverlayVisibility(false)
+	}
 
-    interface InteractionListener{
-        fun onStreamSelected(conference: LiveConference, stream: Stream)
-    }
+	interface InteractionListener {
+		fun onStreamSelected(conference: LiveConference, stream: Stream)
+	}
 }

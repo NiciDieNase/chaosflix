@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:android="http://schemas.android.com/apk/res/android">
+	  xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/action_play"
-        android:icon="@android:drawable/ic_media_play"
-        android:title="@string/play"
-        app:showAsAction="always"/>
-    <item
-        android:id="@+id/action_bookmark"
-        android:title="@string/bookmark"
-        android:icon="@drawable/ic_bookmark_border"
-        app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/action_unbookmark"
-        android:icon="@drawable/ic_bookmark"
-        android:title="Remove Bookmark"
-        app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/action_download"
-        android:title="@string/download"
-        android:icon="@drawable/ic_download"
-        app:showAsAction="ifRoom"/>
+	<item
+		android:id="@+id/action_play"
+		android:icon="@android:drawable/ic_media_play"
+		android:title="@string/play"
+		app:showAsAction="always"/>
+	<item
+		android:id="@+id/action_bookmark"
+		android:title="@string/bookmark"
+		android:icon="@drawable/ic_bookmark_border"
+		app:showAsAction="ifRoom"/>
+	<item
+		android:id="@+id/action_unbookmark"
+		android:icon="@drawable/ic_bookmark"
+		android:title="Remove Bookmark"
+		app:showAsAction="ifRoom"/>
+	<item
+		android:id="@+id/action_download"
+		android:title="@string/download"
+		android:icon="@drawable/ic_download"
+		app:showAsAction="ifRoom"/>
 </menu>
