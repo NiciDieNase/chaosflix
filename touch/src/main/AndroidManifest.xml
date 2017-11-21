@@ -43,6 +43,9 @@
                   android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
                   android:launchMode="singleTop"/>
 
+        <activity android:name=".touch.activities.SpinnerTestActivity"
+            android:exported="true"/>
+
         <service android:name=".touch.sync.DownloadJobService"
                  android:permission="android.permission.BIND_JOB_SERVICE"/>
 

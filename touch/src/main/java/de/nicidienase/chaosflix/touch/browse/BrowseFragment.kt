@@ -27,14 +27,14 @@ open class BrowseFragment : Fragment() {
 	protected fun setupToolbar(toolbar: Toolbar, title: String, isRoot: Boolean = true) {
 		val activity = activity as AppCompatActivity
 		if (activity is BrowseActivity) {
-			(activity as BrowseActivity).setupDrawerToggle(toolbar)
+			activity.setupDrawerToggle(toolbar)
 		}
 		activity.setSupportActionBar(toolbar)
-		activity?.supportActionBar?.setTitle(title)
+		activity.supportActionBar?.setTitle(title)
 		if (isRoot) {
-			activity?.supportActionBar?.setDisplayShowHomeEnabled(true)
+			activity.supportActionBar?.setDisplayShowHomeEnabled(true)
 		} else {
-			activity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+			activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
 		}
 	}
 
