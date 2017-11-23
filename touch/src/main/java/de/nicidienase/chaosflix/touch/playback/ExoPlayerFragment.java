@@ -2,6 +2,7 @@ package de.nicidienase.chaosflix.touch.playback;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,15 +10,12 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -35,7 +33,6 @@ import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -44,50 +41,38 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording;
+import de.nicidienase.chaosflix.databinding.ExoPlaybackControlsoverlayBinding;
+import de.nicidienase.chaosflix.databinding.FragmentExoPlayerBinding;
 import de.nicidienase.chaosflix.touch.ViewModelFactory;
 
 public class ExoPlayerFragment extends Fragment implements PlayerEventListener.PlayerStateChangeListener {
-	private static final String TAG            = ExoPlayerFragment.class.getSimpleName();
-	public static final  String PLAYBACK_STATE = "playback_state";
-	private static final String ARG_EVENT      = "event";
-	private static final String ARG_RECORDING  = "recording";
+	private static final String TAG = ExoPlayerFragment.class.getSimpleName();
+	private static final String PLAYBACK_STATE = "playback_state";
+	private static final String ARG_item = "item";
 
 	private OnMediaPlayerInteractionListener listener;
 	private final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
-	@BindView(R.id.video_view)
-	SimpleExoPlayerView videoView;
-	@BindView(R.id.progressBar)
-	ProgressBar         progressBar;
-
-	@Nullable
-	@BindView(R.id.toolbar)
-	Toolbar  toolbar;
-	@Nullable
-	@BindView(R.id.subtitle_text)
-	TextView subtitleText;
-
 	private String userAgent;
-	private Handler mainHandler   = new Handler();
+	private Handler mainHandler = new Handler();
 	private boolean playbackState = true;
-	private PersistentEvent     event;
-	private PersistentRecording recording;
-	private SimpleExoPlayer     exoPlayer;
-	private PlayerViewModel     viewModel;
+	private SimpleExoPlayer exoPlayer;
+	private PlayerViewModel viewModel;
+	private PlaybackItem item;
+
+	FragmentExoPlayerBinding binding;
+	ExoPlaybackControlsoverlayBinding overlayBinding;
 
 	public ExoPlayerFragment() {
 	}
 
-	public static ExoPlayerFragment newInstance(PersistentEvent event, PersistentRecording recording) {
+	public static ExoPlayerFragment newInstance(PlaybackItem item) {
 		ExoPlayerFragment fragment = new ExoPlayerFragment();
 		Bundle args = new Bundle();
-		args.putParcelable(ARG_EVENT, event);
-		args.putParcelable(ARG_RECORDING, recording);
+		args.putParcelable(ARG_item, item);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -96,8 +81,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (getArguments() != null) {
-			event = getArguments().getParcelable(ARG_EVENT);
-			recording = getArguments().getParcelable(ARG_RECORDING);
+			item = getArguments().getParcelable(ARG_item);
 		}
 		if (savedInstanceState != null) {
 			playbackState = savedInstanceState.getBoolean(PLAYBACK_STATE, true);
@@ -107,17 +91,20 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_exo_player, container, false);
+		binding = DataBindingUtil.inflate(inflater, R.layout.fragment_exo_player, container, false);
+//		overlayBinding = DataBindingUtil.findBinding(binding.videoView.getOverlayFrameLayout());
+		overlayBinding = DataBindingUtil.inflate(inflater, R.layout.exo_playback_controlsoverlay, null, false);
+		overlayBinding.setItem(item);
+//		binding.videoView.getOverlayFrameLayout().removeAllViews();
+//		binding.videoView.getOverlayFrameLayout().addView(overlayBinding.getRoot());
+		return binding.getRoot();
 	}
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		ButterKnife.bind(this, view);
-		if (toolbar != null) {
-			toolbar.setTitle(event.getTitle());
-			toolbar.setSubtitle(event.getSubtitle());
-			((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+		if (overlayBinding != null) {
+			((AppCompatActivity) getActivity()).setSupportActionBar(overlayBinding.toolbar);
 			((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 		if (exoPlayer == null) {
@@ -130,12 +117,12 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 		super.onResume();
 		if (exoPlayer != null) {
 			exoPlayer.setPlayWhenReady(playbackState);
-			viewModel.getPlaybackProgress(event.getEventId()).observe(this, playbackProgress -> {
+			viewModel.getPlaybackProgress(item.getEventId()).observe(this, playbackProgress -> {
 				if (playbackProgress != null) {
 					exoPlayer.seekTo(playbackProgress.getProgress());
 				}
 			});
-			videoView.setPlayer(exoPlayer);
+			binding.videoView.setPlayer(exoPlayer);
 		}
 	}
 
@@ -150,7 +137,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	public void onPause() {
 		super.onPause();
 		if (exoPlayer != null) {
-			viewModel.setPlaybackProgress(event, exoPlayer.getCurrentPosition());
+			viewModel.setPlaybackProgress(item.getEventId(), exoPlayer.getCurrentPosition());
 			exoPlayer.setPlayWhenReady(false);
 		}
 	}
@@ -172,7 +159,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 
 	private SimpleExoPlayer setupPlayer() {
 		Log.d(TAG, "Setting up Player.");
-		videoView.setKeepScreenOn(true);
+		binding.videoView.setKeepScreenOn(true);
 
 		userAgent = Util.getUserAgent(getContext(), getResources().getString(R.string.app_name));
 
@@ -189,7 +176,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 
 		exoPlayer.setPlayWhenReady(playbackState);
 
-		exoPlayer.prepare(buildMediaSource(Uri.parse(recording.getRecordingUrl()), ""));
+		exoPlayer.prepare(buildMediaSource(Uri.parse(item.getUrl()), ""));
 		return exoPlayer;
 	}
 
@@ -211,29 +198,30 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 
 	@Override
 	public void notifyLoadingStart() {
-		if (progressBar != null) {
-			progressBar.setVisibility(View.VISIBLE);
+		if (binding.progressBar != null) {
+			binding.progressBar.setVisibility(View.VISIBLE);
 		}
 	}
 
 	@Override
 	public void notifyLoadingFinished() {
-		if (progressBar != null) {
-			progressBar.setVisibility(View.INVISIBLE);
+		if (binding.progressBar != null) {
+			binding.progressBar.setVisibility(View.INVISIBLE);
 		}
 	}
 
 	@Override
 	public void notifyError(String errorMessage) {
-		Snackbar.make(videoView, errorMessage, Snackbar.LENGTH_LONG).show();
+		Snackbar.make(binding.videoView, errorMessage, Snackbar.LENGTH_LONG).show();
 	}
 
 	@Override
 	public void notifyEnd() {
-		viewModel.deletePlaybackProgress(event);
+		viewModel.deletePlaybackProgress(item.getEventId());
 	}
 
-	public interface OnMediaPlayerInteractionListener {}
+	public interface OnMediaPlayerInteractionListener {
+	}
 
 	private MediaSource buildMediaSource(Uri uri, String overrideExtension) {
 		DataSource.Factory mediaDataSourceFactory = buildDataSourceFactory(true);
@@ -263,9 +251,9 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 
 	private HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
 		return new DefaultHttpDataSourceFactory(userAgent,
-		                                        bandwidthMeter,
-		                                        DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
-		                                        DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
-		                                        true);
+				bandwidthMeter,
+				DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+				DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
+				true);
 	}
 }

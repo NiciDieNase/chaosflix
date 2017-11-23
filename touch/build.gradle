@@ -81,8 +81,6 @@ dependencies {
     implementation 'com.github.medyo:android-about-page:1.2.2'
     implementation 'com.google.android.exoplayer:exoplayer:r2.5.2'
     implementation 'com.squareup.picasso:picasso:2.5.2'
-    implementation 'com.jakewharton:butterknife:8.5.1'
-    kapt 'com.jakewharton:butterknife-compiler:8.5.1'
 
     debugImplementation 'com.facebook.stetho:stetho:1.4.2'
     debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.4.2'

@@ -25,7 +25,8 @@ class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInter
 
 			if (savedInstanceState == null) {
 				val ft = supportFragmentManager.beginTransaction()
-				val playerFragment = ExoPlayerFragment.newInstance(event, recording)
+				val playbackItem = PlaybackItem(event.title, event.subtitle ?: "", event.eventId, recording.recordingUrl)
+				val playerFragment = ExoPlayerFragment.newInstance(playbackItem)
 				ft.replace(R.id.fragment_container, playerFragment)
 				ft.commit()
 			}
