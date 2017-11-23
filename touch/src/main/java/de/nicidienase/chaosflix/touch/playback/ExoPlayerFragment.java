@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,9 +43,6 @@ import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent;
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording;
-import de.nicidienase.chaosflix.databinding.ExoPlaybackControlsoverlayBinding;
 import de.nicidienase.chaosflix.databinding.FragmentExoPlayerBinding;
 import de.nicidienase.chaosflix.touch.ViewModelFactory;
 
@@ -64,7 +62,6 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	private PlaybackItem item;
 
 	FragmentExoPlayerBinding binding;
-	ExoPlaybackControlsoverlayBinding overlayBinding;
 
 	public ExoPlayerFragment() {
 	}
@@ -92,21 +89,19 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		binding = DataBindingUtil.inflate(inflater, R.layout.fragment_exo_player, container, false);
-//		overlayBinding = DataBindingUtil.findBinding(binding.videoView.getOverlayFrameLayout());
-		overlayBinding = DataBindingUtil.inflate(inflater, R.layout.exo_playback_controlsoverlay, null, false);
-		overlayBinding.setItem(item);
-//		binding.videoView.getOverlayFrameLayout().removeAllViews();
-//		binding.videoView.getOverlayFrameLayout().addView(overlayBinding.getRoot());
+
+		Toolbar toolbar = binding.getRoot().findViewById(R.id.toolbar);
+		toolbar.setTitle(item.getTitle());
+		toolbar.setSubtitle(item.getSubtitle());
+		((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+		((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 		return binding.getRoot();
 	}
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		if (overlayBinding != null) {
-			((AppCompatActivity) getActivity()).setSupportActionBar(overlayBinding.toolbar);
-			((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		}
 		if (exoPlayer == null) {
 			exoPlayer = setupPlayer();
 		}
