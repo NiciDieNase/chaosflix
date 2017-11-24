@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="app_name" translatable="false">Chaosflix</string>
+
 	<string name="title">title</string>
 	<string name="subtitle">subtitle</string>
 	<string name="thumbnail">thumbnail</string>
@@ -28,4 +30,6 @@
 	<string name="preferences">Preferences</string>
 	<string name="drawer_open">Drawer open</string>
 	<string name="drawer_close">Drawer closed</string>
+	<string name="about_description">TODO: Description</string>
+	<string name="about_title">Chaosflix</string>
 </resources>
