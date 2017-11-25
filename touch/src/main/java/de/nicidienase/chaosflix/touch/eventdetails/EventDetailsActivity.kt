@@ -29,13 +29,16 @@ class EventDetailsActivity : AppCompatActivity(),
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_eventdetails)
-        viewModel = ViewModelProviders.of(this, ViewModelFactory).get(DetailsViewModel::class.java)
+		viewModel = ViewModelProviders.of(this, ViewModelFactory).get(DetailsViewModel::class.java)
 		viewModel.writeExternalStorageAllowed = hasWriteStoragePermission()
 
 		val eventId = intent.getLongExtra(EXTRA_EVENT, 0)
 
 		showFragmentForEvent(eventId)
-		requestWriteStoragePermission()
+		if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+			requestWriteStoragePermission()
+		}
 	}
 
 	private fun showFragmentForEvent(eventId: Long, addToBackStack: Boolean = false) {
@@ -74,11 +77,12 @@ class EventDetailsActivity : AppCompatActivity(),
 
 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-		if(requestCode == PERMISSION_REQUEST_CODE && grantResults.size > 0){
+		if (requestCode == PERMISSION_REQUEST_CODE && grantResults.size > 0) {
 			if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-				requestWriteStoragePermission()
+//				requestWriteStoragePermission()
 			} else {
 				viewModel.writeExternalStorageAllowed = true
+				invalidateOptionsMenu()
 			}
 		}
 	}
@@ -86,10 +90,12 @@ class EventDetailsActivity : AppCompatActivity(),
 	private val PERMISSION_REQUEST_CODE: Int = 1;
 	private fun requestWriteStoragePermission() {
 		ActivityCompat.requestPermissions(this,
-				arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE);}
+				arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE);
+	}
 
 	private fun hasWriteStoragePermission(): Boolean {
 		return ActivityCompat.checkSelfPermission(
-				this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;}
+				this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+	}
 
 }

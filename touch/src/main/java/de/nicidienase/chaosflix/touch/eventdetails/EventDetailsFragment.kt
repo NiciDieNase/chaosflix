@@ -165,6 +165,7 @@ class EventDetailsFragment : Fragment() {
 			menu.findItem(R.id.action_bookmark).isVisible = true
 			menu.findItem(R.id.action_unbookmark).isVisible = false
 		}
+		menu.findItem(R.id.action_download).isVisible = viewModel.writeExternalStorageAllowed
 		menu.findItem(R.id.action_play).isVisible = appBarExpanded
 	}
 
