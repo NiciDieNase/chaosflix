@@ -1,11 +1,14 @@
 package de.nicidienase.chaosflix.touch.browse.download
 
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import de.nicidienase.chaosflix.R
+import de.nicidienase.chaosflix.common.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.common.entities.streaming.Stream
 import de.nicidienase.chaosflix.databinding.FragmentDownloadsBinding
@@ -29,6 +32,14 @@ class DownloadsListFragment : BrowseFragment() {
 		binding = FragmentDownloadsBinding.inflate(inflater, container, false)
 		setupToolbar(binding.incToolbar?.toolbar!!, R.string.downloads)
 		overlay = binding.incOverlay?.loadingOverlay
+		viewModel.getOfflineEvents().observe(this, Observer { events: List<OfflineEvent>? ->
+			events?.let {
+				binding.list.layoutManager = LinearLayoutManager(context)
+				binding.list.adapter =
+					OfflineEventAdapter(events, viewModel)
+				setLoadingOverlayVisibility(false)
+			}
+		})
 		return binding.root
 	}
 

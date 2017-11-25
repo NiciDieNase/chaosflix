@@ -1,9 +1,14 @@
 package de.nicidienase.chaosflix.touch.browse
 
+import android.app.DownloadManager
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
+import android.content.Context
 import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase
+import de.nicidienase.chaosflix.common.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.network.RecordingService
 import de.nicidienase.chaosflix.common.network.StreamingService
+import de.nicidienase.chaosflix.touch.ChaosflixApplication
 import de.nicidienase.chaosflix.touch.sync.Downloader
 
 class BrowseViewModel(
@@ -13,6 +18,10 @@ class BrowseViewModel(
 ) : ViewModel() {
 
 	val downloader = Downloader(recordingApi, database)
+
+	val downloadManager: DownloadManager
+			= ChaosflixApplication.APPLICATION_CONTEXT
+			.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
 	fun getConferenceGroups()
 			= database.conferenceGroupDao().getAll()
@@ -40,4 +49,10 @@ class BrowseViewModel(
 
 	fun getLivestreams()
 			= streamingApi.getStreamingConferences()
+
+	fun getOfflineEvents(): LiveData<List<OfflineEvent>> = database.offlineEventDao().getAll()
+
+	fun getEventById(eventId: Long) = database.eventDao().findEventById(eventId)
+
+	fun getRecordingByid(recordingId: Long) = database.recordingDao().findRecordingById(recordingId)
 }

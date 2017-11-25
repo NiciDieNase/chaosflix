@@ -28,7 +28,7 @@ class EventDetailsFragment : Fragment() {
 
 	private var eventId: Long = 0
 	private var appBarExpanded: Boolean = false
-	private var event: PersistentEvent? = null
+	private lateinit var event: PersistentEvent
 	private var watchlistItem: WatchlistItem? = null
 	private var eventSelectedListener: OnEventSelectedListener? = null
 
@@ -197,12 +197,20 @@ class EventDetailsFragment : Fragment() {
 				return true
 			}
 			R.id.action_download -> {
-				Snackbar.make(view!!, "Download not yet implemented", Snackbar.LENGTH_LONG).show()
+				viewModel.getRecordingForEvent(eventId).observeForever {
+					viewModel.download(event, Util.getOptimalStream(it!!)).observe(this, Observer {
+						if(it != null){
+							val message = if(it) "Download started" else "Error starting download"
+							Snackbar.make(view!!,message, Snackbar.LENGTH_LONG).show()
+						}
+					})
+				}
 				return true
 			}
 			else -> return super.onOptionsItemSelected(item)
 		}
 	}
+
 
 	interface OnEventDetailsFragmentInteractionListener {
 		fun onToolbarStateChange()

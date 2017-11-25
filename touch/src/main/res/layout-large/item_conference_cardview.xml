@@ -47,7 +47,7 @@
 				app:layout_constraintTop_toBottomOf="@+id/imageView"/>
 
 			<TextView
-				android:id="@+id/acronym_text"
+				android:id="@+id/subtitle_text"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginEnd="8dp"
@@ -67,7 +67,7 @@
 				android:layout_marginTop="8dp"
 				android:text=""
 				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintTop_toBottomOf="@+id/acronym_text"/>
+				app:layout_constraintTop_toBottomOf="@+id/subtitle_text"/>
 
 
 		</android.support.constraint.ConstraintLayout>

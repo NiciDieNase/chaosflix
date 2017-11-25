@@ -65,7 +65,7 @@ abstract class ItemRecyclerViewAdapter<T>()
 	inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
 		val mIcon: ImageView = mView.findViewById<View>(R.id.imageView) as ImageView
 		val mTitleText: TextView = mView.findViewById<View>(R.id.title_text) as TextView
-		val mSubtitle: TextView = mView.findViewById<View>(R.id.acronym_text) as TextView
+		val mSubtitle: TextView = mView.findViewById<View>(R.id.subtitle_text) as TextView
 		val mTag: TextView = mView.findViewById<View>(R.id.tag_text) as TextView
 	}
 
