@@ -1,8 +1,10 @@
 package de.nicidienase.chaosflix.common.entities
 
+import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
+import android.arch.persistence.room.migration.Migration
 import de.nicidienase.chaosflix.common.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.entities.download.OfflineEventDao
 import de.nicidienase.chaosflix.common.entities.recording.persistence.*
@@ -18,7 +20,7 @@ import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItemDao
         ConferenceGroup::class,
         PlaybackProgress::class,
         WatchlistItem::class,
-        OfflineEvent::class), version = 2, exportSchema = false)
+        OfflineEvent::class), version = 3, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ChaosflixDatabase : RoomDatabase() {
     abstract fun playbackProgressDao(): PlaybackProgressDao
@@ -31,4 +33,21 @@ abstract class ChaosflixDatabase : RoomDatabase() {
     abstract fun conferenceGroupDao(): ConferenceGroupDao
 
     abstract fun offlineEventDao(): OfflineEventDao
+
+    companion object {
+        val migration_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE `offline_event` (" +
+                        "´id´ INTEGER, " +
+                        "`event_id` TEXT," +
+                        "`recording_id` TEXT, " +
+                        "`download_reference` TEXT" +
+                        "`local_path` TEXT" +
+                        "PRIMARY KEY (`id`)")
+            }
+        }
+
+    }
 }
+
+
