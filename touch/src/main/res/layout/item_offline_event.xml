@@ -15,77 +15,89 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <android.support.v7.widget.CardView
             android:id="@+id/card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:elevation="2dp"
-            android:foreground="?android:attr/selectableItemBackground">
+            android:elevation="4dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="8dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="@dimen/thumbnail_width"
-                    android:layout_height="@dimen/thumbnail_height"
-                    android:scaleType="fitCenter"/>
+                android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:orientation="vertical">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/title_text"
-                        style="@style/TextAppearance.AppCompat.Medium"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginTop="4dp"
-                        android:layout_weight="1"
-                        android:text="@{event.title}"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                        tools:text="Title"/>
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="@dimen/thumbnail_width"
+                        android:layout_height="@dimen/thumbnail_height"
+                        android:scaleType="fitCenter"/>
 
-                    <TextView
-                        android:id="@+id/subtitle_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@{event.subtitle}"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-                        tools:text="Subtitle"/>
-
-                    <TextView
-                        android:id="@+id/tag_text"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
                         android:layout_weight="1"
-                        android:gravity="bottom|right"
-                        android:text="@{downloadStatus.statusText}"
-                        tools:text="Tag"/>
+                        android:gravity="right"
+                        android:orientation="vertical">
 
-                    <ProgressBar
-                        android:id="@+id/download_progress_bar"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:progress="@{downloadStatus.currentBytes}"
-                        android:max="@{downloadStatus.totalBytes}"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                        <TextView
+                            android:id="@+id/title_text"
+                            style="@style/TextAppearance.AppCompat.Medium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:text="@{event.title}"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                            tools:text="Title"/>
+
+                        <TextView
+                            android:id="@+id/subtitle_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@{event.subtitle}"
+                            android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                            tools:text="Subtitle"/>
+
+                        <TextView
+                            android:id="@+id/tag_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="bottom|right"
+                            android:text="@{downloadStatus.statusText}"
+                            tools:text="Tag"/>
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
+                <ProgressBar
+                    android:id="@+id/download_progress_bar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="1"
+                    android:max="@{downloadStatus.totalBytes}"
+                    android:progress="@{downloadStatus.currentBytes}"/>
+
             </LinearLayout>
+
         </android.support.v7.widget.CardView>
 
     </LinearLayout>
