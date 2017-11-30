@@ -171,7 +171,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 
 		exoPlayer.setPlayWhenReady(playbackState);
 
-		exoPlayer.prepare(buildMediaSource(Uri.parse(item.getUrl()), ""));
+		exoPlayer.prepare(buildMediaSource(Uri.parse(item.getUri()), ""));
 		return exoPlayer;
 	}
 

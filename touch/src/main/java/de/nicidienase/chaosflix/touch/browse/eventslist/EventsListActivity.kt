@@ -30,7 +30,7 @@ class EventsListActivity : AppCompatActivity(), OnEventSelectedListener {
 		}
 	}
 
-	override fun onEventSelected(event: PersistentEvent, v: View) {
+	override fun onEventSelected(event: PersistentEvent) {
 		EventDetailsActivity.launch(this, event.eventId)
 	}
 

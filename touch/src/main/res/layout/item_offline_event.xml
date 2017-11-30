@@ -3,11 +3,15 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="de.nicidienase.chaosflix.touch.browse.BrowseViewModel.DownloadStatus"/>
+
         <import type="de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent"/>
+
         <variable
             name="downloadStatus"
             type="DownloadStatus"/>
+
         <variable
             name="event"
             type="PersistentEvent"/>

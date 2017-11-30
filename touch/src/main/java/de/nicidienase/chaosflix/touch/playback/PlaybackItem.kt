@@ -3,7 +3,7 @@ package de.nicidienase.chaosflix.touch.playback
 import android.os.Parcel
 import android.os.Parcelable
 
-data class PlaybackItem (val title: String, val subtitle: String, val eventId: Long, val url: String) : Parcelable {
+data class PlaybackItem (val title: String, val subtitle: String, val eventId: Long, val uri: String) : Parcelable {
 
     constructor(parcel: Parcel) : this(
             parcel.readString(),
@@ -16,7 +16,7 @@ data class PlaybackItem (val title: String, val subtitle: String, val eventId: L
         parcel.writeString(title)
         parcel.writeString(subtitle)
         parcel.writeLong(eventId)
-        parcel.writeString(url)
+        parcel.writeString(uri)
     }
 
     override fun describeContents(): Int {

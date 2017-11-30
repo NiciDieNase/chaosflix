@@ -4,15 +4,15 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.entities.download.OfflineEvent
-import de.nicidienase.chaosflix.common.entities.streaming.LiveConference
-import de.nicidienase.chaosflix.common.entities.streaming.Stream
 import de.nicidienase.chaosflix.databinding.FragmentDownloadsBinding
+import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment
 
 class DownloadsListFragment : BrowseFragment() {
@@ -23,6 +23,12 @@ class DownloadsListFragment : BrowseFragment() {
 	private val handler = Handler()
 
 	private val UPDATE_DELAY = 700L
+	private var columnCount = 1;
+
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		columnCount = arguments?.getInt(ARG_COLUMN_COUNT) ?: 1
+	}
 
 	override fun onAttach(context: Context?) {
 		super.onAttach(context)
@@ -39,9 +45,13 @@ class DownloadsListFragment : BrowseFragment() {
 		overlay = binding.incOverlay?.loadingOverlay
 		viewModel.getOfflineEvents().observe(this, Observer { events: List<OfflineEvent>? ->
 			events?.let {
-				binding.list.layoutManager = LinearLayoutManager(context)
+				if (columnCount <= 1) {
+					binding.list.layoutManager = LinearLayoutManager(context)
+				} else {
+					binding.list.layoutManager = GridLayoutManager(context, columnCount)
+				}
 				binding.list.adapter =
-					OfflineEventAdapter(events, viewModel)
+					OfflineEventAdapter(events, viewModel, listener)
 				setLoadingOverlayVisibility(false)
 			}
 		})
@@ -71,7 +81,18 @@ class DownloadsListFragment : BrowseFragment() {
 		setLoadingOverlayVisibility(false)
 	}
 
-	interface InteractionListener {
-		fun onStreamSelected(conference: LiveConference, stream: Stream)
+	companion object {
+		private val ARG_COLUMN_COUNT = "column_count"
+
+		fun getInstance(columnCount: Int = 1): DownloadsListFragment{
+			val fragment = DownloadsListFragment()
+			val args = Bundle()
+			args.putInt(ARG_COLUMN_COUNT, columnCount)
+			fragment.arguments = args
+			return fragment
+		}
+	}
+
+	interface InteractionListener: OnEventSelectedListener {
 	}
 }

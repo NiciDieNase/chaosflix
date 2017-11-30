@@ -143,7 +143,8 @@ class BrowseActivity : AppCompatActivity(),
 	}
 
 	private fun showDownloadsFragment() {
-		showFragment(DownloadsListFragment(), "downloads")
+		val fragment = DownloadsListFragment.getInstance(numColumns)
+		showFragment(fragment, "downloads")
 	}
 
 	private fun showAboutPage() {
@@ -182,7 +183,7 @@ class BrowseActivity : AppCompatActivity(),
 		ft.commit()
 	}
 
-	override fun onEventSelected(event: PersistentEvent, v: View) {
+	override fun onEventSelected(event: PersistentEvent) {
 		EventDetailsActivity.launch(this, event.eventId)
 	}
 }

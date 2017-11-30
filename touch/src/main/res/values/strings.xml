@@ -13,6 +13,7 @@
 	<string name="bookmark">Bookmark</string>
 
 	<string name="play">Play</string>
+	<string name="delete">Delete</string>
 	<string name="titleimage">TitleImage</string>
 	<string name="update_database">Update Database</string>
 	<string name="search_events">Search Events</string>

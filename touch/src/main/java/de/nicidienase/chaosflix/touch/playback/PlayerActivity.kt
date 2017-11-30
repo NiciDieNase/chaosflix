@@ -20,12 +20,18 @@ class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInter
 
 		val contentType = intent.getStringExtra(CONTENT_TYPE)
 		if (contentType.equals(CONTENT_RECORDING)) {
-			val event = intent.extras!!.getParcelable<PersistentEvent>(EVENT_KEY)
-			val recording = intent.extras!!.getParcelable<PersistentRecording>(RECORDING_KEY)
+			val event = intent.extras?.getParcelable<PersistentEvent>(EVENT_KEY)
+
+			val recording = intent.extras?.getParcelable<PersistentRecording>(RECORDING_KEY)
+			val recordingUri = intent.extras?.getString(OFFLINE_URI)
 
 			if (savedInstanceState == null) {
 				val ft = supportFragmentManager.beginTransaction()
-				val playbackItem = PlaybackItem(event.title, event.subtitle ?: "", event.eventId, recording.recordingUrl)
+				val playbackItem = PlaybackItem(
+						event?.title ?: "",
+						event?.subtitle ?: "",
+						event?.eventId ?: 0,
+						recordingUri ?: recording?.recordingUrl ?: "")
 				val playerFragment = ExoPlayerFragment.newInstance(playbackItem)
 				ft.replace(R.id.fragment_container, playerFragment)
 				ft.commit()
@@ -53,6 +59,16 @@ class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInter
 		val CONFERENCE = "live_conferences"
 		val ROOM = "room"
 		val STREAM = "stream"
+
+		val OFFLINE_URI = "recording_uri"
+
+		fun launch(context: Context, event: PersistentEvent, uri: String) {
+			val i = Intent(context, PlayerActivity::class.java)
+			i.putExtra(CONTENT_TYPE, CONTENT_RECORDING)
+			i.putExtra(PlayerActivity.EVENT_KEY, event)
+			i.putExtra(PlayerActivity.OFFLINE_URI, uri)
+			context.startActivity(i)
+		}
 
 		fun launch(context: Context, event: PersistentEvent, recording: PersistentRecording) {
 			val i = Intent(context, PlayerActivity::class.java)

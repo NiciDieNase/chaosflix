@@ -20,7 +20,7 @@ class EventDetailsActivity : AppCompatActivity(),
 		EventDetailsFragment.OnEventDetailsFragmentInteractionListener,
 		OnEventSelectedListener {
 
-	override fun onEventSelected(event: PersistentEvent, v: View) {
+	override fun onEventSelected(event: PersistentEvent) {
 		showFragmentForEvent(event.eventId, true)
 	}
 
