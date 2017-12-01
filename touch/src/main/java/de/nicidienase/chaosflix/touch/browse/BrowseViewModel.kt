@@ -6,6 +6,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import android.content.Context
 import android.databinding.ObservableField
+import android.os.Environment
 import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.network.RecordingService
@@ -14,6 +15,7 @@ import de.nicidienase.chaosflix.touch.ChaosflixApplication
 import de.nicidienase.chaosflix.touch.sync.Downloader
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
+import java.io.File
 
 class BrowseViewModel(
 		val database: ChaosflixDatabase,
@@ -64,47 +66,47 @@ class BrowseViewModel(
 
 	init {
 		getOfflineEvents().observeForever(Observer {
-			val downloadRef = it?.map { it.downloadReference }?.map { downloadStatus.put(it,DownloadStatus()) }
+			val downloadRef = it?.map { it.downloadReference }?.map { downloadStatus.put(it, DownloadStatus()) }
 		})
 	}
 
 	fun updateDownloadStatus() {
 		Completable.fromAction {
 			getOfflineEvents().observeForever(Observer {
-				val downloadRef = it?.map { it.downloadReference }?.toTypedArray()?.toLongArray() ?: longArrayOf()
-				val cursor = downloadManager.query(DownloadManager.Query().setFilterById(*downloadRef))
+				if (it != null && it.size > 0) {
+					val downloadRef = it.map { it.downloadReference }.toTypedArray().toLongArray() ?: longArrayOf()
+					val cursor = downloadManager.query(DownloadManager.Query().setFilterById(*downloadRef))
 
-				if (cursor.moveToFirst()) {
-					do {
-						val columnId = cursor.getColumnIndex(DownloadManager.COLUMN_ID)
-						val id = cursor.getLong(columnId)
-						val columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
-						val status = cursor.getInt(columnIndex)
-						val bytesSoFarIndex = cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
-						val bytesSoFar = cursor.getInt(bytesSoFarIndex)
-						val bytesTotalIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)
-						val bytesTotal = cursor.getInt(bytesTotalIndex)
+					if (cursor.moveToFirst()) {
+						do {
+							val columnId = cursor.getColumnIndex(DownloadManager.COLUMN_ID)
+							val id = cursor.getLong(columnId)
+							val columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
+							val status = cursor.getInt(columnIndex)
+							val bytesSoFarIndex = cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
+							val bytesSoFar = cursor.getInt(bytesSoFarIndex)
+							val bytesTotalIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)
+							val bytesTotal = cursor.getInt(bytesTotalIndex)
 
-						val statusText: String =
-								when (status) {
-									DownloadManager.STATUS_RUNNING -> "Running"
-									DownloadManager.STATUS_FAILED -> "Failed"
-									DownloadManager.STATUS_PAUSED -> "Paused"
-									DownloadManager.STATUS_SUCCESSFUL -> "Successful"
-									DownloadManager.STATUS_PENDING -> "Pending"
-									else -> "UNKNOWN"
-								}
-						if (downloadStatus.containsKey(id)) {
-							val item = downloadStatus[id]
-							if (item != null) {
-								item.statusText.set(statusText)
-								item.currentBytes.set(bytesSoFar)
-								item.totalBytes.set(bytesTotal)
+							val statusText: String =
+									when (status) {
+										DownloadManager.STATUS_RUNNING -> "Running"
+										DownloadManager.STATUS_FAILED -> "Failed"
+										DownloadManager.STATUS_PAUSED -> "Paused"
+										DownloadManager.STATUS_SUCCESSFUL -> "Successful"
+										DownloadManager.STATUS_PENDING -> "Pending"
+										else -> "UNKNOWN"
+									}
+							if (downloadStatus.containsKey(id)) {
+								val item = downloadStatus[id]
+								item?.statusText?.set(statusText)
+								item?.currentBytes?.set(bytesSoFar)
+								item?.totalBytes?.set(bytesTotal)
+							} else {
+								downloadStatus.put(id, DownloadStatus(statusText, bytesSoFar, bytesTotal))
 							}
-						} else {
-							downloadStatus.put(id, DownloadStatus(statusText, bytesSoFar, bytesTotal))
-						}
-					} while (cursor.moveToNext())
+						} while (cursor.moveToNext())
+					}
 				}
 			})
 		}.subscribeOn(Schedulers.io()).subscribe()
@@ -121,5 +123,20 @@ class BrowseViewModel(
 			this.totalBytes.set(totalBytes)
 		}
 
+	}
+
+	fun getUriForEvent(item: OfflineEvent): String {
+		val directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)
+		val uri = "${directory.toURI()}chaosflix/${item.localPath}"
+		return uri
+	}
+
+	fun deleteOfflineItem(item: OfflineEvent) {
+		Completable.fromAction {
+			val directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)
+			val file = File("${directory.path}/chaosflix/${item.localPath}")
+			if (file.exists()) file.delete()
+			database.offlineEventDao().deleteById(item.id)
+		}.subscribeOn(Schedulers.io()).subscribe()
 	}
 }

@@ -57,13 +57,11 @@ class OfflineEventAdapter(var items: List<OfflineEvent>, val viewModel: BrowseVi
 						true
 					}
 					R.id.item_play -> {
-						val directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)
-						val uri = "${directory.toURI()}chaosflix/${item.localPath}"
-						PlayerActivity.launch(view.context, item.event!!, uri)
+						PlayerActivity.launch(view.context, item.event!!, viewModel.getUriForEvent(item))
 						true
 					}
 					R.id.item_delete -> {
-						Snackbar.make(view, "Coming soon", Snackbar.LENGTH_SHORT).show()
+						viewModel.deleteOfflineItem(item)
 						true
 					}
 					else -> false
@@ -73,6 +71,8 @@ class OfflineEventAdapter(var items: List<OfflineEvent>, val viewModel: BrowseVi
 			menu.show()
 		}
 	}
+
+
 
 
 	override fun getItemCount(): Int {
