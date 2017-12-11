@@ -33,4 +33,6 @@
 	<string name="drawer_close">Drawer closed</string>
 	<string name="about_description">TODO: Description</string>
 	<string name="about_title">Chaosflix</string>
+    <string name="remove_bookmark">Remove Bookmark</string>
+    <string name="delete_local_file">Delete local File</string>
 </resources>

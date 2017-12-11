@@ -19,6 +19,7 @@ import de.nicidienase.chaosflix.touch.ChaosflixApplication
 import de.nicidienase.chaosflix.touch.sync.Downloader
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
+import java.io.File
 
 class DetailsViewModel(
 		val database: ChaosflixDatabase,
@@ -80,7 +81,7 @@ class DetailsViewModel(
 				Completable.fromAction {
 					database.offlineEventDao().insert(
 							OfflineEvent(eventId = event.eventId, recordingId = recording.recordingId,
-									localPath = recording.filename, downloadReference = downloadReference))
+									localPath = getDownloadDir() + recording.filename, downloadReference = downloadReference))
 					result.postValue(true)
 				}.subscribeOn(Schedulers.io()).subscribe()
 			} else {
@@ -90,8 +91,30 @@ class DetailsViewModel(
 		return result
 	}
 
+	fun getOfflineItem(eventId: Long) = database.offlineEventDao().getByEventId(eventId)
+
+	fun offlineItemExists(eventId: Long): LiveData<Boolean> {
+		val result = MutableLiveData<Boolean>()
+		getOfflineItem(eventId).observeForever({ event: OfflineEvent? ->
+			result.postValue(if (event != null) File(event.localPath).exists() else false)
+		})
+		return result
+	}
+
+	fun deleteOfflineItem(item: OfflineEvent) {
+		Completable.fromAction {
+			val file = File(item.localPath)
+			if (file.exists()) file.delete()
+			database.offlineEventDao().deleteById(item.id)
+		}.subscribeOn(Schedulers.io()).subscribe()
+	}
+
+	private fun getDownloadDir(): String {
+		return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).path + DOWNLOAD_DIR;
+	}
+
 	companion object {
-		val DOWNLOAD_DIR = "chaosflix/"
+		val DOWNLOAD_DIR = "/chaosflix/"
 		val TAG = DetailsViewModel::class.simpleName
 	}
 }

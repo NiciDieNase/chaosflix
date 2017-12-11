@@ -20,10 +20,10 @@ class Downloader(val recordingApi: RecordingService,
 
 	private fun updateEverything() {
 		updateConferencesAndGroups { conferenceIds ->
-			for (id in conferenceIds) {
-				updateEventsForConference(id) { eventIds ->
-					for (id in eventIds) {
-						updateRecordingsForEvent(id)
+			for (confId in conferenceIds) {
+				updateEventsForConference(confId) { eventIds ->
+					for (eventId in eventIds) {
+						updateRecordingsForEvent(eventId)
 					}
 				}
 			}

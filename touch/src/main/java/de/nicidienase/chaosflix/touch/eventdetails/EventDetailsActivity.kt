@@ -19,7 +19,6 @@ import de.nicidienase.chaosflix.touch.playback.PlayerActivity
 class EventDetailsActivity : AppCompatActivity(),
 		EventDetailsFragment.OnEventDetailsFragmentInteractionListener,
 		OnEventSelectedListener {
-
 	override fun onEventSelected(event: PersistentEvent) {
 		showFragmentForEvent(event.eventId, true)
 	}
@@ -63,6 +62,10 @@ class EventDetailsActivity : AppCompatActivity(),
 
 	override fun playItem(event: PersistentEvent, recording: PersistentRecording) {
 		PlayerActivity.launch(this, event, recording)
+	}
+
+	override fun playItem(event: PersistentEvent, uri: String) {
+		PlayerActivity.launch(this,event,uri)
 	}
 
 	companion object {

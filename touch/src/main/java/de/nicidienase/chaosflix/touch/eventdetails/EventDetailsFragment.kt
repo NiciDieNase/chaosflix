@@ -125,16 +125,20 @@ class EventDetailsFragment : Fragment() {
 
 	private fun play() {
 		listener?.let {
-			val event = this.event
-			if (event != null) {
-
-				viewModel.getRecordingForEvent(eventId)
-						.observe(this, Observer { persistentRecordings ->
-							if (persistentRecordings != null) {
-								listener!!.playItem(event, Util.getOptimalStream(persistentRecordings))
-							}
-						})
-			}
+			viewModel.getOfflineItem(eventId).observe(this, Observer { offlineEvent ->
+				if(offlineEvent != null){
+					Log.d(TAG,"Playing offline file")
+					listener?.playItem(event,offlineEvent.localPath)
+				} else {
+					viewModel.getRecordingForEvent(eventId)
+							.observe(this, Observer { persistentRecordings ->
+								if (persistentRecordings != null) {
+									Log.d(TAG,"Playing network file")
+									listener!!.playItem(event, Util.getOptimalStream(persistentRecordings))
+								}
+							})
+				}
+			})
 		}
 	}
 
@@ -166,6 +170,16 @@ class EventDetailsFragment : Fragment() {
 			menu.findItem(R.id.action_unbookmark).isVisible = false
 		}
 		menu.findItem(R.id.action_download).isVisible = viewModel.writeExternalStorageAllowed
+		viewModel.offlineItemExists(eventId).observe(this,
+				Observer { itemExists ->
+					itemExists?.let {
+						menu.findItem(R.id.action_download).isVisible =
+								viewModel.writeExternalStorageAllowed && !itemExists
+						menu.findItem(R.id.action_delete_offline_item).isVisible =
+								viewModel.writeExternalStorageAllowed && itemExists
+					}
+				})
+
 		menu.findItem(R.id.action_play).isVisible = appBarExpanded
 	}
 
@@ -200,11 +214,20 @@ class EventDetailsFragment : Fragment() {
 			R.id.action_download -> {
 				viewModel.getRecordingForEvent(eventId).observeForever {
 					viewModel.download(event, Util.getOptimalStream(it!!)).observe(this, Observer {
-						if(it != null){
-							val message = if(it) "Download started" else "Error starting download"
-							Snackbar.make(view!!,message, Snackbar.LENGTH_LONG).show()
+						if (it != null) {
+							val message = if (it) "Download started" else "Error starting download"
+							Snackbar.make(view!!, message, Snackbar.LENGTH_LONG).show()
 						}
 					})
+				}
+				activity?.invalidateOptionsMenu()
+				return true
+			}
+			R.id.action_delete_offline_item -> {
+				viewModel.getOfflineItem(eventId).observeForever {
+					if (it != null) {
+						viewModel.deleteOfflineItem(it)
+					}
 				}
 				return true
 			}
@@ -217,6 +240,7 @@ class EventDetailsFragment : Fragment() {
 		fun onToolbarStateChange()
 		fun invalidateOptionsMenu()
 		fun playItem(event: PersistentEvent, recording: PersistentRecording)
+		fun playItem(event: PersistentEvent, uri: String)
 	}
 
 	companion object {

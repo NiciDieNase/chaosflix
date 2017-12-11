@@ -6,4 +6,5 @@
 	<dimen name="margin_content">120dp</dimen>
 	<dimen name="details_text_margin">8dp</dimen>
 	<dimen name="details_title_margin">25dp</dimen>
+	<dimen name="del_button_size">64dp</dimen>
 </resources>

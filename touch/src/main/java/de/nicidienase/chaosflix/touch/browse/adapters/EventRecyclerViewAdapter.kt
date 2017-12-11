@@ -57,6 +57,6 @@ open class EventRecyclerViewAdapter(val listener: OnEventSelectedListener) :
 		ViewCompat.setTransitionName(holder.mIcon,
 				resources.getString(R.string.thumbnail) + event.eventId)
 
-		holder.mView.setOnClickListener({ v: View -> listener.onEventSelected(items[position]) })
+		holder.mView.setOnClickListener({ _: View -> listener.onEventSelected(items[position]) })
 	}
 }

@@ -1,10 +1,6 @@
 package de.nicidienase.chaosflix.touch.browse.download
 
-import android.arch.lifecycle.Observer
 import android.databinding.DataBindingUtil
-import android.os.Environment
-import android.support.design.widget.Snackbar
-import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +11,6 @@ import de.nicidienase.chaosflix.common.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.databinding.ItemOfflineEventBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.browse.BrowseViewModel
-import de.nicidienase.chaosflix.touch.playback.PlayerActivity
 
 class OfflineEventAdapter(var items: List<OfflineEvent>, val viewModel: BrowseViewModel, val listener: OnEventSelectedListener) :
 		RecyclerView.Adapter<OfflineEventAdapter.ViewHolder>() {
@@ -37,43 +32,16 @@ class OfflineEventAdapter(var items: List<OfflineEvent>, val viewModel: BrowseVi
 		}
 		)
 
-		holder.binding.downloadStatus = viewModel.downloadStatus[item.downloadReference]
-		holder.binding.card.setOnClickListener { view ->
-			//			item.event?.let {
-//				listener.onEventSelected(it)
-//			}
-//		}
-//
-//		holder.binding.textViewOptions.setOnClickListener {
-//					holder.binding.card.setOnClickListener {
-			val menu = PopupMenu(holder.view.context, holder.binding.card)
-			menu.inflate(R.menu.offline_menu)
-			menu.setOnMenuItemClickListener { menuItem ->
-				when (menuItem.itemId) {
-					R.id.item_open -> {
-						item.event?.let {
-							listener.onEventSelected(it)
-						}
-						true
-					}
-					R.id.item_play -> {
-						PlayerActivity.launch(view.context, item.event!!, viewModel.getUriForEvent(item))
-						true
-					}
-					R.id.item_delete -> {
-						viewModel.deleteOfflineItem(item)
-						true
-					}
-					else -> false
-				}
-
+		holder.binding.downloadStatus = viewModel.offlineItemManager.downloadStatus[item.downloadReference]
+		holder.binding.buttonDelete.setOnClickListener {
+			viewModel.deleteOfflineItem(item)
+		}
+		holder.binding.content.setOnClickListener {
+			item.event?.let {
+				listener.onEventSelected(it)
 			}
-			menu.show()
 		}
 	}
-
-
-
 
 	override fun getItemCount(): Int {
 		return items.size
