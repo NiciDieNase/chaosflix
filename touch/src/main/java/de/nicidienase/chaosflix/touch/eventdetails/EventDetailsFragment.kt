@@ -126,18 +126,27 @@ class EventDetailsFragment : Fragment() {
 	private fun play() {
 		listener?.let {
 			viewModel.getOfflineItem(eventId).observe(this, Observer { offlineEvent ->
-				if(offlineEvent != null){
-					Log.d(TAG,"Playing offline file")
-					listener?.playItem(event,offlineEvent.localPath)
-				} else {
-					viewModel.getRecordingForEvent(eventId)
-							.observe(this, Observer { persistentRecordings ->
-								if (persistentRecordings != null) {
-									Log.d(TAG,"Playing network file")
-									listener!!.playItem(event, Util.getOptimalStream(persistentRecordings))
-								}
-							})
-				}
+				viewModel.offlineItemExists(eventId).observe(this, Observer { itemExists ->
+					if (offlineEvent != null && itemExists == true) {
+						Log.d(TAG, "Playing offline file")
+						listener?.playItem(event, offlineEvent.localPath)
+					} else {
+						if (offlineEvent != null && itemExists == false) {
+							view?.let {
+								Snackbar.make(it, "File gone, removing download-item", Snackbar.LENGTH_LONG).show();
+							}
+							viewModel.deleteOfflineItem(offlineEvent)
+						} else {
+							viewModel.getRecordingForEvent(eventId)
+									.observe(this, Observer { persistentRecordings ->
+										if (persistentRecordings != null) {
+											Log.d(TAG, "Playing network file")
+											listener!!.playItem(event, Util.getOptimalStream(persistentRecordings))
+										}
+									})
+						}
+					}
+				})
 			})
 		}
 	}
