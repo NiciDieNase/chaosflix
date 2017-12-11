@@ -84,8 +84,6 @@ class DetailsViewModel(
 									localPath = getDownloadDir() + recording.filename, downloadReference = downloadReference))
 					result.postValue(true)
 				}.subscribeOn(Schedulers.io()).subscribe()
-			} else {
-				result.postValue(false)
 			}
 		}
 		return result
