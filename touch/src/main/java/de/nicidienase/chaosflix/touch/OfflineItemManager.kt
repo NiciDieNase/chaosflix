@@ -80,6 +80,8 @@ class OfflineItemManager(downloadRefs: List<Long>?) {
 		val statusText: ObservableField<String> = ObservableField()
 		val currentBytes: ObservableField<Int> = ObservableField()
 		val totalBytes: ObservableField<Int> = ObservableField()
+		val done: Boolean
+		get() { return statusText.get() == "Successful"}
 
 		init {
 			this.statusText.set(status)

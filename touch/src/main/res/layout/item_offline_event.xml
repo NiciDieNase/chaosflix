@@ -6,8 +6,8 @@
     <data>
 
         <import type="de.nicidienase.chaosflix.touch.OfflineItemManager.DownloadStatus"/>
-
         <import type="de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent"/>
+        <import type="android.view.View"/>
 
         <variable
             name="downloadStatus"
@@ -96,6 +96,7 @@
                         android:layout_height="match_parent"
                         android:background="@drawable/button_rect_normal"
                         app:srcCompat="@drawable/ic_delete_dark"/>
+                    <!--android:visibility="@{downloadStatus.done ? View.VISIBLE : View.INVISIBLE }"-->
                 </LinearLayout>
 
                 <ProgressBar

@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.content.Context
+import android.database.sqlite.SQLiteConstraintException
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
@@ -79,9 +80,13 @@ class DetailsViewModel(
 				Log.d(TAG, "download started $downloadReference")
 
 				Completable.fromAction {
-					database.offlineEventDao().insert(
-							OfflineEvent(eventId = event.eventId, recordingId = recording.recordingId,
-									localPath = getDownloadDir() + recording.filename, downloadReference = downloadReference))
+					try {
+						database.offlineEventDao().insert(
+								OfflineEvent(eventId = event.eventId, recordingId = recording.recordingId,
+										localPath = getDownloadDir() + recording.filename, downloadReference = downloadReference))
+					} catch (ex: SQLiteConstraintException){
+						Log.d(TAG,ex.message)
+					}
 					result.postValue(true)
 				}.subscribeOn(Schedulers.io()).subscribe()
 			}
