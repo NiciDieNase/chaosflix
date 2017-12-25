@@ -50,7 +50,7 @@ class DownloadsListFragment : BrowseFragment() {
 				if (columnCount <= 1) {
 					binding.list.layoutManager = LinearLayoutManager(context)
 				} else {
-					binding.list.layoutManager = GridLayoutManager(context, columnCount)
+					binding.list.layoutManager = GridLayoutManager(context, columnCount - 1)
 				}
 				offlineEventAdapter.items = it
 				offlineEventAdapter.notifyDataSetChanged()

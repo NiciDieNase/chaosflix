@@ -36,7 +36,7 @@ class OfflineEventAdapter(var items: List<OfflineEvent>, val viewModel: BrowseVi
 		holder.binding.buttonDelete.setOnClickListener {
 			viewModel.deleteOfflineItem(item)
 		}
-		holder.binding.content.setOnClickListener {
+		holder.binding.content?.setOnClickListener {
 			item.event?.let {
 				listener.onEventSelected(it)
 			}
