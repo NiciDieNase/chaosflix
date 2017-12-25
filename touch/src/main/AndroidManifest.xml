@@ -40,7 +40,7 @@
             android:parentActivityName="de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity"/>
 
         <activity
-            android:name=".touch.activities.AboutActivity"
+            android:name=".touch.about.AboutActivity"
             android:parentActivityName=".touch.browse.BrowseActivity"/>
 
         <activity

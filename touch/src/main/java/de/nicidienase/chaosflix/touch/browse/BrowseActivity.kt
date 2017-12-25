@@ -21,7 +21,7 @@ import de.nicidienase.chaosflix.common.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.common.entities.streaming.Stream
 import de.nicidienase.chaosflix.databinding.ActivityBrowseBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
-import de.nicidienase.chaosflix.touch.activities.AboutActivity
+import de.nicidienase.chaosflix.touch.about.AboutActivity
 import de.nicidienase.chaosflix.touch.browse.download.DownloadsListFragment
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListFragment

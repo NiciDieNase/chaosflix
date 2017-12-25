@@ -31,8 +31,14 @@
 	<string name="preferences">Preferences</string>
 	<string name="drawer_open">Drawer open</string>
 	<string name="drawer_close">Drawer closed</string>
-	<string name="about_description">TODO: Description</string>
 	<string name="about_title">Chaosflix</string>
     <string name="remove_bookmark">Remove Bookmark</string>
     <string name="delete_local_file">Delete local File</string>
+	<string name="about_voctocat"> The Vocotocat-Logo was designed by Sebastian Morr and is released under CC BY-NC-SA 4.0</string>
+	<string name="showLibs">Libraries we use</string>
+	<string name="about_chaosflix">About Chaosflix</string>
+	<string name="chaosflix_licence">Chaosflix is released under MIT-License.</string>
+	<string name="description">Chaosflix was developed, because the developer was annoyed
+	that there was an app for Apple-TV but not Android- and Fire-TV. So now, after the
+	TV-app there is also one for (android) phones and tablets. Enjoy!</string>
 </resources>
