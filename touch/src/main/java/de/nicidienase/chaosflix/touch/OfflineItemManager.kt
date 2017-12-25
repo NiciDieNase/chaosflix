@@ -99,7 +99,6 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList()) {
 				request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
 				request.setVisibleInDownloadsUi(true)
 
-				// TODO make configurable
 				val sharedPref: SharedPreferences = PreferenceManager
 						.getDefaultSharedPreferences(ChaosflixApplication.APPLICATION_CONTEXT);
 				val allow_metered = sharedPref.getBoolean("allow_metered_networks", false)

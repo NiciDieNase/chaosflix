@@ -18,26 +18,26 @@ class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInter
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_player)
 
-		val contentType = intent.getStringExtra(CONTENT_TYPE)
-		if (contentType.equals(CONTENT_RECORDING)) {
-			val event = intent.extras?.getParcelable<PersistentEvent>(EVENT_KEY)
-
-			val recording = intent.extras?.getParcelable<PersistentRecording>(RECORDING_KEY)
-			val recordingUri = intent.extras?.getString(OFFLINE_URI)
-
-			if (savedInstanceState == null) {
-				val ft = supportFragmentManager.beginTransaction()
-				val playbackItem = PlaybackItem(
+		if (savedInstanceState == null) {
+			val contentType = intent.getStringExtra(CONTENT_TYPE)
+			var playbackItem = PlaybackItem("Empty", "Empty", 0, "")
+			if (contentType.equals(CONTENT_RECORDING)) {
+				val event = intent.extras?.getParcelable<PersistentEvent>(EVENT_KEY)
+				val recording = intent.extras?.getParcelable<PersistentRecording>(RECORDING_KEY)
+				val recordingUri = intent.extras?.getString(OFFLINE_URI)
+				playbackItem = PlaybackItem(
 						event?.title ?: "",
 						event?.subtitle ?: "",
 						event?.eventId ?: 0,
 						recordingUri ?: recording?.recordingUrl ?: "")
-				val playerFragment = ExoPlayerFragment.newInstance(playbackItem)
-				ft.replace(R.id.fragment_container, playerFragment)
-				ft.commit()
+			} else if (contentType.equals(CONTENT_STREAM)) {
+				// TODO implement Player for Stream
 			}
-		} else if (contentType.equals(CONTENT_STREAM)) {
-			// TODO implement Player for Stream
+
+			val ft = supportFragmentManager.beginTransaction()
+			val playerFragment = ExoPlayerFragment.newInstance(playbackItem)
+			ft.replace(R.id.fragment_container, playerFragment)
+			ft.commit()
 		}
 	}
 
