@@ -63,14 +63,14 @@ class BrowseViewModel(
 	fun getRecordingByid(recordingId: Long) = database.recordingDao().findRecordingById(recordingId)
 
 	fun updateDownloadStatus() {
-		offlineItemManager.updateDownloadStatus(getOfflineEvents())
+		Completable.fromAction {
+			offlineItemManager.updateDownloadStatus(database.offlineEventDao().getAllSynchronous())
+		}.subscribeOn(Schedulers.io()).subscribe()
 	}
 
 	fun deleteOfflineItem(item: OfflineEvent) {
 		Completable.fromAction {
-			val file = File(item.localPath)
-			if (file.exists()) file.delete()
-			database.offlineEventDao().deleteById(item.id)
+			offlineItemManager.deleteOfflineItem(item)
 		}.subscribeOn(Schedulers.io()).subscribe()
 	}
 }

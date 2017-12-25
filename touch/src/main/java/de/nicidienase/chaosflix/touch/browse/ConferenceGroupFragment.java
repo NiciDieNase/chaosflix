@@ -92,13 +92,17 @@ public class ConferenceGroupFragment extends BrowseFragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putParcelable(LAYOUTMANAGER_STATE, layoutManager.onSaveInstanceState());
+		if(layoutManager != null){
+			outState.putParcelable(LAYOUTMANAGER_STATE, layoutManager.onSaveInstanceState());
+		}
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		getArguments().putParcelable(LAYOUTMANAGER_STATE, layoutManager.onSaveInstanceState());
+		if(layoutManager != null){
+			getArguments().putParcelable(LAYOUTMANAGER_STATE, layoutManager.onSaveInstanceState());
+		}
 	}
 
 	@Override

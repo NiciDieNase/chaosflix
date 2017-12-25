@@ -17,6 +17,7 @@ import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
 import de.nicidienase.chaosflix.common.network.RecordingService
 import de.nicidienase.chaosflix.common.network.StreamingService
 import de.nicidienase.chaosflix.touch.ChaosflixApplication
+import de.nicidienase.chaosflix.touch.OfflineItemManager
 import de.nicidienase.chaosflix.touch.sync.Downloader
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
@@ -30,6 +31,7 @@ class DetailsViewModel(
 
 	val downloader = Downloader(recordingApi, database)
 	var writeExternalStorageAllowed: Boolean = false
+	val offlineItemManager: OfflineItemManager = OfflineItemManager()
 
 	fun getEventById(eventId: Long): LiveData<PersistentEvent> {
 		downloader.updateRecordingsForEvent(eventId)
@@ -57,46 +59,20 @@ class DetailsViewModel(
 		}.subscribeOn(Schedulers.io()).subscribe()
 	}
 
-	fun download(event: PersistentEvent, recording: PersistentRecording): LiveData<Boolean> {
-		val result = MutableLiveData<Boolean>()
-		database.offlineEventDao().getByEventId(event.eventId).observeForever {
-			if (it == null) {
-				val downloadManager: DownloadManager
-						= ChaosflixApplication.APPLICATION_CONTEXT
-						.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-
-				val request = DownloadManager.Request(Uri.parse(recording.recordingUrl))
-				request.setTitle(event.title)
-				request.setDestinationInExternalPublicDir(Environment.DIRECTORY_MOVIES, DOWNLOAD_DIR + recording.filename)
-				request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-				request.setVisibleInDownloadsUi(true)
-
-				// TODO make configurable
-				request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
-				request.setAllowedOverMetered(false)
-
-				val downloadReference = downloadManager.enqueue(request)
-
-				Log.d(TAG, "download started $downloadReference")
-
-				Completable.fromAction {
-					try {
-						database.offlineEventDao().insert(
-								OfflineEvent(eventId = event.eventId, recordingId = recording.recordingId,
-										localPath = getDownloadDir() + recording.filename, downloadReference = downloadReference))
-					} catch (ex: SQLiteConstraintException){
-						Log.d(TAG,ex.message)
-					}
-					result.postValue(true)
-				}.subscribeOn(Schedulers.io()).subscribe()
-			}
-		}
-		return result
-	}
+	fun download(event: PersistentEvent, recording: PersistentRecording)
+			= offlineItemManager.download(event, recording)
 
 	fun getOfflineItem(eventId: Long) = database.offlineEventDao().getByEventId(eventId)
 
 	fun offlineItemExists(eventId: Long): LiveData<Boolean> {
+		val result = MutableLiveData<Boolean>()
+		getOfflineItem(eventId).observeForever({ event: OfflineEvent? ->
+			result.postValue(event != null)
+		})
+		return result
+	}
+
+	fun fileExists(eventId: Long): LiveData<Boolean> {
 		val result = MutableLiveData<Boolean>()
 		getOfflineItem(eventId).observeForever({ event: OfflineEvent? ->
 			result.postValue(if (event != null) File(event.localPath).exists() else false)
@@ -106,18 +82,23 @@ class DetailsViewModel(
 
 	fun deleteOfflineItem(item: OfflineEvent) {
 		Completable.fromAction {
-			val file = File(item.localPath)
-			if (file.exists()) file.delete()
-			database.offlineEventDao().deleteById(item.id)
+			offlineItemManager.deleteOfflineItem(item)
 		}.subscribeOn(Schedulers.io()).subscribe()
 	}
 
-	private fun getDownloadDir(): String {
-		return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).path + DOWNLOAD_DIR;
+	fun deleteOfflineItem(itemId: Long): LiveData<Boolean> {
+		val result = MutableLiveData<Boolean>()
+		Completable.fromAction {
+			val offlineEvent = database.offlineEventDao().getByEventIdSynchronous(itemId)
+			deleteOfflineItem(offlineEvent);
+			result.postValue(true);
+		}.subscribeOn(Schedulers.io()).subscribe()
+		return result
 	}
 
+
+
 	companion object {
-		val DOWNLOAD_DIR = "/chaosflix/"
 		val TAG = DetailsViewModel::class.simpleName
 	}
 }

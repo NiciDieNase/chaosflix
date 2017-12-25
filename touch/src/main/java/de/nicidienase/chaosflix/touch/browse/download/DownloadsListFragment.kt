@@ -43,6 +43,8 @@ class DownloadsListFragment : BrowseFragment() {
 		binding = FragmentDownloadsBinding.inflate(inflater, container, false)
 		setupToolbar(binding.incToolbar?.toolbar!!, R.string.downloads)
 		overlay = binding.incOverlay?.loadingOverlay
+		val offlineEventAdapter = OfflineEventAdapter(emptyList(), viewModel, listener)
+		binding.list.adapter = offlineEventAdapter
 		viewModel.getOfflineEvents().observe(this, Observer { events: List<OfflineEvent>? ->
 			events?.let {
 				if (columnCount <= 1) {
@@ -50,8 +52,8 @@ class DownloadsListFragment : BrowseFragment() {
 				} else {
 					binding.list.layoutManager = GridLayoutManager(context, columnCount)
 				}
-				binding.list.adapter =
-					OfflineEventAdapter(events, viewModel, listener)
+				offlineEventAdapter.items = it
+				offlineEventAdapter.notifyDataSetChanged()
 				setLoadingOverlayVisibility(false)
 			}
 		})

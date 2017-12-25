@@ -221,23 +221,22 @@ class EventDetailsFragment : Fragment() {
 				return true
 			}
 			R.id.action_download -> {
-				viewModel.getRecordingForEvent(eventId).observeForever {
+				viewModel.getRecordingForEvent(eventId).observe(this, Observer {
 					viewModel.download(event, Util.getOptimalStream(it!!)).observe(this, Observer {
 						if (it != null) {
 							val message = if (it) "Download started" else "Error starting download"
 							Snackbar.make(view!!, message, Snackbar.LENGTH_LONG).show()
 						}
 					})
-				}
-				activity?.invalidateOptionsMenu()
+				})
 				return true
 			}
 			R.id.action_delete_offline_item -> {
-				viewModel.getOfflineItem(eventId).observeForever {
-					if (it != null) {
-						viewModel.deleteOfflineItem(it)
+				viewModel.deleteOfflineItem(eventId).observe(this, Observer {
+					if(it != null){
+						view?.let { Snackbar.make(it, "Deleted Download", Snackbar.LENGTH_SHORT).show() }
 					}
-				}
+				})
 				return true
 			}
 			else -> return super.onOptionsItemSelected(item)
