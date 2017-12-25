@@ -49,6 +49,10 @@
             android:launchMode="singleTop"
             android:parentActivityName=".touch.eventdetails.EventDetailsActivity"/>
 
+        <activity
+            android:name=".touch.settings.SettingsActivity"
+            android:parentActivityName=".touch.browse.BrowseActivity"/>
+
         <service
             android:name=".touch.sync.DownloadJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>

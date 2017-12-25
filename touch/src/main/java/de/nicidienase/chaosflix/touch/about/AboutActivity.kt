@@ -1,12 +1,12 @@
 package de.nicidienase.chaosflix.touch.about
 
 
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.View
-import android.widget.FrameLayout
 import de.nicidienase.chaosflix.R
+import de.nicidienase.chaosflix.databinding.ActivityAboutBinding
 import mehdi.sakout.aboutpage.AboutPage
 import mehdi.sakout.aboutpage.Element
 
@@ -14,14 +14,13 @@ class AboutActivity : AppCompatActivity() {
 
 	public override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(R.layout.activity_about)
 
-		val toolbar = findViewById<Toolbar>(R.id.toolbar)
-		toolbar.title = getString(R.string.about_chaosflix)
-		setSupportActionBar(toolbar)
+		val binding = DataBindingUtil.setContentView<ActivityAboutBinding>(
+				this, R.layout.activity_about)
+
+		binding.toolbarInc?.toolbar?.title = getString(R.string.about_chaosflix)
+		setSupportActionBar(binding.toolbarInc?.toolbar)
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-		val frame = findViewById<FrameLayout>(R.id.container)
 
 		val showLibs = Element()
 		showLibs.title = resources.getString(R.string.showLibs)
@@ -45,12 +44,11 @@ class AboutActivity : AppCompatActivity() {
 				.addItem(showLibs)
 				.addGroup("Connect with us")
 				.addGitHub("nicidienase/chaosflix", "Find the source on Github")
-				.addTwitter("nicidienase","Follow the developer on Twitter")
+				.addTwitter("nicidienase", "Follow the developer on Twitter")
 				.addPlayStore("de.nicidienase.chaosflix", "Rate us on Google Play")
 				.create()
 
-
-		frame.addView(aboutView)
+		binding.container.addView(aboutView)
 	}
 
 

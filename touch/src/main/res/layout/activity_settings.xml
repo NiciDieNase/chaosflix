@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
 
@@ -5,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context="de.nicidienase.chaosflix.touch.about.AboutActivity">
+        tools:context="de.nicidienase.chaosflix.touch.settings.SettingsActivity">
 
         <include
             android:id="@+id/toolbar_inc"
@@ -14,8 +15,16 @@
         <FrameLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
 
+            <fragment
+                android:id="@+id/fragment"
+                android:name="de.nicidienase.chaosflix.touch.settings.SettingsFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </FrameLayout>
     </LinearLayout>
 
 </layout>
+

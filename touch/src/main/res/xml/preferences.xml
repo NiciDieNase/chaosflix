@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-</resources>
+    <CheckBoxPreference
+        android:key="allow_metered_networks"
+        android:defaultValue="false"
+        android:title="Allow downloads over metered networks"
+        android:summary="Enable downloads over mobile or payed networks"/>
+
+</PreferenceScreen>

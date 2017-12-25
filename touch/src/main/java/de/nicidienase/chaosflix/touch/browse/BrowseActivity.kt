@@ -27,6 +27,8 @@ import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListFragment
 import de.nicidienase.chaosflix.touch.browse.streaming.LivestreamListFragment
 import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
+import de.nicidienase.chaosflix.touch.settings.SettingsActivity
+import de.nicidienase.chaosflix.touch.settings.SettingsFragment
 
 class BrowseActivity : AppCompatActivity(),
 		ConferencesTabBrowseFragment.OnInteractionListener,
@@ -54,7 +56,7 @@ class BrowseActivity : AppCompatActivity(),
 				R.id.nav_about -> showAboutPage()
 				R.id.nav_streams -> showStreamsFragment()
 				R.id.nav_downloads -> showDownloadsFragment()
-				R.id.nav_preferences -> Snackbar.make(binding.drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
+				R.id.nav_preferences -> showSettingsPage()
 				else -> Snackbar.make(binding.drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
 			}
 			binding.drawerLayout.closeDrawers()
@@ -145,6 +147,11 @@ class BrowseActivity : AppCompatActivity(),
 	private fun showDownloadsFragment() {
 		val fragment = DownloadsListFragment.getInstance(numColumns)
 		showFragment(fragment, "downloads")
+	}
+
+	private fun showSettingsPage() {
+		val intent = Intent(this,SettingsActivity::class.java)
+		startActivity(intent)
 	}
 
 	private fun showAboutPage() {

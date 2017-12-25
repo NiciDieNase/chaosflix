@@ -3,14 +3,12 @@ package de.nicidienase.chaosflix.touch
 import android.app.DownloadManager
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.database.sqlite.SQLiteConstraintException
 import android.databinding.ObservableField
 import android.net.Uri
 import android.os.Environment
+import android.preference.PreferenceManager
 import android.util.Log
 import de.nicidienase.chaosflix.common.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.entities.download.OfflineEventDao
@@ -102,8 +100,14 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList()) {
 				request.setVisibleInDownloadsUi(true)
 
 				// TODO make configurable
-				request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
-				request.setAllowedOverMetered(false)
+				val sharedPref: SharedPreferences = PreferenceManager
+						.getDefaultSharedPreferences(ChaosflixApplication.APPLICATION_CONTEXT);
+				val allow_metered = sharedPref.getBoolean("allow_metered_networks", false)
+
+				if(!allow_metered){
+					request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
+					request.setAllowedOverMetered(false)
+				}
 
 				val downloadReference = downloadManager.enqueue(request)
 				Log.d(DetailsViewModel.TAG, "download started $downloadReference")
