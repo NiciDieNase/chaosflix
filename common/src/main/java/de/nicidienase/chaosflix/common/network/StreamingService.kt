@@ -8,5 +8,5 @@ import retrofit2.http.GET
 interface StreamingService {
 
     @GET("streams/v2.json")
-    fun getStreamingConferences(): Flowable<LiveConference>
+    fun getStreamingConferences(): Flowable<List<LiveConference>>
 }
