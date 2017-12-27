@@ -2,13 +2,11 @@ package de.nicidienase.chaosflix.common.entities.streaming
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 import kotlin.collections.HashMap
 
-/**
- * Created by felix on 23.03.17.
- */
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Stream(
         var slug: String,
         var display: String,

@@ -1,10 +1,11 @@
 package de.nicidienase.chaosflix.common.entities.streaming
 
 import android.arch.persistence.room.Entity
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 import java.util.ArrayList
 
-@Entity(tableName = "group")
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Group(
     var group: String,
     var rooms: MutableList<Room>){

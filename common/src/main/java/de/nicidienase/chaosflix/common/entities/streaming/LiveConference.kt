@@ -1,7 +1,9 @@
 package de.nicidienase.chaosflix.common.entities.streaming
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import kotlin.collections.ArrayList
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class LiveConference(
     var conference: String,
     var slug: String,
