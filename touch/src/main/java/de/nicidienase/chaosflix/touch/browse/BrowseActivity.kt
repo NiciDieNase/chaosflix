@@ -2,10 +2,12 @@ package de.nicidienase.chaosflix.touch.browse
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -15,16 +17,14 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.transition.TransitionInflater
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.entities.streaming.LiveConference
-import de.nicidienase.chaosflix.common.entities.streaming.Stream
 import de.nicidienase.chaosflix.common.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.databinding.ActivityBrowseBinding
+import de.nicidienase.chaosflix.touch.ChaosflixApplication
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.about.AboutActivity
 import de.nicidienase.chaosflix.touch.browse.download.DownloadsListFragment
@@ -35,7 +35,6 @@ import de.nicidienase.chaosflix.touch.browse.streaming.StreamingItem
 import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
 import de.nicidienase.chaosflix.touch.playback.PlayerActivity
 import de.nicidienase.chaosflix.touch.settings.SettingsActivity
-import de.nicidienase.chaosflix.touch.settings.SettingsFragment
 
 class BrowseActivity : AppCompatActivity(),
 		ConferencesTabBrowseFragment.OnInteractionListener,
@@ -131,29 +130,45 @@ class BrowseActivity : AppCompatActivity(),
 	}
 
 	override fun onStreamSelected(streamingItem: StreamingItem) {
-		val entries = HashMap<String,StreamUrl>()
-		streamingItem.room.streams.flatMap { stream ->
-			stream.urls.map { entry ->
-				entries.put(stream.slug + " " + entry.key, entry.value)
+		val entries = HashMap<String, StreamUrl>()
+
+		val sharedPref: SharedPreferences = PreferenceManager
+				.getDefaultSharedPreferences(ChaosflixApplication.APPLICATION_CONTEXT);
+		val autoSelectStream = sharedPref.getBoolean("auto_select_stream", false)
+
+		val dashStreams = streamingItem.room.streams.filter { it.slug == "dash-native" }
+		if (dashStreams.size > 0
+				&& autoSelectStream) {
+			playStream(streamingItem.conference.conference,
+					streamingItem.room.display,
+					dashStreams.first().urls["dash"]
+					)
+		} else {
+			streamingItem.room.streams.flatMap { stream ->
+				stream.urls.map { entry ->
+					entries.put(stream.slug + " " + entry.key, entry.value)
+				}
 			}
+
+			val builder = AlertDialog.Builder(this)
+			val strings = entries.keys.sorted().toTypedArray()
+			builder.setTitle("Select Stream")
+					.setItems(strings, DialogInterface.OnClickListener { dialogInterface, i ->
+						Toast.makeText(this, strings[i], Toast.LENGTH_LONG).show()
+
+						playStream(
+								streamingItem.conference.conference,
+								streamingItem.room.display,
+								entries[strings[i]])
+					})
+			builder.create().show()
 		}
+	}
 
-		val builder = AlertDialog.Builder(this)
-		val strings = entries.keys.sorted().toTypedArray()
-		builder.setTitle("Select Stream")
-				.setItems(strings, DialogInterface.OnClickListener {
-					dialogInterface, i ->
-					Toast.makeText(this,strings[i],Toast.LENGTH_LONG).show()
-					val streamUrl = entries[strings[i]]
-
-					val conference = streamingItem.conference.conference
-					val room = streamingItem.room.display
-
-					if(streamUrl != null){
-						PlayerActivity.launch(this,conference,room, streamUrl)
-					}
-				})
-		builder.create().show()
+	private fun playStream(conference: String, room: String, streamUrl: StreamUrl?) {
+		if (streamUrl != null) {
+			PlayerActivity.launch(this, conference, room, streamUrl)
+		}
 	}
 
 	private fun showConferencesFragment() {
@@ -181,7 +196,7 @@ class BrowseActivity : AppCompatActivity(),
 	}
 
 	private fun showSettingsPage() {
-		val intent = Intent(this,SettingsActivity::class.java)
+		val intent = Intent(this, SettingsActivity::class.java)
 		startActivity(intent)
 	}
 

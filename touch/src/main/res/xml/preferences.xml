@@ -7,4 +7,10 @@
         android:title="Allow downloads over metered networks"
         android:summary="Enable downloads over mobile or payed networks"/>
 
+    <CheckBoxPreference
+        android:key="auto_select_stream"
+        android:defaultValue="false"
+        android:title="Automatically chose stream"
+        android:summary="Don't show stream-selection dialog, just use DASH"/>
+
 </PreferenceScreen>
