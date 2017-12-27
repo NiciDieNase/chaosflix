@@ -1,10 +1,12 @@
 package de.nicidienase.chaosflix.touch
 
+import android.util.Log
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.network.RecordingService
 import de.nicidienase.chaosflix.common.network.StreamingService
+import io.reactivex.plugins.RxJavaPlugins
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -45,5 +47,8 @@ object ApiFactory {
                 .build()
         streamingApi = retrofigStreaming.create(StreamingService::class.java)
 
+        RxJavaPlugins.setErrorHandler { t ->
+            Log.d("ApiFactory", t.message,t)
+        }
     }
 }

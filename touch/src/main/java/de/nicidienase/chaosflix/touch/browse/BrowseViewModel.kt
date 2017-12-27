@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
+import android.util.Log
 import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.entities.streaming.LiveConference
@@ -54,10 +55,16 @@ class BrowseViewModel(
 	fun getInProgressEvents()
 			= database.eventDao().findInProgressEvents()
 
+	private val TAG = BrowseViewModel::class.simpleName
+
 	fun getLivestreams(): LiveData<List<LiveConference>> {
 		val result = MutableLiveData<List<LiveConference>>()
 		streamingApi.getStreamingConferences()
 				.subscribeOn(Schedulers.io())
+				.doOnError { t ->
+					Log.d(TAG,t.message,t)
+					result.postValue(emptyList())
+				}
 				.subscribe {
 					result.postValue(it)
 				}

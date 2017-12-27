@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,18 +62,23 @@ class LivestreamListFragment : BrowseFragment() {
 		updateList()
 	}
 
+	private val TAG = LivestreamListFragment::class.simpleName
+
 	private fun updateList() {
-		binding.swipeRefreshLayout.postDelayed( Runnable {
-			binding.swipeRefreshLayout.isRefreshing = true
-		}, 100)
+//		binding.swipeRefreshLayout.postDelayed( Runnable {
+//			binding.swipeRefreshLayout.isRefreshing = true
+//		}, 500)
+		binding.swipeRefreshLayout.isRefreshing = true
+		Log.d(TAG,"Refresh starting")
 		viewModel.getLivestreams().observe(this, Observer {
 			it?.let { adapter.setContent(it) }
 			binding.swipeRefreshLayout.isRefreshing = false
-			if(it?.size == 0){
+			if(it?.size == 0 && !snackbar.isShown){
 				snackbar.show()
 			} else {
 				snackbar.dismiss()
 			}
+			Log.d(TAG, "Refresh done")
 		})
 	}
 
