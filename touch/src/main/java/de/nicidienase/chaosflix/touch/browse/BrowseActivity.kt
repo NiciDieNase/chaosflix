@@ -26,6 +26,7 @@ import de.nicidienase.chaosflix.common.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.databinding.ActivityBrowseBinding
 import de.nicidienase.chaosflix.touch.ChaosflixApplication
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
+import de.nicidienase.chaosflix.touch.PreferencesManager
 import de.nicidienase.chaosflix.touch.about.AboutActivity
 import de.nicidienase.chaosflix.touch.browse.download.DownloadsListFragment
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity
@@ -132,13 +133,9 @@ class BrowseActivity : AppCompatActivity(),
 	override fun onStreamSelected(streamingItem: StreamingItem) {
 		val entries = HashMap<String, StreamUrl>()
 
-		val sharedPref: SharedPreferences = PreferenceManager
-				.getDefaultSharedPreferences(ChaosflixApplication.APPLICATION_CONTEXT);
-		val autoSelectStream = sharedPref.getBoolean("auto_select_stream", false)
-
 		val dashStreams = streamingItem.room.streams.filter { it.slug == "dash-native" }
 		if (dashStreams.size > 0
-				&& autoSelectStream) {
+				&& PreferencesManager.getAutoselectStream()) {
 			playStream(streamingItem.conference.conference,
 					streamingItem.room.display,
 					dashStreams.first().urls["dash"]

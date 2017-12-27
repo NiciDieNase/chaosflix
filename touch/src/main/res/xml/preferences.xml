@@ -11,6 +11,12 @@
         android:key="auto_select_stream"
         android:defaultValue="false"
         android:title="Automatically chose stream"
-        android:summary="Don't show stream-selection dialog, just use DASH"/>
+        android:summary="Don't show selection dialog, just use DASH"/>
+
+    <CheckBoxPreference
+        android:key="auto_select_recording"
+        android:defaultValue="false"
+        android:title="Automatically chose recording"
+        android:summary="Don't show selection dialog, just use HD-mp4"/>
 
 </PreferenceScreen>
