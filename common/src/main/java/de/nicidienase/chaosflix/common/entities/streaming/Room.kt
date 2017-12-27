@@ -1,6 +1,5 @@
 package de.nicidienase.chaosflix.common.entities.streaming
 
-import android.arch.persistence.room.Entity
 import android.os.Parcel
 import android.os.Parcelable
 
@@ -11,16 +10,16 @@ import java.util.ArrayList
  */
 
 data class Room (var slug: String,
-    var shedulename: String,
-    var thumb: String,
-    var link: String,
-    var display: String,
-    internal var streams: MutableList<Stream>): Parcelable{
+                 var schedulename: String,
+                 var thumb: String,
+                 var link: String,
+                 var display: String,
+                 var streams: MutableList<Stream>): Parcelable{
 
 
     protected constructor(`in`: Parcel) : this(
         slug = `in`.readString(),
-        shedulename = `in`.readString(),
+        schedulename = `in`.readString(),
         thumb = `in`.readString(),
         link = `in`.readString(),
         display = `in`.readString(),
@@ -32,7 +31,7 @@ data class Room (var slug: String,
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
         dest.writeString(slug)
-        dest.writeString(shedulename)
+        dest.writeString(schedulename)
         dest.writeString(thumb)
         dest.writeString(link)
         dest.writeString(display)

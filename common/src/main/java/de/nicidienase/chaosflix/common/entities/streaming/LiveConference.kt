@@ -1,10 +1,6 @@
 package de.nicidienase.chaosflix.common.entities.streaming
 
-import java.util.ArrayList
-
-/**
- * Created by felix on 23.03.17.
- */
+import kotlin.collections.ArrayList
 
 class LiveConference(
     var conference: String,
@@ -23,6 +19,7 @@ class LiveConference(
         val dummyObject: LiveConference
             get() {
                 val dummyCon = LiveConference("DummyCon", "Conference McConferenceface")
+                dummyCon.groups = ArrayList()
                 dummyCon.groups.add(Group.dummyObject)
                 dummyCon.slug = "duco"
                 dummyCon.author = ""

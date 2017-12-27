@@ -23,16 +23,13 @@ data class StreamUrl(var display: String,
         dest.writeString(url)
     }
 
-    companion object {
+    companion object CREATOR : Parcelable.Creator<StreamUrl> {
+        override fun createFromParcel(parcel: Parcel): StreamUrl {
+            return StreamUrl(parcel)
+        }
 
-        val CREATOR: Parcelable.Creator<StreamUrl> = object : Parcelable.Creator<StreamUrl> {
-            override fun createFromParcel(`in`: Parcel): StreamUrl {
-                return StreamUrl(`in`)
-            }
-
-            override fun newArray(size: Int): Array<StreamUrl?> {
-                return arrayOfNulls(size)
-            }
+        override fun newArray(size: Int): Array<StreamUrl?> {
+            return arrayOfNulls(size)
         }
 
         fun getDummyObject(codec: String): StreamUrl {

@@ -14,7 +14,7 @@ data class Stream(
         var display: String,
         var type: String,
         var isTranslated: Boolean = false,
-        var videoSize: IntArray,
+        var videoSize: IntArray?,
         var urls: MutableMap<String, StreamUrl>
 
 ) : Parcelable {
@@ -51,18 +51,16 @@ data class Stream(
         }
     }
 
-    companion object {
-        private val MAP_KEY = "map-key"
-
-        val CREATOR: Parcelable.Creator<Stream> = object : Parcelable.Creator<Stream> {
-            override fun createFromParcel(`in`: Parcel): Stream {
-                return Stream(`in`)
-            }
-
-            override fun newArray(size: Int): Array<Stream?> {
-                return arrayOfNulls(size)
-            }
+     companion object CREATOR : Parcelable.Creator<Stream> {
+        override fun createFromParcel(parcel: Parcel): Stream {
+            return Stream(parcel)
         }
+
+        override fun newArray(size: Int): Array<Stream?> {
+            return arrayOfNulls(size)
+        }
+
+        private val MAP_KEY = "map-key"
 
         val dummyObject: Stream
             get() {

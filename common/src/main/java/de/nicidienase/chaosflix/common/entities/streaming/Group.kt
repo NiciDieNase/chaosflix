@@ -7,7 +7,7 @@ import java.util.ArrayList
 @Entity(tableName = "group")
 data class Group(
     var group: String,
-    internal var rooms: MutableList<Room>){
+    var rooms: MutableList<Room>){
 
 
     companion object {
