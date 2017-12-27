@@ -30,8 +30,8 @@ open class EventRecyclerViewAdapter(val listener: OnEventSelectedListener) :
 	override fun onBindViewHolder(holder: ItemRecyclerViewAdapter<PersistentEvent>.ViewHolder, position: Int) {
 		val event = items[position]
 
-		holder.mTitleText.text = event.title
-		holder.mSubtitle.text = event.subtitle
+		holder.titleText.text = event.title
+		holder.subtitle.text = event.subtitle
 		if (showTags) {
 			val tagString = StringBuilder()
 			for (tag in event.tags!!) {
@@ -40,21 +40,21 @@ open class EventRecyclerViewAdapter(val listener: OnEventSelectedListener) :
 				}
 				tagString.append(tag)
 			}
-			holder.mTag.text = tagString
+			holder.tag.text = tagString
 		}
-		Picasso.with(holder.mIcon.context)
+		Picasso.with(holder.icon.context)
 				.load(event.thumbUrl)
 				.noFade()
 				.fit()
 				.centerInside()
-				.into(holder.mIcon)
+				.into(holder.icon)
 
-		val resources = holder.mTitleText.context.getResources()
-		ViewCompat.setTransitionName(holder.mTitleText,
+		val resources = holder.titleText.context.getResources()
+		ViewCompat.setTransitionName(holder.titleText,
 				resources.getString(R.string.title) + event.eventId)
-		ViewCompat.setTransitionName(holder.mSubtitle,
+		ViewCompat.setTransitionName(holder.subtitle,
 				resources.getString(R.string.subtitle) + event.eventId)
-		ViewCompat.setTransitionName(holder.mIcon,
+		ViewCompat.setTransitionName(holder.icon,
 				resources.getString(R.string.thumbnail) + event.eventId)
 
 		holder.mView.setOnClickListener({ _: View -> listener.onEventSelected(items[position]) })

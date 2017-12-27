@@ -19,13 +19,13 @@ class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseF
 	}
 
 	override fun onBindViewHolder(holder: ItemRecyclerViewAdapter<PersistentConference>.ViewHolder, position: Int) {
-		holder.mTitleText.setText(items[position].title)
-		holder.mSubtitle.setText(items[position].acronym)
-		Picasso.with(holder.mIcon.context)
+		holder.titleText.setText(items[position].title)
+		holder.subtitle.setText(items[position].acronym)
+		Picasso.with(holder.icon.context)
 				.load(items[position].logoUrl)
 				.fit()
 				.centerInside()
-				.into(holder.mIcon)
+				.into(holder.icon)
 
 		holder.mView.setOnClickListener { _ ->
 			mListener?.onConferenceSelected((items[position]).conferenceId)

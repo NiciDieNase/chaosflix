@@ -1,13 +1,15 @@
 package de.nicidienase.chaosflix.touch.browse.streaming
 
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
+import android.support.design.widget.Snackbar
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.common.entities.streaming.LiveConference
-import de.nicidienase.chaosflix.common.entities.streaming.Stream
 import de.nicidienase.chaosflix.databinding.FragmentLivestreamsBinding
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment
 
@@ -15,11 +17,23 @@ class LivestreamListFragment : BrowseFragment() {
 
 	private lateinit var listener: InteractionListener
 	private lateinit var binding: FragmentLivestreamsBinding
+	lateinit var adapter: LivestreamAdapter
+	lateinit var snackbar: Snackbar
+
+	private var columnCount = 1
+
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		if (arguments != null) {
+			columnCount = arguments!!.getInt(ARG_COLUMN_COUNT)
+		}
+	}
 
 	override fun onAttach(context: Context?) {
 		super.onAttach(context)
 		if (context is InteractionListener) {
 			listener = context
+			adapter = LivestreamAdapter(listener)
 		} else {
 			throw RuntimeException(context.toString() + " must implement LivestreamListFragment.InteractionListener")
 		}
@@ -28,16 +42,54 @@ class LivestreamListFragment : BrowseFragment() {
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		binding = FragmentLivestreamsBinding.inflate(inflater, container, false)
 		setupToolbar(binding.incToolbar?.toolbar!!, R.string.livestreams)
-		overlay = binding.incOverlay?.loadingOverlay
+		if (columnCount <= 1) {
+			binding.list.layoutManager = LinearLayoutManager(context)
+		} else {
+			binding.list.layoutManager = GridLayoutManager(context, columnCount)
+		}
+		binding.list.adapter = adapter
+		binding.swipeRefreshLayout.setOnRefreshListener {
+			updateList()
+		}
+		snackbar = Snackbar.make(binding.root,R.string.no_livestreams,Snackbar.LENGTH_INDEFINITE)
+				.setAction(R.string.reload, View.OnClickListener { this.updateList() })
 		return binding.root
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		setLoadingOverlayVisibility(false)
+		updateList()
+	}
+
+	private fun updateList() {
+		binding.swipeRefreshLayout.postDelayed( Runnable {
+			binding.swipeRefreshLayout.isRefreshing = true
+		}, 100)
+		viewModel.getLivestreams().observe(this, Observer {
+			it?.let { adapter.setContent(it) }
+			binding.swipeRefreshLayout.isRefreshing = false
+			if(it?.size == 0){
+				snackbar.show()
+			} else {
+				snackbar.dismiss()
+			}
+		})
 	}
 
 	interface InteractionListener {
-		fun onStreamSelected(conference: LiveConference, stream: Stream)
+		fun onStreamSelected(streamingItem: StreamingItem)
+	}
+
+	companion object {
+		private val ARG_COLUMN_COUNT = "column-count"
+
+		fun newInstance(columnCount: Int): LivestreamListFragment {
+			val fragment = LivestreamListFragment()
+			val args = Bundle()
+			args.putInt(ARG_COLUMN_COUNT, columnCount)
+			fragment.arguments = args
+			return fragment
+		}
+
 	}
 }

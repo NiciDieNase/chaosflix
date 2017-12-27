@@ -1,17 +1,18 @@
 package de.nicidienase.chaosflix.touch.browse
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.entities.download.OfflineEvent
+import de.nicidienase.chaosflix.common.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.common.network.RecordingService
 import de.nicidienase.chaosflix.common.network.StreamingService
 import de.nicidienase.chaosflix.touch.OfflineItemManager
 import de.nicidienase.chaosflix.touch.sync.Downloader
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
-import java.io.File
 
 class BrowseViewModel(
 		val database: ChaosflixDatabase,
@@ -53,8 +54,15 @@ class BrowseViewModel(
 	fun getInProgressEvents()
 			= database.eventDao().findInProgressEvents()
 
-	fun getLivestreams()
-			= streamingApi.getStreamingConferences()
+	fun getLivestreams(): LiveData<List<LiveConference>> {
+		val result = MutableLiveData<List<LiveConference>>()
+		streamingApi.getStreamingConferences()
+				.subscribeOn(Schedulers.io())
+				.subscribe {
+					result.postValue(it)
+				}
+		return result
+	}
 
 	fun getOfflineEvents(): LiveData<List<OfflineEvent>> = database.offlineEventDao().getAll()
 
@@ -74,3 +82,4 @@ class BrowseViewModel(
 		}.subscribeOn(Schedulers.io()).subscribe()
 	}
 }
+

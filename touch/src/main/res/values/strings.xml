@@ -42,4 +42,6 @@
 	that there was an app for Apple-TV but not Android- and Fire-TV. So now, after the
 	TV-app there is also one for (android) phones and tablets. Enjoy!</string>
     <string name="settings">Settings</string>
+    <string name="reload">Reload</string>
+	<string name="no_livestreams">Currently no livestreams</string>
 </resources>

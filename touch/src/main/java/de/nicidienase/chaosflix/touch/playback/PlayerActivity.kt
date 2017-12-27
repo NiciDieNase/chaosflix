@@ -11,6 +11,8 @@ import de.nicidienase.chaosflix.common.entities.recording.persistence.Persistent
 import de.nicidienase.chaosflix.common.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.common.entities.streaming.Room
 import de.nicidienase.chaosflix.common.entities.streaming.Stream
+import de.nicidienase.chaosflix.common.entities.streaming.StreamUrl
+import de.nicidienase.chaosflix.touch.browse.streaming.StreamingItem
 
 class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInteractionListener {
 
@@ -18,13 +20,13 @@ class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInter
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_player)
 
-		if (savedInstanceState == null) {
+		if (savedInstanceState == null && intent.extras != null) {
 			val contentType = intent.getStringExtra(CONTENT_TYPE)
 			var playbackItem = PlaybackItem("Empty", "Empty", 0, "")
 			if (contentType.equals(CONTENT_RECORDING)) {
-				val event = intent.extras?.getParcelable<PersistentEvent>(EVENT_KEY)
-				val recording = intent.extras?.getParcelable<PersistentRecording>(RECORDING_KEY)
-				val recordingUri = intent.extras?.getString(OFFLINE_URI)
+				val event = intent.extras.getParcelable<PersistentEvent>(EVENT_KEY)
+				val recording = intent.extras.getParcelable<PersistentRecording>(RECORDING_KEY)
+				val recordingUri = intent.extras.getString(OFFLINE_URI)
 				playbackItem = PlaybackItem(
 						event?.title ?: "",
 						event?.subtitle ?: "",
@@ -32,6 +34,10 @@ class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInter
 						recordingUri ?: recording?.recordingUrl ?: "")
 			} else if (contentType.equals(CONTENT_STREAM)) {
 				// TODO implement Player for Stream
+				val conference = intent.extras.getString(CONFERENCE,"")
+				val room = intent.extras.getString(ROOM,"")
+				val stream = intent.extras.getString(STREAM, "")
+				playbackItem = PlaybackItem(conference,room,0, stream)
 			}
 
 			val ft = supportFragmentManager.beginTransaction()
@@ -78,13 +84,12 @@ class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInter
 			context.startActivity(i)
 		}
 
-		fun launch(context: Context, conference: LiveConference, room: Room, stream: Stream) {
+		fun launch(context: Context, conference: String, room: String, stream: StreamUrl) {
 			val i = Intent(context, PlayerActivity::class.java)
 			i.putExtra(CONTENT_TYPE, CONTENT_STREAM)
-			i.putExtra(CONTENT_TYPE, CONTENT_STREAM)
-			i.putExtra(CONFERENCE, conference.conference)
+			i.putExtra(CONFERENCE, conference)
 			i.putExtra(ROOM, room)
-			i.putExtra(STREAM, stream)
+			i.putExtra(STREAM, stream.url)
 			context.startActivity(i)
 		}
 	}
