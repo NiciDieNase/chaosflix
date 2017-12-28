@@ -61,13 +61,12 @@ class BrowseViewModel(
 		val result = MutableLiveData<List<LiveConference>>()
 		streamingApi.getStreamingConferences()
 				.subscribeOn(Schedulers.io())
-				.doOnError { t ->
-					Log.d(TAG,t.message,t)
-					result.postValue(emptyList())
-				}
-				.subscribe {
+				.subscribe({
 					result.postValue(it)
-				}
+				}, { t ->
+					Log.d(TAG, t.message, t)
+					result.postValue(emptyList())
+				})
 		return result
 	}
 

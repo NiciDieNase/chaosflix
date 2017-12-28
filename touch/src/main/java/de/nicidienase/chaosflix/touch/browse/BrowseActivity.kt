@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.touch.browse
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
@@ -235,5 +236,11 @@ class BrowseActivity : AppCompatActivity(),
 
 	override fun onEventSelected(event: PersistentEvent) {
 		EventDetailsActivity.launch(this, event.eventId)
+	}
+
+	companion object {
+		fun launch(context: Context){
+			context.startActivity(Intent(context,BrowseActivity::class.java))
+		}
 	}
 }

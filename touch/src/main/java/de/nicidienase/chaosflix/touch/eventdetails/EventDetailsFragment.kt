@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.touch.eventdetails
 
+import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -34,6 +35,7 @@ class EventDetailsFragment : Fragment() {
 	private lateinit var event: PersistentEvent
 	private var watchlistItem: WatchlistItem? = null
 	private var eventSelectedListener: OnEventSelectedListener? = null
+	private var selectDialog: AlertDialog? = null
 
 	private lateinit var viewModel: DetailsViewModel
 	private lateinit var relatedEventsAdapter: EventRecyclerViewAdapter
@@ -144,16 +146,7 @@ class EventDetailsFragment : Fragment() {
 									.observe(this, Observer { persistentRecordings ->
 										if (persistentRecordings != null) {
 											Log.d(TAG, "Playing network file")
-											var stream: PersistentRecording
-											if (PreferencesManager.getAutoselectStream()) {
-												stream = Util.getOptimalStream(persistentRecordings)
-												listener?.playItem(event, stream)
-											} else {
-												val items: List<String> = persistentRecordings.map { getStringForRecording(it) }
-												selectRecording(items, DialogInterface.OnClickListener { dialogInterface, i ->
-													listener?.playItem(event, persistentRecordings[i])
-												})
-											}
+											selectRecording(persistentRecordings,{ recording -> listener?.playItem(event, recording) })
 										}
 									})
 						}
@@ -163,15 +156,31 @@ class EventDetailsFragment : Fragment() {
 		}
 	}
 
-	private fun getStringForRecording(recording: PersistentRecording): String {
-		return "${if(recording.isHighQuality) "HD" else "SD"}-${recording.language} [${recording.mimeType}]"
+	private fun selectRecording(persistentRecordings: List<PersistentRecording>, action: (recording: PersistentRecording)-> Unit) {
+		var stream = Util.getOptimalStream(persistentRecordings)
+		if (stream != null && PreferencesManager.getAutoselectStream()) {
+			action.invoke(stream)
+		} else {
+			val items: List<String> = persistentRecordings.map { getStringForRecording(it) }
+			selectRecordingFromList(items, DialogInterface.OnClickListener { dialogInterface, i ->
+				action.invoke(persistentRecordings[i])
+			})
+		}
 	}
 
-	private fun selectRecording(items: List<String>, resultHandler: DialogInterface.OnClickListener) {
+	private fun getStringForRecording(recording: PersistentRecording): String {
+		return "${recording.folder}  [${recording.language}]"
+	}
+
+	private fun selectRecordingFromList(items: List<String>, resultHandler: DialogInterface.OnClickListener) {
 		this.context?.let { context ->
+			if(selectDialog != null){
+				selectDialog?.dismiss()
+			}
 			val builder = AlertDialog.Builder(context)
 			builder.setItems(items.toTypedArray(), resultHandler)
-			builder.create().show()
+			selectDialog = builder.create()
+			selectDialog?.show()
 		}
 	}
 
@@ -245,19 +254,10 @@ class EventDetailsFragment : Fragment() {
 				return true
 			}
 			R.id.action_download -> {
-				viewModel.getRecordingForEvent(eventId).observe(this, Observer {
-					if(PreferencesManager.getAutoselectRecording()){
-						val recording = Util.getOptimalStream(it!!)
-						downloadRecording(recording)
-					} else {
-						it?.let { list ->
-							selectRecording(list.map { getStringForRecording(it) },
-									DialogInterface.OnClickListener { _, i ->
-										downloadRecording(list[i])
-									})
-						}
+				viewModel.getRecordingForEvent(eventId).observe(this, Observer { recordings ->
+					if(recordings != null){
+						selectRecording(recordings,{recording -> downloadRecording(recording) })
 					}
-
 				})
 				return true
 			}
@@ -281,7 +281,6 @@ class EventDetailsFragment : Fragment() {
 			}
 		})
 	}
-
 
 	interface OnEventDetailsFragmentInteractionListener {
 		fun onToolbarStateChange()
