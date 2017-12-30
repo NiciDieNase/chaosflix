@@ -33,4 +33,8 @@ interface EventDao{
 
     @Query("SELECT * FROM event INNER JOIN playback_progress WHERE event.eventId = playback_progress.event_id")
     fun findInProgressEvents(): LiveData<List<PersistentEvent>>
+
+    @Query("SELECT * FROM event WHERE frontendLink = :url ")
+    fun findEventsByFrontendurl(url: String):LiveData<PersistentEvent>
+
 }

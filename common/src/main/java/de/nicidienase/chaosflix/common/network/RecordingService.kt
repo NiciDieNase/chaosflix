@@ -19,6 +19,9 @@ interface RecordingService {
     @GET("public/conferences/{id}")
     fun getConference(@Path("id") id: Long): Single<Conference>
 
+    @GET("public/conferences/{name}")
+    fun getConferenceByname(@Path("name") name: String): Single<Conference>
+
     @GET("public/events/{id}")
     fun getEvent(@Path("id") id: Long): Single<Event>
 
