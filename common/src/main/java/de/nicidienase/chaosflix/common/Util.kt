@@ -5,16 +5,15 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 object Util {
-    fun getOptimalStream(recordings: List<PersistentRecording>): PersistentRecording {
+    fun getOptimalStream(recordings: List<PersistentRecording>): PersistentRecording? {
         val result = ArrayList<PersistentRecording>()
 
         result.addAll(recordings.filter { it.isHighQuality && it.mimeType == "video/mp4" }.sortedBy { it.language.length })
         result.addAll(recordings.filter { !it.isHighQuality && it.mimeType == "video/mp4" }.sortedBy { it.language.length })
-        result.addAll(recordings.filter { it.mimeType.startsWith("video/") }.sortedBy { it.language.length })
 
         when {
             result.size > 0 -> return result[0]
-            else -> return recordings.get(0)
+            else -> return null
         }
     }
 
