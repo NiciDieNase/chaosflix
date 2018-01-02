@@ -1,7 +1,6 @@
 package de.nicidienase.chaosflix.touch.eventdetails
 
 import android.Manifest
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
@@ -16,8 +15,6 @@ import de.nicidienase.chaosflix.common.entities.recording.persistence.Persistent
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.ViewModelFactory
 import de.nicidienase.chaosflix.touch.playback.PlayerActivity
-import de.nicidienase.chaosflix.touch.resolver.BrowseFilter
-import java.net.URI
 
 class EventDetailsActivity : AppCompatActivity(),
 		EventDetailsFragment.OnEventDetailsFragmentInteractionListener,
@@ -106,7 +103,7 @@ class EventDetailsActivity : AppCompatActivity(),
 			context.startActivity(intent)
 		}
 
-		fun launch(context: BrowseFilter, eventId: Uri) {
+		fun launch(context: Context, eventId: Uri) {
 			val intent = Intent(context, EventDetailsActivity::class.java)
 			intent.putExtra(EXTRA_URI, eventId)
 			context.startActivity(intent)

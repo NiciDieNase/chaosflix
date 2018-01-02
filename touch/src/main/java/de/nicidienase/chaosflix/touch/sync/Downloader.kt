@@ -54,6 +54,7 @@ class Downloader(val recordingApi: RecordingService,
 				.subscribeOn(Schedulers.io())
 				.observeOn(Schedulers.io())
 				.subscribe({ conference: Conference? ->
+					database.eventDao().deleteEventsForConference(conferenceId)
 					saveEvents(conference, listener)
 					updateFinished.postValue(true)
 				}, { t: Throwable? ->
