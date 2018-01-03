@@ -13,8 +13,14 @@ interface EventDao{
     @Update
     fun updateEvent(vararg events: PersistentEvent)
 
+    @Delete
+    fun deleteEvent(vararg event: PersistentEvent)
+
     @Query("SELECT * FROM event")
-    fun getAllEvents(): LiveData<PersistentEvent>
+    fun getAllEvents(): LiveData<List<PersistentEvent>>
+
+    @Query("SELECT * FROM event")
+    fun getAllEventsSync(): List<PersistentEvent>
 
     @Query("SELECT * FROM event WHERE title LIKE :search ORDER BY title ASC")
     fun findEventByTitle(search: String): LiveData<PersistentEvent>
@@ -27,6 +33,9 @@ interface EventDao{
 
     @Query("SELECT * FROM event WHERE conferenceId = :id ORDER BY title ASC")
     fun findEventsByConference(id: Long):LiveData<List<PersistentEvent>>
+
+    @Query("SELECT * FROM event WHERE conferenceId = :id ORDER BY title ASC")
+    fun findEventsByConferenceSync(id: Long):List<PersistentEvent>
 
     @Query("SELECT * FROM event INNER JOIN watchlist_item WHERE event.eventId = watchlist_item.event_id")
     fun findBookmarkedEvents(): LiveData<List<PersistentEvent>>
