@@ -1,9 +1,6 @@
 package de.nicidienase.chaosflix.common.entities.recording.persistence
 
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.ForeignKey
-import android.arch.persistence.room.Ignore
-import android.arch.persistence.room.PrimaryKey
+import android.arch.persistence.room.*
 import android.os.Parcel
 import android.os.Parcelable
 import de.nicidienase.chaosflix.common.entities.recording.Recording
@@ -12,7 +9,8 @@ import de.nicidienase.chaosflix.common.entities.recording.Recording
         foreignKeys = arrayOf(ForeignKey(
             entity = PersistentEvent::class,
             parentColumns = (arrayOf("eventId")),
-            childColumns = arrayOf("eventId"))))
+            childColumns = arrayOf("eventId"))),
+        indices = arrayOf(Index("eventId")))
 data class PersistentRecording(
         @PrimaryKey
         var recordingId: Long,

@@ -12,7 +12,8 @@ import java.util.*
         foreignKeys = arrayOf(ForeignKey(
                 entity = PersistentConference::class,
                 parentColumns = (arrayOf("conferenceId")),
-                childColumns = arrayOf("conferenceId"))))
+                childColumns = arrayOf("conferenceId"))),
+        indices = arrayOf(Index("eventId"), Index("frontendLink"),Index("conferenceId")))
 
 data class PersistentEvent(@PrimaryKey(autoGenerate = false)
                            var eventId: Long = 0,
