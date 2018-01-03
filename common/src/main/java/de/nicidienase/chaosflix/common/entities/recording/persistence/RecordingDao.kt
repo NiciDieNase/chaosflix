@@ -19,4 +19,7 @@ interface RecordingDao{
 
     @Query("SELECT * FROM recording WHERE eventId = :id")
     fun findRecordingByEvent(id: Long): LiveData<List<PersistentRecording>>
+
+    @Query("DELETE FROM recording WHERE eventId = :eventId")
+    fun deleteRecordingsForEvent(eventId: Long)
 }

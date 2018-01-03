@@ -37,4 +37,6 @@ interface EventDao{
     @Query("SELECT * FROM event WHERE frontendLink = :url ")
     fun findEventsByFrontendurl(url: String):LiveData<PersistentEvent>
 
+    @Query("DELETE FROM event WHERE conferenceId = :conferenceId")
+    fun deleteEventsForConference(conferenceId: Long)
 }

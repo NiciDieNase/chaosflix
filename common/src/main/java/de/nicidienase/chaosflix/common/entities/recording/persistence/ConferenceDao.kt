@@ -1,10 +1,7 @@
 package de.nicidienase.chaosflix.common.entities.recording.persistence
 
 import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 
 @Dao
 interface ConferenceDao{
@@ -22,4 +19,7 @@ interface ConferenceDao{
 
     @Query("SELECT * FROM conference WHERE conferenceGroupId = :id ORDER BY acronym DESC")
     fun findConferenceByGroup(id: Long): LiveData<List<PersistentConference>>
+
+    @Delete
+    fun deleteConference(vararg conference: PersistentConference)
 }
