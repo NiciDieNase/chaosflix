@@ -7,4 +7,9 @@
         android:title="Allow downloads over metered networks"
         android:summary="Enable downloads over mobile or payed networks"/>
 
+    <Preference
+        android:id="@+id/download_folder"
+        android:key="download_folder"
+        android:title="Download folder"
+        android:focusable="false" />
 </PreferenceScreen>

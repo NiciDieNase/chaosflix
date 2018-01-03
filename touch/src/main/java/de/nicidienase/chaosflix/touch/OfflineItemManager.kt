@@ -94,9 +94,12 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList()) {
 
 				val request = DownloadManager.Request(Uri.parse(recording.recordingUrl))
 				request.setTitle(event.title)
-				request.setDestinationInExternalPublicDir(
-						Environment.DIRECTORY_MOVIES, DOWNLOAD_DIR + recording.filename)
-				request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+
+                request.setDestinationUri(
+                        Uri.withAppendedPath(Uri.fromFile(
+                                File(getDownloadDir())), recording.filename))
+
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
 				request.setVisibleInDownloadsUi(true)
 
 				val sharedPref: SharedPreferences = PreferenceManager
@@ -177,8 +180,18 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList()) {
 		}
 	}
 
+	private fun getMovieDir(): String {
+		val sharedPref: SharedPreferences = PreferenceManager
+				.getDefaultSharedPreferences(ChaosflixApplication.APPLICATION_CONTEXT);
+		var dir = sharedPref.getString("download_folder", null)
+		if (dir == null) {
+			dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).path
+		}
+		return dir
+	}
+
 	private fun getDownloadDir(): String {
-		return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).path + DOWNLOAD_DIR;
+		return getMovieDir() + DOWNLOAD_DIR;
 	}
 
 	companion object {

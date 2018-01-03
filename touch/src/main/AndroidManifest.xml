@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".touch.ChaosflixApplication"
@@ -15,7 +16,8 @@
         android:icon="@drawable/icon_notext"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:theme">
         <activity
             android:name=".touch.SplashActivity"
             android:label="@string/app_name"
@@ -52,6 +54,8 @@
         <activity
             android:name=".touch.settings.SettingsActivity"
             android:parentActivityName=".touch.browse.BrowseActivity"/>
+
+        <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
 
         <service
             android:name=".touch.sync.DownloadJobService"
