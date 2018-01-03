@@ -141,7 +141,7 @@ class EventDetailsFragment : Fragment() {
 									.observe(this, Observer { persistentRecordings ->
 										if (persistentRecordings != null) {
 											Log.d(TAG, "Playing network file")
-											listener!!.playItem(event, Util.getOptimalStream(persistentRecordings))
+											listener!!.playItem(event, Util.getOptimalStream(persistentRecordings)!!)
 										}
 									})
 						}
@@ -222,7 +222,7 @@ class EventDetailsFragment : Fragment() {
 			}
 			R.id.action_download -> {
 				viewModel.getRecordingForEvent(eventId).observe(this, Observer {
-					viewModel.download(event, Util.getOptimalStream(it!!)).observe(this, Observer {
+					viewModel.download(event, Util.getOptimalStream(it!!)!!).observe(this, Observer {
 						if (it != null) {
 							val message = if (it) "Download started" else "Error starting download"
 							Snackbar.make(view!!, message, Snackbar.LENGTH_LONG).show()
