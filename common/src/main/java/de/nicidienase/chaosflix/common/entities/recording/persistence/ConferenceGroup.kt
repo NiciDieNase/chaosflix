@@ -1,9 +1,6 @@
 package de.nicidienase.chaosflix.common.entities.recording.persistence
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.Index
-import android.arch.persistence.room.PrimaryKey
+import android.arch.persistence.room.*
 import android.os.Parcel
 import android.os.Parcelable
 
@@ -16,6 +13,7 @@ data class ConferenceGroup(
     @ColumnInfo(name = "order_index")
     var index: Int = 1_000_000
 
+    @Ignore
     constructor(parcel: Parcel) : this(parcel.readString()) {
         conferenceGroupId = parcel.readLong()
         index = parcel.readInt()
