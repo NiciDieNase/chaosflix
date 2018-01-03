@@ -3,9 +3,11 @@ package de.nicidienase.chaosflix.touch.eventdetails
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
@@ -19,6 +21,7 @@ import de.nicidienase.chaosflix.common.entities.recording.persistence.Persistent
 import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
+import de.nicidienase.chaosflix.touch.PreferencesManager
 import de.nicidienase.chaosflix.touch.ViewModelFactory
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 
@@ -141,13 +144,34 @@ class EventDetailsFragment : Fragment() {
 									.observe(this, Observer { persistentRecordings ->
 										if (persistentRecordings != null) {
 											Log.d(TAG, "Playing network file")
-											listener!!.playItem(event, Util.getOptimalStream(persistentRecordings)!!)
+											var stream: PersistentRecording
+											if (PreferencesManager.getAutoselectStream()) {
+												stream = Util.getOptimalStream(persistentRecordings)
+												listener?.playItem(event, stream)
+											} else {
+												val items: List<String> = persistentRecordings.map { getStringForRecording(it) }
+												selectRecording(items, DialogInterface.OnClickListener { dialogInterface, i ->
+													listener?.playItem(event, persistentRecordings[i])
+												})
+											}
 										}
 									})
 						}
 					}
 				})
 			})
+		}
+	}
+
+	private fun getStringForRecording(recording: PersistentRecording): String {
+		return "${if(recording.isHighQuality) "HD" else "SD"}-${recording.language} [${recording.mimeType}]"
+	}
+
+	private fun selectRecording(items: List<String>, resultHandler: DialogInterface.OnClickListener) {
+		this.context?.let { context ->
+			val builder = AlertDialog.Builder(context)
+			builder.setItems(items.toTypedArray(), resultHandler)
+			builder.create().show()
 		}
 	}
 
@@ -222,18 +246,24 @@ class EventDetailsFragment : Fragment() {
 			}
 			R.id.action_download -> {
 				viewModel.getRecordingForEvent(eventId).observe(this, Observer {
-					viewModel.download(event, Util.getOptimalStream(it!!)!!).observe(this, Observer {
-						if (it != null) {
-							val message = if (it) "Download started" else "Error starting download"
-							Snackbar.make(view!!, message, Snackbar.LENGTH_LONG).show()
+					if(PreferencesManager.getAutoselectRecording()){
+						val recording = Util.getOptimalStream(it!!)
+						downloadRecording(recording)
+					} else {
+						it?.let { list ->
+							selectRecording(list.map { getStringForRecording(it) },
+									DialogInterface.OnClickListener { _, i ->
+										downloadRecording(list[i])
+									})
 						}
-					})
+					}
+
 				})
 				return true
 			}
 			R.id.action_delete_offline_item -> {
 				viewModel.deleteOfflineItem(eventId).observe(this, Observer {
-					if(it != null){
+					if (it != null) {
 						view?.let { Snackbar.make(it, "Deleted Download", Snackbar.LENGTH_SHORT).show() }
 					}
 				})
@@ -241,6 +271,15 @@ class EventDetailsFragment : Fragment() {
 			}
 			else -> return super.onOptionsItemSelected(item)
 		}
+	}
+
+	private fun downloadRecording(recording: PersistentRecording) {
+		viewModel.download(event, recording).observe(this, Observer {
+			if (it != null) {
+				val message = if (it) "Download started" else "Error starting download"
+				Snackbar.make(view!!, message, Snackbar.LENGTH_LONG).show()
+			}
+		})
 	}
 
 

@@ -108,8 +108,22 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
+	public void onStop() {
+		super.onStop();
+		if (exoPlayer != null) {
+			viewModel.setPlaybackProgress(item.getEventId(), exoPlayer.getCurrentPosition());
+			exoPlayer.setPlayWhenReady(false);
+		}
+		getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+		getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	}
+
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 		if (exoPlayer != null) {
 			exoPlayer.setPlayWhenReady(playbackState);
 			viewModel.getPlaybackProgress(item.getEventId()).observe(this, playbackProgress -> {
@@ -119,29 +133,6 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 			});
 			binding.videoView.setPlayer(exoPlayer);
 		}
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-		getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		if (exoPlayer != null) {
-			viewModel.setPlaybackProgress(item.getEventId(), exoPlayer.getCurrentPosition());
-			exoPlayer.setPlayWhenReady(false);
-		}
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-		getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 	}
 
 	@Override
