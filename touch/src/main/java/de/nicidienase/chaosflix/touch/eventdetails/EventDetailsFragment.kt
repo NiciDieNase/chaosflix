@@ -169,7 +169,7 @@ class EventDetailsFragment : Fragment() {
 	}
 
 	private fun getStringForRecording(recording: PersistentRecording): String {
-		return "${recording.folder}  [${recording.language}]"
+		return "${if (recording.isHighQuality)"HD" else "SD"}  ${recording.folder}  [${recording.language}]"
 	}
 
 	private fun selectRecordingFromList(items: List<String>, resultHandler: DialogInterface.OnClickListener) {
