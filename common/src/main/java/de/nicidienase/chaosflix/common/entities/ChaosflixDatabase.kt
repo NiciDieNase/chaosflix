@@ -20,7 +20,7 @@ import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItemDao
         ConferenceGroup::class,
         PlaybackProgress::class,
         WatchlistItem::class,
-        OfflineEvent::class), version = 3, exportSchema = false)
+        OfflineEvent::class), version = 4, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ChaosflixDatabase : RoomDatabase() {
     abstract fun playbackProgressDao(): PlaybackProgressDao
