@@ -11,6 +11,7 @@ import android.os.Environment
 import android.util.Log
 import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.entities.download.OfflineEvent
+import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentConference
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording
 import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem

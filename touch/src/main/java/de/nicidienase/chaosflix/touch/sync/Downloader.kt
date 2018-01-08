@@ -69,7 +69,10 @@ class Downloader(val recordingApi: RecordingService,
 				.subscribeOn(Schedulers.io())
 				.observeOn(Schedulers.io())
 				.subscribe({ event: Event? ->
-					saveRecordings(event, listener)
+					if(event != null){
+						database.eventDao().insertEvent(PersistentEvent(event))
+						saveRecordings(event, listener)
+					}
 				}, { t: Throwable? ->
 					Log.d(TAG, t?.message, t)
 				})
@@ -106,7 +109,10 @@ class Downloader(val recordingApi: RecordingService,
 			val events = conference?.events
 					?.map { PersistentEvent(it) }?.toTypedArray()
 			if (events != null) {
-				database.eventDao().insertEvent(*events)
+				val insertEventIds = database.eventDao().insertEvent(*events)
+				val oldEvents = database.eventDao().findEventsByConferenceSync(conference.conferenceID)
+						.filter { !insertEventIds.contains(it.eventId) }.toTypedArray()
+				database.eventDao().deleteEvent(*oldEvents)
 				listener?.invoke(events.map { it.eventId })
 			}
 		}
