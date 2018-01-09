@@ -112,7 +112,7 @@ class Downloader(val recordingApi: RecordingService,
 				val insertEventIds = database.eventDao().insertEvent(*events)
 				val oldEvents = database.eventDao().findEventsByConferenceSync(conference.conferenceID)
 						.filter { !insertEventIds.contains(it.eventId) }.toTypedArray()
-				database.eventDao().deleteEvent(*oldEvents)
+//				database.eventDao().deleteEvent(*oldEvents)
 				listener?.invoke(events.map { it.eventId })
 			}
 		}

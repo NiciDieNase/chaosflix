@@ -44,4 +44,6 @@
     <string name="settings">Settings</string>
     <string name="reload">Reload</string>
 	<string name="no_livestreams">Currently no livestreams</string>
+    <string name="watch_this">Watch this video from media.ccc.de</string>
+    <string name="related_events">Related Events</string>
 </resources>

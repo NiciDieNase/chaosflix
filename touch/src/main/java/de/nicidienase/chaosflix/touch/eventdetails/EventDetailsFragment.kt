@@ -1,10 +1,11 @@
 package de.nicidienase.chaosflix.touch.eventdetails
 
-import android.app.Dialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -265,6 +266,25 @@ class EventDetailsFragment : Fragment() {
 				viewModel.deleteOfflineItem(eventId).observe(this, Observer {
 					if (it != null) {
 						view?.let { Snackbar.make(it, "Deleted Download", Snackbar.LENGTH_SHORT).show() }
+					}
+				})
+				return true
+			}
+			R.id.action_share -> {
+				val shareIntent = Intent(Intent.ACTION_SEND, Uri.parse(event.frontendLink))
+				shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.watch_this))
+				shareIntent.putExtra(Intent.EXTRA_TEXT, event.frontendLink)
+				shareIntent.setType("text/plain")
+				startActivity(shareIntent)
+				return true
+			}
+			R.id.action_external_player -> {
+				viewModel.getRecordingForEvent(eventId).observe(this, Observer { recordings ->
+					if (recordings != null) {
+						selectRecording(recordings) { recording ->
+							val shareIntent = Intent(Intent.ACTION_VIEW, Uri.parse(recording.recordingUrl))
+							startActivity(shareIntent)
+						}
 					}
 				})
 				return true
