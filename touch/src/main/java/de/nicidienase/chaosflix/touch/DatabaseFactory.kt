@@ -7,6 +7,8 @@ object DatabaseFactory {
     val database = Room.databaseBuilder(
             ChaosflixApplication.APPLICATION_CONTEXT,
             ChaosflixDatabase::class.java, "mediaccc.de")
-            .fallbackToDestructiveMigration()
+            .addMigrations(
+                    ChaosflixDatabase.migration_2_3,
+                    ChaosflixDatabase.migration_3_4)
             .build()
 }
