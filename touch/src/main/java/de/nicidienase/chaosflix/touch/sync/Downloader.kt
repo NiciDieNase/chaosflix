@@ -2,6 +2,7 @@ package de.nicidienase.chaosflix.touch.sync
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.database.sqlite.SQLiteConstraintException
 import android.util.Log
 import de.nicidienase.chaosflix.common.Util
 import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase
@@ -112,7 +113,11 @@ class Downloader(val recordingApi: RecordingService,
 				val insertEventIds = database.eventDao().insertEvent(*events)
 				val oldEvents = database.eventDao().findEventsByConferenceSync(conference.conferenceID)
 						.filter { !insertEventIds.contains(it.eventId) }.toTypedArray()
-//				database.eventDao().deleteEvent(*oldEvents)
+				try {
+					database.eventDao().deleteEvent(*oldEvents)
+				} catch (ex: SQLiteConstraintException){
+					Log.d(TAG,"SQLiteException",ex)
+				}
 				listener?.invoke(events.map { it.eventId })
 			}
 		}

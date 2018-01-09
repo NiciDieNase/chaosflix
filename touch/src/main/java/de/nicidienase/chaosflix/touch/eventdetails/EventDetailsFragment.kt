@@ -91,6 +91,7 @@ class EventDetailsFragment : Fragment() {
 		viewModel.getEventById(eventId)
 				.observe(this, Observer { event: PersistentEvent? ->
 					if (event != null) {
+						Log.d(TAG,"Loading Event ${event.title}, ${event.eventId}")
 						this.event = event
 						updateBookmark()
 						binding.event = event
