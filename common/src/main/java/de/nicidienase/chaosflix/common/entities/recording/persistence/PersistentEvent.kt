@@ -8,14 +8,14 @@ import android.text.Spanned
 import de.nicidienase.chaosflix.common.entities.recording.Event
 import de.nicidienase.chaosflix.common.entities.recording.Metadata
 import de.nicidienase.chaosflix.common.entities.recording.Recording
-import java.util.*
 
 @Entity(tableName = "event",
-        foreignKeys = arrayOf(ForeignKey(
-                entity = PersistentConference::class,
-                parentColumns = (arrayOf("conferenceId")),
-                childColumns = arrayOf("conferenceId"))),
-        indices = arrayOf(Index("eventId"), Index("frontendLink"),Index("conferenceId")))
+		foreignKeys = arrayOf(ForeignKey(
+				entity = PersistentConference::class,
+//				onDelete = ForeignKey.CASCADE,
+				parentColumns = (arrayOf("conferenceId")),
+				childColumns = arrayOf("conferenceId"))),
+		indices = arrayOf(Index("eventId"), Index("frontendLink"), Index("conferenceId")))
 
 data class PersistentEvent(@PrimaryKey(autoGenerate = false)
                            var eventId: Long = 0,
@@ -46,96 +46,96 @@ data class PersistentEvent(@PrimaryKey(autoGenerate = false)
                            var tags: Array<String>? = null,
                            @Ignore
                            var recordings: List<Recording>? = null
-): Parcelable {
+) : Parcelable {
 
-    constructor(parcel: Parcel) : this(
-            parcel.readLong(),
-            parcel.readLong(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readLong(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readParcelable(Metadata::class.java.classLoader),
-            parcel.readByte() != 0.toByte(),
-            parcel.readInt(),
-            parcel.createStringArray(),
-            parcel.createStringArray())
+	constructor(parcel: Parcel) : this(
+			parcel.readLong(),
+			parcel.readLong(),
+			parcel.readString(),
+			parcel.readString(),
+			parcel.readString(),
+			parcel.readString(),
+			parcel.readString(),
+			parcel.readString(),
+			parcel.readString(),
+			parcel.readString(),
+			parcel.readString(),
+			parcel.readString(),
+			parcel.readLong(),
+			parcel.readString(),
+			parcel.readString(),
+			parcel.readString(),
+			parcel.readString(),
+			parcel.readString(),
+			parcel.readParcelable(Metadata::class.java.classLoader),
+			parcel.readByte() != 0.toByte(),
+			parcel.readInt(),
+			parcel.createStringArray(),
+			parcel.createStringArray())
 
-    fun getExtendedDescription(): Spanned {
-        val description = "$description\n\nreleased at: $releaseDate<br>Tags: ${tags?.joinToString(", ")}"
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            return Html.fromHtml(description, Html.FROM_HTML_MODE_LEGACY)
-        } else {
-            return Html.fromHtml(description)
-        }
-    }
+	fun getExtendedDescription(): Spanned {
+		val description = "$description\n\nreleased at: $releaseDate<br>Tags: ${tags?.joinToString(", ")}"
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+			return Html.fromHtml(description, Html.FROM_HTML_MODE_LEGACY)
+		} else {
+			return Html.fromHtml(description)
+		}
+	}
 
-    fun getSpeakerString(): String?
-            = persons?.joinToString(", ")
+	fun getSpeakerString(): String?
+			= persons?.joinToString(", ")
 
-    @Ignore
-    constructor(event: Event) : this(event.eventID,
-            event.conferenceId, event.guid, event.title,
-            event.subtitle, event.slug, event.link, event.description,
-            event.originalLanguage, event.date, event.releaseDate,
-            event.updatedAt, event.length, event.thumbUrl, event.posterUrl,
-            event.frontendLink, event.url, event.conferenceUrl,
-            event.metadata, event.isPromoted, event.viewCount,
-            event.persons, event.tags, event.recordings)
+	@Ignore
+	constructor(event: Event) : this(event.eventID,
+			event.conferenceId, event.guid, event.title,
+			event.subtitle, event.slug, event.link, event.description,
+			event.originalLanguage, event.date, event.releaseDate,
+			event.updatedAt, event.length, event.thumbUrl, event.posterUrl,
+			event.frontendLink, event.url, event.conferenceUrl,
+			event.metadata, event.isPromoted, event.viewCount,
+			event.persons, event.tags, event.recordings)
 
-    fun toEvent(): Event = Event(conferenceId, guid, title, subtitle, slug, link, description,
-            originalLanguage, persons, tags, date, releaseDate, updatedAt, length,
-            thumbUrl, posterUrl, frontendLink, url, conferenceUrl, recordings, metadata, isPromoted)
+	fun toEvent(): Event = Event(conferenceId, guid, title, subtitle, slug, link, description,
+			originalLanguage, persons, tags, date, releaseDate, updatedAt, length,
+			thumbUrl, posterUrl, frontendLink, url, conferenceUrl, recordings, metadata, isPromoted)
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeLong(eventId)
-        parcel.writeLong(conferenceId)
-        parcel.writeString(guid)
-        parcel.writeString(title)
-        parcel.writeString(subtitle)
-        parcel.writeString(slug)
-        parcel.writeString(link)
-        parcel.writeString(description)
-        parcel.writeString(originalLanguage)
-        parcel.writeString(date)
-        parcel.writeString(releaseDate)
-        parcel.writeString(updatedAt)
-        parcel.writeLong(length)
-        parcel.writeString(thumbUrl)
-        parcel.writeString(posterUrl)
-        parcel.writeString(frontendLink)
-        parcel.writeString(url)
-        parcel.writeString(conferenceUrl)
-        parcel.writeParcelable(metadata, flags)
-        parcel.writeByte(if (isPromoted) 1 else 0)
-        parcel.writeInt(viewCount)
-        parcel.writeStringArray(persons)
-        parcel.writeStringArray(tags)
-    }
+	override fun writeToParcel(parcel: Parcel, flags: Int) {
+		parcel.writeLong(eventId)
+		parcel.writeLong(conferenceId)
+		parcel.writeString(guid)
+		parcel.writeString(title)
+		parcel.writeString(subtitle)
+		parcel.writeString(slug)
+		parcel.writeString(link)
+		parcel.writeString(description)
+		parcel.writeString(originalLanguage)
+		parcel.writeString(date)
+		parcel.writeString(releaseDate)
+		parcel.writeString(updatedAt)
+		parcel.writeLong(length)
+		parcel.writeString(thumbUrl)
+		parcel.writeString(posterUrl)
+		parcel.writeString(frontendLink)
+		parcel.writeString(url)
+		parcel.writeString(conferenceUrl)
+		parcel.writeParcelable(metadata, flags)
+		parcel.writeByte(if (isPromoted) 1 else 0)
+		parcel.writeInt(viewCount)
+		parcel.writeStringArray(persons)
+		parcel.writeStringArray(tags)
+	}
 
-    override fun describeContents(): Int {
-        return 0
-    }
+	override fun describeContents(): Int {
+		return 0
+	}
 
-    companion object CREATOR : Parcelable.Creator<PersistentEvent> {
-        override fun createFromParcel(parcel: Parcel): PersistentEvent {
-            return PersistentEvent(parcel)
-        }
+	companion object CREATOR : Parcelable.Creator<PersistentEvent> {
+		override fun createFromParcel(parcel: Parcel): PersistentEvent {
+			return PersistentEvent(parcel)
+		}
 
-        override fun newArray(size: Int): Array<PersistentEvent?> {
-            return arrayOfNulls(size)
-        }
-    }
+		override fun newArray(size: Int): Array<PersistentEvent?> {
+			return arrayOfNulls(size)
+		}
+	}
 }
