@@ -54,23 +54,6 @@
 					android:layout_gravity="bottom"
 					android:background="@drawable/scrim"/>
 
-				<!--<TextView-->
-				<!--android:id="@+id/title_text"-->
-				<!--android:layout_width="wrap_content"-->
-				<!--android:layout_height="wrap_content"-->
-				<!--android:layout_gravity="bottom"-->
-				<!--android:layout_marginBottom="@dimen/details_title_margin"-->
-				<!--android:layout_marginLeft="@dimen/details_title_margin"-->
-				<!--android:layout_marginRight="@dimen/details_title_margin"-->
-				<!--android:layout_marginTop="@dimen/details_title_margin"-->
-				<!--android:text="@{event.title}"-->
-				<!--android:visibility="visible"-->
-				<!--android:textAppearance="@style/TextAppearance.AppCompat.Display1"-->
-				<!--android:textColor="@color/white"-->
-				<!--android:maxLines="2"-->
-				<!--android:ellipsize="end"-->
-				<!--app:layout_collapseParallaxMultiplier="1.0"/>-->
-
 				<android.support.v7.widget.Toolbar
 					android:id="@+id/anim_toolbar"
 					android:layout_width="match_parent"
@@ -137,7 +120,7 @@
 					android:layout_marginLeft="@dimen/details_text_margin"
 					android:layout_marginRight="@dimen/details_text_margin"
 					android:layout_marginTop="@dimen/details_text_margin"
-					android:text="Related Events"
+					android:text="@string/related_events"
 					android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"/>
 
 				<android.support.v7.widget.RecyclerView
@@ -156,7 +139,7 @@
 			android:layout_height="wrap_content"
 			android:layout_margin="16dp"
 			android:clickable="true"
-			android:src="@android:drawable/ic_media_play"
+			android:src="@drawable/ic_action_play"
 			app:backgroundTint="@color/primary"
 			app:fabSize="normal"
 			app:layout_anchor="@+id/appbar"

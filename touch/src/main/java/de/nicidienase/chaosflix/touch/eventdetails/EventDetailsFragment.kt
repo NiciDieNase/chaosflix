@@ -88,7 +88,6 @@ class EventDetailsFragment : Fragment() {
 
 		viewModel = ViewModelProviders.of(activity!!, ViewModelFactory).get(DetailsViewModel::class.java)
 
-
 		viewModel.getEventById(eventId)
 				.observe(this, Observer { event: PersistentEvent? ->
 					if (event != null) {
@@ -109,14 +108,12 @@ class EventDetailsFragment : Fragment() {
 									}
 								})
 
-
 						val relatedIds: LongArray = event.metadata?.related?.keys?.toLongArray() ?: longArrayOf()
 
 						viewModel.getEventsByIds(relatedIds)
 								.observe(this, Observer { events ->
 									relatedEventsAdapter.items = ArrayList(events)
 								})
-
 					}
 				})
 	}
@@ -147,7 +144,7 @@ class EventDetailsFragment : Fragment() {
 									.observe(this, Observer { persistentRecordings ->
 										if (persistentRecordings != null) {
 											Log.d(TAG, "Playing network file")
-											selectRecording(persistentRecordings,{ recording -> listener?.playItem(event, recording) })
+											selectRecording(persistentRecordings, { recording -> listener?.playItem(event, recording) })
 										}
 									})
 						}
@@ -157,7 +154,7 @@ class EventDetailsFragment : Fragment() {
 		}
 	}
 
-	private fun selectRecording(persistentRecordings: List<PersistentRecording>, action: (recording: PersistentRecording)-> Unit) {
+	private fun selectRecording(persistentRecordings: List<PersistentRecording>, action: (recording: PersistentRecording) -> Unit) {
 		var stream = Util.getOptimalStream(persistentRecordings)
 		if (stream != null && PreferencesManager.getAutoselectStream()) {
 			action.invoke(stream)
@@ -170,12 +167,12 @@ class EventDetailsFragment : Fragment() {
 	}
 
 	private fun getStringForRecording(recording: PersistentRecording): String {
-		return "${if (recording.isHighQuality)"HD" else "SD"}  ${recording.folder}  [${recording.language}]"
+		return "${if (recording.isHighQuality) "HD" else "SD"}  ${recording.folder}  [${recording.language}]"
 	}
 
 	private fun selectRecordingFromList(items: List<String>, resultHandler: DialogInterface.OnClickListener) {
 		this.context?.let { context ->
-			if(selectDialog != null){
+			if (selectDialog != null) {
 				selectDialog?.dismiss()
 			}
 			val builder = AlertDialog.Builder(context)
@@ -230,7 +227,6 @@ class EventDetailsFragment : Fragment() {
 		super.onCreateOptionsMenu(menu, inflater)
 		//		if (appBarExpanded)
 		inflater!!.inflate(R.menu.details_menu, menu)
-
 	}
 
 	override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -256,8 +252,8 @@ class EventDetailsFragment : Fragment() {
 			}
 			R.id.action_download -> {
 				viewModel.getRecordingForEvent(eventId).observe(this, Observer { recordings ->
-					if(recordings != null){
-						selectRecording(recordings,{recording -> downloadRecording(recording) })
+					if (recordings != null) {
+						selectRecording(recordings, { recording -> downloadRecording(recording) })
 					}
 				})
 				return true
