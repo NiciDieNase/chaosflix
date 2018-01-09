@@ -3,6 +3,8 @@ package de.nicidienase.chaosflix.common.entities.recording.persistence
 import android.arch.persistence.room.*
 import android.os.Parcel
 import android.os.Parcelable
+import android.text.Html
+import android.text.Spanned
 import de.nicidienase.chaosflix.common.entities.recording.Event
 import de.nicidienase.chaosflix.common.entities.recording.Metadata
 import de.nicidienase.chaosflix.common.entities.recording.Recording
@@ -71,8 +73,14 @@ data class PersistentEvent(@PrimaryKey(autoGenerate = false)
             parcel.createStringArray(),
             parcel.createStringArray())
 
-    fun getExtendedDescription(): String
-            = "$description\n\nreleased at: $releaseDate\n\nTags: ${tags?.joinToString(", ")}"
+    fun getExtendedDescription(): Spanned {
+        val description = "$description\n\nreleased at: $releaseDate<br>Tags: ${tags?.joinToString(", ")}"
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            return Html.fromHtml(description, Html.FROM_HTML_MODE_LEGACY)
+        } else {
+            return Html.fromHtml(description)
+        }
+    }
 
     fun getSpeakerString(): String?
             = persons?.joinToString(", ")
