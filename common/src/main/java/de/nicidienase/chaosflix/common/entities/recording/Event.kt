@@ -36,7 +36,7 @@ data class Event(@JsonProperty("conference_id")
                  @JsonProperty("conference_url")
                  var conferenceUrl: String = "",
                  var recordings: List<Recording>?,
-                 var metadata: Metadata?,
+                 var related: List<RelatedEvent>?,
                  @JsonProperty("promoted")
                  var isPromoted: Boolean = false
 ) : Comparable<Event> {

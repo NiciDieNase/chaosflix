@@ -35,11 +35,11 @@ group="de.nicidienase.chaosflix"
 version="1.3.2-SNAPSHOT"
 
 dependencies {
-    api 'com.android.support:appcompat-v7:27.0.2'
+    api 'com.android.support:appcompat-v7:27.1.1'
 
     api "android.arch.lifecycle:extensions:${rootProject.ext.archCompVersion}"
     kapt "android.arch.lifecycle:compiler:${rootProject.ext.archCompVersion}"
-    api "android.arch.lifecycle:common-java8:1.0.0"
+    api "android.arch.lifecycle:common-java8:1.1.1"
 
     api "android.arch.persistence.room:runtime:${rootProject.ext.archCompVersion}"
     api "android.arch.persistence.room:rxjava2:${rootProject.ext.archCompVersion}"
