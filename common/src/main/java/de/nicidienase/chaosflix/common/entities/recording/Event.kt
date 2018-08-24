@@ -1,14 +1,8 @@
 package de.nicidienase.chaosflix.common.entities.recording
 
-import android.os.Parcel
-import android.os.Parcelable
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.google.gson.annotations.SerializedName
 
-import java.util.*
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class Event(@JsonProperty("conference_id")
+data class Event(@SerializedName("conference_id")
                  var conferenceId: Long = 0,
                  var guid: String = "",
                  var title: String = "",
@@ -16,33 +10,33 @@ data class Event(@JsonProperty("conference_id")
                  var slug: String = "",
                  var link: String? = "",
                  var description: String? = "",
-                 @JsonProperty("original_language")
+                 @SerializedName("original_language")
                  var originalLanguage: String = "",
                  var persons: Array<String>?,
                  var tags: Array<String>?,
                  var date: String? = "",
-                 @JsonProperty("release_date")
+                 @SerializedName("release_date")
                  var releaseDate: String = "",
-                 @JsonProperty("updated_at")
+                 @SerializedName("updated_at")
                  var updatedAt: String = "",
                  var length: Long = 0,
-                 @JsonProperty("thumb_url")
+                 @SerializedName("thumb_url")
                  var thumbUrl: String = "",
-                 @JsonProperty("poster_url")
+                 @SerializedName("poster_url")
                  var posterUrl: String = "",
-                 @JsonProperty("frontend_link")
+                 @SerializedName("frontend_link")
                  var frontendLink: String? = "",
                  var url: String = "",
-                 @JsonProperty("conference_url")
+                 @SerializedName("conference_url")
                  var conferenceUrl: String = "",
                  var recordings: List<Recording>?,
                  var related: List<RelatedEvent>?,
-                 @JsonProperty("promoted")
+                 @SerializedName("promoted")
                  var isPromoted: Boolean = false
 ) : Comparable<Event> {
 
     var eventID: Long
-    @JsonProperty("view_count")
+    @SerializedName("view_count")
     var viewCount: Int = 0
 
     init {

@@ -6,13 +6,11 @@ import android.os.Parcelable
 import android.text.Html
 import android.text.Spanned
 import de.nicidienase.chaosflix.common.entities.recording.Event
-import de.nicidienase.chaosflix.common.entities.recording.Metadata
-import de.nicidienase.chaosflix.common.entities.recording.Recording
 
 @Entity(tableName = "event",
 		foreignKeys = arrayOf(ForeignKey(
 				entity = PersistentConference::class,
-//				onDelete = ForeignKey.CASCADE,
+				onDelete = ForeignKey.CASCADE,
 				parentColumns = (arrayOf("conferenceId")),
 				childColumns = arrayOf("conferenceId"))),
 		indices = arrayOf(Index("eventId"), Index("frontendLink"), Index("conferenceId")))
@@ -36,16 +34,16 @@ data class PersistentEvent(@PrimaryKey(autoGenerate = false)
                            var frontendLink: String? = "",
                            var url: String = "",
                            var conferenceUrl: String = "",
-                           @Embedded
-                           var metadata: Metadata? = null,
-
                            var isPromoted: Boolean = false,
-                           var viewCount: Int = 0,
 
+                           var viewCount: Int = 0,
                            var persons: Array<String>? = null,
+
                            var tags: Array<String>? = null,
                            @Ignore
-                           var recordings: List<Recording>? = null
+                           var related: List<PersistentRelatedEvent>? = null,
+                           @Ignore
+                           var recordings: List<PersistentRecording>? = null
 ) : Parcelable {
 
 	constructor(parcel: Parcel) : this(
@@ -67,7 +65,6 @@ data class PersistentEvent(@PrimaryKey(autoGenerate = false)
 			parcel.readString(),
 			parcel.readString(),
 			parcel.readString(),
-			parcel.readParcelable(Metadata::class.java.classLoader),
 			parcel.readByte() != 0.toByte(),
 			parcel.readInt(),
 			parcel.createStringArray(),
@@ -92,12 +89,11 @@ data class PersistentEvent(@PrimaryKey(autoGenerate = false)
 			event.originalLanguage, event.date, event.releaseDate,
 			event.updatedAt, event.length, event.thumbUrl, event.posterUrl,
 			event.frontendLink, event.url, event.conferenceUrl,
-			event.metadata, event.isPromoted, event.viewCount,
-			event.persons, event.tags, event.recordings)
-
-	fun toEvent(): Event = Event(conferenceId, guid, title, subtitle, slug, link, description,
-			originalLanguage, persons, tags, date, releaseDate, updatedAt, length,
-			thumbUrl, posterUrl, frontendLink, url, conferenceUrl, recordings, metadata, isPromoted)
+			event.isPromoted, event.viewCount,
+			event.persons, event.tags){
+		this.related = event.related?.map { PersistentRelatedEvent(event.eventID,it) }
+		this.recordings = event.recordings?.map { PersistentRecording(it) }
+	}
 
 	override fun writeToParcel(parcel: Parcel, flags: Int) {
 		parcel.writeLong(eventId)
@@ -118,7 +114,6 @@ data class PersistentEvent(@PrimaryKey(autoGenerate = false)
 		parcel.writeString(frontendLink)
 		parcel.writeString(url)
 		parcel.writeString(conferenceUrl)
-		parcel.writeParcelable(metadata, flags)
 		parcel.writeByte(if (isPromoted) 1 else 0)
 		parcel.writeInt(viewCount)
 		parcel.writeStringArray(persons)

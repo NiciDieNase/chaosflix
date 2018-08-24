@@ -1,93 +1,88 @@
 package de.nicidienase.chaosflix.common.entities.recording
 
-import android.arch.persistence.room.Ignore
-import android.os.Parcel
-import android.os.Parcelable
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.google.gson.annotations.SerializedName;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+
 data class Conference(
-        var acronym: String = "",
-
-        @JsonProperty("aspect_ratio")
-        var aspectRatio: String = "",
-
-        var title: String = "",
-
-        var slug: String = "",
-
-        @JsonProperty("webgen_location")
-        var webgenLocation: String = "",
-
-        @JsonProperty("schedule_url")
-        var scheduleUrl: String? = "",
-
-        @JsonProperty("logo_url")
-        var logoUrl: String = "",
-
-        @JsonProperty("images_url")
-        var imagesUrl: String = "",
-
-        @JsonProperty("recordings_url")
-        var recordingsUrl: String = "",
-
-        var url: String = "",
-
-        @JsonProperty("updated_at")
-        var updatedAt: String,
-
-        var events: List<Event>?
+        @SerializedName("acronym")            var acronym: String = "",
+        @SerializedName("aspect_ratio")       var aspectRatio: String = "",
+        @SerializedName("updated_at")         var updatedAt: String = "",
+        @SerializedName("title")              var title: String = "",
+        @SerializedName("schedule_url")       var scheduleUrl: String?,
+        @SerializedName("slug")               var slug: String = "",
+        @SerializedName("event_last_released_at") var lastReleaseAt: String = "",
+        @SerializedName("webgen_location")    var webgenLocation: String = "",
+        @SerializedName("logo_url")           var logoUrl: String = "",
+        @SerializedName("images_url")         var imagesUrl: String = "",
+        @SerializedName("recordings_url")     var recordingsUrl: String = "",
+        @SerializedName("url")                var url: String = "",
+        @SerializedName("events")             var events: List<Event>?
 
 ) : Comparable<Conference> {
 
-    var conferenceID: Long
+    val conferenceID: Long
+        get() = getIdFromUrl()
 
-    val eventsByTags: HashMap<String, MutableList<Event>>
-
-    val sensibleTags: MutableSet<String> = HashSet()
-
-    var tagsUsefull: Boolean;
+    val eventsByTags: Map<String, List<Event>>
+    val sensibleTags: Set<String>
+    val tagsUsefull: Boolean
 
     init {
-        eventsByTags = HashMap<String, MutableList<Event>>()
-        val untagged = ArrayList<Event>()
-        val events = this.events
-        if (events != null) {
-            for (event in events) {
-                if (event.tags?.isNotEmpty() ?: false) {
-                    for (tag in event.tags!!) {
-                        if (tag != null) {
+        eventsByTags = getEventsMap(events)
+        sensibleTags = getSensibleTags(eventsByTags.keys)
+        tagsUsefull = sensibleTags.size > 0
+    }
 
-                            val list: MutableList<Event>
-                            if (eventsByTags.keys.contains(tag)) {
-                                list = eventsByTags[tag]!!
-                            } else {
-                                list = ArrayList<Event>()
-                                eventsByTags.put(tag, list)
+    private fun getEventsMap(events: List<Event>?): Map<String,List<Event>>{
+                val map = HashMap<String, MutableList<Event>>()
+                val untagged = ArrayList<Event>()
+                if (events != null) {
+                    for (event in events) {
+                        if (event.tags?.isNotEmpty() ?: false) {
+                            for (tag in event.tags!!) {
+                                if (tag != null) {
+
+                                    val list: MutableList<Event>
+                                    if (map.keys.contains(tag)) {
+                                        list = map[tag]!!
+                                    } else {
+                                        list = ArrayList<Event>()
+                                        map.put(tag, list)
+                                    }
+                                    list.add(event)
+                                } else {
+                                    untagged.add(event)
+                                }
                             }
-                            list.add(event)
                         } else {
                             untagged.add(event)
                         }
                     }
-                } else {
-                    untagged.add(event)
+                    if (untagged.size > 0) {
+                        map.put("untagged", untagged)
+                    }
                 }
+                return map
             }
-            if (untagged.size > 0) {
-                eventsByTags.put("untagged", untagged)
-            }
-        }
-        val strings = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        conferenceID = (strings[strings.size - 1]).toLong()
 
-        for (s in eventsByTags.keys) {
+
+    private fun getIdFromUrl(url: String = this.url): Long {
+        val strings = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        try {
+            return ((strings[strings.size - 1]).toLong())
+        } catch (e: NumberFormatException){
+            return 0
+        }
+    }
+
+    private fun getSensibleTags(tags: Set<String>): Set<String>{
+        val hashSet = HashSet<String>()
+        for (s in tags) {
             if (!(acronym.equals(s) || s.matches(Regex.fromLiteral("\\d+")))) {
-                sensibleTags.add(s)
+                hashSet.add(s)
             }
         }
-        tagsUsefull = sensibleTags.size > 0
+        return hashSet
     }
 
     override fun compareTo(conference: Conference): Int {

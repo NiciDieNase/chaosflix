@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix.common.entities.recording
 
 import java.util.*
+import kotlin.collections.HashMap
 
 
 data class ConferencesWrapper(var conferences: List<Conference>) {
@@ -11,41 +12,43 @@ data class ConferencesWrapper(var conferences: List<Conference>) {
     private val EVENT_GROUP = "Events"
     private val MIN_NUM_CONS = 1
 
-    val conferenceMap: MutableMap<String, MutableList<Conference>>
+    val conferencesMap: Map<String, List<Conference>>
+        get() = generateConferencesMap()
 
-    init {
-        conferenceMap = HashMap()
+    private fun generateConferencesMap(): HashMap<String, MutableList<Conference>> {
+        val map = HashMap<String,MutableList<Conference>>()
         for (conference in conferences) {
             val split = conference.slug.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             when (split[0]) {
                 CONGRESS -> if (split[1].endsWith("sendezentrum")) {
-                    getListForTag("sendezentrum").add(conference)
+                    getListForTag(map,"sendezentrum").add(conference)
+
                 } else {
-                    getListForTag(CONGRESS).add(conference)
+                    getListForTag(map,CONGRESS).add(conference)
                 }
                 CONFERENCES -> when (split.size) {
                     2 -> if (split[1].startsWith("camp")) {
-                        getListForTag("camp").add(conference)
+                        getListForTag(map,"camp").add(conference)
                     } else if (split[1].startsWith("sigint")) {
-                        getListForTag("sigint").add(conference)
+                        getListForTag(map,"sigint").add(conference)
                     } else if (split[1].startsWith("eh")) {
-                        getListForTag("eh").add(conference)
+                        getListForTag(map,"eh").add(conference)
                     } else {
-                        getListForTag(DEFAULT_CONFERENCE_GROUP).add(conference)
+                        getListForTag(map,DEFAULT_CONFERENCE_GROUP).add(conference)
                     }
-                    3 -> getListForTag(split[1]).add(conference)
-                    else -> getListForTag(DEFAULT_CONFERENCE_GROUP).add(conference)
+                    3 -> getListForTag(map,split[1]).add(conference)
+                    else -> getListForTag(map,DEFAULT_CONFERENCE_GROUP).add(conference)
                 }
-                EVENTS -> getListForTag(EVENT_GROUP).add(conference)
-                else -> getListForTag(conference.slug).add(conference)
+                EVENTS -> getListForTag(map,EVENT_GROUP).add(conference)
+                else -> getListForTag(map,conference.slug).add(conference)
             }
         }
-        val other = conferenceMap[DEFAULT_CONFERENCE_GROUP]
-        val keySet = conferenceMap.keys
+        val other = map[DEFAULT_CONFERENCE_GROUP]
+        val keySet = map.keys
         val removeList = ArrayList<String>()
         for (tag in keySet) {
             if (tag != DEFAULT_CONFERENCE_GROUP) {
-                val list = conferenceMap[tag]
+                val list = map[tag]
                 Collections.sort(list)
                 Collections.reverse(list)
                 if (list!!.size <= MIN_NUM_CONS) {
@@ -55,16 +58,17 @@ data class ConferencesWrapper(var conferences: List<Conference>) {
             }
         }
         for (key in removeList) {
-            conferenceMap.remove(key)
+            map.remove(key)
         }
+        return map
     }
 
-    private fun getListForTag(s: String): MutableList<Conference> {
-        if (conferenceMap.keys.contains(s)) {
-            return conferenceMap[s]!!
+    private fun getListForTag(map: MutableMap<String,MutableList<Conference>>, s: String): MutableList<Conference> {
+        if (map.keys.contains(s)) {
+            return map[s]!!
         } else {
             val list = ArrayList<Conference>()
-            conferenceMap.put(s, list)
+            map.put(s, list)
             return list
         }
     }

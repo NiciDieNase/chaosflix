@@ -2,15 +2,12 @@ package de.nicidienase.chaosflix.common.entities.recording
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.google.gson.annotations.SerializedName;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 open class RelatedEvent(
-
-		@JsonProperty("event_id") 	var eventId: Int,
-		@JsonProperty("event_guid") var eventGuid: String,
-		@JsonProperty("weight") var weight: Int) : Parcelable {
+		@SerializedName("event_id") 	var eventId: Int,
+		@SerializedName("event_guid") var eventGuid: String,
+		@SerializedName("weight") var weight: Int) : Parcelable {
 
 	constructor(parcel: Parcel) : this(
 			parcel.readInt(),

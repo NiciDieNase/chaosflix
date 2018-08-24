@@ -16,7 +16,7 @@ data class PersistentConference(
         var title: String = "",
         var slug: String = "",
         var webgenLocation: String = "",
-        var scheduleUrl: String? = "",
+        var scheduleUrl: String?,
         var logoUrl: String = "",
         var imagesUrl: String = "",
         var recordingsUrl: String = "",
@@ -30,9 +30,6 @@ data class PersistentConference(
             con.acronym, con.aspectRatio, con.title, con.slug, con.webgenLocation,
             con.scheduleUrl, con.logoUrl, con.imagesUrl, con.recordingsUrl, con.url,
             con.updatedAt,con.tagsUsefull)
-
-    fun toConference() = Conference(acronym, aspectRatio, title, slug, webgenLocation,
-            scheduleUrl, logoUrl, imagesUrl, recordingsUrl, url, updatedAt, null)
 
     @Ignore
     constructor(parcel: Parcel) : this(

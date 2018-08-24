@@ -1,31 +1,28 @@
 package de.nicidienase.chaosflix.common.entities.recording
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.google.gson.annotations.SerializedName;
 
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class Recording(
         var size: Int = 0,
         var length: Int = 0,
-        @JsonProperty("mime_type")
+        @SerializedName("mime_type")
         var mimeType: String = "",
         var language: String = "",
         var filename: String = "",
         var state: String = "",
         var folder: String = "",
-        @JsonProperty("high_quality")
+        @SerializedName("high_quality")
         var isHighQuality: Boolean = false,
         var width: Int = 0,
         var height: Int = 0,
-        @JsonProperty("updated_at")
+        @SerializedName("updated_at")
         var updatedAt: String = "",
-        @JsonProperty("recording_url")
+        @SerializedName("recording_url")
         var recordingUrl: String = "",
         var url: String = "",
-        @JsonProperty("event_url")
+        @SerializedName("event_url")
         var eventUrl: String = "",
-        @JsonProperty("conference_url")
+        @SerializedName("conference_url")
         var conferenceUrl: String = ""
 ) {
 
