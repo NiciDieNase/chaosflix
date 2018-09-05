@@ -1,6 +1,6 @@
 package de.nicidienase.chaosflix.common
 
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
 import java.util.*
 import kotlin.collections.ArrayList
 

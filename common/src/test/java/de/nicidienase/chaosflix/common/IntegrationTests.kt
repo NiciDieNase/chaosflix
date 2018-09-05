@@ -1,12 +1,7 @@
 package de.nicidienase.chaosflix.common
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
+
 import com.google.gson.Gson
-import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentConference
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.network.RecordingService
 import junit.framework.Assert.assertNotNull
 import okhttp3.OkHttpClient
 import org.junit.Before
