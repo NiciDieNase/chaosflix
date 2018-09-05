@@ -5,12 +5,7 @@ import kotlin.collections.HashMap
 
 
 data class ConferencesWrapper(var conferences: List<Conference>) {
-    private val CONGRESS = "congress"
-    private val EVENTS = "events"
-    private val CONFERENCES = "conferences"
-    private val DEFAULT_CONFERENCE_GROUP = "other conferences"
-    private val EVENT_GROUP = "Events"
-    private val MIN_NUM_CONS = 1
+
 
     val conferencesMap: Map<String, List<Conference>>
         get() = generateConferencesMap()
@@ -74,6 +69,13 @@ data class ConferencesWrapper(var conferences: List<Conference>) {
     }
 
     companion object {
+        private val CONGRESS = "congress"
+        private val EVENTS = "events"
+        private val CONFERENCES = "conferences"
+        private val DEFAULT_CONFERENCE_GROUP = "other conferences"
+        private val EVENT_GROUP = "Events"
+        private val MIN_NUM_CONS = 1
+
         fun getStringForTag(tag: String): String {
             when (tag) {
                 "congress" -> return "Congress"
