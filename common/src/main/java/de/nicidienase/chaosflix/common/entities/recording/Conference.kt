@@ -24,11 +24,11 @@ data class Conference(
         get() = getIdFromUrl()
 
     val eventsByTags: Map<String, List<Event>>
+        get() = getEventsMap(events)
     val sensibleTags: Set<String>
     val tagsUsefull: Boolean
 
     init {
-        eventsByTags = getEventsMap(events)
         sensibleTags = getSensibleTags(eventsByTags.keys)
         tagsUsefull = sensibleTags.size > 0
     }

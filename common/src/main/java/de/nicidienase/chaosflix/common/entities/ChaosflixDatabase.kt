@@ -15,6 +15,7 @@ import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
 import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItemDao
 
 @Database(entities = arrayOf(
+		PersistentItem::class,
 		PersistentConference::class,
 		PersistentEvent::class,
 		PersistentRecording::class,

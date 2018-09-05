@@ -8,13 +8,11 @@ import de.nicidienase.chaosflix.common.entities.recording.Recording
 @Entity(tableName = "recording",
 		foreignKeys = arrayOf(ForeignKey(
 				entity = PersistentEvent::class,
-//				onDelete = ForeignKey.CASCADE,
-				parentColumns = (arrayOf("eventId")),
+				onDelete = ForeignKey.CASCADE,
+				parentColumns = (arrayOf("id")),
 				childColumns = arrayOf("eventId"))),
 		indices = arrayOf(Index("eventId")))
 data class PersistentRecording(
-		@PrimaryKey
-		var recordingId: Long,
 		var eventId: Long,
 		var size: Int = 0,
 		var length: Int = 0,
@@ -31,22 +29,9 @@ data class PersistentRecording(
 		var url: String = "",
 		var eventUrl: String = "",
 		var conferenceUrl: String = ""
-) : Parcelable {
+) : PersistentItem(), Parcelable {
 
-	@Ignore
-	constructor(rec: Recording) : this(rec.recordingID, rec.eventID,
-			rec.size, rec.length, rec.mimeType,
-			rec.language, rec.filename, rec.state, rec.folder, rec.isHighQuality,
-			rec.width, rec.height, rec.updatedAt, rec.recordingUrl, rec.url,
-			rec.eventUrl, rec.conferenceUrl)
-
-	fun toRecording(): Recording = Recording(size, length, mimeType, language,
-			filename, state, folder, isHighQuality, width, height, updatedAt,
-			recordingUrl, url, eventUrl, conferenceUrl)
-
-	@Ignore
 	constructor(parcel: Parcel) : this(
-			parcel.readLong(),
 			parcel.readLong(),
 			parcel.readInt(),
 			parcel.readInt(),
@@ -65,8 +50,26 @@ data class PersistentRecording(
 			parcel.readString()) {
 	}
 
+	@Ignore
+	constructor(rec: Recording) : this(
+			rec.eventID,
+			rec.size,
+			rec.length,
+			rec.mimeType,
+			rec.language,
+			rec.filename,
+			rec.state,
+			rec.folder,
+			rec.isHighQuality,
+			rec.width,
+			rec.height,
+			rec.updatedAt,
+			rec.recordingUrl,
+			rec.url,
+			rec.eventUrl,
+			rec.conferenceUrl)
+
 	override fun writeToParcel(parcel: Parcel, flags: Int) {
-		parcel.writeLong(recordingId)
 		parcel.writeLong(eventId)
 		parcel.writeInt(size)
 		parcel.writeInt(length)

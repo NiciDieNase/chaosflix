@@ -11,44 +11,44 @@ import de.nicidienase.chaosflix.common.entities.recording.Event
 		foreignKeys = arrayOf(ForeignKey(
 				entity = PersistentConference::class,
 				onDelete = ForeignKey.CASCADE,
-				parentColumns = (arrayOf("conferenceId")),
+				parentColumns = (arrayOf("id")),
 				childColumns = arrayOf("conferenceId"))),
-		indices = arrayOf(Index("eventId"), Index("frontendLink"), Index("conferenceId")))
+		indices = arrayOf(Index("guid",unique = true), Index("frontendLink"), Index("conferenceId")))
 
-data class PersistentEvent(@PrimaryKey(autoGenerate = false)
-                           var eventId: Long = 0,
-                           var conferenceId: Long = 0,
-                           var guid: String = "",
-                           var title: String = "",
-                           var subtitle: String? = "",
-                           var slug: String = "",
-                           var link: String? = "",
-                           var description: String? = "",
-                           var originalLanguage: String = "",
-                           var date: String? = "",
-                           var releaseDate: String = "",
-                           var updatedAt: String = "",
-                           var length: Long = 0,
-                           var thumbUrl: String = "",
-                           var posterUrl: String = "",
-                           var frontendLink: String? = "",
-                           var url: String = "",
-                           var conferenceUrl: String = "",
-                           var isPromoted: Boolean = false,
+data class PersistentEvent(
+		var conferenceId: Long = 0,
+		var conference: String = "",
+		var guid: String = "",
+		var title: String = "",
+		var subtitle: String? = "",
+		var slug: String = "",
+		var link: String? = "",
+		var description: String? = "",
+		var originalLanguage: String = "",
+		var date: String? = "",
+		var releaseDate: String = "",
+		var updatedAt: String = "",
+		var length: Long = 0,
+		var thumbUrl: String = "",
+		var posterUrl: String = "",
+		var frontendLink: String? = "",
+		var url: String = "",
+		var conferenceUrl: String = "",
+		var isPromoted: Boolean = false,
 
-                           var viewCount: Int = 0,
-                           var persons: Array<String>? = null,
+		var viewCount: Int = 0,
+		var persons: Array<String>? = null,
 
-                           var tags: Array<String>? = null,
-                           @Ignore
-                           var related: List<PersistentRelatedEvent>? = null,
-                           @Ignore
-                           var recordings: List<PersistentRecording>? = null
-) : Parcelable {
+		var tags: Array<String>? = null,
+		@Ignore
+		var related: List<PersistentRelatedEvent>? = null,
+		@Ignore
+		var recordings: List<PersistentRecording>? = null
+) : PersistentItem(), Parcelable {
 
 	constructor(parcel: Parcel) : this(
 			parcel.readLong(),
-			parcel.readLong(),
+			parcel.readString(),
 			parcel.readString(),
 			parcel.readString(),
 			parcel.readString(),
@@ -68,7 +68,35 @@ data class PersistentEvent(@PrimaryKey(autoGenerate = false)
 			parcel.readByte() != 0.toByte(),
 			parcel.readInt(),
 			parcel.createStringArray(),
-			parcel.createStringArray())
+			parcel.createStringArray(),
+			parcel.createTypedArrayList(PersistentRelatedEvent),
+			parcel.createTypedArrayList(PersistentRecording))
+
+	@Ignore
+	constructor(event: Event,conferenceId: Long = 0) : this(
+			conferenceId = conferenceId,
+			guid = event.guid,
+			title = event.title,
+			subtitle = event.subtitle,
+			slug = event.slug,
+			link = event.link,
+			description = event.description,
+			originalLanguage = event.originalLanguage,
+			date = event.date,
+			releaseDate = event.releaseDate,
+			updatedAt = event.updatedAt,
+			length = event.length,
+			thumbUrl = event.thumbUrl,
+			frontendLink = event.frontendLink,
+			url = event.url,
+			conferenceUrl = event.conferenceUrl,
+			isPromoted = event.isPromoted,
+			viewCount = event.viewCount,
+			persons = event.persons,
+			tags = event.tags,
+			related = event.related?.map { PersistentRelatedEvent(event.eventID,it) },
+			recordings = event.recordings?.map { PersistentRecording(it) }
+	)
 
 	fun getExtendedDescription(): Spanned {
 		val description = "$description\n\nreleased at: $releaseDate<br>Tags: ${tags?.joinToString(", ")}"
@@ -82,22 +110,9 @@ data class PersistentEvent(@PrimaryKey(autoGenerate = false)
 	fun getSpeakerString(): String?
 			= persons?.joinToString(", ")
 
-	@Ignore
-	constructor(event: Event) : this(event.eventID,
-			event.conferenceId, event.guid, event.title,
-			event.subtitle, event.slug, event.link, event.description,
-			event.originalLanguage, event.date, event.releaseDate,
-			event.updatedAt, event.length, event.thumbUrl, event.posterUrl,
-			event.frontendLink, event.url, event.conferenceUrl,
-			event.isPromoted, event.viewCount,
-			event.persons, event.tags){
-		this.related = event.related?.map { PersistentRelatedEvent(event.eventID,it) }
-		this.recordings = event.recordings?.map { PersistentRecording(it) }
-	}
-
 	override fun writeToParcel(parcel: Parcel, flags: Int) {
-		parcel.writeLong(eventId)
-		parcel.writeLong(conferenceId)
+		parcel.writeLong(id)
+		parcel.writeString(conference)
 		parcel.writeString(guid)
 		parcel.writeString(title)
 		parcel.writeString(subtitle)
@@ -118,6 +133,8 @@ data class PersistentEvent(@PrimaryKey(autoGenerate = false)
 		parcel.writeInt(viewCount)
 		parcel.writeStringArray(persons)
 		parcel.writeStringArray(tags)
+		parcel.writeTypedList(related)
+		parcel.writeTypedList(recordings)
 	}
 
 	override fun describeContents(): Int {
@@ -133,4 +150,6 @@ data class PersistentEvent(@PrimaryKey(autoGenerate = false)
 			return arrayOfNulls(size)
 		}
 	}
+
+
 }

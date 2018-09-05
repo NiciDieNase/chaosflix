@@ -8,8 +8,6 @@ import de.nicidienase.chaosflix.common.entities.recording.Event
 
 @Entity(tableName = "conference")
 data class PersistentConference(
-        @PrimaryKey
-        var conferenceId: Long = 0,
         var conferenceGroupId: Long = 0,
         var acronym: String = "",
         var aspectRatio: String = "",
@@ -23,17 +21,9 @@ data class PersistentConference(
         var url: String = "",
         var updatedAt: String = "",
         var tagsUsefull: Boolean = false
-) : Parcelable {
+) : PersistentItem(), Parcelable {
 
-    @Ignore
-    constructor(con: Conference) : this(con.conferenceID,0,
-            con.acronym, con.aspectRatio, con.title, con.slug, con.webgenLocation,
-            con.scheduleUrl, con.logoUrl, con.imagesUrl, con.recordingsUrl, con.url,
-            con.updatedAt,con.tagsUsefull)
-
-    @Ignore
     constructor(parcel: Parcel) : this(
-            parcel.readLong(),
             parcel.readLong(),
             parcel.readString(),
             parcel.readString(),
@@ -49,8 +39,22 @@ data class PersistentConference(
             parcel.readByte() != 0.toByte()) {
     }
 
+    @Ignore
+    constructor(con: Conference) : this(
+            acronym = con.acronym,
+            aspectRatio = con.aspectRatio,
+            title = con.title,
+            slug = con.slug,
+            webgenLocation = con.webgenLocation,
+            scheduleUrl = con.scheduleUrl,
+            logoUrl = con.logoUrl,
+            imagesUrl = con.imagesUrl,
+            recordingsUrl = con.recordingsUrl,
+            url = con.url,
+            updatedAt = con.updatedAt,
+            tagsUsefull = con.tagsUsefull)
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeLong(conferenceId)
         parcel.writeLong(conferenceGroupId)
         parcel.writeString(acronym)
         parcel.writeString(aspectRatio)

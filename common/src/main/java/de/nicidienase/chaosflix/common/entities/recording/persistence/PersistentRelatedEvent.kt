@@ -12,36 +12,28 @@ import de.nicidienase.chaosflix.common.entities.recording.RelatedEvent
 		foreignKeys = arrayOf(ForeignKey(
 				entity = PersistentEvent::class,
 				onDelete = ForeignKey.CASCADE,
-				parentColumns = arrayOf("eventId"),
-				childColumns = arrayOf("eventId"))))
+				parentColumns = arrayOf("id"),
+				childColumns = arrayOf("parentEventId"))))
 
 
-class PersistentRelatedEvent( @PrimaryKey(autoGenerate = true)
-							   val id: Long = 0,
-							   val eventId: Long,
-							   var relatedEventId: Int,
-							   var relatedEventGuid: String,
-							   var weight: Int): Parcelable {
+class PersistentRelatedEvent(val parentEventId: Long,
+                             var relatedEventGuid: String,
+                             var weight: Int): PersistentItem(), Parcelable {
 
-	@Ignore
 	constructor(parcel: Parcel) : this(
 			parcel.readLong(),
-			parcel.readLong(),
-			parcel.readInt(),
 			parcel.readString(),
-			parcel.readInt())
+			parcel.readInt()) {
+	}
 
 	@Ignore
-	constructor(eventId: Long, relatedEvent: RelatedEvent): this(
-			eventId = eventId,
-			relatedEventId = relatedEvent.eventId,
+	constructor(parentEventId: Long, relatedEvent: RelatedEvent): this(
+			parentEventId= parentEventId,
 			relatedEventGuid = relatedEvent.eventGuid,
 			weight = relatedEvent.weight)
 
 	override fun writeToParcel(parcel: Parcel, flags: Int) {
-		parcel.writeLong(id)
-		parcel.writeLong(eventId)
-		parcel.writeInt(relatedEventId)
+		parcel.writeLong(parentEventId)
 		parcel.writeString(relatedEventGuid)
 		parcel.writeInt(weight)
 	}
