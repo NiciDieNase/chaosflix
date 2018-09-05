@@ -41,7 +41,11 @@ data class Event(@SerializedName("conference_id")
 
     init {
         val strings = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        eventID = strings[strings.size - 1].toLong()
+        try{
+            eventID = strings[strings.size - 1].toLong()
+        } catch (ex: NumberFormatException){
+            eventID = 0
+        }
 
         val split = conferenceUrl.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         conferenceId = (split[split.size - 1]).toLong()
