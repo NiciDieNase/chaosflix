@@ -67,6 +67,12 @@ class IntegrationTests {
 		assert("16:9".equals(emfCamp.aspectRatio))
 	}
 
+	@Test
+	fun testConferencesWrapper(){
+		val conferencesWrapper = recordingApi.getConferencesWrapper().blockingGet()
+		assert(conferencesWrapper.conferencesMap.size.equals(22))
+	}
+
 	companion object {
 		val recordingUrl = "https://api.media.ccc.de"
 	}
