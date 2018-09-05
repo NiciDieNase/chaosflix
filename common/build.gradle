@@ -12,7 +12,7 @@ android {
         minSdkVersion rootProject.ext.minSDK
         targetSdkVersion rootProject.ext.targetSDK
         versionCode 1
-        versionName "1.3.2"
+        versionName rootProject.ext.version
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -32,10 +32,10 @@ android {
 }
 
 group="de.nicidienase.chaosflix"
-version="1.3.2-SNAPSHOT"
+version=rootProject.ext.version
 
 dependencies {
-    api 'com.android.support:appcompat-v7:27.1.1'
+    api "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
 
     api "android.arch.lifecycle:extensions:${rootProject.ext.archCompVersion}"
     kapt "android.arch.lifecycle:compiler:${rootProject.ext.archCompVersion}"
