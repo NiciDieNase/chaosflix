@@ -27,7 +27,7 @@ interface EventDao: PersistentItemDao<PersistentEvent> {
     @Query("SELECT * FROM event WHERE conference = :id ORDER BY title ASC")
     fun findEventsByConference(id: Long):LiveData<List<PersistentEvent>>
 
-    @Query("SELECT * FROM event WHERE conference = :id ORDER BY title ASC")
+    @Query("SELECT * FROM event WHERE conferenceId = :id ORDER BY title ASC")
     fun findEventsByConferenceSync(id: Long):List<PersistentEvent>
 
     @Query("SELECT * FROM event INNER JOIN watchlist_item WHERE event.id = watchlist_item.event_id")

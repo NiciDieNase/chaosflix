@@ -13,7 +13,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.Recording
 				childColumns = arrayOf("eventId"))),
 		indices = arrayOf(Index("eventId")))
 data class PersistentRecording(
-		var eventId: Long,
+		var eventId: Long = 0,
 		var size: Int = 0,
 		var length: Int = 0,
 		var mimeType: String = "",
@@ -51,23 +51,23 @@ data class PersistentRecording(
 	}
 
 	@Ignore
-	constructor(rec: Recording) : this(
-			rec.eventID,
-			rec.size,
-			rec.length,
-			rec.mimeType,
-			rec.language,
-			rec.filename,
-			rec.state,
-			rec.folder,
-			rec.isHighQuality,
-			rec.width,
-			rec.height,
-			rec.updatedAt,
-			rec.recordingUrl,
-			rec.url,
-			rec.eventUrl,
-			rec.conferenceUrl)
+	constructor(rec: Recording, eventId: Long = 0) : this(
+			eventId = eventId,
+			size = rec.size,
+			length = rec.length,
+			mimeType = rec.mimeType,
+			language = rec.language,
+			filename = rec.filename,
+			state = rec.state,
+			folder = rec.folder,
+			isHighQuality = rec.isHighQuality,
+			width = rec.width,
+			height = rec.height,
+			updatedAt = rec.updatedAt,
+			recordingUrl = rec.recordingUrl,
+			url = rec.url,
+			eventUrl = rec.eventUrl,
+			conferenceUrl = rec.conferenceUrl)
 
 	override fun writeToParcel(parcel: Parcel, flags: Int) {
 		parcel.writeLong(eventId)

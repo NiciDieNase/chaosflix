@@ -45,12 +45,9 @@ dependencies {
     api "android.arch.persistence.room:rxjava2:${rootProject.ext.archCompVersion}"
     kapt "android.arch.persistence.room:compiler:${rootProject.ext.archCompVersion}"
 
-    api 'io.reactivex.rxjava2:rxjava:2.1.5'
 
     api 'com.squareup.retrofit2:retrofit:2.3.0'
-
     api 'com.squareup.retrofit2:converter-gson:2.3.0'
-    api 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
 
     api 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0'
 

@@ -27,12 +27,14 @@ data class Recording(
 ) {
 
     var recordingID: Long
-    var eventID: Long
 
     init {
         val strings = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         recordingID = (strings[strings.size - 1]).toLong()
+    }
+
+    fun getEventString():String {
         val split = eventUrl.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        eventID = (split[split.size - 1]).toLong()
+        return (split[split.size - 1])
     }
 }

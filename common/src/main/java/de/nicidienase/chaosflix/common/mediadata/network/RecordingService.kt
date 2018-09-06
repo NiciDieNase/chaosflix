@@ -4,31 +4,28 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.Recording
-import io.reactivex.Single
+import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-public interface RecordingService {
+interface RecordingService {
 
     @GET("public/conferences")
-    fun getConferencesWrapper(): Single<ConferencesWrapper>
-
-    @GET("public/events")
-    fun getAllEvents(): Single<List<Event>>
+    fun getConferencesWrapper(): Call<ConferencesWrapper>
 
     @GET("public/conferences/{id}")
-    fun getConference(@Path("id") id: Long): Single<Conference>
-
-    @GET("public/conferences/{id}")
-    fun getConferenceString(@Path("id") id: Long): Single<String>
+    fun getConference(@Path("id") id: Long): Call<Conference>
 
     @GET("public/conferences/{name}")
-    fun getConferenceByname(@Path("name") name: String): Single<Conference>
+    fun getConferenceByName(@Path("name") name: String): Call<Conference>
 
     @GET("public/events/{id}")
-    fun getEvent(@Path("id") id: Long): Single<Event>
+    fun getEvent(@Path("id") id: Long): Call<Event>
+
+    @GET("public/events/{guid}")
+    fun getEventByGUID(@Path("guid") guid: String): Call<Event>
 
     @GET("public/recordings/{id}")
-    fun getRecording(@Path("id") id: Long): Single<Recording>
+    fun getRecording(@Path("id") id: Long): Call<Recording>
 
 }

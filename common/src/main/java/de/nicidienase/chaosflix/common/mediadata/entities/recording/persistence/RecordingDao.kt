@@ -7,7 +7,7 @@ import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 
 @Dao
-interface RecordingDao{
+interface RecordingDao: PersistentItemDao<RecordingDao>{
 
     @Query("SELECT * FROM recording")
     fun getAllRecordings(): LiveData<List<PersistentRecording>>
