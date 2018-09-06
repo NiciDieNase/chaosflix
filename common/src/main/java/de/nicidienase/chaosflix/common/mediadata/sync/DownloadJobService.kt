@@ -1,32 +1,41 @@
-package de.nicidienase.chaosflix.touch.sync
+package de.nicidienase.chaosflix.common.mediadata.sync
 
 import android.content.Intent
 import android.support.v4.app.JobIntentService
-import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
-import de.nicidienase.chaosflix.touch.ViewModelFactory
+import de.nicidienase.chaosflix.common.DatabaseFactory
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentItem
+import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 
 class DownloadJobService : JobIntentService() {
 
 	override fun onHandleWork(intent: Intent) {
-		val downloader = Downloader(ViewModelFactory.recordingApi, ViewModelFactory.database)
-		val entity: String? = intent.getStringExtra(ENTITY_KEY)
-		val id: Long = intent.getLongExtra(ID_KEY, -1)
-		if (entity != null) {
-			when (entity) {
-//                ENTITY_KEY_EVERYTHING -> downloader.updateEverything()
+		val downloader = Downloader(
+				ApiFactory(resources).recordingApi,
+				DatabaseFactory(applicationContext).mediaDatabase)
+		val entityType: String? = intent.getStringExtra(ENTITY_KEY)
+
+		if (entityType != null) {
+			when (entityType) {
 				ENTITY_KEY_CONFERENCES -> downloader.updateConferencesAndGroups()
-				ENTITY_KEY_EVENTS -> downloader.updateEventsForConference(id)
-				ENTITY_KEY_RECORDINGS -> downloader.updateRecordingsForEvent(id)
+				ENTITY_KEY_EVENTS -> {
+					val item = intent.getParcelableExtra<PersistentConference>(ITEM_KEY)
+					downloader.updateEventsForConference(item as PersistentConference)
+				}
+				ENTITY_KEY_RECORDINGS -> {
+					val item = intent.getParcelableExtra<PersistentEvent>(ITEM_KEY)
+					downloader.updateRecordingsForEvent(item as PersistentEvent)
+				}
 			}
 		}
 	}
 
 	companion object {
 		val ENTITY_KEY: String = "entity_key"
-		//        val ENTITY_KEY_EVERYTHING = "everything"
+		val ITEM_KEY: String = "item_key"
 		val ENTITY_KEY_CONFERENCES: String = "conferences"
 		val ENTITY_KEY_EVENTS: String = "events"
 		val ENTITY_KEY_RECORDINGS: String = "recodings"
-		val ID_KEY: String = "id_key"
 	}
 }

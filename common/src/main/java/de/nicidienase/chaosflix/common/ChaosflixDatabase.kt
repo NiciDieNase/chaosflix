@@ -1,14 +1,28 @@
-package de.nicidienase.chaosflix.common.mediadata.entities
+package de.nicidienase.chaosflix.common
 
 import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 import android.arch.persistence.room.migration.Migration
+import de.nicidienase.chaosflix.common.mediadata.entities.Converters
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceDao
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroupDao
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.EventDao
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentItem
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRelatedEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RecordingDao
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RelatedEventDao
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.*
+import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventDao
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
+import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgressDao
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
+import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 
 @Database(entities = arrayOf(
 		PersistentItem::class,
@@ -17,17 +31,24 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 		PersistentRecording::class,
 		PersistentRelatedEvent::class,
 		ConferenceGroup::class,
+
 		PlaybackProgress::class,
 		WatchlistItem::class,
-		OfflineEvent::class), version = 5, exportSchema = true)
+		OfflineEvent::class
+), version = 5, exportSchema = true)
 @TypeConverters(Converters::class)
-abstract class MediaDatabase : RoomDatabase() {
+abstract class ChaosflixDatabase : RoomDatabase() {
 
 	abstract fun conferenceGroupDao(): ConferenceGroupDao
 	abstract fun conferenceDao(): ConferenceDao
 	abstract fun eventDao(): EventDao
 	abstract fun relatedEventDao(): RelatedEventDao
 	abstract fun recordingDao(): RecordingDao
+
+	abstract fun playbackProgressDao(): PlaybackProgressDao
+	abstract fun watchlistItemDao(): WatchlistItemDao
+	abstract fun offlineEventDao(): OfflineEventDao
+
 
 	companion object {
 		val migration_2_3 = object : Migration(2, 3) {
@@ -59,5 +80,3 @@ abstract class MediaDatabase : RoomDatabase() {
 		}
 	}
 }
-
-

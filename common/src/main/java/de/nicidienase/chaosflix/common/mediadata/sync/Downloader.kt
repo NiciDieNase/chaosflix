@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.database.sqlite.SQLiteConstraintException
 import android.util.Log
 import de.nicidienase.chaosflix.common.Util
-import de.nicidienase.chaosflix.common.mediadata.entities.MediaDatabase
+import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.Recording
@@ -16,10 +16,9 @@ import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import de.nicidienase.chaosflix.common.util.ThreadHandler
-import io.reactivex.schedulers.Schedulers
 
 class Downloader(val recordingApi: RecordingService,
-                 val database: MediaDatabase) {
+                 val database: ChaosflixDatabase) {
 
 	private val threadHandler = ThreadHandler()
 

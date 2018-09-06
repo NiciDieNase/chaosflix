@@ -28,9 +28,11 @@ data class PersistentRecording(
 		var recordingUrl: String = "",
 		var url: String = "",
 		var eventUrl: String = "",
-		var conferenceUrl: String = ""
+		var conferenceUrl: String = "",
+		var backendId: Long = 0
 ) : PersistentItem(), Parcelable {
 
+	@Ignore
 	constructor(parcel: Parcel) : this(
 			parcel.readLong(),
 			parcel.readInt(),
@@ -67,7 +69,8 @@ data class PersistentRecording(
 			recordingUrl = rec.recordingUrl,
 			url = rec.url,
 			eventUrl = rec.eventUrl,
-			conferenceUrl = rec.conferenceUrl)
+			conferenceUrl = rec.conferenceUrl,
+			backendId = rec.recordingID )
 
 	override fun writeToParcel(parcel: Parcel, flags: Int) {
 		parcel.writeLong(eventId)
@@ -101,4 +104,5 @@ data class PersistentRecording(
 			return arrayOfNulls(size)
 		}
 	}
+
 }

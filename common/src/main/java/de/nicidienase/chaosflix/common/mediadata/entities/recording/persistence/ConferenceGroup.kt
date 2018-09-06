@@ -6,7 +6,7 @@ import android.os.Parcelable
 
 @Entity(
         tableName = "conference_group",
-        indices = [Index(value = "name", unique = true)])
+        indices = [Index(value = ["name"], unique = true)])
 data class ConferenceGroup(
         var name: String = ""
 ): PersistentItem(), Parcelable {

@@ -57,15 +57,15 @@ data class Event(@SerializedName("conference_id")
     fun getSpeakerString(): String?
         = persons?.joinToString(", ")
 
-    override fun compareTo(event: Event): Int {
-        return slug.compareTo(event.slug)
+    override fun compareTo(other: Event): Int {
+        return slug.compareTo(other.slug)
     }
 
-    override fun equals(obj: Any?): Boolean {
-        return if (obj is Event) {
-            guid == obj.guid
+    override fun equals(other: Any?): Boolean {
+        return if (other is Event) {
+            guid == other.guid
         } else {
-            super.equals(obj)
+            super.equals(other)
         }
 
     }

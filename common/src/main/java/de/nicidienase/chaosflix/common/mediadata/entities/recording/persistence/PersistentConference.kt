@@ -1,10 +1,10 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence
 
-import android.arch.persistence.room.*
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
 import android.os.Parcel
 import android.os.Parcelable
-import de.nicidienase.chaosflix.common.entities.recording.Conference
-import de.nicidienase.chaosflix.common.entities.recording.Event
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.Conference
 
 @Entity(tableName = "conference")
 data class PersistentConference(

@@ -103,6 +103,7 @@ data class PersistentEvent(
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
 			return Html.fromHtml(description, Html.FROM_HTML_MODE_LEGACY)
 		} else {
+			@Suppress("DEPRECATION")
 			return Html.fromHtml(description)
 		}
 	}

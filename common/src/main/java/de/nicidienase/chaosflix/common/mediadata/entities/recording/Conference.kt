@@ -34,36 +34,33 @@ data class Conference(
     }
 
     private fun getEventsMap(events: List<Event>?): Map<String,List<Event>>{
-                val map = HashMap<String, MutableList<Event>>()
-                val untagged = ArrayList<Event>()
-                if (events != null) {
-                    for (event in events) {
-                        if (event.tags?.isNotEmpty() ?: false) {
-                            for (tag in event.tags!!) {
-                                if (tag != null) {
+        val map = HashMap<String, MutableList<Event>>()
+        val untagged = ArrayList<Event>()
+        if (events != null) {
+            for (event in events) {
+                if (event.tags?.isNotEmpty() ?: false) {
+                    for (tag in event.tags!!) {
 
-                                    val list: MutableList<Event>
-                                    if (map.keys.contains(tag)) {
-                                        list = map[tag]!!
-                                    } else {
-                                        list = ArrayList<Event>()
-                                        map.put(tag, list)
-                                    }
-                                    list.add(event)
-                                } else {
-                                    untagged.add(event)
-                                }
-                            }
+                        val list: MutableList<Event>
+                        if (map.keys.contains(tag)) {
+                            list = map[tag]!!
                         } else {
-                            untagged.add(event)
+                            list = ArrayList<Event>()
+                            map.put(tag, list)
                         }
+                        list.add(event)
+
                     }
-                    if (untagged.size > 0) {
-                        map.put("untagged", untagged)
-                    }
+                } else {
+                    untagged.add(event)
                 }
-                return map
             }
+            if (untagged.size > 0) {
+                map.put("untagged", untagged)
+            }
+        }
+        return map
+    }
 
 
     private fun getIdFromUrl(url: String = this.url): Long {
@@ -85,7 +82,7 @@ data class Conference(
         return hashSet
     }
 
-    override fun compareTo(conference: Conference): Int {
-        return slug.compareTo(conference.slug)
+    override fun compareTo(other: Conference): Int {
+        return slug.compareTo(other.slug)
     }
 }

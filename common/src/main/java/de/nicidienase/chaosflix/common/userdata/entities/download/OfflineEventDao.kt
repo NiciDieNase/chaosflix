@@ -11,11 +11,11 @@ interface OfflineEventDao{
     @Insert
     fun insert(vararg items: OfflineEvent)
 
-    @Query("SELECT * FROM offline_event WHERE event_id = :id LIMIT 1")
-    fun getByEventId(id: Long): LiveData<OfflineEvent>
+    @Query("SELECT * FROM offline_event WHERE event_guid = :guid LIMIT 1")
+    fun getByEventId(guid: String): LiveData<OfflineEvent>
 
-    @Query("SELECT * FROM offline_event WHERE event_id = :id LIMIT 1")
-    fun getByEventIdSynchronous(id: Long): OfflineEvent
+    @Query("SELECT * FROM offline_event WHERE event_guid = :guid LIMIT 1")
+    fun getByEventIdSynchronous(guid: String): OfflineEvent
 
     @Query("SELECT * FROM offline_event WHERE download_reference = :ref LIMIT 1")
     fun getByDownloadReference(ref: Long): LiveData<OfflineEvent>

@@ -23,10 +23,9 @@ data class Recording(
         @SerializedName("event_url")
         var eventUrl: String = "",
         @SerializedName("conference_url")
-        var conferenceUrl: String = ""
+        var conferenceUrl: String = "",
+        var recordingID: Long
 ) {
-
-    var recordingID: Long
 
     init {
         val strings = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
