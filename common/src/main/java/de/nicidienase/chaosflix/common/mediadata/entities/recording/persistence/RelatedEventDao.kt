@@ -8,4 +8,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.RelatedEvent
 interface RelatedEventDao: PersistentItemDao<RelatedEvent> {
 	@Query("SELECT * FROM related WHERE parentEventId = :id")
 	fun getRelatedEventsForEvent(id: Long): LiveData<List<PersistentRelatedEvent>>
+
+	@Query("SELECT * FROM related WHERE parentEventId = :id")
+	fun getRelatedEventsForEventSync(id: Long): List<PersistentRelatedEvent>
 }

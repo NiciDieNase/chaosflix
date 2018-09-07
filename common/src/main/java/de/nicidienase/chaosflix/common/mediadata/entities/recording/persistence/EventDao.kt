@@ -27,6 +27,9 @@ interface EventDao: PersistentItemDao<PersistentEvent> {
     @Query("SELECT * FROM event WHERE guid in (:ids)")
     fun findEventsByGUIDs(ids: List<String>): LiveData<List<PersistentEvent>>
 
+    @Query("SELECT * FROM event WHERE guid in (:ids)")
+    fun findEventsByGUIDsSync(ids: List<String>): List<PersistentEvent>
+
     @Query("SELECT * FROM event WHERE conference = :id ORDER BY title ASC")
     fun findEventsByConference(id: Long):LiveData<List<PersistentEvent>>
 
