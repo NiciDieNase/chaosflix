@@ -54,7 +54,7 @@ android {
 
 dependencies {
 //    implementation 'com.github.NiciDieNase:chaosflix-common:1.3.2'
-    implementation 'de.nicidienase.chaosflix:common:2.0.1-SNAPSHOT'
+    implementation 'de.nicidienase.chaosflix:common:2.0.0-SNAPSHOT'
 
     implementation('com.mikepenz:aboutlibraries:6.1.1@aar') {
         transitive = true

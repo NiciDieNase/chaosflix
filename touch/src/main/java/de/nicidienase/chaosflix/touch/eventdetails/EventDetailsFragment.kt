@@ -37,7 +37,6 @@ class EventDetailsFragment : Fragment() {
 
 	private var listener: OnEventDetailsFragmentInteractionListener? = null
 
-	private var eventId: Long = 0
 	private var appBarExpanded: Boolean = false
 	private lateinit var event: PersistentEvent
 	private var watchlistItem: WatchlistItem? = null
@@ -102,26 +101,32 @@ class EventDetailsFragment : Fragment() {
 				ViewModelFactory(requireContext()))
 				.get(DetailsViewModel::class.java)
 
-		viewModel.setEvent(eventId)
+		viewModel.setEvent(event)
+				.observe(this, Observer {
+					Log.d(TAG,"Loading Event ${event.title}, ${event.guid}")
+					updateBookmark(event.guid)
+					binding.thumbImage.transitionName = getString(R.string.thumbnail) + event.guid
+					Picasso.with(context)
+							.load(event.thumbUrl)
+							.noFade()
+							.into(binding.thumbImage, object : Callback {
+								override fun onSuccess() {
+//                                        startPostponedEnterTransition()
+								}
+
+								override fun onError() {
+//                                        startPostponedEnterTransition()
+								}
+							})
+
+				})
+		viewModel.getRelatedEvents(event).observe(this, Observer {
+
+		})
+
 				.observe(this, Observer { event: PersistentEvent? ->
 					if (event != null) {
-						Log.d(TAG,"Loading Event ${event.title}, ${event.guid}")
-						this.event = event
-						updateBookmark()
-						binding.event = event
-						binding.thumbImage.transitionName = getString(R.string.thumbnail) + event.guid
-						Picasso.with(context)
-								.load(event.thumbUrl)
-								.noFade()
-								.into(binding.thumbImage, object : Callback {
-									override fun onSuccess() {
-//                                        startPostponedEnterTransition()
-									}
 
-									override fun onError() {
-//                                        startPostponedEnterTransition()
-									}
-								})
 
 						val relatedGuids = event.related?.map { it.relatedEventGuid }
 //						val relatedIds: LongArray = event.metadata?.related?.keys?.toLongArray() ?: longArrayOf()
@@ -134,8 +139,8 @@ class EventDetailsFragment : Fragment() {
 				})
 	}
 
-	private fun updateBookmark() {
-		viewModel.getBookmarkForEvent(event.guid)
+	private fun updateBookmark(guid: String) {
+		viewModel.getBookmarkForEvent(guid)
 				.observe(this, Observer { watchlistItem: WatchlistItem? ->
 					this.watchlistItem = watchlistItem
 					listener?.invalidateOptionsMenu()

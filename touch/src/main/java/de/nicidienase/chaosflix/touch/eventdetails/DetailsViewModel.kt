@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRelatedEvent
 import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
@@ -13,7 +14,6 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.ThreadHandler
 import de.nicidienase.chaosflix.touch.OfflineItemManager
 import java.io.File
-
 class DetailsViewModel(
 		val database: ChaosflixDatabase,
 		recordingApi: RecordingService
@@ -88,7 +88,17 @@ class DetailsViewModel(
 		return result
 	}
 
+	fun getRelatedEvents(event: PersistentEvent): LiveData<List<PersistentEvent>>{
+		val data = MutableLiveData<List<PersistentEvent>>()
+		handler.runOnBackgroundThread {
+			val guids = database.relatedEventDao().getRelatedEventsForEventSync(event.id).map { it.relatedEventGuid }
+			data.postValue(database.eventDao().findEventsByGUIDsSync(guids))
+		}
+		return data
+	}
+
 	companion object {
 		val TAG = DetailsViewModel::class.simpleName
 	}
 }
+
