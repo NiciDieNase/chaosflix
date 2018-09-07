@@ -42,9 +42,7 @@ dependencies {
     api "android.arch.lifecycle:common-java8:1.1.1"
 
     api "android.arch.persistence.room:runtime:${rootProject.ext.archCompVersion}"
-    api "android.arch.persistence.room:rxjava2:${rootProject.ext.archCompVersion}"
     kapt "android.arch.persistence.room:compiler:${rootProject.ext.archCompVersion}"
-
 
     api 'com.squareup.retrofit2:retrofit:2.3.0'
     api 'com.squareup.retrofit2:converter-gson:2.3.0'
@@ -56,7 +54,7 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 }
 repositories {

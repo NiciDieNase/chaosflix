@@ -9,8 +9,8 @@ interface WatchlistItemDao {
     @Query("SELECT * from watchlist_item")
     fun getAll(): LiveData<List<WatchlistItem>>
 
-    @Query("SELECT * from watchlist_item WHERE event_id = :id LIMIT 1")
-    fun getItemForEvent(id: Long): LiveData<WatchlistItem>
+    @Query("SELECT * from watchlist_item WHERE event_guid = :guid LIMIT 1")
+    fun getItemForEvent(guid: String): LiveData<WatchlistItem>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveItem(item: WatchlistItem)
@@ -18,6 +18,6 @@ interface WatchlistItemDao {
     @Delete
     fun deleteItem(item: WatchlistItem)
 
-    @Query("DELETE from watchlist_item WHERE event_id = :id")
-    fun deleteItem(id: Long)
+    @Query("DELETE from watchlist_item WHERE event_guid = :guid")
+    fun deleteItem(guid: String)
 }

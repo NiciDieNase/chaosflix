@@ -18,6 +18,9 @@ interface EventDao: PersistentItemDao<PersistentEvent> {
     @Query("SELECT * FROM event WHERE id = :id ORDER BY title ASC")
     fun findEventById(id: Long): LiveData<PersistentEvent>
 
+    @Query("SELECT * FROM event WHERE guid = :guid LIMIT 1")
+    fun findEventByGuid(guid: String): LiveData<PersistentEvent>
+
     @Query("SELECT * FROM event WHERE id in (:ids)")
     fun findEventsByIds(ids: LongArray): LiveData<List<PersistentEvent>>
 
@@ -30,7 +33,7 @@ interface EventDao: PersistentItemDao<PersistentEvent> {
     @Query("SELECT * FROM event WHERE conferenceId = :id ORDER BY title ASC")
     fun findEventsByConferenceSync(id: Long):List<PersistentEvent>
 
-    @Query("SELECT * FROM event INNER JOIN watchlist_item WHERE event.id = watchlist_item.event_id")
+    @Query("SELECT * FROM event INNER JOIN watchlist_item WHERE event.guid = watchlist_item.event_guid")
     fun findBookmarkedEvents(): LiveData<List<PersistentEvent>>
 
     @Query("SELECT * FROM event INNER JOIN playback_progress WHERE event.id = playback_progress.event_id")
