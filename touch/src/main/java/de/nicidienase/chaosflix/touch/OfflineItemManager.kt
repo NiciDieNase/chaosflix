@@ -19,7 +19,7 @@ import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
 
-class OfflineItemManager(downloadRefs: List<Long>? = emptyList()) {
+class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEventDao: OfflineEventDao) {
 
 	val downloadStatus: MutableMap<Long, DownloadStatus>
 
@@ -31,8 +31,6 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList()) {
 		downloadStatus = HashMap()
 		downloadRefs?.map { downloadStatus.put(it, DownloadStatus()) }
 	}
-
-	val offlineEventDao: OfflineEventDao = DatabaseFactory.database.offlineEventDao()
 
 	fun updateDownloadStatus() {
 		updateDownloads(downloadStatus.keys.toLongArray())
@@ -110,7 +108,7 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList()) {
 				val downloadReference = downloadManager.enqueue(request)
 				Log.d(DetailsViewModel.TAG, "download started $downloadReference")
 
-				val cancelHandler = DownloadCancelHandler(downloadReference)
+				val cancelHandler = DownloadCancelHandler(downloadReference, offlineEventDao)
 				val intentFilter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
 				ChaosflixApplication.APPLICATION_CONTEXT.registerReceiver(cancelHandler, intentFilter)
 
@@ -156,13 +154,13 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList()) {
 		}
 	}
 
-	class DownloadCancelHandler(val id: Long) : BroadcastReceiver() {
+	class DownloadCancelHandler(val id: Long, val offlineEventDao: OfflineEventDao) : BroadcastReceiver() {
 		private val TAG = DownloadCancelHandler::class.simpleName
 
 		override fun onReceive(p0: Context?, p1: Intent?) {
 			val downloadId = p1?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
 			if (downloadId != null && downloadId == id) {
-				val offlineItemManager = OfflineItemManager(listOf(downloadId))
+				val offlineItemManager = OfflineItemManager(listOf(downloadId),offlineEventDao)
 				offlineItemManager.updateDownloadStatus()
 				val downloadStatus = offlineItemManager.downloadStatus[downloadId]
 				if (downloadStatus?.status == DownloadManager.STATUS_FAILED) {

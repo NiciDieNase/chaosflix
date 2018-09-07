@@ -1,103 +1,92 @@
 package de.nicidienase.chaosflix.touch.eventdetails
 
-import android.app.DownloadManager
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.content.Context
-import android.database.sqlite.SQLiteConstraintException
-import android.net.Uri
-import android.os.Environment
-import android.util.Log
-import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase
-import de.nicidienase.chaosflix.common.entities.download.OfflineEvent
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentConference
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording
-import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
-import de.nicidienase.chaosflix.common.network.RecordingService
-import de.nicidienase.chaosflix.common.network.StreamingService
-import de.nicidienase.chaosflix.touch.ChaosflixApplication
+import de.nicidienase.chaosflix.common.ChaosflixDatabase
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
+import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
+import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
+import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
+import de.nicidienase.chaosflix.common.util.ThreadHandler
 import de.nicidienase.chaosflix.touch.OfflineItemManager
-import de.nicidienase.chaosflix.touch.sync.Downloader
-import io.reactivex.Completable
-import io.reactivex.schedulers.Schedulers
 import java.io.File
 
 class DetailsViewModel(
 		val database: ChaosflixDatabase,
-		val recordingApi: RecordingService,
-		val streamingApi: StreamingService
+		recordingApi: RecordingService
 ) : ViewModel() {
 
 	val downloader = Downloader(recordingApi, database)
 	var writeExternalStorageAllowed: Boolean = false
-	val offlineItemManager: OfflineItemManager = OfflineItemManager()
+	val offlineItemManager: OfflineItemManager = OfflineItemManager(offlineEventDao = database.offlineEventDao())
 
-	fun getEventById(eventId: Long): LiveData<PersistentEvent> {
-		downloader.updateRecordingsForEvent(eventId)
-		return database.eventDao().findEventById(eventId)
+	private val handler = ThreadHandler()
+
+	fun setEvent(persistentEvent: PersistentEvent): LiveData<PersistentEvent> {
+		downloader.updateRecordingsForEvent(persistentEvent)
+		return database.eventDao().findEventByGuid(persistentEvent.guid)
 	}
 
-	fun getEventsByIds(ids: LongArray) = database.eventDao().findEventsByIds(ids)
-
-	fun getRecordingForEvent(id: Long): LiveData<List<PersistentRecording>> {
-		downloader.updateRecordingsForEvent(id)
-		return database.recordingDao().findRecordingByEvent(id)
+	fun getRecordingForEvent(persistentEvent: PersistentEvent): LiveData<List<PersistentRecording>> {
+		downloader.updateRecordingsForEvent(persistentEvent)
+		return database.recordingDao().findRecordingByEvent(persistentEvent.id)
 	}
 
-	fun getBookmarkForEvent(id: Long): LiveData<WatchlistItem> = database.watchlistItemDao().getItemForEvent(id)
+	fun getBookmarkForEvent(guid: String): LiveData<WatchlistItem> =
+			database.watchlistItemDao().getItemForEvent(guid)
 
-	fun createBookmark(apiId: Long) {
-		Completable.fromAction {
-			database.watchlistItemDao().saveItem(WatchlistItem(eventId = apiId))
-		}.subscribeOn(Schedulers.io()).subscribe()
+	fun createBookmark(guid: String) {
+		handler.runOnBackgroundThread {
+			database.watchlistItemDao().saveItem(WatchlistItem(eventGuid= guid))
+		}
 	}
 
-	fun removeBookmark(apiID: Long) {
-		Completable.fromAction {
-			database.watchlistItemDao().deleteItem(apiID)
-		}.subscribeOn(Schedulers.io()).subscribe()
+	fun removeBookmark(guid: String) {
+		handler.runOnBackgroundThread {
+			database.watchlistItemDao().deleteItem(guid)
+		}
 	}
 
 	fun download(event: PersistentEvent, recording: PersistentRecording)
 			= offlineItemManager.download(event, recording)
 
-	fun getOfflineItem(eventId: Long) = database.offlineEventDao().getByEventId(eventId)
+	fun getOfflineItem(guid: String): OfflineEvent?
+			= database.offlineEventDao().getByEventGuidSynchronous(guid)
 
-	fun offlineItemExists(eventId: Long): LiveData<Boolean> {
+	fun offlineItemExists(guid: String): LiveData<Boolean> {
 		val result = MutableLiveData<Boolean>()
-		getOfflineItem(eventId).observeForever({ event: OfflineEvent? ->
-			result.postValue(event != null)
-		})
+		handler.runOnBackgroundThread {
+			result.postValue(getOfflineItem(guid) != null )
+		}
 		return result
 	}
 
-	fun fileExists(eventId: Long): LiveData<Boolean> {
+	fun fileExists(guid: String): LiveData<Boolean> {
 		val result = MutableLiveData<Boolean>()
-		getOfflineItem(eventId).observeForever({ event: OfflineEvent? ->
-			result.postValue(if (event != null) File(event.localPath).exists() else false)
-		})
+		handler.runOnBackgroundThread {
+			val offlineItem = getOfflineItem(guid)
+			result.postValue( offlineItem != null && File(offlineItem.localPath).exists())
+		}
 		return result
 	}
 
 	fun deleteOfflineItem(item: OfflineEvent) {
-		Completable.fromAction {
+		handler.runOnBackgroundThread {
 			offlineItemManager.deleteOfflineItem(item)
-		}.subscribeOn(Schedulers.io()).subscribe()
+		}
 	}
 
 	fun deleteOfflineItem(itemId: Long): LiveData<Boolean> {
 		val result = MutableLiveData<Boolean>()
-		Completable.fromAction {
-			val offlineEvent = database.offlineEventDao().getByEventIdSynchronous(itemId)
-			deleteOfflineItem(offlineEvent);
-			result.postValue(true);
-		}.subscribeOn(Schedulers.io()).subscribe()
+		handler.runOnBackgroundThread {
+			database.offlineEventDao().deleteById(itemId)
+			result.postValue(true)
+		}
 		return result
 	}
-
-
 
 	companion object {
 		val TAG = DetailsViewModel::class.simpleName

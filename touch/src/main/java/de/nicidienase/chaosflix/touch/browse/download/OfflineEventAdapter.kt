@@ -47,7 +47,7 @@ class OfflineEventAdapter(var items: List<OfflineEvent>, val viewModel: BrowseVi
 		return items.size
 	}
 
-	override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 		val binding = DataBindingUtil.inflate<ItemOfflineEventBinding>(
 				LayoutInflater.from(parent?.context), R.layout.item_offline_event, parent, false)
 		return ViewHolder(binding, binding.root)

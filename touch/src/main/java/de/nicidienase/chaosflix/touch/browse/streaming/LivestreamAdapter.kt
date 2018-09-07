@@ -41,13 +41,13 @@ class LivestreamAdapter(val listener: LivestreamListFragment.InteractionListener
 		return items.size
 	}
 
-	override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 		val binding =
 				ItemLiveeventCardviewBinding.inflate(LayoutInflater.from(parent?.context),parent,false)
 		return ViewHolder(binding)
 	}
 
-	override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 		val item = items[position]
 
 		holder!!.binding.item = item

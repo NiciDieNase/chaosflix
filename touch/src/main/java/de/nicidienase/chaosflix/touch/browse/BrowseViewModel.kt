@@ -27,7 +27,7 @@ class BrowseViewModel(
 	init {
 		getOfflineEvents().observeForever(Observer {
 			val downloadRefs = it?.map { it.downloadReference } ?: emptyList()
-			offlineItemManager = OfflineItemManager(downloadRefs)
+			offlineItemManager = OfflineItemManager(downloadRefs, database.offlineEventDao())
 		})
 	}
 

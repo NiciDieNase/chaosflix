@@ -7,20 +7,26 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.renderscript.RSInvalidStateException
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.Util
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording
-import de.nicidienase.chaosflix.common.entities.userdata.WatchlistItem
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.PreferencesManager
@@ -51,7 +57,12 @@ class EventDetailsFragment : Fragment() {
 //        sharedElementEnterTransition = transition
 
 		if (arguments != null) {
-			eventId = arguments!!.getLong(EVENT_PARAM)
+			val parcelable = arguments?.getParcelable<PersistentEvent>(EVENT_PARAM)
+			if(parcelable != null){
+				event = parcelable
+			} else {
+				throw RSInvalidStateException("Event Missing")
+			}
 		}
 	}
 
@@ -86,16 +97,19 @@ class EventDetailsFragment : Fragment() {
 			}
 		}
 
-		viewModel = ViewModelProviders.of(activity!!, ViewModelFactory).get(DetailsViewModel::class.java)
+		viewModel = ViewModelProviders.of(
+				requireActivity(),
+				ViewModelFactory(requireContext()))
+				.get(DetailsViewModel::class.java)
 
-		viewModel.getEventById(eventId)
+		viewModel.setEvent(eventId)
 				.observe(this, Observer { event: PersistentEvent? ->
 					if (event != null) {
-						Log.d(TAG,"Loading Event ${event.title}, ${event.eventId}")
+						Log.d(TAG,"Loading Event ${event.title}, ${event.guid}")
 						this.event = event
 						updateBookmark()
 						binding.event = event
-						binding.thumbImage.transitionName = getString(R.string.thumbnail) + event.eventId
+						binding.thumbImage.transitionName = getString(R.string.thumbnail) + event.guid
 						Picasso.with(context)
 								.load(event.thumbUrl)
 								.noFade()
@@ -109,18 +123,19 @@ class EventDetailsFragment : Fragment() {
 									}
 								})
 
-						val relatedIds: LongArray = event.metadata?.related?.keys?.toLongArray() ?: longArrayOf()
+						val relatedGuids = event.related?.map { it.relatedEventGuid }
+//						val relatedIds: LongArray = event.metadata?.related?.keys?.toLongArray() ?: longArrayOf()
 
-						viewModel.getEventsByIds(relatedIds)
-								.observe(this, Observer { events ->
-									relatedEventsAdapter.items = ArrayList(events)
-								})
+//						viewModel.getEventsByGuids(relatedGuids)
+//								.observe(this, Observer { events ->
+//									relatedEventsAdapter.items = ArrayList(events)
+//								})
 					}
 				})
 	}
 
 	private fun updateBookmark() {
-		viewModel.getBookmarkForEvent(eventId)
+		viewModel.getBookmarkForEvent(event.guid)
 				.observe(this, Observer { watchlistItem: WatchlistItem? ->
 					this.watchlistItem = watchlistItem
 					listener?.invalidateOptionsMenu()
@@ -310,10 +325,10 @@ class EventDetailsFragment : Fragment() {
 		private val TAG = EventDetailsFragment::class.java.simpleName
 		private val EVENT_PARAM = "event_param"
 
-		fun newInstance(eventId: Long): EventDetailsFragment {
+		fun newInstance(event: PersistentEvent): EventDetailsFragment {
 			val fragment = EventDetailsFragment()
 			val args = Bundle()
-			args.putLong(EVENT_PARAM, eventId)
+			args.putParcelable(EVENT_PARAM, event)
 			fragment.arguments = args
 			return fragment
 		}
