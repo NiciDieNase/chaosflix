@@ -3,20 +3,23 @@ package de.nicidienase.chaosflix.touch
 import android.app.DownloadManager
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.database.sqlite.SQLiteConstraintException
 import android.databinding.ObservableField
 import android.net.Uri
 import android.os.Environment
 import android.preference.PreferenceManager
 import android.util.Log
-import de.nicidienase.chaosflix.common.entities.download.OfflineEvent
-import de.nicidienase.chaosflix.common.entities.download.OfflineEventDao
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
+import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventDao
+import de.nicidienase.chaosflix.common.util.ThreadHandler
 import de.nicidienase.chaosflix.touch.eventdetails.DetailsViewModel
-import io.reactivex.Completable
-import io.reactivex.schedulers.Schedulers
 import java.io.File
 
 class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEventDao: OfflineEventDao) {
@@ -26,6 +29,8 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEven
 	val downloadManager: DownloadManager
 			= ChaosflixApplication.APPLICATION_CONTEXT
 			.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+
+	private val handler = ThreadHandler()
 
 	init {
 		downloadStatus = HashMap()
@@ -37,7 +42,7 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEven
 	}
 
 	fun updateDownloadStatus(offlineEvents: List<OfflineEvent>) {
-		if (offlineEvents != null && offlineEvents.size > 0) {
+		if (offlineEvents.size > 0) {
 			val downloadRef = offlineEvents.map { it.downloadReference }.toTypedArray().toLongArray() ?: longArrayOf()
 			updateDownloads(downloadRef)
 		}
@@ -83,8 +88,10 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEven
 
 	fun download(event: PersistentEvent, recording: PersistentRecording): LiveData<Boolean> {
 		val result = MutableLiveData<Boolean>()
-		Completable.fromAction {
-			val offlineEvent = offlineEventDao.getByEventIdSynchronous(event.eventId)
+		handler.runOnBackgroundThread {
+
+
+			val offlineEvent = offlineEventDao.getByEventGuidSync(event.guid)
 			if (offlineEvent == null) {
 				val downloadManager: DownloadManager
 						= ChaosflixApplication.APPLICATION_CONTEXT
@@ -114,8 +121,8 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEven
 
 				try {
 					offlineEventDao.insert(
-							OfflineEvent(eventId = event.eventId,
-									recordingId = recording.recordingId,
+							OfflineEvent(eventGuid = event.guid,
+									recordingId = recording.id,
 									localPath = getDownloadDir() + recording.filename,
 									downloadReference = downloadReference))
 				} catch (ex: SQLiteConstraintException) {
@@ -123,13 +130,15 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEven
 				}
 				result.postValue(true)
 			}
-		}.subscribeOn(Schedulers.io()).subscribe()
+		}
 		return result
 	}
 
 	fun deleteOfflineItem(downloadId: Long) {
-		val offlineEvent = offlineEventDao.getByDownloadReferenceSyncrounous(downloadId)
-		deleteOfflineItem(offlineEvent)
+		val offlineEvent = offlineEventDao.getByDownloadReferenceSync(downloadId)
+		if (offlineEvent != null) {
+			deleteOfflineItem(offlineEvent)
+		}
 	}
 
 	fun deleteOfflineItem(item: OfflineEvent) {
@@ -157,6 +166,8 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEven
 	class DownloadCancelHandler(val id: Long, val offlineEventDao: OfflineEventDao) : BroadcastReceiver() {
 		private val TAG = DownloadCancelHandler::class.simpleName
 
+		val handler = ThreadHandler()
+
 		override fun onReceive(p0: Context?, p1: Intent?) {
 			val downloadId = p1?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
 			if (downloadId != null && downloadId == id) {
@@ -165,9 +176,9 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEven
 				val downloadStatus = offlineItemManager.downloadStatus[downloadId]
 				if (downloadStatus?.status == DownloadManager.STATUS_FAILED) {
 					Log.d(TAG, "Deleting item")
-					Completable.fromAction {
+					handler.runOnBackgroundThread {
 						offlineItemManager.deleteOfflineItem(downloadId)
-					}.subscribeOn(Schedulers.io()).subscribe()
+					}
 				}
 				p0?.unregisterReceiver(this);
 			}

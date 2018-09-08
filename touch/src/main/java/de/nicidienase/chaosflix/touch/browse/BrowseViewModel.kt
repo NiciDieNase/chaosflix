@@ -1,38 +1,30 @@
 package de.nicidienase.chaosflix.touch.browse
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModel
-import android.util.Log
-import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase
-import de.nicidienase.chaosflix.common.entities.download.OfflineEvent
-import de.nicidienase.chaosflix.common.entities.streaming.LiveConference
-import de.nicidienase.chaosflix.common.network.RecordingService
-import de.nicidienase.chaosflix.common.network.StreamingService
-import de.nicidienase.chaosflix.touch.OfflineItemManager
-import de.nicidienase.chaosflix.touch.sync.Downloader
-import io.reactivex.Completable
-import io.reactivex.schedulers.Schedulers
-
 class BrowseViewModel(
 		val database: ChaosflixDatabase,
-		val recordingApi: RecordingService,
+		recordingApi: RecordingService,
 		val streamingApi: StreamingService
 ) : ViewModel() {
 
 	val downloader = Downloader(recordingApi, database)
 	lateinit var offlineItemManager: OfflineItemManager
+	private val handler = ThreadHandler()
 
 	init {
-		getOfflineEvents().observeForever(Observer {
-			val downloadRefs = it?.map { it.downloadReference } ?: emptyList()
+		handler.runOnBackgroundThread {
+			val downloadRefs =
+					database
+							.offlineEventDao()
+							.getAllSync()
+							.map { it.downloadReference }
 			offlineItemManager = OfflineItemManager(downloadRefs, database.offlineEventDao())
-		})
+		}
 	}
 
-	fun getConferenceGroups()
-			= database.conferenceGroupDao().getAll()
+	fun getConferenceGroups(): LiveData<List<ConferenceGroup>> {
+		downloader.updateConferencesAndGroups()
+		return database.conferenceGroupDao().getAll()
+	}
 
 	fun getConference(conferenceId: Long)
 			= database.conferenceDao().findConferenceById(conferenceId)
@@ -40,17 +32,19 @@ class BrowseViewModel(
 	fun getConferencesByGroup(groupId: Long)
 			= database.conferenceDao().findConferenceByGroup(groupId)
 
-	fun getEventsforConference(conferenceId: Long)
-			= database.eventDao().findEventsByConference(conferenceId)
+	fun getEventsforConference(conference: PersistentConference)
+			= database.eventDao().findEventsByConference(conference.id)
 
 	fun updateConferences()
 			= downloader.updateConferencesAndGroups()
 
-	fun updateEventsForConference(conferenceId: Long)
-			= downloader.updateEventsForConference(conferenceId)
+	fun updateEventsForConference(conference: PersistentConference)
+			= downloader.updateEventsForConference(conference)
 
-	fun getBookmarkedEvents()
-			= database.eventDao().findBookmarkedEvents()
+	fun getBookmarkedEvents(){
+//		database.
+//		= database.eventDao().findBookmarkedEvents()
+	}
 
 	fun getInProgressEvents()
 			= database.eventDao().findInProgressEvents()
@@ -59,33 +53,70 @@ class BrowseViewModel(
 
 	fun getLivestreams(): LiveData<List<LiveConference>> {
 		val result = MutableLiveData<List<LiveConference>>()
-		streamingApi.getStreamingConferences()
-				.subscribeOn(Schedulers.io())
-				.subscribe({
-					result.postValue(it)
-				}, { t ->
-					Log.d(TAG, t.message, t)
-					result.postValue(emptyList())
-				})
+		handler.runOnBackgroundThread {
+			val conferences = streamingApi.getStreamingConferences().execute()
+			if(!conferences.isSuccessful){
+				result.postValue(emptyList())
+				return@runOnBackgroundThread
+			}
+			result.postValue(conferences.body())
+		}
 		return result
 	}
 
-	fun getOfflineEvents(): LiveData<List<OfflineEvent>> = database.offlineEventDao().getAll()
+	fun getOfflineEvents(): LiveData<List<Pair<OfflineEvent,PersistentEvent>>> {
+		val result = MutableLiveData<List<Pair<OfflineEvent, PersistentEvent>>>()
+		handler.runOnBackgroundThread {
+			val offlineEventMap = database.offlineEventDao().getAllSync()
+					.map { it.eventGuid to it }.toMap()
+			val persistentEventMap = database.eventDao().findEventsByGUIDsSync(offlineEventMap.keys.toList())
+					.map { it.guid to it }.toMap()
+
+			val resultList = ArrayList<Pair<OfflineEvent, PersistentEvent>>()
+			for (key in offlineEventMap.keys){
+				val offlineEvent = offlineEventMap[key]
+				var persistentEvent: PersistentEvent? = persistentEventMap[key]
+				if(persistentEvent == null){
+					persistentEvent = downloader.updateSingleEvent(key)
+				}
+				if(persistentEvent != null && offlineEvent != null){
+					resultList.add(Pair(offlineEvent, persistentEvent))
+				}
+			}
+			result.postValue(resultList)
+		}
+		return result
+	}
 
 	fun getEventById(eventId: Long) = database.eventDao().findEventById(eventId)
 
 	fun getRecordingByid(recordingId: Long) = database.recordingDao().findRecordingById(recordingId)
 
 	fun updateDownloadStatus() {
-		Completable.fromAction {
-			offlineItemManager.updateDownloadStatus(database.offlineEventDao().getAllSynchronous())
-		}.subscribeOn(Schedulers.io()).subscribe()
+		handler.runOnBackgroundThread {
+			offlineItemManager.updateDownloadStatus(database.offlineEventDao().getAllSync())
+		}
 	}
 
 	fun deleteOfflineItem(item: OfflineEvent) {
-		Completable.fromAction {
+		handler.runOnBackgroundThread {
 			offlineItemManager.deleteOfflineItem(item)
-		}.subscribeOn(Schedulers.io()).subscribe()
+		}
 	}
 }
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.ViewModel
+import de.nicidienase.chaosflix.common.ChaosflixDatabase
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
+import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
+import de.nicidienase.chaosflix.common.mediadata.network.StreamingService
+import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
+import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
+import de.nicidienase.chaosflix.common.util.ThreadHandler
+import de.nicidienase.chaosflix.touch.OfflineItemManager
+
 

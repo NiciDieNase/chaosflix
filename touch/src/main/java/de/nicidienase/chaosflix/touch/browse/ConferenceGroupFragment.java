@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.recording.persistence.ConferenceGroup;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup;
 import de.nicidienase.chaosflix.touch.browse.adapters.ConferenceRecyclerViewAdapter;
 
 public class ConferenceGroupFragment extends BrowseFragment {
@@ -68,11 +68,16 @@ public class ConferenceGroupFragment extends BrowseFragment {
 
 			conferencesAdapter = new ConferenceRecyclerViewAdapter(listener);
 			recyclerView.setAdapter(conferencesAdapter);
-			getViewModel().getConferencesByGroup(conferenceGroup.getConferenceGroupId()).observe(this, conferenceList -> {
-				conferencesAdapter.setItems(conferenceList);
-				Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
-				if (layoutState != null) {
-					layoutManager.onRestoreInstanceState(layoutState);
+			getViewModel().getConferencesByGroup(conferenceGroup.getId()).observe(this, conferenceList -> {
+				if(conferenceList != null){
+					if(conferenceList.size() > 0){
+						setLoadingOverlayVisibility(false);
+					}
+					conferencesAdapter.setItems(conferenceList);
+					Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
+					if (layoutState != null) {
+						layoutManager.onRestoreInstanceState(layoutState);
+					}
 				}
 			});
 		}

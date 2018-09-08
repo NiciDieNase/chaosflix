@@ -2,27 +2,25 @@ package de.nicidienase.chaosflix.touch.playback
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
-import de.nicidienase.chaosflix.common.entities.ChaosflixDatabase
-import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgress
-import de.nicidienase.chaosflix.common.network.RecordingService
-import de.nicidienase.chaosflix.common.network.StreamingService
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
+import de.nicidienase.chaosflix.common.ChaosflixDatabase
+import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
+import de.nicidienase.chaosflix.common.util.ThreadHandler
 
-internal class PlayerViewModel(val database: ChaosflixDatabase,
-                               val recordingApi: RecordingService,
-                               val streamingApi: StreamingService) : ViewModel() {
+internal class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
+
+    val handler = ThreadHandler()
+
     fun getPlaybackProgress(apiID: Long): LiveData<PlaybackProgress>
             = database.playbackProgressDao().getProgressForEvent(apiID)
 
     fun setPlaybackProgress(eventId: Long, progress: Long) {
-        Single.fromCallable {
+        handler.runOnBackgroundThread {
             database.playbackProgressDao().saveProgress(PlaybackProgress(eventId, progress))
-        }.subscribeOn(Schedulers.io()).subscribe()
+        }
     }
 
     fun deletePlaybackProgress(eventId: Long) {
-        Single.fromCallable {
+        handler.runOnBackgroundThread {
             database.playbackProgressDao().deleteItem(eventId)
         }
     }

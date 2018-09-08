@@ -4,7 +4,7 @@ import android.support.v4.view.ViewCompat
 import android.view.View
 import com.squareup.picasso.Picasso
 import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import java.util.*
 
@@ -51,11 +51,11 @@ open class EventRecyclerViewAdapter(val listener: OnEventSelectedListener) :
 
 		val resources = holder.titleText.context.getResources()
 		ViewCompat.setTransitionName(holder.titleText,
-				resources.getString(R.string.title) + event.eventId)
+				resources.getString(R.string.title) + event.id)
 		ViewCompat.setTransitionName(holder.subtitle,
-				resources.getString(R.string.subtitle) + event.eventId)
+				resources.getString(R.string.subtitle) + event.id)
 		ViewCompat.setTransitionName(holder.icon,
-				resources.getString(R.string.thumbnail) + event.eventId)
+				resources.getString(R.string.thumbnail) + event.id)
 
 		holder.mView.setOnClickListener({ _: View -> listener.onEventSelected(items[position]) })
 	}

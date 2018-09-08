@@ -7,38 +7,35 @@ import android.view.View
 import android.view.ViewGroup
 import com.squareup.picasso.Picasso
 import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.common.entities.download.OfflineEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.databinding.ItemOfflineEventBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.browse.BrowseViewModel
 
-class OfflineEventAdapter(var items: List<OfflineEvent>, val viewModel: BrowseViewModel, val listener: OnEventSelectedListener) :
+class OfflineEventAdapter(var items: List<Pair<OfflineEvent, PersistentEvent>>, val viewModel: BrowseViewModel, val listener: OnEventSelectedListener) :
 		RecyclerView.Adapter<OfflineEventAdapter.ViewHolder>() {
 
 	override fun onBindViewHolder(holder: OfflineEventAdapter.ViewHolder, position: Int) {
 		val item = items[position]
-		viewModel.getEventById(item.eventId).observeForever({
-			item.event = it
-			holder.binding.event = it
-			Picasso.with(holder.thumbnail.context)
-					.load(item.event?.thumbUrl)
-					.noFade()
-					.fit()
-					.centerInside()
-					.into(holder.thumbnail)
-		})
-		viewModel.getRecordingByid(item.recordingId).observeForever({
-			item.recording = it
-		}
-		)
 
-		holder.binding.downloadStatus = viewModel.offlineItemManager.downloadStatus[item.downloadReference]
-		holder.binding.buttonDelete.setOnClickListener {
-			viewModel.deleteOfflineItem(item)
-		}
-		holder.binding.content?.setOnClickListener {
-			item.event?.let {
-				listener.onEventSelected(it)
+		holder.binding.event = item.second
+		Picasso.with(holder.thumbnail.context)
+				.load(item.second.thumbUrl)
+				.noFade()
+				.fit()
+				.centerInside()
+				.into(holder.thumbnail)
+
+
+		with(holder.binding){
+			downloadStatus = viewModel.offlineItemManager.downloadStatus[item.first.downloadReference]
+			buttonDelete.setOnClickListener {
+				viewModel.deleteOfflineItem(item.first)
+			}
+			content?.setOnClickListener { view ->
+				listener.onEventSelected(item.second)
+
 			}
 		}
 	}
@@ -49,7 +46,7 @@ class OfflineEventAdapter(var items: List<OfflineEvent>, val viewModel: BrowseVi
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 		val binding = DataBindingUtil.inflate<ItemOfflineEventBinding>(
-				LayoutInflater.from(parent?.context), R.layout.item_offline_event, parent, false)
+				LayoutInflater.from(parent.context), R.layout.item_offline_event, parent, false)
 		return ViewHolder(binding, binding.root)
 	}
 

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.recording.persistence.ConferenceGroup;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup;
 import de.nicidienase.chaosflix.touch.browse.ConferenceGroupFragment;
 
 public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
@@ -34,7 +34,7 @@ public class ConferenceGroupsFragmentPager extends FragmentPagerAdapter {
 
 	@Override
 	public long getItemId(int position) {
-		return conferenceGroupList.get(position).getConferenceGroupId();
+		return conferenceGroupList.get(position).getId();
 	}
 
 	@Override

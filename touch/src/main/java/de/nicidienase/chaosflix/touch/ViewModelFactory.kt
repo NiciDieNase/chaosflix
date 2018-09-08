@@ -22,7 +22,7 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
 			return BrowseViewModel(database, recordingApi, streamingApi) as T
 
 		} else if (modelClass.isAssignableFrom(PlayerViewModel::class.java)) {
-			return PlayerViewModel(database, recordingApi, streamingApi) as T
+			return PlayerViewModel(database) as T
 
 		} else if (modelClass.isAssignableFrom(DetailsViewModel::class.java)) {
 			return DetailsViewModel(database, recordingApi) as T

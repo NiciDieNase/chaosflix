@@ -4,18 +4,15 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <import type="de.nicidienase.chaosflix.touch.OfflineItemManager.DownloadStatus"/>
-        <import type="de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent"/>
         <import type="android.view.View"/>
 
         <variable
             name="downloadStatus"
-            type="DownloadStatus"/>
+            type="de.nicidienase.chaosflix.touch.OfflineItemManager.DownloadStatus"/>
 
         <variable
             name="event"
-            type="PersistentEvent"/>
+            type="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent"/>
     </data>
 
     <LinearLayout

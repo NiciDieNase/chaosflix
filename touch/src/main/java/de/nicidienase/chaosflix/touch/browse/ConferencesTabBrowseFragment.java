@@ -2,12 +2,16 @@ package de.nicidienase.chaosflix.touch.browse;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jetbrains.annotations.NotNull;
+
 import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
 import de.nicidienase.chaosflix.databinding.FragmentTabPagerLayoutBinding;
 import de.nicidienase.chaosflix.touch.browse.adapters.ConferenceGroupsFragmentPager;
 
@@ -22,6 +26,7 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 	private              int    mColumnCount     = 1;
 	private OnInteractionListener         listener;
 	private FragmentTabPagerLayoutBinding binding;
+	private Snackbar snackbar;
 
 	public static ConferencesTabBrowseFragment newInstance(int columnCount) {
 		ConferencesTabBrowseFragment fragment = new ConferencesTabBrowseFragment();
@@ -69,8 +74,36 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 				setLoadingOverlayVisibility(false);
 			}
 		});
-		getViewModel().updateConferences().observe(this, loadingFinished -> setLoadingOverlayVisibility(!loadingFinished));
+		getViewModel().updateConferences().observe(this, state -> {
+			if(state == null){
+				return;
+			}
+			switch (state.getState()){
+				case RUNNING:
+					setLoadingOverlayVisibility(true);
+					break;
+				case DONE:
+					setLoadingOverlayVisibility(false);
+					break;
+			}
+			if(state.getError() != null){
+				showSnackbar(state.getError());
+			}
+		});
 		return binding.getRoot();
+	}
+
+
+	private void showSnackbar(String message) {
+		View view1 = getView();
+		if(snackbar!= null){
+			snackbar.dismiss();
+		}
+		if(view1 != null){
+			snackbar = Snackbar.make(view1, message, Snackbar.LENGTH_LONG);
+			snackbar.setAction("Okay", view -> snackbar.dismiss());
+			snackbar.show();
+		}
 	}
 
 	@Override
@@ -86,6 +119,6 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 	}
 
 	public interface OnInteractionListener {
-		void onConferenceSelected(long conferenceId);
+		void onConferenceSelected(PersistentConference conference);
 	}
 }

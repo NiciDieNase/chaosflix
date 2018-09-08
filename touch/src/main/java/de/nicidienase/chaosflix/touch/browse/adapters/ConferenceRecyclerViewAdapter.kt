@@ -2,7 +2,7 @@ package de.nicidienase.chaosflix.touch.browse.adapters
 
 import com.squareup.picasso.Picasso
 import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentConference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
 import de.nicidienase.chaosflix.touch.browse.ConferencesTabBrowseFragment
 import java.util.*
 
@@ -28,7 +28,7 @@ class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseF
 				.into(holder.icon)
 
 		holder.mView.setOnClickListener { _ ->
-			mListener?.onConferenceSelected((items[position]).conferenceId)
+			mListener?.onConferenceSelected((items[position]))
 		}
 	}
 }

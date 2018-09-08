@@ -6,13 +6,9 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording
-import de.nicidienase.chaosflix.common.entities.streaming.LiveConference
-import de.nicidienase.chaosflix.common.entities.streaming.Room
-import de.nicidienase.chaosflix.common.entities.streaming.Stream
-import de.nicidienase.chaosflix.common.entities.streaming.StreamUrl
-import de.nicidienase.chaosflix.touch.browse.streaming.StreamingItem
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 
 class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInteractionListener {
 
@@ -30,7 +26,7 @@ class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInter
 				playbackItem = PlaybackItem(
 						event?.title ?: "",
 						event?.subtitle ?: "",
-						event?.eventId ?: 0,
+						event?.id ?: 0,
 						recordingUri ?: recording?.recordingUrl ?: "")
 			} else if (contentType.equals(CONTENT_STREAM)) {
 				// TODO implement Player for Stream

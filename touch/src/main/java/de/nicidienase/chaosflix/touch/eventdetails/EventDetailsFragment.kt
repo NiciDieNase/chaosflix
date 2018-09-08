@@ -7,7 +7,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.renderscript.RSInvalidStateException
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
@@ -60,7 +59,7 @@ class EventDetailsFragment : Fragment() {
 			if(parcelable != null){
 				event = parcelable
 			} else {
-				throw RSInvalidStateException("Event Missing")
+				throw IllegalStateException("Event Missing")
 			}
 		}
 	}
@@ -73,6 +72,7 @@ class EventDetailsFragment : Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		val binding = FragmentEventDetailsBinding.bind(view)
+		binding.event = event
 		binding.playFab.setOnClickListener { _ -> play() }
 		if (listener != null) {
 			(activity as AppCompatActivity).setSupportActionBar(binding.animToolbar)
@@ -121,22 +121,35 @@ class EventDetailsFragment : Fragment() {
 
 				})
 		viewModel.getRelatedEvents(event).observe(this, Observer {
-
+			relatedEventsAdapter.items = ArrayList(it)
 		})
 
-				.observe(this, Observer { event: PersistentEvent? ->
-					if (event != null) {
-
-
-						val relatedGuids = event.related?.map { it.relatedEventGuid }
-//						val relatedIds: LongArray = event.metadata?.related?.keys?.toLongArray() ?: longArrayOf()
-
-//						viewModel.getEventsByGuids(relatedGuids)
-//								.observe(this, Observer { events ->
-//									relatedEventsAdapter.items = ArrayList(events)
-//								})
+		viewModel.state.observe(this, Observer { liveEvent ->
+			if(liveEvent == null){
+				return@Observer
+			}
+			when(liveEvent.state){
+				DetailsViewModel.DetailsViewModelState.PlayOfflineItem -> {
+					liveEvent.data?.getParcelable<PersistentRecording>(DetailsViewModel.KEY_PLAY_RECORDING)?.let {
+						listener?.playItem(event, it)
 					}
-				})
+				}
+				DetailsViewModel.DetailsViewModelState.PlayOnlineItem -> {
+					liveEvent.data?.getParcelable<PersistentRecording>(DetailsViewModel.KEY_PLAY_RECORDING)?.let {
+						listener?.playItem(event,it)
+					}
+
+				}
+				DetailsViewModel.DetailsViewModelState.SelectRecording -> {
+					val selectItems: Array<PersistentRecording> =
+							liveEvent.data?.getParcelableArray(DetailsViewModel.KEY_SELECT_RECORDINGS) as Array<PersistentRecording>
+					selectRecording(selectItems.asList()) {
+						viewModel.playRecording(it)
+					}
+				}
+				DetailsViewModel.DetailsViewModelState.Error -> liveEvent.error?.let { showSnackbar(it) }
+			}
+		})
 	}
 
 	private fun updateBookmark(guid: String) {
@@ -147,36 +160,21 @@ class EventDetailsFragment : Fragment() {
 				})
 	}
 
-	private fun play() {
-		listener?.let {
-			viewModel.getOfflineItem(eventId).observe(this, Observer { offlineEvent ->
-				viewModel.offlineItemExists(eventId).observe(this, Observer { itemExists ->
-					if (offlineEvent != null && itemExists == true) {
-						Log.d(TAG, "Playing offline file")
-						listener?.playItem(event, offlineEvent.localPath)
-					} else {
-						if (offlineEvent != null && itemExists == false) {
-							view?.let {
-								Snackbar.make(it, "File gone, removing download-item", Snackbar.LENGTH_LONG).show();
-							}
-							viewModel.deleteOfflineItem(offlineEvent)
-						} else {
-							viewModel.getRecordingForEvent(eventId)
-									.observe(this, Observer { persistentRecordings ->
-										if (persistentRecordings != null) {
-											Log.d(TAG, "Playing network file")
-											selectRecording(persistentRecordings, { recording -> listener?.playItem(event, recording) })
-										}
-									})
-						}
-					}
-				})
-			})
+	private fun showSnackbar(message: String, duration: Int = Snackbar.LENGTH_LONG ){
+		view?.let {
+			Snackbar.make(it, message, duration)
 		}
 	}
 
+	private fun play() {
+		if(listener == null){
+			return
+		}
+		viewModel.playEvent(event)
+	}
+
 	private fun selectRecording(persistentRecordings: List<PersistentRecording>, action: (recording: PersistentRecording) -> Unit) {
-		var stream = Util.getOptimalStream(persistentRecordings)
+		val stream = Util.getOptimalStream(persistentRecordings)
 		if (stream != null && PreferencesManager.getAutoselectStream()) {
 			action.invoke(stream)
 		} else {
@@ -231,13 +229,12 @@ class EventDetailsFragment : Fragment() {
 			menu.findItem(R.id.action_unbookmark).isVisible = false
 		}
 		menu.findItem(R.id.action_download).isVisible = viewModel.writeExternalStorageAllowed
-		viewModel.offlineItemExists(eventId).observe(this,
-				Observer { itemExists ->
-					itemExists?.let {
+		viewModel.offlineItemExists(event).observe(this, Observer { itemExists->
+					itemExists?.let {exists ->
 						menu.findItem(R.id.action_download).isVisible =
-								viewModel.writeExternalStorageAllowed && !itemExists
+								viewModel.writeExternalStorageAllowed && !exists
 						menu.findItem(R.id.action_delete_offline_item).isVisible =
-								viewModel.writeExternalStorageAllowed && itemExists
+								viewModel.writeExternalStorageAllowed && exists
 					}
 				})
 
@@ -261,18 +258,18 @@ class EventDetailsFragment : Fragment() {
 				return true
 			}
 			R.id.action_bookmark -> {
-				viewModel.createBookmark(eventId)
-				updateBookmark()
+				viewModel.createBookmark(event.guid)
+				updateBookmark(event.guid)
 				return true
 			}
 			R.id.action_unbookmark -> {
-				viewModel.removeBookmark(eventId)
+				viewModel.removeBookmark(event.guid)
 				watchlistItem = null
 				listener!!.invalidateOptionsMenu()
 				return true
 			}
 			R.id.action_download -> {
-				viewModel.getRecordingForEvent(eventId).observe(this, Observer { recordings ->
+				viewModel.getRecordingForEvent(event).observe(this, Observer { recordings ->
 					if (recordings != null) {
 						selectRecording(recordings, { recording -> downloadRecording(recording) })
 					}
@@ -280,8 +277,8 @@ class EventDetailsFragment : Fragment() {
 				return true
 			}
 			R.id.action_delete_offline_item -> {
-				viewModel.deleteOfflineItem(eventId).observe(this, Observer {
-					if (it != null) {
+				viewModel.deleteOfflineItem(event).observe(this, Observer { success ->
+					if (success != null) {
 						view?.let { Snackbar.make(it, "Deleted Download", Snackbar.LENGTH_SHORT).show() }
 					}
 				})
@@ -296,7 +293,7 @@ class EventDetailsFragment : Fragment() {
 				return true
 			}
 			R.id.action_external_player -> {
-				viewModel.getRecordingForEvent(eventId).observe(this, Observer { recordings ->
+				viewModel.getRecordingForEvent(event).observe(this, Observer { recordings ->
 					if (recordings != null) {
 						selectRecording(recordings) { recording ->
 							val shareIntent = Intent(Intent.ACTION_VIEW, Uri.parse(recording.recordingUrl))

@@ -4,18 +4,15 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <import type="de.nicidienase.chaosflix.touch.OfflineItemManager.DownloadStatus"/>
-        <import type="de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent"/>
         <import type="android.view.View"/>
 
         <variable
             name="downloadStatus"
-            type="DownloadStatus"/>
+            type="de.nicidienase.chaosflix.touch.OfflineItemManager.DownloadStatus"/>
 
         <variable
             name="event"
-            type="PersistentEvent"/>
+            type="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent"/>
     </data>
 
     <LinearLayout
@@ -51,9 +48,9 @@
 
                     <LinearLayout
                         android:id="@+id/content"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
                         android:layout_weight="1"
                         android:gravity="right"
                         android:orientation="vertical">
@@ -83,8 +80,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:gravity="bottom|right"
-                            android:paddingRight="8dp"
+                            android:gravity="bottom|end"
+                            android:paddingEnd="8dp"
                             android:text="@{downloadStatus.statusText}"
                             tools:text="Tag"/>
 
@@ -102,7 +99,7 @@
                     android:id="@+id/download_progress_bar"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_gravity="bottom"
                     android:layout_marginTop="0dp"
                     android:layout_weight="1"

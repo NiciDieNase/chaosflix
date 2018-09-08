@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 
 import com.google.android.exoplayer2.C;
@@ -83,7 +85,8 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 		if (savedInstanceState != null) {
 			playbackState = savedInstanceState.getBoolean(PLAYBACK_STATE, true);
 		}
-		viewModel = ViewModelProviders.of(this, ViewModelFactory.INSTANCE).get(PlayerViewModel.class);
+
+		viewModel = ViewModelProviders.of(this, new ViewModelFactory(requireContext())).get(PlayerViewModel.class);
 	}
 
 	@Override
@@ -114,16 +117,24 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 			viewModel.setPlaybackProgress(item.getEventId(), exoPlayer.getCurrentPosition());
 			exoPlayer.setPlayWhenReady(false);
 		}
-		getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-		getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		FragmentActivity activity = getActivity();
+		if(activity != null){
+			Window window = activity.getWindow();
+			window.addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+			window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		}
 	}
 
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+		FragmentActivity activity = getActivity();
+		if(activity != null){
+			Window window = activity.getWindow();
+			window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+			window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+		}
 		if (exoPlayer != null) {
 			exoPlayer.setPlayWhenReady(playbackState);
 			viewModel.getPlaybackProgress(item.getEventId()).observe(this, playbackProgress -> {

@@ -10,7 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.common.entities.download.OfflineEvent
+import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.databinding.FragmentDownloadsBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment
@@ -45,14 +45,14 @@ class DownloadsListFragment : BrowseFragment() {
 		overlay = binding.incOverlay?.loadingOverlay
 		val offlineEventAdapter = OfflineEventAdapter(emptyList(), viewModel, listener)
 		binding.list.adapter = offlineEventAdapter
-		viewModel.getOfflineEvents().observe(this, Observer { events: List<OfflineEvent>? ->
-			events?.let {
-				if (columnCount <= 1) {
-					binding.list.layoutManager = LinearLayoutManager(context)
-				} else {
-					binding.list.layoutManager = GridLayoutManager(context, columnCount - 1)
-				}
-				offlineEventAdapter.items = it
+		if (columnCount <= 1) {
+			binding.list.layoutManager = LinearLayoutManager(context)
+		} else {
+			binding.list.layoutManager = GridLayoutManager(context, columnCount - 1)
+		}
+		viewModel.getOfflineEvents().observe(this, Observer { events ->
+			if(events != null){
+				offlineEventAdapter.items = events
 				offlineEventAdapter.notifyDataSetChanged()
 				setLoadingOverlayVisibility(false)
 			}

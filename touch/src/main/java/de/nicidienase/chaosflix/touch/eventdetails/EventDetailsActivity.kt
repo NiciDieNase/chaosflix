@@ -10,8 +10,8 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.ViewModelFactory
 import de.nicidienase.chaosflix.touch.playback.PlayerActivity
@@ -26,20 +26,20 @@ class EventDetailsActivity : AppCompatActivity(),
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_eventdetails)
-		viewModel = ViewModelProviders.of(this, ViewModelFactory).get(DetailsViewModel::class.java)
+		viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(DetailsViewModel::class.java)
 		viewModel.writeExternalStorageAllowed = hasWriteStoragePermission()
 
-		val eventId = intent.getLongExtra(EXTRA_EVENT, 0)
+		val event = intent.getParcelableExtra<PersistentEvent>(EXTRA_EVENT)
 
-		showFragmentForEvent(eventId)
+		showFragmentForEvent(event)
 		if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
 				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 			requestWriteStoragePermission()
 		}
 	}
 
-	private fun showFragmentForEvent(eventId: Long, addToBackStack: Boolean = false) {
-		val detailsFragment = EventDetailsFragment.newInstance(eventId)
+	private fun showFragmentForEvent(event: PersistentEvent, addToBackStack: Boolean = false) {
+		val detailsFragment = EventDetailsFragment.newInstance(event)
 
 		detailsFragment.allowEnterTransitionOverlap = true
 		detailsFragment.allowReturnTransitionOverlap = true
@@ -55,7 +55,7 @@ class EventDetailsActivity : AppCompatActivity(),
 	}
 
 	override fun onEventSelected(event: PersistentEvent) {
-		showFragmentForEvent(event.eventId, true)
+		showFragmentForEvent(event, true)
 	}
 
 	override fun onToolbarStateChange() {
@@ -97,9 +97,9 @@ class EventDetailsActivity : AppCompatActivity(),
 		private val EXTRA_EVENT = "extra_event"
 		private val EXTRA_URI = "extra_uri"
 
-		fun launch(context: Context, eventId: Long) {
+		fun launch(context: Context, event: PersistentEvent) {
 			val intent = Intent(context, EventDetailsActivity::class.java)
-			intent.putExtra(EXTRA_EVENT, eventId)
+			intent.putExtra(EXTRA_EVENT, event)
 			context.startActivity(intent)
 		}
 

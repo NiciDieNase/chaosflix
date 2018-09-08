@@ -3,12 +3,10 @@ package de.nicidienase.chaosflix.touch.browse
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -22,10 +20,10 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.entities.streaming.StreamUrl
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.databinding.ActivityBrowseBinding
-import de.nicidienase.chaosflix.touch.ChaosflixApplication
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.PreferencesManager
 import de.nicidienase.chaosflix.touch.about.AboutActivity
@@ -43,6 +41,7 @@ class BrowseActivity : AppCompatActivity(),
 		LivestreamListFragment.InteractionListener,
 		DownloadsListFragment.InteractionListener,
 		OnEventSelectedListener {
+
 	private var drawerOpen: Boolean = false
 
 	private val TAG = BrowseActivity::class.simpleName
@@ -127,8 +126,8 @@ class BrowseActivity : AppCompatActivity(),
 		return super.onOptionsItemSelected(item)
 	}
 
-	override fun onConferenceSelected(conferenceId: Long) {
-		EventsListActivity.start(this, conferenceId)
+	override fun onConferenceSelected(conference: PersistentConference) {
+		EventsListActivity.start(this, conference)
 	}
 
 	override fun onStreamSelected(streamingItem: StreamingItem) {
@@ -151,7 +150,7 @@ class BrowseActivity : AppCompatActivity(),
 			val builder = AlertDialog.Builder(this)
 			val strings = entries.keys.sorted().toTypedArray()
 			builder.setTitle("Select Stream")
-					.setItems(strings, DialogInterface.OnClickListener { dialogInterface, i ->
+					.setItems(strings, { _, i ->
 						Toast.makeText(this, strings[i], Toast.LENGTH_LONG).show()
 
 						playStream(
@@ -174,12 +173,12 @@ class BrowseActivity : AppCompatActivity(),
 	}
 
 	private fun showBookmarksFragment() {
-		val bookmarksFragment = EventsListFragment.newInstance(EventsListFragment.BOOKMARKS_LIST_ID, numColumns)
+		val bookmarksFragment = EventsListFragment.newInstance(EventsListFragment.TYPE_BOOKMARKS, null, numColumns)
 		showFragment(bookmarksFragment, "bookmarks")
 	}
 
 	private fun showInProgressFragment() {
-		val progressEventsFragment = EventsListFragment.newInstance(EventsListFragment.IN_PROGRESS_LIST_ID, numColumns)
+		val progressEventsFragment = EventsListFragment.newInstance(EventsListFragment.TYPE_IN_PROGRESS, null, numColumns)
 		showFragment(progressEventsFragment, "in_progress")
 	}
 
@@ -235,7 +234,7 @@ class BrowseActivity : AppCompatActivity(),
 	}
 
 	override fun onEventSelected(event: PersistentEvent) {
-		EventDetailsActivity.launch(this, event.eventId)
+		EventDetailsActivity.launch(this, event)
 	}
 
 	companion object {

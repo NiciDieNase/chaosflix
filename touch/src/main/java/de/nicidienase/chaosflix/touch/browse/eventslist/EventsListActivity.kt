@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
 import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
 
@@ -19,10 +19,10 @@ class EventsListActivity : AppCompatActivity(), OnEventSelectedListener {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_events_list)
 
-		val conferenceId = intent.getLongExtra(CONFERENCE_ID_KEY, 0)
+		val conference = intent.getParcelableExtra<PersistentConference>(CONFERENCE_KEY)
 
 		if (savedInstanceState == null) {
-			val eventsListFragment = EventsListFragment.newInstance(conferenceId, numColumns)
+			val eventsListFragment = EventsListFragment.newInstance(EventsListFragment.TYPE_EVENTS, conference, numColumns)
 
 			supportFragmentManager.beginTransaction()
 					.replace(R.id.fragment_container, eventsListFragment)
@@ -31,15 +31,15 @@ class EventsListActivity : AppCompatActivity(), OnEventSelectedListener {
 	}
 
 	override fun onEventSelected(event: PersistentEvent) {
-		EventDetailsActivity.launch(this, event.eventId)
+		EventDetailsActivity.launch(this, event)
 	}
 
 	companion object {
-		val CONFERENCE_ID_KEY = "conference_id"
+		val CONFERENCE_KEY = "conference_id"
 
-		fun start(context: Context, conferenceId: Long) {
+		fun start(context: Context, conference: PersistentConference) {
 			val i = Intent(context, EventsListActivity::class.java)
-			i.putExtra(CONFERENCE_ID_KEY, conferenceId)
+			i.putExtra(CONFERENCE_KEY, conference)
 			context.startActivity(i)
 		}
 	}

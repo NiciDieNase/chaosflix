@@ -9,7 +9,7 @@
 
 		<variable
 			name="event"
-			type="de.nicidienase.chaosflix.common.entities.recording.persistence.PersistentEvent"/>
+			type="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent"/>
 	</data>
 
 	<android.support.design.widget.CoordinatorLayout
