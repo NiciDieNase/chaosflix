@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools">
+
+	<android.support.design.widget.CoordinatorLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<android.support.design.widget.AppBarLayout
+			android:id="@+id/app_bar_layout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<include
+				android:id="@+id/inc_toolbar"
+				layout="@layout/toolbar"/>
+
+			<!--<android.support.design.widget.TabLayout-->
+			<!--android:id="@+id/sliding_tabs"-->
+			<!--android:layout_width="match_parent"-->
+			<!--android:layout_height="wrap_content"-->
+			<!--android:background="@color/primary"-->
+			<!--android:visibility="invisible"-->
+			<!--app:layout_anchor="@id/toolbar"-->
+			<!--app:tabIndicatorColor="@color/white"-->
+			<!--app:tabMode="scrollable"-->
+			<!--app:tabSelectedTextColor="@color/white"-->
+			<!--app:tabTextColor="@color/inactive_tab_color"/>-->
+
+		</android.support.design.widget.AppBarLayout>
+
+		<FrameLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+			<android.support.v7.widget.RecyclerView
+				android:id="@+id/list"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				app:layout_anchor="@id/app_bar_layout"
+				tools:listitem="@layout/item_conference_cardview"/>
+		</FrameLayout>
+
+		<include
+			android:id="@+id/inc_overlay"
+			layout="@layout/loading_overlay"/>
+	</android.support.design.widget.CoordinatorLayout>
+</layout>

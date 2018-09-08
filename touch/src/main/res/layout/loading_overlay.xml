@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools">
+
+	<FrameLayout
+		android:id="@+id/loading_overlay"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@color/inactive_tab_color"
+		tools:showIn="@layout/fragment_tab_pager_layout">
+
+		<de.nicidienase.chaosflix.touch.ChaosflixLoadingSpinner
+			android:layout_width="120dp"
+			android:layout_height="120dp"
+			android:layout_gravity="center"
+			android:src="@drawable/vector_loading_icon"
+			app:duration="2000"/>
+
+	</FrameLayout>
+</layout>

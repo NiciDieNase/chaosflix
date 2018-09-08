@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+
+        <variable
+            name="downloadStatus"
+            type="de.nicidienase.chaosflix.touch.OfflineItemManager.DownloadStatus"/>
+
+        <variable
+            name="event"
+            type="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:elevation="4dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="@dimen/thumbnail_width"
+                        android:layout_height="@dimen/thumbnail_height"
+                        android:scaleType="fitCenter"/>
+
+                    <LinearLayout
+                        android:id="@+id/content"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/title_text"
+                            style="@style/TextAppearance.AppCompat.Medium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:text="@{event.title}"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                            tools:text="Title"/>
+
+                        <TextView
+                            android:id="@+id/subtitle_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@{event.subtitle}"
+                            android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                            tools:text="Subtitle"/>
+
+                        <TextView
+                            android:id="@+id/tag_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="bottom|end"
+                            android:paddingEnd="8dp"
+                            android:text="@{downloadStatus.statusText}"
+                            tools:text="Tag"/>
+
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/button_delete"
+                        android:layout_width="@dimen/del_button_size"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/button_rect_normal"
+                        app:srcCompat="@drawable/ic_delete_dark"/>
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/download_progress_bar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="1"
+                    android:max="@{downloadStatus.totalBytes}"
+                    android:progress="@{downloadStatus.currentBytes}"/>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+</layout>

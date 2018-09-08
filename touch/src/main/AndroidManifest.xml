@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          package="de.nicidienase.chaosflix"
+          tools:ignore="MissingLeanbackLauncher">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <application
+        android:name=".touch.ChaosflixApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/icon_notext"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:replace="android:theme">
+        <activity
+            android:name=".touch.SplashActivity"
+            android:label="@string/app_name"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".touch.browse.BrowseActivity">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+        </activity>
+
+        <activity
+            android:name=".touch.browse.eventslist.EventsListActivity"
+            android:parentActivityName=".touch.browse.BrowseActivity"/>
+
+        <activity
+            android:name=".touch.eventdetails.EventDetailsActivity"
+            android:parentActivityName="de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity"/>
+
+        <activity
+            android:name=".touch.about.AboutActivity"
+            android:parentActivityName=".touch.browse.BrowseActivity"/>
+
+        <activity
+            android:name=".touch.playback.PlayerActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:launchMode="singleTop"
+            android:parentActivityName=".touch.eventdetails.EventDetailsActivity"/>
+
+        <activity
+            android:name=".touch.settings.SettingsActivity"
+            android:parentActivityName=".touch.browse.BrowseActivity"/>
+
+        <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
+
+        <service
+            android:name=".touch.sync.DownloadJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
+    </application>
+
+</manifest>
