@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.2.30'
+    ext.kotlin_version = '1.2.61'
     repositories {
         jcenter()
         mavenCentral()
@@ -11,7 +11,6 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.1.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
-
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -20,29 +19,23 @@ buildscript {
 allprojects {
     repositories {
         mavenLocal()
+        google()
         jcenter()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        google()
         maven { url 'https://jitpack.io' }
     }
 }
 
 ext{
-    compileSdkVersion = 27
-    buildToolsVersion = "27.0.3"
+    minSDK = 22
+    targetSDK = 28
+    compileSdkVersion = 28
+    buildToolsVersion = "28.0.0"
     supportLibraryVersion = "27.1.1"
     constraintLayoutVersion = "1.0.2"
     archCompVersion = "1.1.1"
-    minSDK = 22
-    targetSDK = 27
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-configurations.all {
-    resolutionStrategy {
-        cacheChangingModulesFor 0, 'seconds'
-    }
 }

@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'android-maven'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
@@ -12,7 +11,7 @@ android {
         minSdkVersion rootProject.ext.minSDK
         targetSdkVersion rootProject.ext.targetSDK
         versionCode 1
-        versionName rootProject.ext.version
+        versionName '2.0.0'
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -32,7 +31,6 @@ android {
 }
 
 group="de.nicidienase.chaosflix"
-version=rootProject.ext.version
 
 dependencies {
     api "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"

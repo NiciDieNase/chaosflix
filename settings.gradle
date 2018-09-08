@@ -1,1 +1,1 @@
-include ':touch'
+include ':touch', ':common'
