@@ -1,0 +1,62 @@
+apply plugin: 'com.android.library'
+apply plugin: 'android-maven'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSDK
+        targetSdkVersion rootProject.ext.targetSDK
+        versionCode 1
+        versionName rootProject.ext.version
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+group="de.nicidienase.chaosflix"
+version=rootProject.ext.version
+
+dependencies {
+    api "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
+
+    api "android.arch.lifecycle:extensions:${rootProject.ext.archCompVersion}"
+    kapt "android.arch.lifecycle:compiler:${rootProject.ext.archCompVersion}"
+    api "android.arch.lifecycle:common-java8:1.1.1"
+
+    api "android.arch.persistence.room:runtime:${rootProject.ext.archCompVersion}"
+    kapt "android.arch.persistence.room:compiler:${rootProject.ext.archCompVersion}"
+
+    api 'com.squareup.retrofit2:retrofit:2.3.0'
+    api 'com.squareup.retrofit2:converter-gson:2.3.0'
+
+    api 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0'
+
+    testImplementation "org.mockito:mockito-core:2.11.0"
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+}
+repositories {
+    mavenCentral()
+}
