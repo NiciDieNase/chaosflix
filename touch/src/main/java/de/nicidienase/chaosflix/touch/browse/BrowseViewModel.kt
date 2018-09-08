@@ -1,5 +1,20 @@
 package de.nicidienase.chaosflix.touch.browse
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.ViewModel
+import de.nicidienase.chaosflix.common.ChaosflixDatabase
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
+import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
+import de.nicidienase.chaosflix.common.mediadata.network.StreamingService
+import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
+import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
+import de.nicidienase.chaosflix.common.util.ThreadHandler
+import de.nicidienase.chaosflix.touch.OfflineItemManager
+
 class BrowseViewModel(
 		val database: ChaosflixDatabase,
 		recordingApi: RecordingService,
@@ -41,13 +56,26 @@ class BrowseViewModel(
 	fun updateEventsForConference(conference: PersistentConference)
 			= downloader.updateEventsForConference(conference)
 
-	fun getBookmarkedEvents(){
-//		database.
-//		= database.eventDao().findBookmarkedEvents()
-	}
+	fun getBookmarkedEvents(): LiveData<List<PersistentEvent>> = updateAndGetEventsForGuids {
+		database
+				.watchlistItemDao()
+				.getAllSync().map { it.eventGuid } }
 
-	fun getInProgressEvents()
-			= database.eventDao().findInProgressEvents()
+	fun getInProgressEvents(): LiveData<List<PersistentEvent>> = updateAndGetEventsForGuids {
+		database
+				.playbackProgressDao()
+				.getAllSync()
+				.map { it.eventGuid } }
+
+	private fun updateAndGetEventsForGuids(guidProvider: ()->List<String>):LiveData<List<PersistentEvent>>{
+		val result = MutableLiveData<List<PersistentEvent>>()
+		handler.runOnBackgroundThread {
+			val guids = guidProvider.invoke()
+			val events = guids.map { downloader.updateSingleEvent(it) }.filterNotNull()
+			result.postValue(events)
+		}
+		return result
+	}
 
 	private val TAG = BrowseViewModel::class.simpleName
 
@@ -104,19 +132,5 @@ class BrowseViewModel(
 		}
 	}
 }
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
-import de.nicidienase.chaosflix.common.ChaosflixDatabase
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
-import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
-import de.nicidienase.chaosflix.common.mediadata.network.StreamingService
-import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
-import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
-import de.nicidienase.chaosflix.common.util.ThreadHandler
-import de.nicidienase.chaosflix.touch.OfflineItemManager
 
 

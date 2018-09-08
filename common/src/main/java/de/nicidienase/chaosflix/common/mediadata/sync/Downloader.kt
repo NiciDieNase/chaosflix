@@ -1,14 +1,12 @@
 package de.nicidienase.chaosflix.common.mediadata.sync
 
 import android.arch.lifecycle.LiveData
-import android.database.sqlite.SQLiteConstraintException
-import android.util.Log
-import de.nicidienase.chaosflix.common.Util
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
+import de.nicidienase.chaosflix.common.Util
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.Recording
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.RelatedEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
@@ -18,6 +16,8 @@ import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import de.nicidienase.chaosflix.common.util.ThreadHandler
+import retrofit2.Response
+import java.io.IOException
 
 class Downloader(private val recordingApi: RecordingService,
                  private val database: ChaosflixDatabase) {
@@ -32,7 +32,13 @@ class Downloader(private val recordingApi: RecordingService,
 		val updateState = SingleLiveEvent<LiveEvent<DownloaderState, List<PersistentConference>, String>>()
 		threadHandler.runOnBackgroundThread {
 			updateState.postValue(LiveEvent(DownloaderState.RUNNING,null, null))
-			val response = recordingApi.getConferencesWrapper().execute()
+			val response: Response<ConferencesWrapper>?
+			try {
+				response = recordingApi.getConferencesWrapper().execute()
+			} catch (e: IOException){
+				updateState.postValue(LiveEvent(DownloaderState.DONE, error = e.message))
+				return@runOnBackgroundThread
+			}
 
 			if(!response.isSuccessful){
 				updateState.postValue(LiveEvent(state = DownloaderState.DONE, error = response.message()))
@@ -57,7 +63,13 @@ class Downloader(private val recordingApi: RecordingService,
 		val updateState = SingleLiveEvent<LiveEvent<DownloaderState, List<PersistentEvent>, String>>()
 		updateState.postValue(LiveEvent(DownloaderState.RUNNING))
 		threadHandler.runOnBackgroundThread {
-			val response = recordingApi.getConferenceByName(conference.acronym).execute()
+			val response: Response<Conference>?
+			try {
+				response = recordingApi.getConferenceByName(conference.acronym).execute()
+			} catch (e: IOException){
+				updateState.postValue(LiveEvent(DownloaderState.DONE,error = e.message))
+				return@runOnBackgroundThread
+			}
 			if(!response.isSuccessful){
 				updateState.postValue(LiveEvent(DownloaderState.DONE,error = response.message()))
 				return@runOnBackgroundThread
@@ -80,7 +92,13 @@ class Downloader(private val recordingApi: RecordingService,
 		val updateState = SingleLiveEvent<LiveEvent<DownloaderState, List<PersistentRecording>, String>>()
 		updateState.postValue(LiveEvent(DownloaderState.RUNNING))
 		threadHandler.runOnBackgroundThread {
-			val response = recordingApi.getEventByGUID(event.guid).execute()
+			val response: Response<Event>?
+			try {
+				response = recordingApi.getEventByGUID(event.guid).execute()
+			} catch (e: IOException){
+				updateState.postValue(LiveEvent(DownloaderState.DONE, error = e.message))
+				return@runOnBackgroundThread
+			}
 			if(!response.isSuccessful){
 				updateState.postValue(LiveEvent(DownloaderState.DONE, error = response.message()))
 				return@runOnBackgroundThread
@@ -98,7 +116,12 @@ class Downloader(private val recordingApi: RecordingService,
 	}
 
 	fun updateSingleEvent(guid: String): PersistentEvent? {
-		val request = recordingApi.getEventByGUID(guid).execute()
+		val request: Response<Event>?
+		try {
+			request = recordingApi.getEventByGUID(guid).execute()
+		} catch (e: IOException){
+			return null
+		}
 		if(!request.isSuccessful){
 			return null
 		}
@@ -183,5 +206,4 @@ class Downloader(private val recordingApi: RecordingService,
 		database.recordingDao().insert(*persistentRecordings.toTypedArray())
 		return persistentRecordings
 	}
-
 }

@@ -6,8 +6,9 @@ import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 
 @Entity(tableName = "playback_progress",
-        indices = arrayOf(Index(value = ["event_id"],unique = true)))
-data class PlaybackProgress (@PrimaryKey
-                        @ColumnInfo(name = "event_id")
-                        var eventId: Long,
-                        var progress: Long)
+		indices = arrayOf(Index(value = ["event_guid"],unique = true)))
+data class PlaybackProgress (@PrimaryKey(autoGenerate = true)
+                             val id: Long = 0,
+                             @ColumnInfo(name = "event_guid")
+                             var eventGuid: String,
+                             var progress: Long)

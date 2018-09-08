@@ -10,16 +10,17 @@ internal class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
 
     val handler = ThreadHandler()
 
-    fun getPlaybackProgress(apiID: Long): LiveData<PlaybackProgress>
-            = database.playbackProgressDao().getProgressForEvent(apiID)
+    fun getPlaybackProgress(guid: String): LiveData<PlaybackProgress?>
+            = database.playbackProgressDao().getProgressForEvent(guid)
 
-    fun setPlaybackProgress(eventId: Long, progress: Long) {
+    fun setPlaybackProgress(eventGuid: String, progress: Long) {
         handler.runOnBackgroundThread {
-            database.playbackProgressDao().saveProgress(PlaybackProgress(eventId, progress))
+            database.playbackProgressDao().saveProgress(
+                    PlaybackProgress(progress = progress, eventGuid = eventGuid))
         }
     }
 
-    fun deletePlaybackProgress(eventId: Long) {
+    fun deletePlaybackProgress(eventId: String) {
         handler.runOnBackgroundThread {
             database.playbackProgressDao().deleteItem(eventId)
         }

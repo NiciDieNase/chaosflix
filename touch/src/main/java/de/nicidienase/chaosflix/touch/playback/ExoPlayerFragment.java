@@ -6,10 +6,12 @@ import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -96,8 +98,14 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 		Toolbar toolbar = binding.getRoot().findViewById(R.id.toolbar);
 		toolbar.setTitle(item.getTitle());
 		toolbar.setSubtitle(item.getSubtitle());
-		((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-		((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		AppCompatActivity activity = (AppCompatActivity) getActivity();
+		if(activity != null){
+			activity.setSupportActionBar(toolbar);
+			ActionBar actionBar = activity.getSupportActionBar();
+			if (actionBar != null) {
+				actionBar.setDisplayHomeAsUpEnabled(true);
+			}
+		}
 
 		return binding.getRoot();
 	}
@@ -114,7 +122,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	public void onStop() {
 		super.onStop();
 		if (exoPlayer != null) {
-			viewModel.setPlaybackProgress(item.getEventId(), exoPlayer.getCurrentPosition());
+			viewModel.setPlaybackProgress(item.getEventGuid() , exoPlayer.getCurrentPosition());
 			exoPlayer.setPlayWhenReady(false);
 		}
 		FragmentActivity activity = getActivity();
@@ -137,7 +145,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 		}
 		if (exoPlayer != null) {
 			exoPlayer.setPlayWhenReady(playbackState);
-			viewModel.getPlaybackProgress(item.getEventId()).observe(this, playbackProgress -> {
+			viewModel.getPlaybackProgress(item.getEventGuid()).observe(this, playbackProgress -> {
 				if (playbackProgress != null) {
 					exoPlayer.seekTo(playbackProgress.getProgress());
 				}
@@ -147,7 +155,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		super.onSaveInstanceState(outState);
 		if (exoPlayer != null) {
 			outState.putBoolean(PLAYBACK_STATE, exoPlayer.getPlayWhenReady());
@@ -214,7 +222,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 
 	@Override
 	public void notifyEnd() {
-		viewModel.deletePlaybackProgress(item.getEventId());
+		viewModel.deletePlaybackProgress(item.getEventGuid());
 	}
 
 	public interface OnMediaPlayerInteractionListener {

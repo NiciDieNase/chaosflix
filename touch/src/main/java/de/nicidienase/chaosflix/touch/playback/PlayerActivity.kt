@@ -18,7 +18,7 @@ class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInter
 
 		if (savedInstanceState == null && intent.extras != null) {
 			val contentType = intent.getStringExtra(CONTENT_TYPE)
-			var playbackItem = PlaybackItem("Empty", "Empty", 0, "")
+			var playbackItem = PlaybackItem("Empty", "Empty", "", "")
 			if (contentType.equals(CONTENT_RECORDING)) {
 				val event = intent.extras.getParcelable<PersistentEvent>(EVENT_KEY)
 				val recording = intent.extras.getParcelable<PersistentRecording>(RECORDING_KEY)
@@ -26,14 +26,14 @@ class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInter
 				playbackItem = PlaybackItem(
 						event?.title ?: "",
 						event?.subtitle ?: "",
-						event?.id ?: 0,
+						event?.guid ?: "",
 						recordingUri ?: recording?.recordingUrl ?: "")
 			} else if (contentType.equals(CONTENT_STREAM)) {
 				// TODO implement Player for Stream
 				val conference = intent.extras.getString(CONFERENCE,"")
 				val room = intent.extras.getString(ROOM,"")
 				val stream = intent.extras.getString(STREAM, "")
-				playbackItem = PlaybackItem(conference,room,0, stream)
+				playbackItem = PlaybackItem(conference,room,"", stream)
 			}
 
 			val ft = supportFragmentManager.beginTransaction()

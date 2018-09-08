@@ -69,11 +69,5 @@ abstract class ChaosflixDatabase : RoomDatabase() {
 				database.execSQL("CREATE INDEX IF NOT EXISTS index_event_conferenceId ON event (conferenceId)")
 			}
 		}
-
-		val migration_4_5 = object : Migration(4,5){
-			override fun migrate(database: SupportSQLiteDatabase) {
-			}
-
-		}
 	}
 }

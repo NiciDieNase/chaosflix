@@ -39,12 +39,9 @@ abstract class EventDao: BaseDao<PersistentEvent>() {
     @Query("SELECT * FROM event INNER JOIN watchlist_item WHERE event.guid = watchlist_item.event_guid")
     abstract fun findBookmarkedEvents(): LiveData<List<PersistentEvent>>
 
-    @Query("SELECT * FROM event INNER JOIN playback_progress WHERE event.id = playback_progress.event_id")
+    @Query("SELECT * FROM event INNER JOIN playback_progress WHERE event.guid = playback_progress.event_guid")
     abstract fun findInProgressEvents(): LiveData<List<PersistentEvent>>
 
     @Query("SELECT * FROM event WHERE frontendLink = :url ")
     abstract fun findEventsByFrontendurl(url: String):LiveData<PersistentEvent?>
-
-    @Query("DELETE FROM event WHERE id = :conferenceId")
-    abstract fun deleteEventsForConference(conferenceId: Long)
 }

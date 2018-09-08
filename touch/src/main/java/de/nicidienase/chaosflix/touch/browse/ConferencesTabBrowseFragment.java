@@ -64,6 +64,9 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 		setOverlay(binding.incOverlay.loadingOverlay);
 
 		getViewModel().getConferenceGroups().observe(this, conferenceGroups -> {
+			if(conferenceGroups.size() > 0){
+				this.setLoadingOverlayVisibility(false);
+			}
 			ConferenceGroupsFragmentPager fragmentPager = new ConferenceGroupsFragmentPager(this.getContext(), getChildFragmentManager());
 			fragmentPager.setContent(conferenceGroups);
 			binding.viewpager.setAdapter(fragmentPager);

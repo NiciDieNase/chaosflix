@@ -221,13 +221,8 @@ class EventDetailsFragment : Fragment() {
 	override fun onPrepareOptionsMenu(menu: Menu) {
 		Log.d(TAG, "OnPrepareOptionsMenu")
 		super.onPrepareOptionsMenu(menu)
-		if (watchlistItem != null) {
-			menu.findItem(R.id.action_bookmark).isVisible = false
-			menu.findItem(R.id.action_unbookmark).isVisible = true
-		} else {
-			menu.findItem(R.id.action_bookmark).isVisible = true
-			menu.findItem(R.id.action_unbookmark).isVisible = false
-		}
+		menu.findItem(R.id.action_bookmark).isVisible = watchlistItem == null
+		menu.findItem(R.id.action_unbookmark).isVisible = watchlistItem != null
 		menu.findItem(R.id.action_download).isVisible = viewModel.writeExternalStorageAllowed
 		viewModel.offlineItemExists(event).observe(this, Observer { itemExists->
 					itemExists?.let {exists ->

@@ -10,8 +10,8 @@ class DatabaseFactory (context: Context) {
                 ChaosflixDatabase::class.java, "mediaccc.de")
                 .addMigrations(
                         ChaosflixDatabase.migration_2_3,
-                        ChaosflixDatabase.migration_3_4,
-                        ChaosflixDatabase.migration_4_5)
+                        ChaosflixDatabase.migration_3_4)
+                .fallbackToDestructiveMigrationFrom(4)
                 .build()
     }
 }
