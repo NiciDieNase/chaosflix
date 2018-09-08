@@ -21,7 +21,7 @@ class ApiFactory(val res: Resources) {
 
     val recordingApi: RecordingService by lazy {
         Retrofit.Builder()
-                .baseUrl(res.getString(R.string.api_media_ccc_url))
+                .baseUrl(res.getString(R.string.recording_url))
                 .client(client)
                 .addConverterFactory(gsonConverterFactory)
                 .build()
@@ -29,7 +29,7 @@ class ApiFactory(val res: Resources) {
     }
 
     val streamingApi: StreamingService by lazy { Retrofit.Builder()
-            .baseUrl(res.getString(R.string.streaming_media_ccc_url))
+            .baseUrl(res.getString(R.string.streaming_url))
             .client(client)
             .addConverterFactory(gsonConverterFactory)
             .build()

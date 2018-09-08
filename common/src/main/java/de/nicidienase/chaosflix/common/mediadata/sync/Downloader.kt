@@ -8,17 +8,19 @@ import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.Recording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.RelatedEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRelatedEvent
 import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import de.nicidienase.chaosflix.common.util.ThreadHandler
 
-class Downloader(val recordingApi: RecordingService,
-                 val database: ChaosflixDatabase) {
+class Downloader(private val recordingApi: RecordingService,
+                 private val database: ChaosflixDatabase) {
 
 	private val threadHandler = ThreadHandler()
 
@@ -26,8 +28,8 @@ class Downloader(val recordingApi: RecordingService,
 		RUNNING, DONE
 	}
 
-	fun updateConferencesAndGroups(): LiveData<LiveEvent<DownloaderState, ConferencesWrapper, String>> {
-		val updateState = SingleLiveEvent<LiveEvent<DownloaderState, ConferencesWrapper, String>>()
+	fun updateConferencesAndGroups(): LiveData<LiveEvent<DownloaderState, List<PersistentConference>, String>> {
+		val updateState = SingleLiveEvent<LiveEvent<DownloaderState, List<PersistentConference>, String>>()
 		threadHandler.runOnBackgroundThread {
 			updateState.postValue(LiveEvent(DownloaderState.RUNNING,null, null))
 			val response = recordingApi.getConferencesWrapper().execute()
@@ -38,8 +40,8 @@ class Downloader(val recordingApi: RecordingService,
 			}
 			try {
 				response.body()?.let { conferencesWrapper ->
-					saveConferences(conferencesWrapper)
-					updateState.postValue(LiveEvent(DownloaderState.DONE,conferencesWrapper))
+					val saveConferences = saveConferences(conferencesWrapper)
+					updateState.postValue(LiveEvent(DownloaderState.DONE,data = saveConferences))
 				}
 			} catch (e: Exception){
 				updateState.postValue(LiveEvent(DownloaderState.DONE, error = "Error updating conferences."))
@@ -95,7 +97,20 @@ class Downloader(val recordingApi: RecordingService,
 		return updateState
 	}
 
-	fun saveConferences(conferencesWrapper: ConferencesWrapper): List<PersistentConference> {
+	fun updateSingleEvent(guid: String): PersistentEvent? {
+		val request = recordingApi.getEventByGUID(guid).execute()
+		if(!request.isSuccessful){
+			return null
+		}
+		val body = request.body()
+		if(body != null){
+			return saveEvent(body)
+		} else {
+			return null
+		}
+	}
+
+	private fun saveConferences(conferencesWrapper: ConferencesWrapper): List<PersistentConference> {
 		return conferencesWrapper.conferencesMap.map { entry ->
 			val conferenceGroup: ConferenceGroup = getOrCreateConferenceGroup(entry.key)
 			val conferenceList = entry.value
@@ -128,19 +143,39 @@ class Downloader(val recordingApi: RecordingService,
 	private fun saveEvents(persistentConference: PersistentConference, events: List<Event>): List<PersistentEvent> {
 		val persistantEvents = events.map { PersistentEvent(it,persistentConference.id) }
 		val insertEventIds = database.eventDao().insert(*(persistantEvents.toTypedArray())).asList()
-		val oldEvents = database.eventDao()
-				.findEventsByConferenceSync(persistentConference.id)
-				.filter { !insertEventIds.contains(it.id) }
-				.toTypedArray()
-		try {
-			database.eventDao().delete(*oldEvents)
-		} catch (ex: SQLiteConstraintException){
-			Log.d(TAG,"SQLiteException",ex)
-		}
+//		val oldEvents = database.eventDao()
+//				.findEventsByConferenceSync(persistentConference.id)
+//				.filter { !insertEventIds.contains(it.id) }
+//				.toTypedArray()
+//		try {
+//			database.eventDao().delete(*oldEvents)
+//		} catch (ex: SQLiteConstraintException){
+//			Log.d(TAG,"SQLiteException",ex)
+//		}
 		persistantEvents.zip(insertEventIds) {event: PersistentEvent, id: Long ->
 			event.id = id
 		}
+		persistantEvents.forEach{
+			saveRelatedEvents(it)
+		}
 		return persistantEvents
+	}
+
+	private fun saveEvent(event: Event): PersistentEvent {
+		val split = event.conferenceUrl.split("/")
+		val acronym = split[split.size - 1]
+		val conferenceId = database.conferenceDao().findConferenceByAcronymSync(acronym).id
+
+		val persistentEvent = PersistentEvent(event, conferenceId)
+		val id = database.eventDao().insert(persistentEvent)
+		persistentEvent.id = id
+		return persistentEvent
+	}
+
+	private fun saveRelatedEvents(event: PersistentEvent): List<PersistentRelatedEvent> {
+		val list = event.related?.map { it.parentEventId = event.id; it }
+		database.relatedEventDao().insert(*list?.toTypedArray()?: emptyArray())
+		return list ?: emptyList()
 	}
 
 	private fun saveRecordings(event: PersistentEvent,recordings: List<Recording>): List<PersistentRecording> {

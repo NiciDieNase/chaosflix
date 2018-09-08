@@ -12,7 +12,6 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.EventDao
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentItem
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRelatedEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RecordingDao
@@ -25,7 +24,6 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 
 @Database(entities = arrayOf(
-		PersistentItem::class,
 		PersistentConference::class,
 		PersistentEvent::class,
 		PersistentRecording::class,
@@ -74,7 +72,6 @@ abstract class ChaosflixDatabase : RoomDatabase() {
 
 		val migration_4_5 = object : Migration(4,5){
 			override fun migrate(database: SupportSQLiteDatabase) {
-//				TODO("not implemented")
 			}
 
 		}

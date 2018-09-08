@@ -5,7 +5,6 @@ import android.support.v4.app.JobIntentService
 import de.nicidienase.chaosflix.common.DatabaseFactory
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentItem
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 
 class DownloadJobService : JobIntentService() {
