@@ -5,10 +5,10 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 
 @Dao
-interface ConferenceGroupDao: PersistentItemDao<ConferenceGroup>{
+abstract class ConferenceGroupDao: BaseDao<ConferenceGroup>() {
     @Query("SELECT * FROM conference_group ORDER BY order_index")
-    fun getAll(): LiveData<List<ConferenceGroup>>
+    abstract fun getAll(): LiveData<List<ConferenceGroup>>
 
     @Query("SELECT * FROM conference_group WHERE name = :name LIMIT 1")
-    fun getConferenceGroupByName(name: String): ConferenceGroup?
+    abstract fun getConferenceGroupByName(name: String): ConferenceGroup?
 }

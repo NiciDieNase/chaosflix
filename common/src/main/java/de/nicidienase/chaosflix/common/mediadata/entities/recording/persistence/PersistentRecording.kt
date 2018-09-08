@@ -11,8 +11,10 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.Recording
 				onDelete = ForeignKey.CASCADE,
 				parentColumns = (arrayOf("id")),
 				childColumns = arrayOf("eventId"))),
-		indices = arrayOf(Index("eventId")))
+		indices = arrayOf(Index("eventId"), Index("url", unique = true)))
 data class PersistentRecording(
+		@PrimaryKey(autoGenerate = true)
+		var id: Long = 0,
 		var eventId: Long = 0,
 		var size: Int = 0,
 		var length: Int = 0,
@@ -30,26 +32,27 @@ data class PersistentRecording(
 		var eventUrl: String = "",
 		var conferenceUrl: String = "",
 		var backendId: Long = 0
-) : PersistentItem(), Parcelable {
+) : Parcelable {
 
-	@Ignore
 	constructor(parcel: Parcel) : this(
+			parcel.readLong(),
 			parcel.readLong(),
 			parcel.readInt(),
 			parcel.readInt(),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString(),
+			parcel.readString() ?: "",
+			parcel.readString() ?: "",
+			parcel.readString() ?: "",
+			parcel.readString() ?: "",
+			parcel.readString() ?: "",
 			parcel.readByte() != 0.toByte(),
 			parcel.readInt(),
 			parcel.readInt(),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString()) {
+			parcel.readString() ?: "",
+			parcel.readString() ?: "",
+			parcel.readString() ?: "",
+			parcel.readString() ?: "",
+			parcel.readString() ?: "",
+			parcel.readLong()) {
 	}
 
 	@Ignore
@@ -73,6 +76,7 @@ data class PersistentRecording(
 			backendId = rec.recordingID )
 
 	override fun writeToParcel(parcel: Parcel, flags: Int) {
+		parcel.writeLong(id)
 		parcel.writeLong(eventId)
 		parcel.writeInt(size)
 		parcel.writeInt(length)
@@ -89,6 +93,7 @@ data class PersistentRecording(
 		parcel.writeString(url)
 		parcel.writeString(eventUrl)
 		parcel.writeString(conferenceUrl)
+		parcel.writeLong(backendId)
 	}
 
 	override fun describeContents(): Int {

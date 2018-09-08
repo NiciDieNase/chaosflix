@@ -16,11 +16,15 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.RelatedEvent
 				childColumns = arrayOf("parentEventId"))))
 
 
-class PersistentRelatedEvent(val parentEventId: Long,
-                             var relatedEventGuid: String,
-                             var weight: Int): PersistentItem(), Parcelable {
+class PersistentRelatedEvent(
+		@PrimaryKey(autoGenerate = true)
+		var id: Long = 0,
+		var parentEventId: Long,
+		var relatedEventGuid: String,
+		var weight: Int) : Parcelable {
 
 	constructor(parcel: Parcel) : this(
+			parcel.readLong(),
 			parcel.readLong(),
 			parcel.readString(),
 			parcel.readInt()) {
@@ -33,6 +37,7 @@ class PersistentRelatedEvent(val parentEventId: Long,
 			weight = relatedEvent.weight)
 
 	override fun writeToParcel(parcel: Parcel, flags: Int) {
+		parcel.writeLong(id)
 		parcel.writeLong(parentEventId)
 		parcel.writeString(relatedEventGuid)
 		parcel.writeInt(weight)

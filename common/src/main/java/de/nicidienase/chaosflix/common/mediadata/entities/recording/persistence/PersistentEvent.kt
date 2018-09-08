@@ -1,6 +1,10 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence
 
-import android.arch.persistence.room.*
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.Ignore
+import android.arch.persistence.room.Index
+import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
 import android.text.Html
@@ -16,6 +20,8 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.Event
 		indices = arrayOf(Index("guid",unique = true), Index("frontendLink"), Index("conferenceId")))
 
 data class PersistentEvent(
+		@PrimaryKey(autoGenerate = true)
+		var id: Long = 0,
 		var conferenceId: Long = 0,
 		var conference: String = "",
 		var guid: String = "",
@@ -44,33 +50,35 @@ data class PersistentEvent(
 		var related: List<PersistentRelatedEvent>? = null,
 		@Ignore
 		var recordings: List<PersistentRecording>? = null
-) : PersistentItem(), Parcelable {
+) : Parcelable {
 
 	constructor(parcel: Parcel) : this(
 			parcel.readLong(),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString(),
-			parcel.readString(),
 			parcel.readLong(),
+			parcel.readString() ?: "",
+			parcel.readString() ?: "",
+			parcel.readString() ?: "",
+			parcel.readString(),
+			parcel.readString() ?: "",
 			parcel.readString(),
 			parcel.readString(),
+			parcel.readString() ?: "",
 			parcel.readString(),
+			parcel.readString() ?: "",
+			parcel.readString() ?: "",
+			parcel.readLong(),
+			parcel.readString() ?: "",
+			parcel.readString() ?: "",
 			parcel.readString(),
-			parcel.readString(),
+			parcel.readString() ?: "",
+			parcel.readString() ?: "",
 			parcel.readByte() != 0.toByte(),
 			parcel.readInt(),
 			parcel.createStringArray(),
 			parcel.createStringArray(),
 			parcel.createTypedArrayList(PersistentRelatedEvent),
-			parcel.createTypedArrayList(PersistentRecording))
+			parcel.createTypedArrayList(PersistentRecording)) {
+	}
 
 	@Ignore
 	constructor(event: Event,conferenceId: Long = 0) : this(
@@ -113,6 +121,7 @@ data class PersistentEvent(
 
 	override fun writeToParcel(parcel: Parcel, flags: Int) {
 		parcel.writeLong(id)
+		parcel.writeLong(conferenceId)
 		parcel.writeString(conference)
 		parcel.writeString(guid)
 		parcel.writeString(title)

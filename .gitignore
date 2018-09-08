@@ -64,3 +64,5 @@ freeline/
 freeline_project_description.json
 projectFilesBackup/
 
+
+.gradletasknamecache
