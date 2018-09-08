@@ -130,8 +130,9 @@ class EventDetailsFragment : Fragment() {
 			}
 			when(liveEvent.state){
 				DetailsViewModel.DetailsViewModelState.PlayOfflineItem -> {
-					liveEvent.data?.getParcelable<PersistentRecording>(DetailsViewModel.KEY_PLAY_RECORDING)?.let {
-						listener?.playItem(event, it)
+					val recording = liveEvent.data?.getString(DetailsViewModel.KEY_LOCAL_PATH)
+					if(recording != null){
+						listener?.playItem(event, recording)
 					}
 				}
 				DetailsViewModel.DetailsViewModelState.PlayOnlineItem -> {
