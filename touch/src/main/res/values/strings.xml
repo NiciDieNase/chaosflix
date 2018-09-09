@@ -46,4 +46,8 @@
 	<string name="no_livestreams">Currently no livestreams</string>
     <string name="watch_this">Watch this video from media.ccc.de</string>
     <string name="related_events">Related Events</string>
+    <string name="about_github">Find the source on Github</string>
+	<string name="about_beta">Become a Beta-Tester</string>
+	<string name="about_twitter">Follow the developer on Twitter</string>
+	<string name="about_playstore">Rate us on Google Play</string>
 </resources>

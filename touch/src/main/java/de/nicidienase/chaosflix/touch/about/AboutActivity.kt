@@ -37,15 +37,16 @@ class AboutActivity : AppCompatActivity() {
 				.setImage(R.drawable.icon_notext_144x144)
 				.setDescription(resources.getString(R.string.description))
 				.addItem(Element().setTitle("Version ${version}"))
-				.addWebsite("https://github.com/NiciDieNase/chaosflix/blob/master/LICENSE",
+				.addWebsite(getString(R.string.about_licence_url),
 						getString(R.string.chaosflix_licence))
-				.addWebsite("https://morr.cc/voctocat/",
+				.addWebsite(getString(R.string.about_voctocat_url),
 						resources.getString(R.string.about_voctocat))
 				.addItem(showLibs)
 				.addGroup("Connect with us")
-				.addGitHub("nicidienase/chaosflix", "Find the source on Github")
-				.addTwitter("nicidienase", "Follow the developer on Twitter")
-				.addPlayStore("de.nicidienase.chaosflix", "Rate us on Google Play")
+				.addGitHub("nicidienase/chaosflix", getString(R.string.about_github))
+				.addWebsite(getString(R.string.about_beta_url), getString(R.string.about_beta))
+				.addTwitter("nicidienase", getString(R.string.about_twitter))
+				.addPlayStore("de.nicidienase.chaosflix", getString(R.string.about_playstore))
 				.create()
 
 		binding.container.addView(aboutView)
