@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fragment android:id="@+id/browse_fragment"
+          android:name="de.nicidienase.chaosflix.leanback.fragments.EventsBrowseFragment"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          tools:context=".leanback.activities.EventsActivity"
+          tools:deviceIds="tv"
+          tools:ignore="MergeRootFrame"/>
