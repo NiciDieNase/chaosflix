@@ -1,16 +1,13 @@
 package de.nicidienase.chaosflix
 
-import android.arch.lifecycle.ViewModelProviders
-import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import android.test.ActivityInstrumentationTestCase2
-import android.view.View
 import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgress
 
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import de.nicidienase.chaosflix.touch.ViewModelFactory
+import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import io.reactivex.functions.Consumer
 
 /**

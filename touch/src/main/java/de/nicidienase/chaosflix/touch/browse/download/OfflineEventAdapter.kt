@@ -11,7 +11,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.databinding.ItemOfflineEventBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
-import de.nicidienase.chaosflix.touch.browse.BrowseViewModel
+import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 
 class OfflineEventAdapter(var items: List<Pair<OfflineEvent, PersistentEvent>>, val viewModel: BrowseViewModel, val listener: OnEventSelectedListener) :
 		RecyclerView.Adapter<OfflineEventAdapter.ViewHolder>() {

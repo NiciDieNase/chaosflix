@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.touch.eventdetails
+package de.nicidienase.chaosflix.common.viewmodel
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData

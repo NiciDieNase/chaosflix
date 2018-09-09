@@ -1,7 +1,6 @@
 package de.nicidienase.chaosflix.touch.browse
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.databinding.DataBindingUtil
@@ -25,7 +24,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.databinding.ActivityBrowseBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
-import de.nicidienase.chaosflix.touch.PreferencesManager
+import de.nicidienase.chaosflix.common.PreferencesManager
 import de.nicidienase.chaosflix.touch.about.AboutActivity
 import de.nicidienase.chaosflix.touch.browse.download.DownloadsListFragment
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity

@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.touch
+package de.nicidienase.chaosflix.common
 
 import android.app.DownloadManager
 import android.arch.lifecycle.LiveData
@@ -19,16 +19,22 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventDao
 import de.nicidienase.chaosflix.common.util.ThreadHandler
-import de.nicidienase.chaosflix.touch.eventdetails.DetailsViewModel
+import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import java.io.File
 
 class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEventDao: OfflineEventDao) {
 
 	val downloadStatus: MutableMap<Long, DownloadStatus>
 
+	private val downloadManager1: DownloadManager
+		get() {
+			val downloadManager: DownloadManager = ChaosflixApplication.APPLICATION_CONTEXT
+					.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+			return downloadManager
+		}
+
 	val downloadManager: DownloadManager
-			= ChaosflixApplication.APPLICATION_CONTEXT
-			.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+			= downloadManager1
 
 	private val handler = ThreadHandler()
 
@@ -93,9 +99,7 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEven
 
 			val offlineEvent = offlineEventDao.getByEventGuidSync(event.guid)
 			if (offlineEvent == null) {
-				val downloadManager: DownloadManager
-						= ChaosflixApplication.APPLICATION_CONTEXT
-						.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+				val downloadManager: DownloadManager = downloadManager1
 
 				val request = DownloadManager.Request(Uri.parse(recording.recordingUrl))
 				request.setTitle(event.title)
@@ -171,7 +175,7 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEven
 		override fun onReceive(p0: Context?, p1: Intent?) {
 			val downloadId = p1?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
 			if (downloadId != null && downloadId == id) {
-				val offlineItemManager = OfflineItemManager(listOf(downloadId),offlineEventDao)
+				val offlineItemManager = OfflineItemManager(listOf(downloadId), offlineEventDao)
 				offlineItemManager.updateDownloadStatus()
 				val downloadStatus = offlineItemManager.downloadStatus[downloadId]
 				if (downloadStatus?.status == DownloadManager.STATUS_FAILED) {

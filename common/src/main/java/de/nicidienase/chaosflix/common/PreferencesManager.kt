@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.touch
+package de.nicidienase.chaosflix.common
 
 import android.content.SharedPreferences
 import android.preference.PreferenceManager

@@ -1,10 +1,9 @@
-package de.nicidienase.chaosflix.touch.browse
+package de.nicidienase.chaosflix.common.viewmodel
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent

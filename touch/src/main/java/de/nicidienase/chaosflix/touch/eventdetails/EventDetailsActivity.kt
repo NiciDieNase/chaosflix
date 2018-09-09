@@ -12,8 +12,9 @@ import android.support.v7.app.AppCompatActivity
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
-import de.nicidienase.chaosflix.touch.ViewModelFactory
+import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.playback.PlayerActivity
 
 class EventDetailsActivity : AppCompatActivity(),

@@ -8,7 +8,7 @@
 
         <variable
             name="downloadStatus"
-            type="de.nicidienase.chaosflix.touch.OfflineItemManager.DownloadStatus"/>
+            type="de.nicidienase.chaosflix.common.OfflineItemManager"/>
 
         <variable
             name="event"

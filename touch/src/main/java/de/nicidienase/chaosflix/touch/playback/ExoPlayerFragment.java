@@ -47,8 +47,9 @@ import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.common.viewmodel.PlayerViewModel;
 import de.nicidienase.chaosflix.databinding.FragmentExoPlayerBinding;
-import de.nicidienase.chaosflix.touch.ViewModelFactory;
+import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory;
 
 public class ExoPlayerFragment extends Fragment implements PlayerEventListener.PlayerStateChangeListener {
 	private static final String TAG = ExoPlayerFragment.class.getSimpleName();

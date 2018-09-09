@@ -1,12 +1,9 @@
-package de.nicidienase.chaosflix.touch
+package de.nicidienase.chaosflix.common.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
-import de.nicidienase.chaosflix.touch.browse.BrowseViewModel
-import de.nicidienase.chaosflix.touch.eventdetails.DetailsViewModel
-import de.nicidienase.chaosflix.touch.playback.PlayerViewModel
 
 class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
 
