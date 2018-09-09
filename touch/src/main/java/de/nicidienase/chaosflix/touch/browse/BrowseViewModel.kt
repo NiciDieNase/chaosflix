@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
@@ -14,6 +15,8 @@ import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.util.ThreadHandler
 import de.nicidienase.chaosflix.touch.OfflineItemManager
+import retrofit2.Response
+import java.io.IOException
 
 class BrowseViewModel(
 		val database: ChaosflixDatabase,
@@ -80,14 +83,21 @@ class BrowseViewModel(
 	private val TAG = BrowseViewModel::class.simpleName
 
 	fun getLivestreams(): LiveData<List<LiveConference>> {
+		// TODO use LiveEvent for Result
 		val result = MutableLiveData<List<LiveConference>>()
 		handler.runOnBackgroundThread {
-			val conferences = streamingApi.getStreamingConferences().execute()
-			if(!conferences.isSuccessful){
+			val request: Response<List<LiveConference>>
+			try {
+				request = streamingApi.getStreamingConferences().execute()
+			} catch (e: IOException){
 				result.postValue(emptyList())
 				return@runOnBackgroundThread
 			}
-			result.postValue(conferences.body())
+			if(!request.isSuccessful){
+				result.postValue(emptyList())
+				return@runOnBackgroundThread
+			}
+			result.postValue(request.body())
 		}
 		return result
 	}
