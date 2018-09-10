@@ -77,8 +77,8 @@ public class EventsBrowseFragment extends BrowseFragment {
 		super.onActivityCreated(savedInstanceState);
 		final BrowseErrorFragment errorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(), FRAGMENT);
-		conferenceId = this.getActivity().getIntent().getIntExtra(EventsActivity.CONFERENCE_ACRONYM, 0);
-		mConference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.CONFERENCE);
+		conferenceId = this.getActivity().getIntent().getIntExtra(EventsActivity.Companion.getCONFERENCE_ACRONYM(), 0);
+		mConference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.Companion.getCONFERENCE());
 
 		((LeanbackBaseActivity) getActivity()).getApiServiceObservable()
 				.subscribe(mediaApiService -> {

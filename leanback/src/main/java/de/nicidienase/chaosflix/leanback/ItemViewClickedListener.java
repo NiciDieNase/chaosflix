@@ -37,32 +37,32 @@ public class ItemViewClickedListener implements OnItemViewClickedListener {
 			PersistentConference conference = (PersistentConference) item;
 			// Start EventsActivity for this conference
 			Intent i = new Intent(fragment.getActivity(), EventsActivity.class);
-			i.putExtra(EventsActivity.CONFERENCE, conference);
-			i.putExtra(EventsActivity.CONFERENCE_ACRONYM, conference.getAcronym());
+			i.putExtra(EventsActivity.Companion.getCONFERENCE(), conference);
+			i.putExtra(EventsActivity.Companion.getCONFERENCE_ACRONYM(), conference.getAcronym());
 			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
 					activity,
 					((ImageCardView) itemViewHolder.view).getMainImageView(),
-					EventsActivity.SHARED_ELEMENT_NAME).toBundle();
+					EventsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
 			fragment.startActivity(i, bundle);
 		} else if (item instanceof PersistentEvent) {
 			PersistentEvent event = (PersistentEvent) item;
 			Intent i = new Intent(fragment.getActivity(), DetailsActivity.class);
-			i.putExtra(DetailsActivity.TYPE, DetailsActivity.TYPE_RECORDING);
-			i.putExtra(DetailsActivity.EVENT, event);
+			i.putExtra(DetailsActivity.Companion.getTYPE(), DetailsActivity.Companion.getTYPE_RECORDING());
+			i.putExtra(DetailsActivity.Companion.getEVENT(), event);
 			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
 					activity,
 					((ImageCardView) itemViewHolder.view).getMainImageView(),
-					EventDetailsActivity.SHARED_ELEMENT_NAME).toBundle();
+					EventDetailsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
 			activity.startActivity(i, bundle);
 		} else if (item instanceof Room) {
 			Room room = (Room) item;
 			Intent i = new Intent(fragment.getActivity(), DetailsActivity.class);
-			i.putExtra(DetailsActivity.TYPE, DetailsActivity.TYPE_STREAM);
-			i.putExtra(DetailsActivity.ROOM, room);
+			i.putExtra(DetailsActivity.Companion.getTYPE(), DetailsActivity.Companion.getTYPE_STREAM());
+			i.putExtra(DetailsActivity.Companion.getROOM(), room);
 			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
 					activity,
 					((ImageCardView) itemViewHolder.view).getMainImageView(),
-					EventDetailsActivity.SHARED_ELEMENT_NAME).toBundle();
+					EventDetailsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
 			activity.startActivity(i, bundle);
 		}
 	}

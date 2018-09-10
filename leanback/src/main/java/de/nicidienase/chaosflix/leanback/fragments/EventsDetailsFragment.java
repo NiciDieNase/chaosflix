@@ -115,29 +115,29 @@ public class EventsDetailsFragment extends DetailsFragment {
 				mRecordingActionsAdapter.replace(0, new Action(ADD_WATCHLIST_ACTION, EventsDetailsFragment.this.getString(R.string.add_to_watchlist)));
 			} else {
 				Intent i = new Intent(EventsDetailsFragment.this.getActivity(), PlayerActivity.class);
-				i.putExtra(DetailsActivity.TYPE, eventType);
-				if (eventType == DetailsActivity.TYPE_RECORDING) {
-					i.putExtra(DetailsActivity.EVENT, mSelectedEvent);
+				i.putExtra(DetailsActivity.Companion.getTYPE(), eventType);
+				if (eventType == DetailsActivity.Companion.getTYPE_RECORDING()) {
+					i.putExtra(DetailsActivity.Companion.getEVENT(), mSelectedEvent);
 					if (action.getId() == DUMMY_ID) {
 						Recording dummy = new Recording();
 						dummy.setRecordingUrl("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8");
 						dummy.setMimeType("video/hls");
 						dummy.setLanguage("eng");
 						dummy.setHighQuality(true);
-						i.putExtra(DetailsActivity.RECORDING, dummy);
+						i.putExtra(DetailsActivity.Companion.getRECORDING(), dummy);
 					} else {
 						for (Recording r : mSelectedEvent.getRecordings()) {
 							if (r.getApiID() == action.getId()) {
-								i.putExtra(DetailsActivity.RECORDING, r);
+								i.putExtra(DetailsActivity.Companion.getRECORDING(), r);
 								break;
 							}
 						}
 					}
-				} else if (eventType == DetailsActivity.TYPE_STREAM) {
-					i.putExtra(DetailsActivity.ROOM, mRoom);
+				} else if (eventType == DetailsActivity.Companion.getTYPE_STREAM()) {
+					i.putExtra(DetailsActivity.Companion.getROOM(), mRoom);
 					StreamUrl streamUrl = EventsDetailsFragment.this.getStreamUrlForActionId((int) action.getId());
 					if (streamUrl != null) {
-						i.putExtra(DetailsActivity.STREAM_URL, streamUrl);
+						i.putExtra(DetailsActivity.Companion.getSTREAM_URL(), streamUrl);
 					} else {
 						// TODO handle missing Stream
 						return;
@@ -156,15 +156,15 @@ public class EventsDetailsFragment extends DetailsFragment {
 		prepareBackgroundManager();
 		final BrowseErrorFragment browseErrorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(), FRAGMENT);
-		eventType = getActivity().getIntent().getIntExtra(DetailsActivity.TYPE, -1);
+		eventType = getActivity().getIntent().getIntExtra(DetailsActivity.Companion.getTYPE(), -1);
 
-		if (eventType == DetailsActivity.TYPE_RECORDING) {
+		if (eventType == DetailsActivity.Companion.getTYPE_RECORDING()) {
 			mSelectedEvent = getActivity().getIntent()
-					.getParcelableExtra(DetailsActivity.EVENT);
+					.getParcelableExtra(DetailsActivity.Companion.getEVENT());
 			mWatchlistItem = WatchlistItem.findById(WatchlistItem.class, mSelectedEvent.getApiID());
-		} else if (eventType == DetailsActivity.TYPE_STREAM) {
+		} else if (eventType == DetailsActivity.Companion.getTYPE_STREAM()) {
 			mRoom = getActivity().getIntent()
-					.getParcelableExtra(DetailsActivity.ROOM);
+					.getParcelableExtra(DetailsActivity.Companion.getROOM());
 		}
 
 		FullWidthDetailsOverviewRowPresenter mDetailsPresenter
@@ -178,7 +178,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 				.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
 				.subscribe(mediaApiService -> {
 					mMediaApiService = mediaApiService;
-					if (eventType == DetailsActivity.TYPE_RECORDING) {
+					if (eventType == DetailsActivity.Companion.getTYPE_RECORDING()) {
 						final DetailsOverviewRow detailsOverviewRow = setupDetailsOverviewRow(mSelectedEvent);
 						mediaApiService.getEvent(mSelectedEvent.getApiID())
 								.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
@@ -222,7 +222,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 												browseErrorFragment.dismiss();
 											});
 								});
-					} else if (eventType == DetailsActivity.TYPE_STREAM) {
+					} else if (eventType == DetailsActivity.Companion.getTYPE_STREAM()) {
 						mediaApiService.getStreamingConferences()
 								.observeOn(AndroidSchedulers.mainThread())
 								.subscribe(liveConferences -> {
@@ -319,7 +319,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 		FullWidthDetailsOverviewSharedElementHelper helper
 				= new FullWidthDetailsOverviewSharedElementHelper();
 		helper.setSharedElementEnterTransition(getActivity(),
-				EventDetailsActivity.SHARED_ELEMENT_NAME);
+				EventDetailsActivity.Companion.getSHARED_ELEMENT_NAME());
 		mDetailsPresenter.setListener(helper);
 		prepareEntranceTransition();
 

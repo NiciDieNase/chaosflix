@@ -136,19 +136,19 @@ public class OverlayFragment extends PlaybackFragment {
 
 		Intent intent = getActivity()
 				.getIntent();
-		eventType = intent.getIntExtra(DetailsActivity.TYPE, -1);
-		if (eventType == DetailsActivity.TYPE_RECORDING) {
-			mSelectedEvent = intent.getParcelableExtra(DetailsActivity.EVENT);
-			mSelectedRecording = intent.getParcelableExtra(DetailsActivity.RECORDING);
+		eventType = intent.getIntExtra(DetailsActivity.Companion.getTYPE(), -1);
+		if (eventType == DetailsActivity.Companion.getTYPE_RECORDING()) {
+			mSelectedEvent = intent.getParcelableExtra(DetailsActivity.Companion.getEVENT());
+			mSelectedRecording = intent.getParcelableExtra(DetailsActivity.Companion.getRECORDING());
 			mHelper = new PlaybackHelper(getActivity(), this, mSelectedEvent, mSelectedRecording);
 
 			List<PlaybackProgress> progressList = PlaybackProgress.find(PlaybackProgress.class, "event_id = ?", String.valueOf(mSelectedEvent.getApiID()));
 			if (progressList.size() > 0) {
 				mPlaybackProgress = progressList.get(0);
 			}
-		} else if (eventType == DetailsActivity.TYPE_STREAM) {
-			mSelectedRoom = intent.getParcelableExtra(DetailsActivity.ROOM);
-			mSelectedStream = intent.getParcelableExtra(DetailsActivity.STREAM_URL);
+		} else if (eventType == DetailsActivity.Companion.getTYPE_STREAM()) {
+			mSelectedRoom = intent.getParcelableExtra(DetailsActivity.Companion.getROOM());
+			mSelectedStream = intent.getParcelableExtra(DetailsActivity.Companion.getSTREAM_URL());
 			mHelper = new PlaybackHelper(getActivity(), this, mSelectedRoom, mSelectedStream);
 		} else {
 			Log.d(TAG, "No Media found, finishing");
@@ -181,19 +181,19 @@ public class OverlayFragment extends PlaybackFragment {
 		ps.addClassPresenter(ListRow.class, new ListRowPresenter());
 		mRowsAdapter = new ArrayObjectAdapter(ps);
 		mRowsAdapter.add(controlsRow);
-		if (eventType == DetailsActivity.TYPE_RECORDING) {
+		if (eventType == DetailsActivity.Companion.getTYPE_RECORDING()) {
 			if (mSelectedEvent.getMetadata() != null && mSelectedEvent.getMetadata().getRelated() != null) {
 				mRowsAdapter.add(getRelatedItems());
 				setOnItemViewClickedListener(new ItemViewClickedListener(this));
 			}
-		} else if (eventType == DetailsActivity.TYPE_STREAM) {
+		} else if (eventType == DetailsActivity.Companion.getTYPE_STREAM()) {
 			// TODO add other streams as related events
 		}
 		setAdapter(mRowsAdapter);
 
-		if (mCallback != null && eventType == DetailsActivity.TYPE_STREAM) {
+		if (mCallback != null && eventType == DetailsActivity.Companion.getTYPE_STREAM()) {
 			mCallback.setVideoSource(mSelectedStream.getUrl());
-		} else if (mCallback != null && eventType == DetailsActivity.TYPE_RECORDING) {
+		} else if (mCallback != null && eventType == DetailsActivity.Companion.getTYPE_RECORDING()) {
 			mCallback.setVideoSource(mSelectedRecording.getRecordingUrl());
 		} else {
 			Log.d(TAG, "Callback not set or not event/stream");
@@ -255,7 +255,7 @@ public class OverlayFragment extends PlaybackFragment {
 	}
 
 	public int getCurrentPosition() {
-		if (eventType == DetailsActivity.TYPE_RECORDING) {
+		if (eventType == DetailsActivity.Companion.getTYPE_RECORDING()) {
 			if (mCallback != null) {
 				return (int) mCallback.getCurrentPosition();
 			}
@@ -264,7 +264,7 @@ public class OverlayFragment extends PlaybackFragment {
 	}
 
 	private long getCurrentPositionLong() {
-		if (eventType == DetailsActivity.TYPE_RECORDING) {
+		if (eventType == DetailsActivity.Companion.getTYPE_RECORDING()) {
 			if (mCallback != null) {
 				return mCallback.getCurrentPosition();
 			}
