@@ -76,7 +76,7 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 
 		viewModel.getConferenceGroups().observe(this, conferenceGroups -> {
 			Map<String, List<PersistentConference>> conferences = new HashMap<>(); // TODO get map!
-			
+
 			List<Row> rows = addRecordings(cardPresenter, conferences);
 			rowsAdapter.addAll(CONFERENCES_INDEX, rows);
 		});

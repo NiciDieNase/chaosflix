@@ -23,10 +23,10 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.entities.recording.Conference;
-import de.nicidienase.chaosflix.common.entities.recording.Event;
-import de.nicidienase.chaosflix.common.entities.streaming.LiveConference;
-import de.nicidienase.chaosflix.common.entities.streaming.Room;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent;
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference;
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room;
 
 /*
  * A CardPresenter is used to generate Views and bind Objects to them on demand.
@@ -74,9 +74,9 @@ public class CardPresenter extends Presenter {
 	public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
 		ImageCardView cardView = (ImageCardView) viewHolder.view;
 		cardView.setMainImageScaleType(ImageView.ScaleType.FIT_CENTER);
-		if (item instanceof Conference) {
+		if (item instanceof PersistentConference) {
 			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_4);
-			Conference conference = (Conference) item;
+			PersistentConference conference = (PersistentConference) item;
 			cardView.setTitleText(conference.getTitle());
 			cardView.setContentText(conference.getAcronym());
 			if (conference.getLogoUrl() != null) {
@@ -87,9 +87,9 @@ public class CardPresenter extends Presenter {
 						.error(mDefaultCardImage)
 						.into(cardView.getMainImageView());
 			}
-		} else if (item instanceof Event) {
+		} else if (item instanceof PersistentEvent) {
 			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_16);
-			Event event = (Event) item;
+			PersistentEvent event = (PersistentEvent) item;
 			cardView.setTitleText(event.getTitle());
 			cardView.setContentText(event.getSubtitle());
 //			cardView.setContentText(android.text.TextUtils.join(", ",event.getPersons()));
@@ -110,7 +110,7 @@ public class CardPresenter extends Presenter {
 			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_16);
 			Room room = (Room) item;
 			cardView.setTitleText(room.getDisplay());
-			cardView.setContentText(room.getShedulename());
+			cardView.setContentText(room.getSchedulename());
 			if (room.getThumb() != null) {
 				Glide.with(viewHolder.view.getContext())
 						.load(room.getThumb())
