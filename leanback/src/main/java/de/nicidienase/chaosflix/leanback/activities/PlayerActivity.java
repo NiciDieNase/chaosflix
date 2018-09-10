@@ -42,8 +42,6 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.leanback.fragments.OverlayFragment;
 
@@ -55,9 +53,7 @@ public class PlayerActivity extends AppCompatActivity
 		implements OverlayFragment.PlaybackControlListener {
 
 	private static final String TAG = PlayerActivity.class.getSimpleName();
-	@BindView(R.id.videoView)
 	SurfaceView mSurfaceView;
-	@BindView(R.id.loading_player)
 	ProgressBar loadingSpinner;
 	OverlayFragment mPlaybackControllFragment;
 	private DefaultBandwidthMeter bandwidthMeter;
@@ -72,7 +68,9 @@ public class PlayerActivity extends AppCompatActivity
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_playback);
-		ButterKnife.bind(this);
+
+		mSurfaceView = findViewById(R.id.videoView);
+		loadingSpinner = findViewById(R.id.loading_player);
 		mSurfaceView.setKeepScreenOn(true);
 
 		mPlaybackControllFragment = (OverlayFragment) getFragmentManager().findFragmentById(R.id.playback_controls_fragment);
