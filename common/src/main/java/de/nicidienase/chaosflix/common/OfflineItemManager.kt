@@ -22,25 +22,19 @@ import de.nicidienase.chaosflix.common.util.ThreadHandler
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import java.io.File
 
-class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEventDao: OfflineEventDao) {
+class OfflineItemManager(context: Context, val offlineEventDao: OfflineEventDao) {
 
-	val downloadStatus: MutableMap<Long, DownloadStatus>
-
-	private val downloadManager1: DownloadManager
-		get() {
-			val downloadManager: DownloadManager = ChaosflixApplication.APPLICATION_CONTEXT
-					.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-			return downloadManager
-		}
+	val downloadStatus: MutableMap<Long, DownloadStatus> = HashMap()
 
 	val downloadManager: DownloadManager
-			= downloadManager1
+			= context.applicationContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
 	private val handler = ThreadHandler()
 
-	init {
-		downloadStatus = HashMap()
-		downloadRefs?.map { downloadStatus.put(it, DownloadStatus()) }
+	private val applicationContext: Context = context.applicationContext
+
+	fun addDownloadRefs(refs: List<Long>){
+		refs.map { downloadStatus.put(it, DownloadStatus()) }
 	}
 
 	fun updateDownloadStatus() {
@@ -99,7 +93,6 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEven
 
 			val offlineEvent = offlineEventDao.getByEventGuidSync(event.guid)
 			if (offlineEvent == null) {
-				val downloadManager: DownloadManager = downloadManager1
 
 				val request = DownloadManager.Request(Uri.parse(recording.recordingUrl))
 				request.setTitle(event.title)
@@ -119,9 +112,9 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEven
 				val downloadReference = downloadManager.enqueue(request)
 				Log.d(DetailsViewModel.TAG, "download started $downloadReference")
 
-				val cancelHandler = DownloadCancelHandler(downloadReference, offlineEventDao)
+				val cancelHandler = DownloadCancelHandler(applicationContext, downloadReference, offlineEventDao)
 				val intentFilter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-				ChaosflixApplication.APPLICATION_CONTEXT.registerReceiver(cancelHandler, intentFilter)
+				applicationContext.registerReceiver(cancelHandler, intentFilter)
 
 				try {
 					offlineEventDao.insert(
@@ -167,7 +160,7 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEven
 		}
 	}
 
-	class DownloadCancelHandler(val id: Long, val offlineEventDao: OfflineEventDao) : BroadcastReceiver() {
+	class DownloadCancelHandler(val context: Context, val id: Long, val offlineEventDao: OfflineEventDao) : BroadcastReceiver() {
 		private val TAG = DownloadCancelHandler::class.simpleName
 
 		val handler = ThreadHandler()
@@ -175,7 +168,8 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEven
 		override fun onReceive(p0: Context?, p1: Intent?) {
 			val downloadId = p1?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
 			if (downloadId != null && downloadId == id) {
-				val offlineItemManager = OfflineItemManager(listOf(downloadId), offlineEventDao)
+				val offlineItemManager = OfflineItemManager(context, offlineEventDao)
+				offlineItemManager.addDownloadRefs(listOf(downloadId))
 				offlineItemManager.updateDownloadStatus()
 				val downloadStatus = offlineItemManager.downloadStatus[downloadId]
 				if (downloadStatus?.status == DownloadManager.STATUS_FAILED) {
@@ -191,7 +185,7 @@ class OfflineItemManager(downloadRefs: List<Long>? = emptyList(),val offlineEven
 
 	private fun getMovieDir(): String {
 		val sharedPref: SharedPreferences = PreferenceManager
-				.getDefaultSharedPreferences(ChaosflixApplication.APPLICATION_CONTEXT);
+				.getDefaultSharedPreferences(applicationContext);
 		var dir = sharedPref.getString("download_folder", null)
 		if (dir == null) {
 			dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).path

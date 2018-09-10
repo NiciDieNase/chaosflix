@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
+import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
@@ -13,18 +14,17 @@ import de.nicidienase.chaosflix.common.mediadata.network.StreamingService
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.util.ThreadHandler
-import de.nicidienase.chaosflix.touch.OfflineItemManager
 import retrofit2.Response
 import java.io.IOException
 
 class BrowseViewModel(
+		val offlineItemManager: OfflineItemManager,
 		val database: ChaosflixDatabase,
 		recordingApi: RecordingService,
 		val streamingApi: StreamingService
 ) : ViewModel() {
 
 	val downloader = Downloader(recordingApi, database)
-	lateinit var offlineItemManager: OfflineItemManager
 	private val handler = ThreadHandler()
 
 	init {
@@ -34,7 +34,7 @@ class BrowseViewModel(
 							.offlineEventDao()
 							.getAllSync()
 							.map { it.downloadReference }
-			offlineItemManager = OfflineItemManager(downloadRefs, database.offlineEventDao())
+			offlineItemManager.addDownloadRefs(downloadRefs)
 		}
 	}
 
