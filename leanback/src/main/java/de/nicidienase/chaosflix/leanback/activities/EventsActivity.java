@@ -1,12 +1,13 @@
 package de.nicidienase.chaosflix.leanback.activities;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import de.nicidienase.chaosflix.R;
 
-public class EventsActivity extends LeanbackBaseActivity {
+public class EventsActivity extends AppCompatActivity {
 
-	public static final String CONFERENCE_ID = "conference_id";
+	public static final String CONFERENCE_ACRONYM = "conference_acronym";
 	public static final String CONFERENCE = "conference";
 	public static final String SHARED_ELEMENT_NAME = "shared_element";
 
