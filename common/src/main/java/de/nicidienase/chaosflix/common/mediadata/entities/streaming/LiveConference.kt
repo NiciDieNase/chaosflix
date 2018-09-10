@@ -18,6 +18,7 @@ class LiveConference(
 
     companion object {
 
+        @JvmStatic
         val dummyObject: LiveConference
             get() {
                 val dummyCon = LiveConference("DummyCon", "Conference McConferenceface")

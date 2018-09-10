@@ -1,11 +1,11 @@
 package de.nicidienase.chaosflix.leanback.fragments;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v17.leanback.app.ErrorFragment;
+import android.support.v17.leanback.app.ErrorSupportFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +15,7 @@ import android.widget.ProgressBar;
 
 import de.nicidienase.chaosflix.R;
 
-/**
- * Created by felix on 22.03.17.
- */
-
-public class BrowseErrorFragment extends ErrorFragment {
+public class BrowseErrorFragment extends ErrorSupportFragment {
 
 	private static final boolean TRANSLUCENT = true;
 	public static final String FRAGMENT = "fragmentId";

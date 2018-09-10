@@ -1,7 +1,11 @@
 package de.nicidienase.chaosflix.leanback.fragments;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v17.leanback.app.BrowseFragment;
+import android.support.v17.leanback.app.BrowseSupportFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
@@ -15,31 +19,28 @@ import java.util.Map;
 import java.util.Set;
 
 import de.nicidienase.chaosflix.BuildConfig;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Group;
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference;
+import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem;
+import de.nicidienase.chaosflix.common.util.ThreadHandler;
+import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel;
+import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory;
 import de.nicidienase.chaosflix.leanback.CardPresenter;
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.leanback.activities.LeanbackBaseActivity;
-import de.nicidienase.chaosflix.common.entities.WatchlistItem;
-import de.nicidienase.chaosflix.common.entities.recording.Conference;
-import de.nicidienase.chaosflix.common.entities.recording.ConferencesWrapper;
-import de.nicidienase.chaosflix.common.entities.streaming.Group;
-import de.nicidienase.chaosflix.common.entities.streaming.LiveConference;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 
 /**
  * Created by felix on 21.03.17.
  */
 
-public class ConferencesBrowseFragment extends BrowseFragment {
+public class ConferencesBrowseFragment extends BrowseSupportFragment {
 
 	private static final String TAG = ConferencesBrowseFragment.class.getSimpleName();
 	public static final int FRAGMENT = R.id.browse_fragment;
 	private ArrayObjectAdapter mRowsAdapter;
-	private Map<String, List<Conference>> mConferences;
-	CompositeDisposable mDisposables = new CompositeDisposable();
+	private Map<String, List<PersistentConference>> mConferences;
 	private ArrayObjectAdapter watchListAdapter;
 	private ListRow mWatchlistRow;
 	private boolean streamsAvailable = false;
@@ -60,12 +61,20 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 //			}
 //		});
 
+		BrowseViewModel viewModel = ViewModelProviders.of(this).get(BrowseViewModel.class);
+
 		final BrowseErrorFragment errorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(), FRAGMENT);
 		CardPresenter cardPresenter = new CardPresenter();
 		mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 		watchListAdapter = new ArrayObjectAdapter(cardPresenter);
 
+		viewModel.getConferenceGroups().observe(this, new Observer<List<ConferenceGroup>>() {
+			@Override
+			public void onChanged(@Nullable List<ConferenceGroup> conferenceGroups) {
+
+			}
+		});
 		Disposable disposable = ((LeanbackBaseActivity) getActivity()).getApiServiceObservable()
 				.subscribe(mediaApiService -> {
 					mDisposables.add(Observable.zip(mediaApiService.getStreamingConferences(),
@@ -95,10 +104,10 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 		mDisposables.add(disposable);
 	}
 
-	private void addRecordings(CardPresenter cardPresenter, ConferencesWrapper conferences) {
+	private void addRecordings(CardPresenter cardPresenter, Map<String, List<PersistentConference>> conferences) {
 		mConferencesSection = new SectionRow(getString(R.string.conferences));
 		mRowsAdapter.add(mConferencesSection);
-		mConferences = conferences.getConferencesBySeries();
+
 		Set<String> keySet = mConferences.keySet();
 		for (String tag : ConferencesWrapper.getOrderedConferencesList()) {
 			if (keySet.contains(tag)) {
@@ -144,15 +153,14 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-
-		List<WatchlistItem> watchlistItems = new ArrayList<>();
-		Iterator<WatchlistItem> all = WatchlistItem.findAll(WatchlistItem.class);
-		while (all.hasNext()){
-			watchlistItems.add(all.next());
-		}
-//				= Lists.newArrayList(WatchlistItem.findAll(WatchlistItem.class));
+//
+//		List<WatchlistItem> watchlistItems = new ArrayList<>();
+//		Iterator<WatchlistItem> all = WatchlistItem.findAll(WatchlistItem.class);
+//		while (all.hasNext()){
+//			watchlistItems.add(all.next());
+//		}
 		// setup and list items
-		updateWatchlist(watchlistItems);
+//		updateWatchlist(watchlistItems);
 	}
 
 	private void showWatchlist() {
@@ -207,13 +215,7 @@ public class ConferencesBrowseFragment extends BrowseFragment {
 		}
 	}
 
-	@Override
-	public void onStop() {
-		mDisposables.dispose();
-		super.onStop();
-	}
-
-	private ListRow getRow(Map<String, List<Conference>> conferences, CardPresenter cardPresenter, String tag, String description) {
+	private ListRow getRow(Map<String, List<PersistentConference>> conferences, CardPresenter cardPresenter, String tag, String description) {
 		ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
 		listRowAdapter.addAll(0, conferences.get(tag));
 		HeaderItem header = new HeaderItem(ConferencesWrapper.getStringForTag(tag));
