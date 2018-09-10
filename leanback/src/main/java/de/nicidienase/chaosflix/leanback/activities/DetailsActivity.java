@@ -15,13 +15,14 @@
 package de.nicidienase.chaosflix.leanback.activities;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import de.nicidienase.chaosflix.R;
 
 /*
  * Details activity class that loads LeanbackDetailsFragment class
  */
-public class DetailsActivity extends LeanbackBaseActivity {
+public class DetailsActivity extends AppCompatActivity {
 
 	public static final String SHARED_ELEMENT_NAME = "hero";
 	public static final String EVENT = "event";
