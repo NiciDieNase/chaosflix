@@ -1,38 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:id="@+id/title_text"
-        style="@style/Widget.Leanback.DetailsDescriptionTitleStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="3dp"
-        android:layout_marginTop="15dp"
-        android:fontFamily="sans-serif-light"/>
+    <data>
+        <variable
+            name="item"
+            type="de.nicidienase.chaosflix.leanback.EventDetailsDescriptionPresenter.DetailViewContent"/>
+    </data>
 
-    <TextView
-        android:id="@+id/subtitle_text"
-        style="@style/Widget.Leanback.DetailsDescriptionSubtitleStyle"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:fontFamily="sans-serif-condensed"/>
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/speakers_text"
-        style="@style/Widget.Leanback.DetailsDescriptionSubtitleStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:fontFamily="sans-serif-condensed"/>
+        <TextView
+            android:id="@+id/title_text"
+            android:text="@{item.title}"
+            style="@style/Widget.Leanback.DetailsDescriptionTitleStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:layout_marginTop="15dp"
+            android:fontFamily="sans-serif-light"/>
 
-    <TextView
-        android:id="@+id/description_text"
-        style="@style/Widget.Leanback.DetailsDescriptionBodyStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-regular"/>
-</LinearLayout>
+        <TextView
+            android:id="@+id/subtitle_text"
+            android:text="@{item.subtitle}"
+            style="@style/Widget.Leanback.DetailsDescriptionSubtitleStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:fontFamily="sans-serif-condensed"/>
+
+        <TextView
+            android:id="@+id/speakers_text"
+            android:text="@{item.speakers}"
+            style="@style/Widget.Leanback.DetailsDescriptionSubtitleStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:fontFamily="sans-serif-condensed"/>
+
+        <TextView
+            android:id="@+id/description_text"
+            android:text="@{item.description}"
+            style="@style/Widget.Leanback.DetailsDescriptionBodyStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-regular"/>
+    </LinearLayout>
+</layout>

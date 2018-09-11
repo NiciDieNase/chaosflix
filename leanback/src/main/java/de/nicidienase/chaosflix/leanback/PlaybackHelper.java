@@ -12,7 +12,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v17.leanback.app.PlaybackControlGlue;
+import android.support.v17.leanback.media.PlaybackControlGlue;
 import android.support.v17.leanback.widget.Action;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.ControlButtonPresenterSelector;
@@ -22,12 +22,11 @@ import android.support.v17.leanback.widget.PlaybackControlsRowPresenter;
 import android.support.v17.leanback.widget.SparseArrayObjectAdapter;
 import android.util.Log;
 
-import de.nicidienase.chaosflix.common.entities.recording.Event;
-import de.nicidienase.chaosflix.common.entities.recording.Recording;
-import de.nicidienase.chaosflix.common.entities.streaming.Room;
-import de.nicidienase.chaosflix.common.entities.streaming.StreamUrl;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording;
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room;
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl;
 import de.nicidienase.chaosflix.leanback.fragments.OverlayFragment;
-import io.reactivex.disposables.Disposable;
 
 /**
  * Created by felix on 26.03.17.
@@ -39,14 +38,13 @@ public class PlaybackHelper extends PlaybackControlGlue {
 	private static final int DEFAULT_UPDATE_PERIOD = 500;
 	private static final int UPDATE_PERIOD = 16;
 	private static final String TAG = PlaybackHelper.class.getSimpleName();
-	private Disposable thumbDisposable;
 	private OverlayFragment.PlaybackControlListener mControlListener;
 	private BitmapDrawable mDrawable = null;
 	private Room room;
 	private StreamUrl stream;
 	private OverlayFragment fragment;
-	private Event event;
-	private Recording recording;
+	private PersistentEvent event;
+	private PersistentRecording recording;
 	private Runnable mUpdateProgressRunnable;
 	private Handler mHandler = new Handler();
 
@@ -61,7 +59,7 @@ public class PlaybackHelper extends PlaybackControlGlue {
 	private MediaController.TransportControls mTransportControls;
 	private ArrayObjectAdapter adapter;
 
-	public PlaybackHelper(Context context, OverlayFragment fragment, Event event, Recording recording) {
+	public PlaybackHelper(Context context, OverlayFragment fragment, PersistentEvent event, PersistentRecording recording) {
 		super(context, SEEK_SPEEDS);
 		mControlListener = (OverlayFragment.PlaybackControlListener) context;
 		this.fragment = fragment;
@@ -102,9 +100,8 @@ public class PlaybackHelper extends PlaybackControlGlue {
 		}
 	}
 
-	@Override
 	public PlaybackControlsRowPresenter createControlsRowAndPresenter() {
-		PlaybackControlsRowPresenter presenter = super.createControlsRowAndPresenter();
+		PlaybackControlsRowPresenter presenter = super.getControlsRowPresenter();
 		adapter = new ArrayObjectAdapter(new ControlButtonPresenterSelector());
 		getControlsRow().setSecondaryActionsAdapter(adapter);
 
@@ -219,7 +216,11 @@ public class PlaybackHelper extends PlaybackControlGlue {
 	@Override
 	public int getMediaDuration() {
 		if (mediaIsRecording()) {
-			return event.getLength() * 1000;
+			try {
+				return (int) (event.getLength() * 1000);
+			} catch (ClassCastException ex){
+				ex.printStackTrace();
+			}
 		}
 		return 0;
 	}
@@ -229,7 +230,6 @@ public class PlaybackHelper extends PlaybackControlGlue {
 		return mDrawable;
 	}
 
-	@Override
 	protected void startPlayback(int speed) {
 		if (getCurrentSpeedId() == speed) {
 			return;
@@ -241,7 +241,6 @@ public class PlaybackHelper extends PlaybackControlGlue {
 		}
 	}
 
-	@Override
 	protected void pausePlayback() {
 		if (mTransportControls != null) {
 			mTransportControls.pause();
@@ -250,12 +249,10 @@ public class PlaybackHelper extends PlaybackControlGlue {
 		}
 	}
 
-	@Override
 	protected void skipToNext() {
 		mTransportControls.skipToNext();
 	}
 
-	@Override
 	protected void skipToPrevious() {
 		mTransportControls.skipToPrevious();
 	}
@@ -327,12 +324,6 @@ public class PlaybackHelper extends PlaybackControlGlue {
 		public void onMetadataChanged(@Nullable MediaMetadata metadata) {
 			PlaybackHelper.this.onMetadataChanged();
 			PlaybackHelper.this.adapter.notifyArrayItemRangeChanged(0, 1);
-		}
-	}
-
-	public void onStop() {
-		if (thumbDisposable != null) {
-			thumbDisposable.dispose();
 		}
 	}
 }

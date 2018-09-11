@@ -55,7 +55,7 @@ public class PlayerActivity extends AppCompatActivity
 	private static final String TAG = PlayerActivity.class.getSimpleName();
 	SurfaceView mSurfaceView;
 	ProgressBar loadingSpinner;
-	OverlayFragment mPlaybackControllFragment;
+	OverlayFragment playbackControllFragment;
 	private DefaultBandwidthMeter bandwidthMeter;
 	private SimpleExoPlayer player;
 	private String mUserAgent;
@@ -73,7 +73,8 @@ public class PlayerActivity extends AppCompatActivity
 		loadingSpinner = findViewById(R.id.loading_player);
 		mSurfaceView.setKeepScreenOn(true);
 
-		mPlaybackControllFragment = (OverlayFragment) getFragmentManager().findFragmentById(R.id.playback_controls_fragment);
+		playbackControllFragment = (OverlayFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.playback_controls_fragment);
 
 		mUserAgent = Util.getUserAgent(this, getResources().getString(R.string.app_name));
 		synchronized (this) {

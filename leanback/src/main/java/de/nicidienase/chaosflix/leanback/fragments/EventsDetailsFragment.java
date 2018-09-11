@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.leanback.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,7 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v17.leanback.app.BackgroundManager;
-import android.support.v17.leanback.app.DetailsFragment;
+import android.support.v17.leanback.app.DetailsSupportFragment;
 import android.support.v17.leanback.widget.Action;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.ClassPresenterSelector;
@@ -17,12 +18,10 @@ import android.support.v17.leanback.widget.DetailsOverviewLogoPresenter;
 import android.support.v17.leanback.widget.DetailsOverviewRow;
 import android.support.v17.leanback.widget.FullWidthDetailsOverviewRowPresenter;
 import android.support.v17.leanback.widget.FullWidthDetailsOverviewSharedElementHelper;
-import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnActionClickedListener;
 import android.support.v17.leanback.widget.Presenter;
-import android.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,35 +34,31 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import de.nicidienase.chaosflix.leanback.CardPresenter;
-import de.nicidienase.chaosflix.leanback.EventDetailsDescriptionPresenter;
-import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording;
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Group;
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference;
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room;
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Stream;
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl;
+import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem;
+import de.nicidienase.chaosflix.leanback.EventDetailsDescriptionPresenter;
 import de.nicidienase.chaosflix.leanback.activities.ConferencesActivity;
 import de.nicidienase.chaosflix.leanback.activities.DetailsActivity;
 import de.nicidienase.chaosflix.leanback.activities.EventDetailsActivity;
-import de.nicidienase.chaosflix.leanback.activities.LeanbackBaseActivity;
 import de.nicidienase.chaosflix.leanback.activities.PlayerActivity;
-import de.nicidienase.chaosflix.common.entities.WatchlistItem;
-import de.nicidienase.chaosflix.common.entities.recording.Conference;
-import de.nicidienase.chaosflix.common.entities.recording.Event;
-import de.nicidienase.chaosflix.common.entities.recording.Recording;
-import de.nicidienase.chaosflix.common.entities.streaming.Group;
-import de.nicidienase.chaosflix.common.entities.streaming.LiveConference;
-import de.nicidienase.chaosflix.common.entities.streaming.Room;
-import de.nicidienase.chaosflix.common.entities.streaming.Stream;
-import de.nicidienase.chaosflix.common.entities.streaming.StreamUrl;
-import de.nicidienase.chaosflix.common.network.MediaApiService;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by felix on 18.03.17.
  */
 
-public class EventsDetailsFragment extends DetailsFragment {
+public class EventsDetailsFragment extends DetailsSupportFragment {
 	private static final int DETAIL_THUMB_WIDTH = 254;
 	private static final int DETAIL_THUMB_HEIGHT = 143;
 	private static final int NUM_RELATED_TALKS = 5;
@@ -75,22 +70,21 @@ public class EventsDetailsFragment extends DetailsFragment {
 	public static final int DEFAULT_DRAWABLE = R.drawable.default_background;
 	private static final long ADD_WATCHLIST_ACTION = 1646465165;
 	private static final long REMOVE_WATCHLIST_ACTION = 1646465166;
-	private Event mSelectedEvent;
-	private MediaApiService mMediaApiService;
-	private Room mRoom;
+	private PersistentEvent event;
+	private Room room;
 	private int eventType;
 	private ArrayList<StreamUrl> streamUrlList;
-	private BackgroundManager mBackgroundmanager;
-	private DisplayMetrics mMetrics;
-	private WatchlistItem mWatchlistItem;
-	private ArrayObjectAdapter mRecordingActionsAdapter;
-	private OnActionClickedListener mOnActionClickedListener = new OnActionClickedListener() {
+	private BackgroundManager backgroundManager;
+	private DisplayMetrics metrics;
+	private WatchlistItem watchlistItem;
+	private ArrayObjectAdapter recordingActionsAdapter;
+	private OnActionClickedListener onActionClickedListener = new OnActionClickedListener() {
 		@Override
 		public void onActionClicked(Action action) {
 			Log.d(TAG, "OnActionClicked");
 			if (action.getId() == ADD_WATCHLIST_ACTION) {
-				new WatchlistItem(mSelectedEvent.getApiID()).save();
-				mRecordingActionsAdapter.replace(0, new Action(REMOVE_WATCHLIST_ACTION, EventsDetailsFragment.this.getString(R.string.remove_from_watchlist)));
+//				new WatchlistItem(event.getApiID()).save();
+				recordingActionsAdapter.replace(0, new Action(REMOVE_WATCHLIST_ACTION, EventsDetailsFragment.this.getString(R.string.remove_from_watchlist)));
 				SharedPreferences preferences = getActivity().getSharedPreferences(getString(R.string.watchlist_preferences_key), Context.MODE_PRIVATE);
 				if(preferences.getBoolean(getString(R.string.watchlist_dialog_needed), true)) { // new item
 					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -109,32 +103,32 @@ public class EventsDetailsFragment extends DetailsFragment {
 					builder.create().show();
 				}
 			} else if (action.getId() == REMOVE_WATCHLIST_ACTION) {
-				if (mWatchlistItem != null) {
-					mWatchlistItem.delete();
+				if (watchlistItem != null) {
+//					watchlistItem.delete();
 				}
-				mRecordingActionsAdapter.replace(0, new Action(ADD_WATCHLIST_ACTION, EventsDetailsFragment.this.getString(R.string.add_to_watchlist)));
+				recordingActionsAdapter.replace(0, new Action(ADD_WATCHLIST_ACTION, EventsDetailsFragment.this.getString(R.string.add_to_watchlist)));
 			} else {
 				Intent i = new Intent(EventsDetailsFragment.this.getActivity(), PlayerActivity.class);
 				i.putExtra(DetailsActivity.Companion.getTYPE(), eventType);
 				if (eventType == DetailsActivity.Companion.getTYPE_RECORDING()) {
-					i.putExtra(DetailsActivity.Companion.getEVENT(), mSelectedEvent);
+					i.putExtra(DetailsActivity.Companion.getEVENT(), event);
 					if (action.getId() == DUMMY_ID) {
-						Recording dummy = new Recording();
+						PersistentRecording dummy = new PersistentRecording();
 						dummy.setRecordingUrl("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8");
 						dummy.setMimeType("video/hls");
 						dummy.setLanguage("eng");
 						dummy.setHighQuality(true);
 						i.putExtra(DetailsActivity.Companion.getRECORDING(), dummy);
 					} else {
-						for (Recording r : mSelectedEvent.getRecordings()) {
-							if (r.getApiID() == action.getId()) {
+						for (PersistentRecording r : event.getRecordings()) {
+							if (r.getId() == action.getId()) {
 								i.putExtra(DetailsActivity.Companion.getRECORDING(), r);
 								break;
 							}
 						}
 					}
 				} else if (eventType == DetailsActivity.Companion.getTYPE_STREAM()) {
-					i.putExtra(DetailsActivity.Companion.getROOM(), mRoom);
+					i.putExtra(DetailsActivity.Companion.getROOM(), room);
 					StreamUrl streamUrl = EventsDetailsFragment.this.getStreamUrlForActionId((int) action.getId());
 					if (streamUrl != null) {
 						i.putExtra(DetailsActivity.Companion.getSTREAM_URL(), streamUrl);
@@ -159,11 +153,11 @@ public class EventsDetailsFragment extends DetailsFragment {
 		eventType = getActivity().getIntent().getIntExtra(DetailsActivity.Companion.getTYPE(), -1);
 
 		if (eventType == DetailsActivity.Companion.getTYPE_RECORDING()) {
-			mSelectedEvent = getActivity().getIntent()
+			event = getActivity().getIntent()
 					.getParcelableExtra(DetailsActivity.Companion.getEVENT());
-			mWatchlistItem = WatchlistItem.findById(WatchlistItem.class, mSelectedEvent.getApiID());
+//			watchlistItem = WatchlistItem.findById(WatchlistItem.class, event.getApiID());
 		} else if (eventType == DetailsActivity.Companion.getTYPE_STREAM()) {
-			mRoom = getActivity().getIntent()
+			room = getActivity().getIntent()
 					.getParcelableExtra(DetailsActivity.Companion.getROOM());
 		}
 
@@ -174,72 +168,72 @@ public class EventsDetailsFragment extends DetailsFragment {
 		mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
 		final ArrayObjectAdapter adapter = new ArrayObjectAdapter(mPresenterSelector);
 
-		((LeanbackBaseActivity) getActivity()).getApiServiceObservable()
-				.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
-				.subscribe(mediaApiService -> {
-					mMediaApiService = mediaApiService;
-					if (eventType == DetailsActivity.Companion.getTYPE_RECORDING()) {
-						final DetailsOverviewRow detailsOverviewRow = setupDetailsOverviewRow(mSelectedEvent);
-						mediaApiService.getEvent(mSelectedEvent.getApiID())
-								.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
-								.subscribe(event -> {
-									mSelectedEvent = event;
-									mRecordingActionsAdapter =
-											getRecordingActionsAdapter(mSelectedEvent.getRecordings());
-									detailsOverviewRow.setActionsAdapter(mRecordingActionsAdapter);
-									adapter.add(detailsOverviewRow);
-									mediaApiService.getConference(
-											mSelectedEvent.getConferenceId())
-											.observeOn(AndroidSchedulers.mainThread())
-											.subscribe(conference -> {
-												String tag = null;
-												if (mSelectedEvent.getTags().size() > 0) {
-													tag = mSelectedEvent.getTags().get(0);
-													List<Event> relatedEvents = conference.getEventsByTags().get(tag);
-													relatedEvents.remove(mSelectedEvent);
-													Collections.shuffle(relatedEvents);
-													if (relatedEvents.size() > 5) {
-														relatedEvents = relatedEvents.subList(0, NUM_RELATED_TALKS);
-													}
-													ArrayObjectAdapter relatedEventsAdapter
-															= new ArrayObjectAdapter(new CardPresenter());
-													relatedEventsAdapter.addAll(0, relatedEvents);
-													HeaderItem header = new HeaderItem(getString(R.string.random_talks_on_this_track));
-													adapter.add(new ListRow(header, relatedEventsAdapter));
-												}
-
-												List<Event> selectedEvents = getRandomEvents(conference, tag);
-												if (selectedEvents.size() > 0) {
-													ArrayObjectAdapter randomEventAdapter
-															= new ArrayObjectAdapter(new CardPresenter());
-													randomEventAdapter.addAll(0, selectedEvents);
-													HeaderItem header = new HeaderItem(getString(R.string.random_talks));
-													adapter.add(new ListRow(header, randomEventAdapter));
-												}
-
-												setOnItemViewClickedListener(new ItemViewClickedListener(this));
-												setAdapter(adapter);
-												browseErrorFragment.dismiss();
-											});
-								});
-					} else if (eventType == DetailsActivity.Companion.getTYPE_STREAM()) {
-						mediaApiService.getStreamingConferences()
-								.observeOn(AndroidSchedulers.mainThread())
-								.subscribe(liveConferences -> {
-									if(mRoom.getStreams() == null){
-										mRoom = getRoom(mRoom, liveConferences);
-									}
-									final DetailsOverviewRow detailsOverviewRow = setupDetailsOverviewRow(mRoom);
-									ArrayObjectAdapter actionsAdapter = getStreamActionsAdapter(mRoom.getStreams());
-									detailsOverviewRow.setActionsAdapter(actionsAdapter);
-									adapter.add(detailsOverviewRow);
-									setOnItemViewClickedListener(new ItemViewClickedListener(EventsDetailsFragment.this));
-									setAdapter(adapter);
-									browseErrorFragment.dismiss();
-									// TODO add other streams
-								});
-					}
-				});
+//		((LeanbackBaseActivity) getActivity()).getApiServiceObservable()
+//				.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
+//				.subscribe(mediaApiService -> {
+//					mMediaApiService = mediaApiService;
+//					if (eventType == DetailsActivity.Companion.getTYPE_RECORDING()) {
+//						final DetailsOverviewRow detailsOverviewRow = setupDetailsOverviewRow(event);
+//						mediaApiService.getEvent(event.getApiID())
+//								.doOnError(t -> browseErrorFragment.setErrorContent(t.getMessage()))
+//								.subscribe(event -> {
+//									this.event = event;
+//									recordingActionsAdapter =
+//											getRecordingActionsAdapter(this.event.getRecordings());
+//									detailsOverviewRow.setActionsAdapter(recordingActionsAdapter);
+//									adapter.add(detailsOverviewRow);
+//									mediaApiService.getConference(
+//											this.event.getConferenceId())
+//											.observeOn(AndroidSchedulers.mainThread())
+//											.subscribe(conference -> {
+//												String tag = null;
+//												if (this.event.getTags().size() > 0) {
+//													tag = this.event.getTags().get(0);
+//													List<Event> relatedEvents = conference.getEventsByTags().get(tag);
+//													relatedEvents.remove(this.event);
+//													Collections.shuffle(relatedEvents);
+//													if (relatedEvents.size() > 5) {
+//														relatedEvents = relatedEvents.subList(0, NUM_RELATED_TALKS);
+//													}
+//													ArrayObjectAdapter relatedEventsAdapter
+//															= new ArrayObjectAdapter(new CardPresenter());
+//													relatedEventsAdapter.addAll(0, relatedEvents);
+//													HeaderItem header = new HeaderItem(getString(R.string.random_talks_on_this_track));
+//													adapter.add(new ListRow(header, relatedEventsAdapter));
+//												}
+//
+//												List<Event> selectedEvents = getRandomEvents(conference, tag);
+//												if (selectedEvents.size() > 0) {
+//													ArrayObjectAdapter randomEventAdapter
+//															= new ArrayObjectAdapter(new CardPresenter());
+//													randomEventAdapter.addAll(0, selectedEvents);
+//													HeaderItem header = new HeaderItem(getString(R.string.random_talks));
+//													adapter.add(new ListRow(header, randomEventAdapter));
+//												}
+//
+//												setOnItemViewClickedListener(new ItemViewClickedListener(this));
+//												setAdapter(adapter);
+//												browseErrorFragment.dismiss();
+//											});
+//								});
+//					} else if (eventType == DetailsActivity.Companion.getTYPE_STREAM()) {
+//						mediaApiService.getStreamingConferences()
+//								.observeOn(AndroidSchedulers.mainThread())
+//								.subscribe(liveConferences -> {
+//									if(room.getStreams() == null){
+//										room = getRoom(room, liveConferences);
+//									}
+//									final DetailsOverviewRow detailsOverviewRow = setupDetailsOverviewRow(room);
+//									ArrayObjectAdapter actionsAdapter = getStreamActionsAdapter(room.getStreams());
+//									detailsOverviewRow.setActionsAdapter(actionsAdapter);
+//									adapter.add(detailsOverviewRow);
+//									setOnItemViewClickedListener(new ItemViewClickedListener(EventsDetailsFragment.this));
+//									setAdapter(adapter);
+//									browseErrorFragment.dismiss();
+//									// TODO add other streams
+//								});
+//					}
+//				});
 	}
 
 	@Override
@@ -250,15 +244,15 @@ public class EventsDetailsFragment extends DetailsFragment {
 
 	@Override
 	public void onStop() {
-		mBackgroundmanager.release();
+		backgroundManager.release();
 		super.onStop();
 	}
 
 	private void prepareBackgroundManager() {
-		mBackgroundmanager = BackgroundManager.getInstance(getActivity());
-		mBackgroundmanager.attach(getActivity().getWindow());
-		mMetrics = new DisplayMetrics();
-		getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
+		backgroundManager = BackgroundManager.getInstance(getActivity());
+		backgroundManager.attach(getActivity().getWindow());
+		metrics = new DisplayMetrics();
+		getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 	}
 
 	private void updateBackground(String uri) {
@@ -269,7 +263,7 @@ public class EventsDetailsFragment extends DetailsFragment {
 				.into(new SimpleTarget<Bitmap>() {
 					@Override
 					public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-						mBackgroundmanager.setBitmap(resource);
+						backgroundManager.setBitmap(resource);
 					}
 				});
 	}
@@ -288,14 +282,14 @@ public class EventsDetailsFragment extends DetailsFragment {
 	}
 
 	@NonNull
-	private List<Event> getRandomEvents(Conference conference, String tag) {
-		List<Event> randomEvents = conference.getEvents();
+	private List<PersistentEvent> getRandomEvents(PersistentConference conference, String tag) {
+		List<PersistentEvent> randomEvents = Collections.EMPTY_LIST; //conference.getEvents();
 		Collections.shuffle(randomEvents);
-		List<Event> selectedEvents;
+		List<PersistentEvent> selectedEvents;
 		if (tag != null) {
-			selectedEvents = new ArrayList<Event>();
-			for (Event e : randomEvents) {
-				if (!e.getTags().contains(tag)) {
+			selectedEvents = new ArrayList<PersistentEvent>();
+			for (PersistentEvent e : randomEvents) {
+				if (!Arrays.asList(e.getTags()).contains(tag)) {
 					selectedEvents.add(e);
 				}
 				if (selectedEvents.size() == 5) {
@@ -323,15 +317,15 @@ public class EventsDetailsFragment extends DetailsFragment {
 		mDetailsPresenter.setListener(helper);
 		prepareEntranceTransition();
 
-		mDetailsPresenter.setOnActionClickedListener(mOnActionClickedListener);
+		mDetailsPresenter.setOnActionClickedListener(onActionClickedListener);
 		return mDetailsPresenter;
 	}
 
 	private DetailsOverviewRow setupDetailsOverviewRow(Object event) {
 		final DetailsOverviewRow row = new DetailsOverviewRow(event);
 		String thumbUrl;
-		if (event instanceof Event) {
-			thumbUrl = ((Event) event).getThumbUrl();
+		if (event instanceof PersistentEvent) {
+			thumbUrl = ((PersistentEvent) event).getThumbUrl();
 		} else {
 			thumbUrl = ((Room) event).getThumb();
 		}
@@ -354,20 +348,20 @@ public class EventsDetailsFragment extends DetailsFragment {
 		return row;
 	}
 
-	private ArrayObjectAdapter getRecordingActionsAdapter(List<Recording> recordings) {
+	private ArrayObjectAdapter getRecordingActionsAdapter(List<PersistentRecording> recordings) {
 		ArrayObjectAdapter actionsAdapter = new ArrayObjectAdapter();
-		if(mWatchlistItem != null){
+		if(watchlistItem != null){
 			actionsAdapter.add(new Action(REMOVE_WATCHLIST_ACTION,getString(R.string.remove_from_watchlist)));
 		} else {
 			actionsAdapter.add(new Action(ADD_WATCHLIST_ACTION,getString(R.string.add_to_watchlist)));
 		}
 		if (recordings != null) {
 			for (int i = 0; i < recordings.size(); i++) {
-				Recording recording = recordings.get(i);
+				PersistentRecording recording = recordings.get(i);
 				if (recording.getMimeType().startsWith("video/") && !recording.getMimeType().equals("video/webm")) {
 					String quality = recording.isHighQuality() ? "HD" : "SD";
 					String title = quality + " (" + recording.getLanguage() + ")";
-					actionsAdapter.add(new Action(recording.getApiID(), title, recording.getMimeType().substring(6)));
+					actionsAdapter.add(new Action(recording.getId(), title, recording.getMimeType().substring(6)));
 				}
 			}
 		} else {

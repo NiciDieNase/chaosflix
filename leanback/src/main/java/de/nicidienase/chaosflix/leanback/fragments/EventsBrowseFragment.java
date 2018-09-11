@@ -18,7 +18,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v17.leanback.app.BackgroundManager;
-import android.support.v17.leanback.app.BrowseFragment;
+import android.support.v17.leanback.app.BrowseSupportFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
@@ -46,16 +46,14 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.leanback.CardPresenter;
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.leanback.activities.LeanbackBaseActivity;
 import de.nicidienase.chaosflix.leanback.activities.EventsActivity;
-import de.nicidienase.chaosflix.common.entities.recording.Conference;
-import de.nicidienase.chaosflix.common.entities.recording.Event;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 
-public class EventsBrowseFragment extends BrowseFragment {
+public class EventsBrowseFragment extends BrowseSupportFragment {
 	private static final String TAG = EventsBrowseFragment.class.getSimpleName();
 
 	private static final int BACKGROUND_UPDATE_DELAY = 300;
@@ -68,7 +66,7 @@ public class EventsBrowseFragment extends BrowseFragment {
 	private Timer mBackgroundTimer;
 	private URI mBackgroundURI;
 	private BackgroundManager mBackgroundManager;
-	private Conference mConference;
+	private PersistentConference mConference;
 	private int conferenceId;
 
 	@Override
@@ -80,18 +78,18 @@ public class EventsBrowseFragment extends BrowseFragment {
 		conferenceId = this.getActivity().getIntent().getIntExtra(EventsActivity.Companion.getCONFERENCE_ACRONYM(), 0);
 		mConference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.Companion.getCONFERENCE());
 
-		((LeanbackBaseActivity) getActivity()).getApiServiceObservable()
-				.subscribe(mediaApiService -> {
-					mediaApiService.getConference(mConference.getApiID())
-							.observeOn(AndroidSchedulers.mainThread())
-							.doOnError(t -> errorFragment.setErrorContent(t.getMessage()))
-							.subscribe(conference -> {
-								mConference = conference;
-								setupUIElements();
-								loadRows();
-								errorFragment.dismiss();
-							});
-				});
+//		((LeanbackBaseActivity) getActivity()).getApiServiceObservable()
+//				.subscribe(mediaApiService -> {
+//					mediaApiService.getConference(mConference.getApiID())
+//							.observeOn(AndroidSchedulers.mainThread())
+//							.doOnError(t -> errorFragment.setErrorContent(t.getMessage()))
+//							.subscribe(conference -> {
+//								mConference = conference;
+//								setupUIElements();
+//								loadRows();
+//								errorFragment.dismiss();
+//							});
+//				});
 
 		prepareBackgroundManager();
 		setOnItemViewClickedListener(new ItemViewClickedListener(this));
@@ -107,40 +105,40 @@ public class EventsBrowseFragment extends BrowseFragment {
 		}
 	}
 
-	private void loadRows() {
-		HashMap<String, List<Event>> eventsByTags = mConference.getEventsByTags();
-
-		mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
-		CardPresenter cardPresenter = new CardPresenter();
-
-		List<Event> other = new LinkedList<Event>();
-//		List<String> keys = Lists.newArrayList(eventsByTags.keySet());
-		List<String> keys = new ArrayList<>();
-		Iterator<String> iterator = eventsByTags.keySet().iterator();
-		while (iterator.hasNext()){
-			keys.add(iterator.next());
-		}
-		Collections.sort(keys);
-		for (String tag : keys) {
-			List<Event> items = eventsByTags.get(tag);
-			Collections.sort(items);
-			if (android.text.TextUtils.isDigitsOnly(tag)) {
-				other.addAll(items);
-			} else {
-				ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
-				listRowAdapter.addAll(0, items);
-				HeaderItem header = new HeaderItem(tag);
-				mRowsAdapter.add(new ListRow(header, listRowAdapter));
-			}
-		}
-		if (other.size() > 0) {
-			ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
-			listRowAdapter.addAll(0, other);
-			HeaderItem header = new HeaderItem("other");
-			mRowsAdapter.add(new ListRow(header, listRowAdapter));
-		}
-		setAdapter(mRowsAdapter);
-	}
+//	private void loadRows() {
+//		HashMap<String, List<Event>> eventsByTags = mConference.getEventsByTags();
+//
+//		mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
+//		CardPresenter cardPresenter = new CardPresenter();
+//
+//		List<Event> other = new LinkedList<Event>();
+////		List<String> keys = Lists.newArrayList(eventsByTags.keySet());
+//		List<String> keys = new ArrayList<>();
+//		Iterator<String> iterator = eventsByTags.keySet().iterator();
+//		while (iterator.hasNext()){
+//			keys.add(iterator.next());
+//		}
+//		Collections.sort(keys);
+//		for (String tag : keys) {
+//			List<Event> items = eventsByTags.get(tag);
+//			Collections.sort(items);
+//			if (android.text.TextUtils.isDigitsOnly(tag)) {
+//				other.addAll(items);
+//			} else {
+//				ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
+//				listRowAdapter.addAll(0, items);
+//				HeaderItem header = new HeaderItem(tag);
+//				mRowsAdapter.add(new ListRow(header, listRowAdapter));
+//			}
+//		}
+//		if (other.size() > 0) {
+//			ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
+//			listRowAdapter.addAll(0, other);
+//			HeaderItem header = new HeaderItem("other");
+//			mRowsAdapter.add(new ListRow(header, listRowAdapter));
+//		}
+//		setAdapter(mRowsAdapter);
+//	}
 
 	private void prepareBackgroundManager() {
 		mBackgroundManager = BackgroundManager.getInstance(getActivity());
@@ -205,9 +203,9 @@ public class EventsBrowseFragment extends BrowseFragment {
 		@Override
 		public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item,
 								   RowPresenter.ViewHolder rowViewHolder, Row row) {
-			if (item instanceof Event) {
+			if (item instanceof PersistentEvent) {
 				try {
-					mBackgroundURI = new URI(((Event) item).getPosterUrl());
+					mBackgroundURI = new URI(((PersistentEvent) item).getPosterUrl());
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
