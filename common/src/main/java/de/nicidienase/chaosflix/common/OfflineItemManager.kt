@@ -22,7 +22,9 @@ import de.nicidienase.chaosflix.common.util.ThreadHandler
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import java.io.File
 
-class OfflineItemManager(context: Context, val offlineEventDao: OfflineEventDao) {
+class OfflineItemManager(context: Context,
+                         val offlineEventDao: OfflineEventDao,
+                         val preferencesManager: PreferencesManager) {
 
 	val downloadStatus: MutableMap<Long, DownloadStatus> = HashMap()
 
@@ -104,7 +106,7 @@ class OfflineItemManager(context: Context, val offlineEventDao: OfflineEventDao)
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
 				request.setVisibleInDownloadsUi(true)
 
-				if(!PreferencesManager.getMetered()){
+				if(!preferencesManager.getMetered()){
 					request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
 					request.setAllowedOverMetered(false)
 				}
@@ -112,7 +114,7 @@ class OfflineItemManager(context: Context, val offlineEventDao: OfflineEventDao)
 				val downloadReference = downloadManager.enqueue(request)
 				Log.d(DetailsViewModel.TAG, "download started $downloadReference")
 
-				val cancelHandler = DownloadCancelHandler(applicationContext, downloadReference, offlineEventDao)
+				val cancelHandler = DownloadCancelHandler(applicationContext, downloadReference, offlineEventDao, preferencesManager)
 				val intentFilter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
 				applicationContext.registerReceiver(cancelHandler, intentFilter)
 
@@ -160,7 +162,10 @@ class OfflineItemManager(context: Context, val offlineEventDao: OfflineEventDao)
 		}
 	}
 
-	class DownloadCancelHandler(val context: Context, val id: Long, val offlineEventDao: OfflineEventDao) : BroadcastReceiver() {
+	class DownloadCancelHandler(val context: Context,
+	                            val id: Long,
+	                            val offlineEventDao: OfflineEventDao,
+	                            val preferencesManager: PreferencesManager) : BroadcastReceiver() {
 		private val TAG = DownloadCancelHandler::class.simpleName
 
 		val handler = ThreadHandler()
@@ -168,7 +173,7 @@ class OfflineItemManager(context: Context, val offlineEventDao: OfflineEventDao)
 		override fun onReceive(p0: Context?, p1: Intent?) {
 			val downloadId = p1?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
 			if (downloadId != null && downloadId == id) {
-				val offlineItemManager = OfflineItemManager(context, offlineEventDao)
+				val offlineItemManager = OfflineItemManager(context, offlineEventDao, preferencesManager)
 				offlineItemManager.addDownloadRefs(listOf(downloadId))
 				offlineItemManager.updateDownloadStatus()
 				val downloadStatus = offlineItemManager.downloadStatus[downloadId]

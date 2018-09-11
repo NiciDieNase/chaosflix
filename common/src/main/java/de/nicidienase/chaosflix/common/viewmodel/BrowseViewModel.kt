@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.OfflineItemManager
+import de.nicidienase.chaosflix.common.PreferencesManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
@@ -21,7 +22,8 @@ class BrowseViewModel(
 		val offlineItemManager: OfflineItemManager,
 		val database: ChaosflixDatabase,
 		recordingApi: RecordingService,
-		val streamingApi: StreamingService
+		val streamingApi: StreamingService,
+		val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
 	val downloader = Downloader(recordingApi, database)
@@ -140,6 +142,8 @@ class BrowseViewModel(
 			offlineItemManager.deleteOfflineItem(item)
 		}
 	}
+
+	fun getAutoselectStream() = preferencesManager.getAutoselectStream()
 }
 
 

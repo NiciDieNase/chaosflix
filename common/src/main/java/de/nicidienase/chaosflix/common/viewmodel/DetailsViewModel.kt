@@ -5,6 +5,8 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.os.Bundle
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
+import de.nicidienase.chaosflix.common.OfflineItemManager
+import de.nicidienase.chaosflix.common.PreferencesManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
 import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
@@ -13,12 +15,13 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import de.nicidienase.chaosflix.common.util.ThreadHandler
-import de.nicidienase.chaosflix.touch.OfflineItemManager
 import java.io.File
 
 class DetailsViewModel(
 		val database: ChaosflixDatabase,
-		recordingApi: RecordingService
+		recordingApi: RecordingService,
+		val offlineItemManager: OfflineItemManager,
+		val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
 	val state: SingleLiveEvent<LiveEvent<DetailsViewModelState,Bundle,String>>
@@ -26,7 +29,6 @@ class DetailsViewModel(
 
 	val downloader = Downloader(recordingApi, database)
 	var writeExternalStorageAllowed: Boolean = false
-	val offlineItemManager: OfflineItemManager = OfflineItemManager(offlineEventDao = database.offlineEventDao())
 
 	private val handler = ThreadHandler()
 
@@ -119,6 +121,8 @@ class DetailsViewModel(
 		}
 		return liveData
 	}
+
+	fun getAutoselectStream() = preferencesManager.getAutoselectStream()
 
 	enum class DetailsViewModelState{
 		PlayOfflineItem, PlayOnlineItem, SelectRecording, Error

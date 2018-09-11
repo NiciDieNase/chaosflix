@@ -177,7 +177,7 @@ class EventDetailsFragment : Fragment() {
 
 	private fun selectRecording(persistentRecordings: List<PersistentRecording>, action: (recording: PersistentRecording) -> Unit) {
 		val stream = Util.getOptimalStream(persistentRecordings)
-		if (stream != null && PreferencesManager.getAutoselectStream()) {
+		if (stream != null && viewModel.getAutoselectStream()) {
 			action.invoke(stream)
 		} else {
 			val items: List<String> = persistentRecordings.map { getStringForRecording(it) }

@@ -1,11 +1,13 @@
 package de.nicidienase.chaosflix.touch.browse
 
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -25,6 +27,8 @@ import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.databinding.ActivityBrowseBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.common.PreferencesManager
+import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
+import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.about.AboutActivity
 import de.nicidienase.chaosflix.touch.browse.download.DownloadsListFragment
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity
@@ -47,6 +51,8 @@ class BrowseActivity : AppCompatActivity(),
 
 	private lateinit var drawerToggle: ActionBarDrawerToggle
 	private lateinit var binding: ActivityBrowseBinding
+
+	private lateinit var viewModel: BrowseViewModel
 
 	protected val numColumns: Int
 		get() = resources.getInteger(R.integer.num_columns)
@@ -74,6 +80,7 @@ class BrowseActivity : AppCompatActivity(),
 		if (savedInstanceState == null) {
 			showConferencesFragment()
 		}
+		viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(BrowseViewModel::class.java)
 	}
 
 	fun setupDrawerToggle(toolbar: Toolbar?) {
@@ -134,7 +141,7 @@ class BrowseActivity : AppCompatActivity(),
 
 		val dashStreams = streamingItem.room.streams.filter { it.slug == "dash-native" }
 		if (dashStreams.size > 0
-				&& PreferencesManager.getAutoselectStream()) {
+				&& viewModel.getAutoselectStream()) {
 			playStream(streamingItem.conference.conference,
 					streamingItem.room.display,
 					dashStreams.first().urls["dash"]
