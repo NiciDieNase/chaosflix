@@ -36,14 +36,11 @@ public class ItemViewClickedListener implements OnItemViewClickedListener {
 		if (item instanceof PersistentConference) {
 			PersistentConference conference = (PersistentConference) item;
 			// Start EventsActivity for this conference
-			Intent i = new Intent(fragment.getActivity(), EventsActivity.class);
-			i.putExtra(EventsActivity.Companion.getCONFERENCE(), conference);
-			i.putExtra(EventsActivity.Companion.getCONFERENCE_ACRONYM(), conference.getAcronym());
-			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
+			Bundle transition = ActivityOptionsCompat.makeSceneTransitionAnimation(
 					activity,
 					((ImageCardView) itemViewHolder.view).getMainImageView(),
 					EventsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
-			fragment.startActivity(i, bundle);
+			EventsActivity.start(fragment.requireContext(),conference,transition);
 		} else if (item instanceof PersistentEvent) {
 			PersistentEvent event = (PersistentEvent) item;
 			Intent i = new Intent(fragment.getActivity(), DetailsActivity.class);

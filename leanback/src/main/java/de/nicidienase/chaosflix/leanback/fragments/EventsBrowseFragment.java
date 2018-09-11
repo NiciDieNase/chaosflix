@@ -20,9 +20,6 @@ import android.os.Handler;
 import android.support.v17.leanback.app.BackgroundManager;
 import android.support.v17.leanback.app.BrowseSupportFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
-import android.support.v17.leanback.widget.HeaderItem;
-import android.support.v17.leanback.widget.ListRow;
-import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnItemViewSelectedListener;
 import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
@@ -37,18 +34,11 @@ import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent;
-import de.nicidienase.chaosflix.leanback.CardPresenter;
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.leanback.activities.EventsActivity;
@@ -66,8 +56,7 @@ public class EventsBrowseFragment extends BrowseSupportFragment {
 	private Timer mBackgroundTimer;
 	private URI mBackgroundURI;
 	private BackgroundManager mBackgroundManager;
-	private PersistentConference mConference;
-	private int conferenceId;
+	private PersistentConference conference;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -75,16 +64,16 @@ public class EventsBrowseFragment extends BrowseSupportFragment {
 		super.onActivityCreated(savedInstanceState);
 		final BrowseErrorFragment errorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(), FRAGMENT);
-		conferenceId = this.getActivity().getIntent().getIntExtra(EventsActivity.Companion.getCONFERENCE_ACRONYM(), 0);
-		mConference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.Companion.getCONFERENCE());
+
+		conference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.getCONFERENCE());
 
 //		((LeanbackBaseActivity) getActivity()).getApiServiceObservable()
 //				.subscribe(mediaApiService -> {
-//					mediaApiService.getConference(mConference.getApiID())
+//					mediaApiService.getConference(conference.getApiID())
 //							.observeOn(AndroidSchedulers.mainThread())
 //							.doOnError(t -> errorFragment.setErrorContent(t.getMessage()))
 //							.subscribe(conference -> {
-//								mConference = conference;
+//								conference = conference;
 //								setupUIElements();
 //								loadRows();
 //								errorFragment.dismiss();
@@ -106,7 +95,7 @@ public class EventsBrowseFragment extends BrowseSupportFragment {
 	}
 
 //	private void loadRows() {
-//		HashMap<String, List<Event>> eventsByTags = mConference.getEventsByTags();
+//		HashMap<String, List<Event>> eventsByTags = conference.getEventsByTags();
 //
 //		mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 //		CardPresenter cardPresenter = new CardPresenter();
@@ -150,7 +139,7 @@ public class EventsBrowseFragment extends BrowseSupportFragment {
 
 	private void setupUIElements() {
 		Glide.with(getActivity())
-				.load(mConference.getLogoUrl())
+				.load(conference.getLogoUrl())
 				.centerCrop()
 				.error(mDefaultBackground)
 				.into(new SimpleTarget<GlideDrawable>(432, 243) {
@@ -161,7 +150,7 @@ public class EventsBrowseFragment extends BrowseSupportFragment {
 						setBadgeDrawable(resource);
 					}
 				});
-		setTitle(mConference.getTitle()); // Badge, when set, takes precedent
+		setTitle(conference.getTitle()); // Badge, when set, takes precedent
 		// over title
 		setHeadersState(HEADERS_ENABLED);
 		setHeadersTransitionOnBackEnabled(true);
