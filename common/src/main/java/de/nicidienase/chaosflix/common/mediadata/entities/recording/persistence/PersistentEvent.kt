@@ -50,7 +50,9 @@ data class PersistentEvent(
 		var related: List<PersistentRelatedEvent>? = null,
 		@Ignore
 		var recordings: List<PersistentRecording>? = null
-) : Parcelable {
+) : Parcelable, Comparable<PersistentEvent> {
+
+	override fun compareTo(other: PersistentEvent): Int = title.compareTo(other.title)
 
 	constructor(parcel: Parcel) : this(
 			parcel.readLong(),

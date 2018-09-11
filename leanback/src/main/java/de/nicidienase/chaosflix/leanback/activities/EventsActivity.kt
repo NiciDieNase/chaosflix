@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.leanback.activities
 
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -15,13 +16,14 @@ class EventsActivity : FragmentActivity() {
 
 	public override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		// TODO determin if we should use a Browse or a Grid layout
+		val conference = intent.getParcelableExtra<PersistentConference>(CONFERENCE)
+		if(conference.tagsUsefull){
+			// TODO determin if we should use a Browse or a Grid layout
+		}
 		setContentView(R.layout.activity_events_browse)
 	}
 
 	companion object {
-		@JvmStatic
-		val CONFERENCE_ACRONYM = "conference_acronym"
 		@JvmStatic
 		val CONFERENCE = "conference"
 		@JvmStatic

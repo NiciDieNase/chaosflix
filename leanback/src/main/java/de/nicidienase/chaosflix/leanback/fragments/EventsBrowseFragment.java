@@ -20,6 +20,9 @@ import android.os.Handler;
 import android.support.v17.leanback.app.BackgroundManager;
 import android.support.v17.leanback.app.BrowseSupportFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
+import android.support.v17.leanback.widget.HeaderItem;
+import android.support.v17.leanback.widget.ListRow;
+import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnItemViewSelectedListener;
 import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
@@ -34,13 +37,21 @@ import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent;
+import de.nicidienase.chaosflix.leanback.CardPresenter;
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
-import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.leanback.activities.EventsActivity;
 
 public class EventsBrowseFragment extends BrowseSupportFragment {
@@ -51,11 +62,11 @@ public class EventsBrowseFragment extends BrowseSupportFragment {
 
 	private final Handler mHandler = new Handler();
 	private ArrayObjectAdapter mRowsAdapter;
-	private Drawable mDefaultBackground;
-	private DisplayMetrics mMetrics;
+	private Drawable defaultBackground;
+	private DisplayMetrics metrics;
 	private Timer mBackgroundTimer;
 	private URI mBackgroundURI;
-	private BackgroundManager mBackgroundManager;
+	private BackgroundManager backgroundManager;
 	private PersistentConference conference;
 
 	@Override
@@ -66,19 +77,11 @@ public class EventsBrowseFragment extends BrowseSupportFragment {
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(), FRAGMENT);
 
 		conference = this.getActivity().getIntent().getParcelableExtra(EventsActivity.getCONFERENCE());
+		setupUIElements(conference);
 
-//		((LeanbackBaseActivity) getActivity()).getApiServiceObservable()
-//				.subscribe(mediaApiService -> {
-//					mediaApiService.getConference(conference.getApiID())
-//							.observeOn(AndroidSchedulers.mainThread())
-//							.doOnError(t -> errorFragment.setErrorContent(t.getMessage()))
-//							.subscribe(conference -> {
-//								conference = conference;
-//								setupUIElements();
-//								loadRows();
-//								errorFragment.dismiss();
-//							});
-//				});
+		CardPresenter cardPresenter = new CardPresenter();
+		mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
+		setAdapter(mRowsAdapter);
 
 		prepareBackgroundManager();
 		setOnItemViewClickedListener(new ItemViewClickedListener(this));
@@ -94,54 +97,46 @@ public class EventsBrowseFragment extends BrowseSupportFragment {
 		}
 	}
 
-//	private void loadRows() {
-//		HashMap<String, List<Event>> eventsByTags = conference.getEventsByTags();
-//
-//		mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
-//		CardPresenter cardPresenter = new CardPresenter();
-//
-//		List<Event> other = new LinkedList<Event>();
-////		List<String> keys = Lists.newArrayList(eventsByTags.keySet());
-//		List<String> keys = new ArrayList<>();
-//		Iterator<String> iterator = eventsByTags.keySet().iterator();
-//		while (iterator.hasNext()){
-//			keys.add(iterator.next());
-//		}
-//		Collections.sort(keys);
-//		for (String tag : keys) {
-//			List<Event> items = eventsByTags.get(tag);
-//			Collections.sort(items);
-//			if (android.text.TextUtils.isDigitsOnly(tag)) {
-//				other.addAll(items);
-//			} else {
-//				ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
-//				listRowAdapter.addAll(0, items);
-//				HeaderItem header = new HeaderItem(tag);
-//				mRowsAdapter.add(new ListRow(header, listRowAdapter));
-//			}
-//		}
-//		if (other.size() > 0) {
-//			ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
-//			listRowAdapter.addAll(0, other);
-//			HeaderItem header = new HeaderItem("other");
-//			mRowsAdapter.add(new ListRow(header, listRowAdapter));
-//		}
-//		setAdapter(mRowsAdapter);
-//	}
+	private Map<String, List<PersistentEvent>> loadRows(List<PersistentEvent> events) {
+		HashMap<String, List<PersistentEvent>> eventsByTags = new HashMap<>();
 
-	private void prepareBackgroundManager() {
-		mBackgroundManager = BackgroundManager.getInstance(getActivity());
-		mBackgroundManager.attach(getActivity().getWindow());
-		mDefaultBackground = getResources().getDrawable(R.drawable.default_background);
-		mMetrics = new DisplayMetrics();
-		getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
+		List<PersistentEvent> other = new LinkedList<PersistentEvent>();
+		List<String> keys = new ArrayList<>();
+		Iterator<String> iterator = eventsByTags.keySet().iterator();
+		while (iterator.hasNext()){
+			keys.add(iterator.next());
+		}
+		Collections.sort(keys);
+		for (String tag : keys) {
+			List<PersistentEvent> items = eventsByTags.get(tag);
+			Collections.sort(items);
+			if (android.text.TextUtils.isDigitsOnly(tag)) {
+				other.addAll(items);
+			}
+		}
+		return eventsByTags;
 	}
 
-	private void setupUIElements() {
+	private Row buildRowForEvents(CardPresenter cardPresenter,String tag, List<PersistentEvent> items){
+		ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
+		listRowAdapter.addAll(0, items);
+		HeaderItem header = new HeaderItem(tag);
+		return new ListRow(header, listRowAdapter);
+	}
+
+	private void prepareBackgroundManager() {
+		backgroundManager = BackgroundManager.getInstance(getActivity());
+		backgroundManager.attach(getActivity().getWindow());
+		defaultBackground = getResources().getDrawable(R.drawable.default_background);
+		metrics = new DisplayMetrics();
+		getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+	}
+
+	private void setupUIElements(PersistentConference conference) {
 		Glide.with(getActivity())
 				.load(conference.getLogoUrl())
 				.centerCrop()
-				.error(mDefaultBackground)
+				.error(defaultBackground)
 				.into(new SimpleTarget<GlideDrawable>(432, 243) {
 					@Override
 					public void onResourceReady(GlideDrawable resource,
@@ -163,18 +158,18 @@ public class EventsBrowseFragment extends BrowseSupportFragment {
 	}
 
 	protected void updateBackground(String uri) {
-		int width = mMetrics.widthPixels;
-		int height = mMetrics.heightPixels;
+		int width = metrics.widthPixels;
+		int height = metrics.heightPixels;
 		Glide.with(getActivity())
 				.load(uri)
 				.centerCrop()
-				.error(mDefaultBackground)
+				.error(defaultBackground)
 				.into(new SimpleTarget<GlideDrawable>(width, height) {
 					@Override
 					public void onResourceReady(GlideDrawable resource,
 												GlideAnimation<? super GlideDrawable>
 														glideAnimation) {
-						mBackgroundManager.setDrawable(resource);
+						backgroundManager.setDrawable(resource);
 					}
 				});
 		mBackgroundTimer.cancel();

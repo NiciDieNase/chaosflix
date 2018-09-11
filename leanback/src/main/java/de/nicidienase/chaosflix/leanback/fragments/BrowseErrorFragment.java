@@ -60,7 +60,11 @@ public class BrowseErrorFragment extends ErrorSupportFragment {
 	public void dismiss() {
 		FragmentManager fragmentManager = getFragmentManager();
 		if (fragmentManager != null) {
-			fragmentManager.beginTransaction().remove(BrowseErrorFragment.this).commit();
+			fragmentManager
+					.beginTransaction()
+					.remove(BrowseErrorFragment.this)
+					.remove(spinnerFragment)
+					.commit();
 			fragmentManager.popBackStack();
 		}
 	}
