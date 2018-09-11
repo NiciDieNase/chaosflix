@@ -19,7 +19,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (requestCode == REQUEST_DIRECTORY) {
             if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
                 val dir = data!!.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR)
-                val sharedPref = PreferenceManager.getDefaultSharedPreferences(ChaosflixApplication.APPLICATION_CONTEXT)
+                val sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext().applicationContext)
                 val edit = sharedPref.edit()
                 edit.putString("download_folder", dir)
                 edit.apply()
@@ -29,7 +29,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun updateSummary() {
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(ChaosflixApplication.APPLICATION_CONTEXT)
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext().applicationContext)
         val folder = sharedPref.getString("download_folder", "")
         val pref = this.findPreference("download_folder")
         pref.setSummary(folder)

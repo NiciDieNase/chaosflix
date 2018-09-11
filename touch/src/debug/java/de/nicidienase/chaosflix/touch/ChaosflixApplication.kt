@@ -8,11 +8,6 @@ class ChaosflixApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        APPLICATION_CONTEXT = this
         Stetho.initializeWithDefaults(this)
-    }
-
-    companion object {
-        lateinit var APPLICATION_CONTEXT: Context
     }
 }
