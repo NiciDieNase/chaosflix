@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 android {
     buildToolsVersion '27.0.3'
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -63,6 +64,12 @@ dependencies {
 
     implementation "com.android.support:leanback-v17:${rootProject.ext.supportLibraryVersion}"
     implementation "com.android.support:preference-leanback-v17:${rootProject.ext.supportLibraryVersion}"
+
+    implementation "android.arch.lifecycle:extensions:${rootProject.ext.archCompVersion}"
+    implementation "android.arch.lifecycle:common-java8:1.1.1"
+    implementation "android.arch.persistence.room:runtime:${rootProject.ext.archCompVersion}"
+    kapt "android.arch.lifecycle:compiler:${rootProject.ext.archCompVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.2.61"
 
     implementation 'com.google.android.exoplayer:exoplayer:r2.5.2'
     implementation 'com.github.bumptech.glide:glide:3.8.0'

@@ -103,6 +103,11 @@ dependencies {
     implementation 'commons-io:commons-io:2.4'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
+
+kapt {
+    generateStubs = true
+}
+
 repositories {
     mavenCentral()
     maven { url 'http://guardian.github.com/maven/repo-releases' }

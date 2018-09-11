@@ -19,7 +19,7 @@ public class BrowseErrorFragment extends ErrorSupportFragment {
 
 	private static final boolean TRANSLUCENT = true;
 	public static final String FRAGMENT = "fragmentId";
-	private SpinnerFragment mSpinnerFragment;
+	private SpinnerFragment spinnerFragment;
 
 	public static BrowseErrorFragment showErrorFragment(FragmentManager manager, int fragmentId) {
 		BrowseErrorFragment errorFragment = new BrowseErrorFragment();
@@ -35,14 +35,8 @@ public class BrowseErrorFragment extends ErrorSupportFragment {
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		int fragmentId = getArguments().getInt(FRAGMENT);
-		mSpinnerFragment = new SpinnerFragment();
-		getFragmentManager().beginTransaction().add(fragmentId, mSpinnerFragment).commit();
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		getFragmentManager().beginTransaction().remove(mSpinnerFragment).commit();
+		spinnerFragment = new SpinnerFragment();
+		getFragmentManager().beginTransaction().add(fragmentId, spinnerFragment).commit();
 	}
 
 	public void setErrorContent(int resourceId) {

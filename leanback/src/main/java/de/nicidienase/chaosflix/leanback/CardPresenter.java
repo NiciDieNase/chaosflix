@@ -40,7 +40,7 @@ public class CardPresenter extends Presenter {
 	private static final int CARD_HEIGHT_16 = 177;
 	private static int sSelectedBackgroundColor;
 	private static int sDefaultBackgroundColor;
-	private Drawable mDefaultCardImage;
+	private Drawable defaultCardImage;
 
 	private static void updateCardBackgroundColor(ImageCardView view, boolean selected) {
 		int color = selected ? sSelectedBackgroundColor : sDefaultBackgroundColor;
@@ -54,7 +54,7 @@ public class CardPresenter extends Presenter {
 	public ViewHolder onCreateViewHolder(ViewGroup parent) {
 		sDefaultBackgroundColor = parent.getResources().getColor(R.color.default_background);
 		sSelectedBackgroundColor = parent.getResources().getColor(R.color.selected_background);
-		mDefaultCardImage = parent.getResources().getDrawable(R.drawable.default_background);
+		defaultCardImage = parent.getResources().getDrawable(R.drawable.default_background);
 
 		ImageCardView cardView = new ImageCardView(parent.getContext()) {
 			@Override
@@ -63,6 +63,7 @@ public class CardPresenter extends Presenter {
 				super.setSelected(selected);
 			}
 		};
+		cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_4);
 
 		cardView.setFocusable(true);
 		cardView.setFocusableInTouchMode(true);
@@ -84,7 +85,7 @@ public class CardPresenter extends Presenter {
 				Glide.with(viewHolder.view.getContext())
 						.load(conference.getLogoUrl())
 						.fitCenter()
-						.error(mDefaultCardImage)
+						.error(defaultCardImage)
 						.into(cardView.getMainImageView());
 			}
 		} else if (item instanceof PersistentEvent) {
@@ -97,14 +98,14 @@ public class CardPresenter extends Presenter {
 				Glide.with(viewHolder.view.getContext())
 						.load(event.getThumbUrl())
 						.fitCenter()
-						.error(mDefaultCardImage)
+						.error(defaultCardImage)
 						.into(cardView.getMainImageView());
 			}
 		} else if (item instanceof LiveConference) {
 			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_4);
 			LiveConference con = (LiveConference) item;
 			cardView.setTitleText(con.getConference());
-			cardView.setMainImage(mDefaultCardImage);
+			cardView.setMainImage(defaultCardImage);
 			cardView.setContentText(con.getDescription());
 		} else if (item instanceof Room) {
 			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_16);
@@ -115,7 +116,7 @@ public class CardPresenter extends Presenter {
 				Glide.with(viewHolder.view.getContext())
 						.load(room.getThumb())
 						.fitCenter()
-						.error(mDefaultCardImage)
+						.error(defaultCardImage)
 						.into(cardView.getMainImageView());
 			}
 		} else if(item instanceof String) {

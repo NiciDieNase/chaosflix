@@ -1,10 +1,8 @@
 package de.nicidienase.chaosflix.leanback.fragments;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v17.leanback.app.BrowseSupportFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.DiffCallback;
@@ -21,20 +19,16 @@ import java.util.Map;
 import java.util.Set;
 
 import de.nicidienase.chaosflix.BuildConfig;
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Group;
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference;
 import de.nicidienase.chaosflix.common.util.ConferenceUtil;
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel;
+import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory;
 import de.nicidienase.chaosflix.leanback.CardPresenter;
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
 import de.nicidienase.chaosflix.R;
-
-/**
- * Created by felix on 21.03.17.
- */
 
 public class ConferencesBrowseFragment extends BrowseSupportFragment {
 
@@ -51,7 +45,7 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 	private SectionRow recomendationsSectionsRow;
 	private SectionRow conferencesSection;
 
-	private boolean mWatchlistVisible = false;
+	private boolean watchlistVisible = false;
 	private BrowseViewModel viewModel;
 
 	@Override
@@ -66,7 +60,8 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 //			}
 //		});
 
-		viewModel = ViewModelProviders.of(this).get(BrowseViewModel.class);
+		viewModel = ViewModelProviders.of(this, new ViewModelFactory(requireContext()))
+				.get(BrowseViewModel.class);
 
 		final BrowseErrorFragment errorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(), FRAGMENT);
@@ -78,7 +73,10 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 			Map<String, List<PersistentConference>> conferences = new HashMap<>(); // TODO get map!
 
 			List<Row> rows = addRecordings(cardPresenter, conferences);
-			rowsAdapter.addAll(CONFERENCES_INDEX, rows);
+//			rowsAdapter.addAll(CONFERENCES_INDEX, rows);
+			for(Row row: rows){
+				rowsAdapter.add(row);
+			}
 		});
 
 		viewModel.getBookmarkedEvents().observe(this, (bookmarks) -> {
@@ -113,10 +111,11 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 		});
 
 		conferencesSection = new SectionRow(getString(R.string.conferences));
-		rowsAdapter.add(CONFERENCES_INDEX, conferencesSection);
+//		rowsAdapter.add(CONFERENCES_INDEX, conferencesSection);
+		rowsAdapter.add(conferencesSection);
 		setOnItemViewClickedListener(new ItemViewClickedListener(this));
 		setAdapter(rowsAdapter);
-		setSelectedPosition(1);
+//		setSelectedPosition(1);
 	}
 
 	private List<Row> addRecordings(CardPresenter cardPresenter, Map<String, List<PersistentConference>> conferences) {
@@ -140,7 +139,8 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 		if (liveConferences.size() > 0) {
 			HeaderItem streamingHeader = new HeaderItem(getString(R.string.livestreams));
 			streamingSection = new SectionRow(streamingHeader);
-			rowsAdapter.add(LIVESTREAMS_INDEX, streamingSection);
+//			rowsAdapter.add(LIVESTREAMS_INDEX, streamingSection);
+			rowsAdapter.add(streamingSection);
 			for (LiveConference con : liveConferences) {
 				if(!con.getConference().equals("Sendeschleife") || BuildConfig.DEBUG){
 					int i = -1;
@@ -155,7 +155,8 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 						ArrayObjectAdapter listRowAdapter
 								= new ArrayObjectAdapter(cardPresenter);
 						listRowAdapter.addAll(listRowAdapter.size(), g.getRooms());
-						rowsAdapter.add(i + 1, new ListRow(header, listRowAdapter));
+						rowsAdapter.add(new ListRow(header, listRowAdapter));
+//						rowsAdapter.add(i + 1, new ListRow(header, listRowAdapter));
 					}
 				}
 //				rowsAdapter.add(i + 1, new DividerRow());
@@ -170,18 +171,20 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 			HeaderItem header = new HeaderItem(getString(R.string.watchlist));
 			watchlistRow = new ListRow(header, watchListAdapter);
 		}
-		if(!mWatchlistVisible){
-			rowsAdapter.add(RECOMENDATIONS_INDEX, recomendationsSectionsRow);
-			rowsAdapter.add(RECOMENDATIONS_INDEX +1 , watchlistRow);
-			mWatchlistVisible = true;
+		if(!watchlistVisible){
+//			rowsAdapter.add(RECOMENDATIONS_INDEX, recomendationsSectionsRow);
+//			rowsAdapter.add(RECOMENDATIONS_INDEX +1 , watchlistRow);
+			rowsAdapter.add(recomendationsSectionsRow);
+			rowsAdapter.add(watchlistRow);
+			watchlistVisible = true;
 		}
 	}
 
 	private void hideWatchlist() {
-		if(mWatchlistVisible){
+		if(watchlistVisible){
 			int i = rowsAdapter.indexOf(recomendationsSectionsRow);
 			rowsAdapter.removeItems(i,2);
-			mWatchlistVisible = false;
+			watchlistVisible = false;
 		}
 	}
 

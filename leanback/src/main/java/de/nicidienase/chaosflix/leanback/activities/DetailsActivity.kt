@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix.leanback.activities
 
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 
 import de.nicidienase.chaosflix.R
@@ -8,7 +9,7 @@ import de.nicidienase.chaosflix.R
 /*
  * Details activity class that loads LeanbackDetailsFragment class
  */
-class DetailsActivity : AppCompatActivity() {
+class DetailsActivity : FragmentActivity() {
 
 	/**
 	 * Called when the activity is first created.
