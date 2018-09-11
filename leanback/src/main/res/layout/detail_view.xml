@@ -4,7 +4,7 @@
     <data>
         <variable
             name="item"
-            type="de.nicidienase.chaosflix.leanback.EventDetailsDescriptionPresenter.DetailViewContent"/>
+            type="de.nicidienase.chaosflix.leanback.EventDetailsDescriptionPresenter.DetailDataHolder"/>
     </data>
 
     <LinearLayout
