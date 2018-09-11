@@ -24,6 +24,7 @@ import com.bumptech.glide.request.target.SimpleTarget
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.CardPresenter
@@ -53,7 +54,7 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 		viewModel = ViewModelProviders
 				.of(this,ViewModelFactory(requireContext()))
 				.get(BrowseViewModel::class.java)
-		val errorFragment = BrowseErrorFragment.showErrorFragment(fragmentManager!!, FRAGMENT)
+
 
 		val conference = this.activity
 				?.intent
@@ -69,13 +70,26 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 		onItemViewClickedListener = ItemViewClickedListener(this)
 		onItemViewSelectedListener = ItemViewSelectedListener()
 
+		var errorFragment: BrowseErrorFragment? = null
+		viewModel.updateEventsForConference(conference).observe(this, Observer {
+			when(it?.state){
+				Downloader.DownloaderState.RUNNING -> { errorFragment =  BrowseErrorFragment.showErrorFragment(fragmentManager, FRAGMENT)}
+				Downloader.DownloaderState.DONE -> {
+					if(it.error != null){
+						errorFragment?.setErrorContent(it.error)
+					} else {
+						errorFragment?.dismiss()
+					}
+				}
+			}
+		})
 		viewModel.getEventsforConference(conference).observe(
 				this,
 				Observer {
-					errorFragment.dismiss()
 					if(it != null){
-						getEventsByTags(it, conference.acronym).forEach { tag, events ->
-							rowsAdapter.add(buildRowForEvents(cardPresenter,tag,events))
+						val eventsByTags = getEventsByTags(it, conference.acronym)
+						for(item in eventsByTags){
+							rowsAdapter.add(buildRowForEvents(cardPresenter,item.key,item.value))
 						}
 					}
 				}
@@ -85,7 +99,7 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 	override fun onDestroy() {
 		super.onDestroy()
 		if (null != backgroundTimer) {
-			Log.d(TAG, "onDestroy: " + backgroundTimer!!.toString())
+			Log.d(TAG, "onDestroy: " + backgroundTimer?.toString())
 			backgroundTimer?.cancel()
 		}
 	}
@@ -119,11 +133,11 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 	}
 
 	private fun prepareBackgroundManager() {
-		backgroundManager = BackgroundManager.getInstance(activity!!)
-		backgroundManager!!.attach(activity!!.window)
+		backgroundManager = BackgroundManager.getInstance(activity)
+		backgroundManager?.attach(activity?.window)
 		defaultBackground = resources.getDrawable(R.drawable.default_background)
 		metrics = DisplayMetrics()
-		activity!!.windowManager.defaultDisplay.getMetrics(metrics)
+		activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
 	}
 
 	private fun setupUIElements(conference: PersistentConference) {

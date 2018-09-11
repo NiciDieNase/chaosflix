@@ -13,7 +13,7 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
 
 	val apiFactory = ApiFactory(context.resources)
 
-	val database = DatabaseFactory(context).mediaDatabase
+	val database = DatabaseFactory.getInstance(context)
 	val recordingApi = apiFactory.recordingApi
 	val streamingApi = apiFactory.streamingApi
 	val preferencesManager =

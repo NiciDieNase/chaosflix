@@ -12,7 +12,7 @@ class DownloadJobService : JobIntentService() {
 	override fun onHandleWork(intent: Intent) {
 		val downloader = Downloader(
 				ApiFactory(resources).recordingApi,
-				DatabaseFactory(applicationContext).mediaDatabase)
+				DatabaseFactory.getInstance(applicationContext))
 		val entityType: String? = intent.getStringExtra(ENTITY_KEY)
 
 		if (entityType != null) {
