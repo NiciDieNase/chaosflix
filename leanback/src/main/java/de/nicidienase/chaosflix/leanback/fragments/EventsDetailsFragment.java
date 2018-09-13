@@ -78,69 +78,7 @@ public class EventsDetailsFragment extends DetailsSupportFragment {
 	private DisplayMetrics metrics;
 	private WatchlistItem watchlistItem;
 	private ArrayObjectAdapter recordingActionsAdapter;
-	private OnActionClickedListener onActionClickedListener = new OnActionClickedListener() {
-		@Override
-		public void onActionClicked(Action action) {
-			Log.d(TAG, "OnActionClicked");
-			if (action.getId() == ADD_WATCHLIST_ACTION) {
-//				new WatchlistItem(event.getApiID()).save();
-				recordingActionsAdapter.replace(0, new Action(REMOVE_WATCHLIST_ACTION, EventsDetailsFragment.this.getString(R.string.remove_from_watchlist)));
-				SharedPreferences preferences = getActivity().getSharedPreferences(getString(R.string.watchlist_preferences_key), Context.MODE_PRIVATE);
-				if(preferences.getBoolean(getString(R.string.watchlist_dialog_needed), true)) { // new item
-					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-					builder.setTitle(R.string.watchlist_message);
-					builder.setNegativeButton(R.string.return_to_homescreen,(dialog, which) -> {
-						Intent i = new Intent(getActivity(), ConferencesActivity.class);
-						i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-						startActivity(i);
-						getActivity().finish();
-					});
-					builder.setPositiveButton("OK",(dialog, which) -> {});
-					SharedPreferences.Editor edit = preferences.edit();
-					edit.putBoolean(getString(R.string.watchlist_dialog_needed), false);
-					edit.commit();
-
-					builder.create().show();
-				}
-			} else if (action.getId() == REMOVE_WATCHLIST_ACTION) {
-				if (watchlistItem != null) {
-//					watchlistItem.delete();
-				}
-				recordingActionsAdapter.replace(0, new Action(ADD_WATCHLIST_ACTION, EventsDetailsFragment.this.getString(R.string.add_to_watchlist)));
-			} else {
-				Intent i = new Intent(EventsDetailsFragment.this.getActivity(), PlayerActivity.class);
-				i.putExtra(DetailsActivity.Companion.getTYPE(), eventType);
-				if (eventType == DetailsActivity.Companion.getTYPE_RECORDING()) {
-					i.putExtra(DetailsActivity.Companion.getEVENT(), event);
-					if (action.getId() == DUMMY_ID) {
-						PersistentRecording dummy = new PersistentRecording();
-						dummy.setRecordingUrl("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8");
-						dummy.setMimeType("video/hls");
-						dummy.setLanguage("eng");
-						dummy.setHighQuality(true);
-						i.putExtra(DetailsActivity.Companion.getRECORDING(), dummy);
-					} else {
-						for (PersistentRecording r : event.getRecordings()) {
-							if (r.getId() == action.getId()) {
-								i.putExtra(DetailsActivity.Companion.getRECORDING(), r);
-								break;
-							}
-						}
-					}
-				} else if (eventType == DetailsActivity.Companion.getTYPE_STREAM()) {
-					i.putExtra(DetailsActivity.Companion.getROOM(), room);
-					StreamUrl streamUrl = EventsDetailsFragment.this.getStreamUrlForActionId((int) action.getId());
-					if (streamUrl != null) {
-						i.putExtra(DetailsActivity.Companion.getSTREAM_URL(), streamUrl);
-					} else {
-						// TODO handle missing Stream
-						return;
-					}
-				}
-				EventsDetailsFragment.this.getActivity().startActivity(i);
-			}
-		}
-	};
+	private OnActionClickedListener onActionClickedListener = new DetailActionClickedListener();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -431,6 +369,70 @@ public class EventsDetailsFragment extends DetailsSupportFragment {
 				EventDetailsOverviewLogoPresenter.ViewHolder vh =
 						(EventDetailsOverviewLogoPresenter.ViewHolder) viewHolder;
 				vh.getParentPresenter().notifyOnBindLogo(vh.getParentViewHolder());
+			}
+		}
+	}
+
+	private class DetailActionClickedListener implements OnActionClickedListener {
+		@Override
+		public void onActionClicked(Action action) {
+			Log.d(TAG, "OnActionClicked");
+			if (action.getId() == ADD_WATCHLIST_ACTION) {
+//				new WatchlistItem(event.getApiID()).save();
+				recordingActionsAdapter.replace(0, new Action(REMOVE_WATCHLIST_ACTION, EventsDetailsFragment.this.getString(R.string.remove_from_watchlist)));
+				SharedPreferences preferences = getActivity().getSharedPreferences(getString(R.string.watchlist_preferences_key), Context.MODE_PRIVATE);
+				if(preferences.getBoolean(getString(R.string.watchlist_dialog_needed), true)) { // new item
+					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+					builder.setTitle(R.string.watchlist_message);
+					builder.setNegativeButton(R.string.return_to_homescreen,(dialog, which) -> {
+						Intent i = new Intent(getActivity(), ConferencesActivity.class);
+						i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+						startActivity(i);
+						getActivity().finish();
+					});
+					builder.setPositiveButton("OK",(dialog, which) -> {});
+					SharedPreferences.Editor edit = preferences.edit();
+					edit.putBoolean(getString(R.string.watchlist_dialog_needed), false);
+					edit.commit();
+
+					builder.create().show();
+				}
+			} else if (action.getId() == REMOVE_WATCHLIST_ACTION) {
+				if (watchlistItem != null) {
+//					watchlistItem.delete();
+				}
+				recordingActionsAdapter.replace(0, new Action(ADD_WATCHLIST_ACTION, EventsDetailsFragment.this.getString(R.string.add_to_watchlist)));
+			} else {
+				Intent i = new Intent(EventsDetailsFragment.this.getActivity(), PlayerActivity.class);
+				i.putExtra(DetailsActivity.Companion.getTYPE(), eventType);
+				if (eventType == DetailsActivity.Companion.getTYPE_RECORDING()) {
+					i.putExtra(DetailsActivity.Companion.getEVENT(), event);
+					if (action.getId() == DUMMY_ID) {
+						PersistentRecording dummy = new PersistentRecording();
+						dummy.setRecordingUrl("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8");
+						dummy.setMimeType("video/hls");
+						dummy.setLanguage("eng");
+						dummy.setHighQuality(true);
+						i.putExtra(DetailsActivity.Companion.getRECORDING(), dummy);
+					} else {
+						for (PersistentRecording r : event.getRecordings()) {
+							if (r.getId() == action.getId()) {
+								i.putExtra(DetailsActivity.Companion.getRECORDING(), r);
+								break;
+							}
+						}
+					}
+				} else if (eventType == DetailsActivity.Companion.getTYPE_STREAM()) {
+					i.putExtra(DetailsActivity.Companion.getROOM(), room);
+					StreamUrl streamUrl = EventsDetailsFragment.this.getStreamUrlForActionId((int) action.getId());
+					if (streamUrl != null) {
+						i.putExtra(DetailsActivity.Companion.getSTREAM_URL(), streamUrl);
+					} else {
+						// TODO handle missing Stream
+						return;
+					}
+				}
+				EventsDetailsFragment.this.getActivity().startActivity(i);
 			}
 		}
 	}

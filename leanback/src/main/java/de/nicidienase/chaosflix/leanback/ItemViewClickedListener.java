@@ -1,6 +1,5 @@
 package de.nicidienase.chaosflix.leanback;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.OnItemViewClickedListener;
@@ -42,25 +41,20 @@ public class ItemViewClickedListener implements OnItemViewClickedListener {
 					EventsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
 			EventsActivity.start(fragment.requireContext(),conference,transition);
 		} else if (item instanceof PersistentEvent) {
+			Bundle transistion = ActivityOptionsCompat.makeSceneTransitionAnimation(
+					activity,
+					((ImageCardView) itemViewHolder.view).getMainImageView(),
+					EventDetailsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
 			PersistentEvent event = (PersistentEvent) item;
-			Intent i = new Intent(fragment.getActivity(), DetailsActivity.class);
-			i.putExtra(DetailsActivity.Companion.getTYPE(), DetailsActivity.Companion.getTYPE_RECORDING());
-			i.putExtra(DetailsActivity.Companion.getEVENT(), event);
-			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-					activity,
-					((ImageCardView) itemViewHolder.view).getMainImageView(),
-					EventDetailsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
-			activity.startActivity(i, bundle);
+			DetailsActivity.start(fragment.requireContext(),event,transistion);
 		} else if (item instanceof Room) {
-			Room room = (Room) item;
-			Intent i = new Intent(fragment.getActivity(), DetailsActivity.class);
-			i.putExtra(DetailsActivity.Companion.getTYPE(), DetailsActivity.Companion.getTYPE_STREAM());
-			i.putExtra(DetailsActivity.Companion.getROOM(), room);
-			Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
+			Bundle transition = ActivityOptionsCompat.makeSceneTransitionAnimation(
 					activity,
 					((ImageCardView) itemViewHolder.view).getMainImageView(),
 					EventDetailsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
-			activity.startActivity(i, bundle);
+			Room room = (Room) item;
+			DetailsActivity.start(fragment.requireContext(), room, transition);
+
 		}
 	}
 }

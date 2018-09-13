@@ -8,6 +8,7 @@ import android.os.Handler
 import android.support.v17.leanback.app.BackgroundManager
 import android.support.v17.leanback.app.BrowseSupportFragment
 import android.support.v17.leanback.widget.ArrayObjectAdapter
+import android.support.v17.leanback.widget.DiffCallback
 import android.support.v17.leanback.widget.HeaderItem
 import android.support.v17.leanback.widget.ListRow
 import android.support.v17.leanback.widget.ListRowPresenter
@@ -33,7 +34,7 @@ import de.nicidienase.chaosflix.leanback.activities.EventsActivity
 import java.net.URI
 import java.net.URISyntaxException
 import java.util.*
-import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class EventsBrowseFragment : BrowseSupportFragment() {
 
@@ -46,20 +47,22 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 	private var backgroundURI: URI? = null
 	private var backgroundManager: BackgroundManager? = null
 
+	private val eventRows: MutableMap<String, ListRow> = HashMap()
+
 	private val useTalksAsBackground = false
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
 		viewModel = ViewModelProviders
-				.of(this,ViewModelFactory(requireContext()))
+				.of(this, ViewModelFactory(requireContext()))
 				.get(BrowseViewModel::class.java)
 
 
 		val conference = this.activity
 				?.intent
 				?.getParcelableExtra<PersistentConference>(EventsActivity.CONFERENCE)
-		if(conference == null){
+		if (conference == null) {
 			throw IllegalStateException("No conference passed")
 		}
 		setupUIElements(conference)
@@ -68,32 +71,46 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 
 		prepareBackgroundManager()
 		onItemViewClickedListener = ItemViewClickedListener(this)
-		onItemViewSelectedListener = ItemViewSelectedListener()
+//		onItemViewSelectedListener = ItemViewSelectedListener()
 
 		var errorFragment: BrowseErrorFragment? = null
 		viewModel.updateEventsForConference(conference).observe(this, Observer {
-			when(it?.state){
-				Downloader.DownloaderState.RUNNING -> { errorFragment =  BrowseErrorFragment.showErrorFragment(fragmentManager, FRAGMENT)}
+			when (it?.state) {
+				Downloader.DownloaderState.RUNNING -> {
+					errorFragment = BrowseErrorFragment.showErrorFragment(fragmentManager, FRAGMENT)
+				}
 				Downloader.DownloaderState.DONE -> {
-					if(it.error != null){
+					if (it.error != null) {
 						errorFragment?.setErrorContent(it.error)
 					} else {
 						errorFragment?.dismiss()
 					}
 				}
 			}
+			val events = it?.data
+			if (events != null) {
+				Log.d(TAG, "Got ${events.size} events")
+				val eventsByTags = getEventsByTags(events, conference.acronym)
+				Log.d(TAG, "Got ${eventsByTags.keys.size} Tags")
+				for (item in eventsByTags) {
+					updateRowForTag(cardPresenter, item.key, item.value)
+				}
+				errorFragment?.dismiss()
+			}
 		})
 		viewModel.getEventsforConference(conference).observe(
 				this,
 				Observer {
-					if(it != null){
+					if (it != null) {
 						val eventsByTags = getEventsByTags(it, conference.acronym)
-						for(item in eventsByTags){
-							rowsAdapter.add(buildRowForEvents(cardPresenter,item.key,item.value))
+						for (item in eventsByTags) {
+							updateRowForTag(cardPresenter, item.key, item.value)
 						}
+						errorFragment?.dismiss()
 					}
 				}
 		)
+		adapter = rowsAdapter
 	}
 
 	override fun onDestroy() {
@@ -105,31 +122,55 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 	}
 
 	private fun getEventsByTags(events: List<PersistentEvent>, conferenceAcronym: String): Map<String, List<PersistentEvent>> {
-		val tags: Set<String> = events.map { it.tags ?: emptyArray() }.toTypedArray().flatten().toSet()
-
 		val eventsByTags = HashMap<String, MutableList<PersistentEvent>>()
-		tags.forEach { eventsByTags.put(it, ArrayList()) }
 		val other = LinkedList<PersistentEvent>()
-		for(event in events){
+		for (event in events) {
 			val tags: List<String> = event
 					.tags
-					?.filter { !android.text.TextUtils.isDigitsOnly(it) && !it.equals(conferenceAcronym)}
+					?.filter { !android.text.TextUtils.isDigitsOnly(it) && !it.equals(conferenceAcronym) }
 					?: emptyList<String>()
-			if(tags.size == 0){
+			if (tags.size == 0) {
 				other.add(event)
 			} else {
-				tags.forEach { eventsByTags.get(it)?.add(event) }
+				tags.forEach {
+					if (!eventsByTags.keys.contains(it)) {
+						eventsByTags.put(it, ArrayList())
+					}
+					eventsByTags[it]?.add(event)
+				}
 			}
 		}
-		eventsByTags.put("other", other)
+		if (other.size > 0) {
+			eventsByTags.put("other", other)
+		}
 		return eventsByTags
 	}
 
-	private fun buildRowForEvents(cardPresenter: CardPresenter, tag: String, items: List<PersistentEvent>): Row {
-		val listRowAdapter = ArrayObjectAdapter(cardPresenter)
-		listRowAdapter.addAll(0, items)
-		val header = HeaderItem(tag)
-		return ListRow(header, listRowAdapter)
+	private fun updateRowForTag(cardPresenter: CardPresenter, tag: String, items: List<PersistentEvent>): Row {
+		var row = eventRows[tag]
+		val header: HeaderItem
+		val listRowAdapter: ArrayObjectAdapter
+		if (row == null) {
+			header = HeaderItem(tag)
+			listRowAdapter = ArrayObjectAdapter(cardPresenter)
+			row = ListRow(header, listRowAdapter)
+			eventRows.put(tag, row)
+			rowsAdapter.add(row)
+		} else {
+			listRowAdapter = row.adapter as ArrayObjectAdapter
+		}
+		Collections.sort(items)
+		listRowAdapter.setItems(items, object : DiffCallback<PersistentEvent>() {
+			override fun areItemsTheSame(oldItem: PersistentEvent, newItem: PersistentEvent): Boolean {
+				return oldItem.guid == newItem.guid
+			}
+
+			override fun areContentsTheSame(oldItem: PersistentEvent, newItem: PersistentEvent): Boolean {
+				return oldItem.title == newItem.title
+			}
+
+		})
+		return row
 	}
 
 	private fun prepareBackgroundManager() {
@@ -198,7 +239,7 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 				}
 
 				// TODO make configurable (enable/disable)
-				if(useTalksAsBackground){
+				if (useTalksAsBackground) {
 					startBackgroundTimer();
 				}
 			}

@@ -1,11 +1,13 @@
 package de.nicidienase.chaosflix.leanback.activities
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.v4.app.FragmentActivity
-import android.support.v7.app.AppCompatActivity
-
 import de.nicidienase.chaosflix.R
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
 
 
 class EventDetailsActivity : FragmentActivity() {
@@ -16,8 +18,15 @@ class EventDetailsActivity : FragmentActivity() {
 	}
 
 	companion object {
-
 		val EVENT = "event"
 		val SHARED_ELEMENT_NAME = "transision_element"
+
+		@JvmStatic
+		fun start(context: Context, event: PersistentEvent, transition: Bundle){
+			val i = Intent(context, EventsActivity::class.java)
+			i.putExtra(EventDetailsActivity.EVENT, event)
+			context.startActivity(i, transition)
+		}
+
 	}
 }
