@@ -25,9 +25,11 @@ data class PersistentConference(
 		var recordingsUrl: String = "",
 		var url: String = "",
 		var updatedAt: String = "",
-		var tagsUsefull: Boolean = false
-) : Parcelable {
+		var tagsUsefull: Boolean = false,
+		var lastReleasedAt: String = ""
+) : Parcelable, Comparable<PersistentConference> {
 
+	@Ignore
 	constructor(parcel: Parcel) : this(
 			parcel.readLong(),
 			parcel.readLong(),
@@ -42,7 +44,8 @@ data class PersistentConference(
 			parcel.readString() ?: "",
 			parcel.readString() ?: "",
 			parcel.readString() ?: "",
-			parcel.readByte() != 0.toByte()) {
+			parcel.readByte() != 0.toByte(),
+			parcel.readString() ?: "") {
 	}
 
 	@Ignore
@@ -58,7 +61,10 @@ data class PersistentConference(
 			recordingsUrl = con.recordingsUrl,
 			url = con.url,
 			updatedAt = con.updatedAt,
-			tagsUsefull = con.tagsUsefull)
+			tagsUsefull = con.tagsUsefull,
+			lastReleasedAt = con.lastReleaseAt ?: "")
+
+	override fun compareTo(other: PersistentConference) = lastReleasedAt.compareTo(other.lastReleasedAt) * -1
 
 	override fun writeToParcel(parcel: Parcel, flags: Int) {
 		parcel.writeLong(id)
@@ -75,6 +81,7 @@ data class PersistentConference(
 		parcel.writeString(url)
 		parcel.writeString(updatedAt)
 		parcel.writeByte(if (tagsUsefull) 1 else 0)
+		parcel.writeString(lastReleasedAt)
 	}
 
 	override fun describeContents(): Int {

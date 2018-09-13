@@ -40,10 +40,8 @@ class BrowseViewModel(
 		}
 	}
 
-	fun getConferenceGroups(): LiveData<List<ConferenceGroup>> {
-		downloader.updateConferencesAndGroups()
-		return database.conferenceGroupDao().getAll()
-	}
+	fun getConferenceGroups(): LiveData<List<ConferenceGroup>>
+			= database.conferenceGroupDao().getAll()
 
 	fun getConference(conferenceId: Long)
 			= database.conferenceDao().findConferenceById(conferenceId)

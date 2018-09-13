@@ -10,7 +10,7 @@ data class Conference(
         @SerializedName("title")              var title: String = "",
         @SerializedName("schedule_url")       var scheduleUrl: String?,
         @SerializedName("slug")               var slug: String = "",
-        @SerializedName("event_last_released_at") var lastReleaseAt: String = "",
+        @SerializedName("event_last_released_at") var lastReleaseAt: String? = "",
         @SerializedName("webgen_location")    var webgenLocation: String = "",
         @SerializedName("logo_url")           var logoUrl: String = "",
         @SerializedName("images_url")         var imagesUrl: String = "",
