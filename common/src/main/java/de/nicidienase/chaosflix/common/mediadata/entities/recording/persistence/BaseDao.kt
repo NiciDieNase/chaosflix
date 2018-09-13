@@ -14,7 +14,7 @@ abstract class BaseDao<in T> {
 	abstract fun update(item: T)
 
 	@Update
-	abstract fun update(vararg items: T): Long
+	abstract fun update(vararg items: T)
 
 	@Delete
 	abstract fun delete(item: T)
@@ -23,12 +23,12 @@ abstract class BaseDao<in T> {
 	abstract fun delete(vararg items: T)
 
 	@Transaction
-	fun updateOrInsert(item: T) {
+	open fun updateOrInsert(item: T) {
 		updateOrInsertInternal(item)
 	}
 
 	@Transaction
-	fun updateOrInsert(vararg events: T) {
+	open fun updateOrInsert(vararg events: T) {
 		events.map { updateOrInsert(it) }
 	}
 

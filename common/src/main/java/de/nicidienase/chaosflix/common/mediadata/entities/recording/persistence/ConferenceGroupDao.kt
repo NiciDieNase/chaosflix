@@ -16,7 +16,7 @@ abstract class ConferenceGroupDao : BaseDao<ConferenceGroup>() {
 		if (!group.id.equals(0)) {
 			update(group)
 		} else {
-			val existingGroup = getExistingItem(group)
+			val existingGroup = getConferenceGroupByName(group.name)
 			if (existingGroup != null) {
 				group.id = existingGroup.id
 				update(group)
@@ -25,6 +25,4 @@ abstract class ConferenceGroupDao : BaseDao<ConferenceGroup>() {
 			}
 		}
 	}
-
-	private fun getExistingItem(group: ConferenceGroup) = getConferenceGroupByName(group.name)
 }

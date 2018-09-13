@@ -48,19 +48,17 @@ abstract class EventDao: BaseDao<PersistentEvent>() {
     @Query("SELECT * FROM event WHERE frontendLink = :url ")
     abstract fun findEventsByFrontendurl(url: String):LiveData<PersistentEvent?>
 
-    override fun updateOrInsertInternal(event: PersistentEvent) {
-        if (!event.id.equals(0)) {
-            update(event)
+    override fun updateOrInsertInternal(item: PersistentEvent) {
+        if (!item.id.equals(0)) {
+            update(item)
         } else {
-            val existingEvent = getExistingItem(event)
+            val existingEvent = findEventByGuidSync(item.guid)
             if (existingEvent != null) {
-                event.id = existingEvent.id
-                update(event)
+                item.id = existingEvent.id
+                update(item)
             } else {
-                event.id = insert(event)
+                item.id = insert(item)
             }
         }
     }
-
-    private fun getExistingItem(event: PersistentEvent) = findEventByGuidSync(event.guid)
 }

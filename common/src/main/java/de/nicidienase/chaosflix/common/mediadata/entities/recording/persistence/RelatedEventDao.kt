@@ -15,12 +15,11 @@ abstract class RelatedEventDao : BaseDao<PersistentRelatedEvent>() {
 	@Query("SELECT * FROM related WHERE parentEventId = :parentId AND relatedEventGuid = :related")
 	abstract fun findSpecificRelatedEventSync(parentId: Long, related: String): PersistentRelatedEvent?
 
-
 	override fun updateOrInsertInternal(item: PersistentRelatedEvent) {
 		if (!item.id.equals(0)) {
 			update(item)
 		} else {
-			val existingItem = getExistingItem(item)
+			val existingItem = findSpecificRelatedEventSync(item.parentEventId, item.relatedEventGuid)
 			if (existingItem != null) {
 				item.id = existingItem.id
 				update(item)
@@ -29,8 +28,4 @@ abstract class RelatedEventDao : BaseDao<PersistentRelatedEvent>() {
 			}
 		}
 	}
-
-	private fun getExistingItem(item: PersistentRelatedEvent) = findSpecificRelatedEventSync(item.parentEventId, item.relatedEventGuid)
-
-
 }

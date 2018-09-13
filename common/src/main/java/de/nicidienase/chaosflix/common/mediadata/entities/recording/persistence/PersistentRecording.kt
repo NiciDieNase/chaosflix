@@ -1,6 +1,10 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence
 
-import android.arch.persistence.room.*
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.Ignore
+import android.arch.persistence.room.Index
+import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.Recording
@@ -37,6 +41,7 @@ data class PersistentRecording(
 		var backendId: Long = 0
 ) : Parcelable {
 
+	@Ignore
 	constructor(parcel: Parcel) : this(
 			parcel.readLong(),
 			parcel.readLong(),

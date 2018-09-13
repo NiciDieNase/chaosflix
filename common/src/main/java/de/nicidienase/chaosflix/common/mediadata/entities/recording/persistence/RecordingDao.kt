@@ -29,7 +29,7 @@ abstract class RecordingDao: BaseDao<PersistentRecording>() {
         if (!item.id.equals(0)) {
             update(item)
         } else {
-            val existingRecording = getExistingItem(item)
+            val existingRecording = findRecordingByBackendIdSync(item.backendId)
             if (existingRecording != null) {
                 item.id = existingRecording.id
                 update(item)
@@ -38,7 +38,4 @@ abstract class RecordingDao: BaseDao<PersistentRecording>() {
             }
         }
     }
-
-    private fun getExistingItem(item: PersistentRecording) = findRecordingByBackendIdSync(item.backendId)
-
 }

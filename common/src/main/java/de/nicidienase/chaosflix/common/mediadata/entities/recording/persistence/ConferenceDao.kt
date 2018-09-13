@@ -17,26 +17,23 @@ abstract class ConferenceDao : BaseDao<PersistentConference>() {
 	abstract fun findConferenceById(id: Long): LiveData<PersistentConference>
 
 	@Query("SELECT * FROM conference WHERE acronym = :acronym LIMIT 1")
-	abstract fun findConferenceByAcronymSync(acronym: String): PersistentConference
+	abstract fun findConferenceByAcronymSync(acronym: String): PersistentConference?
 
 
 	@Query("SELECT * FROM conference WHERE conferenceGroupId = :id ORDER BY acronym DESC")
 	abstract fun findConferenceByGroup(id: Long): LiveData<List<PersistentConference>>
 
-	override fun updateOrInsertInternal(conference: PersistentConference) {
-		if (!conference.id.equals(0)) {
-			update(conference)
+	override fun updateOrInsertInternal(item: PersistentConference) {
+		if (!item.id.equals(0)) {
+			update(item)
 		} else {
-			val existingEvent = getExistingItem(conference)
+			val existingEvent = findConferenceByAcronymSync(item.acronym)
 			if (existingEvent != null) {
-				conference.id = existingEvent.id
-				update(conference)
+				item.id = existingEvent.id
+				update(item)
 			} else {
-				conference.id = insert(conference)
+				item.id = insert(item)
 			}
 		}
 	}
-
-	private fun getExistingItem(conference: PersistentConference) = findConferenceByAcronymSync(conference.acronym)
-
 }
