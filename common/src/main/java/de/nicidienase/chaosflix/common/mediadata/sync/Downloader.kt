@@ -172,12 +172,25 @@ class Downloader(private val recordingApi: RecordingService,
 	private fun saveEvent(event: Event): PersistentEvent {
 		val split = event.conferenceUrl.split("/")
 		val acronym = split[split.size - 1]
-		val conferenceId = database.conferenceDao().findConferenceByAcronymSync(acronym).id
+		val conferenceId = database.conferenceDao().findConferenceByAcronymSync(acronym)?.id
+				?: updateConferencesAndGet(acronym)
+
+		if(conferenceId == -1L){
+			throw IllegalStateException("Could not find Conference for event")
+		}
 
 		val persistentEvent = PersistentEvent(event, conferenceId)
 		val id = database.eventDao().insert(persistentEvent)
 		persistentEvent.id = id
 		return persistentEvent
+	}
+
+	private fun updateConferencesAndGet(acronym: String): Long{
+		val response: Response<ConferencesWrapper>? = recordingApi.getConferencesWrapper().execute()
+		val conferences = response?.body()?.let { conferencesWrapper ->
+			return@let saveConferences(conferencesWrapper)
+		}
+		return conferences?.find { it.acronym == acronym }?.id ?: -1
 	}
 
 	private fun saveRelatedEvents(event: PersistentEvent): List<PersistentRelatedEvent> {
