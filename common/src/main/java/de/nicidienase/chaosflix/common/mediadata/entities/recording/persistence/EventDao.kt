@@ -21,6 +21,9 @@ abstract class EventDao: BaseDao<PersistentEvent>() {
     @Query("SELECT * FROM event WHERE guid = :guid LIMIT 1")
     abstract fun findEventByGuid(guid: String): LiveData<PersistentEvent?>
 
+    @Query("SELECT * FROM event WHERE guid = :guid LIMIT 1")
+    abstract fun findEventByGuidSync(guid: String): PersistentEvent?
+
     @Query("SELECT * FROM event WHERE id in (:ids)")
     abstract fun findEventsByIds(ids: LongArray): LiveData<List<PersistentEvent>>
 
@@ -44,4 +47,20 @@ abstract class EventDao: BaseDao<PersistentEvent>() {
 
     @Query("SELECT * FROM event WHERE frontendLink = :url ")
     abstract fun findEventsByFrontendurl(url: String):LiveData<PersistentEvent?>
+
+    override fun updateOrInsertInternal(event: PersistentEvent) {
+        if (!event.id.equals(0)) {
+            update(event)
+        } else {
+            val existingEvent = getExistingItem(event)
+            if (existingEvent != null) {
+                event.id = existingEvent.id
+                update(event)
+            } else {
+                event.id = insert(event)
+            }
+        }
+    }
+
+    private fun getExistingItem(event: PersistentEvent) = findEventByGuidSync(event.guid)
 }

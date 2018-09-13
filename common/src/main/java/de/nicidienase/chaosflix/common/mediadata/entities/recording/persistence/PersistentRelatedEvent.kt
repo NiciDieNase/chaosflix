@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.Ignore
+import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
@@ -13,7 +14,9 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.RelatedEvent
 				entity = PersistentEvent::class,
 				onDelete = ForeignKey.CASCADE,
 				parentColumns = arrayOf("id"),
-				childColumns = arrayOf("parentEventId"))))
+				childColumns = arrayOf("parentEventId"))),
+		indices = [Index("parentEventId","relatedEventGuid",unique = true)]
+		)
 
 
 class PersistentRelatedEvent(
@@ -26,7 +29,7 @@ class PersistentRelatedEvent(
 	constructor(parcel: Parcel) : this(
 			parcel.readLong(),
 			parcel.readLong(),
-			parcel.readString(),
+			parcel.readString() ?: "",
 			parcel.readInt()) {
 	}
 

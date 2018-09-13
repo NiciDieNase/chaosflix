@@ -17,7 +17,10 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.Event
 				onDelete = ForeignKey.CASCADE,
 				parentColumns = (arrayOf("id")),
 				childColumns = arrayOf("conferenceId"))),
-		indices = arrayOf(Index("guid",unique = true), Index("frontendLink"), Index("conferenceId")))
+		indices = [
+			Index("guid",unique = true),
+			Index("frontendLink"),
+			Index("conferenceId")])
 
 data class PersistentEvent(
 		@PrimaryKey(autoGenerate = true)

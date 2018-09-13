@@ -11,7 +11,10 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.Recording
 				onDelete = ForeignKey.CASCADE,
 				parentColumns = (arrayOf("id")),
 				childColumns = arrayOf("eventId"))),
-		indices = arrayOf(Index("eventId"), Index("url", unique = true)))
+		indices = arrayOf(
+				Index("eventId"),
+				Index("url", unique = true),
+				Index("backendId", unique = true)))
 data class PersistentRecording(
 		@PrimaryKey(autoGenerate = true)
 		var id: Long = 0,
