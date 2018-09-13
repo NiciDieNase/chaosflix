@@ -24,7 +24,7 @@ abstract class ConferenceDao : BaseDao<PersistentConference>() {
 	abstract fun findConferenceByGroup(id: Long): LiveData<List<PersistentConference>>
 
 	override fun updateOrInsertInternal(item: PersistentConference) {
-		if (!item.id.equals(0)) {
+		if (item.id != 0L) {
 			update(item)
 		} else {
 			val existingEvent = findConferenceByAcronymSync(item.acronym)

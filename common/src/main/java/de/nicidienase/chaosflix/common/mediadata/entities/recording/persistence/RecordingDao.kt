@@ -26,7 +26,7 @@ abstract class RecordingDao: BaseDao<PersistentRecording>() {
     abstract fun deleteRecordingsForEvent(eventId: Long)
 
     override fun updateOrInsertInternal(item: PersistentRecording) {
-        if (!item.id.equals(0)) {
+        if (item.id != 0L) {
             update(item)
         } else {
             val existingRecording = findRecordingByBackendIdSync(item.backendId)

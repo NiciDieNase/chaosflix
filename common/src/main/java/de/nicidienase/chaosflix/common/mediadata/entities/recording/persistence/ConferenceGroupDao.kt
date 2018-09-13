@@ -12,16 +12,16 @@ abstract class ConferenceGroupDao : BaseDao<ConferenceGroup>() {
 	@Query("SELECT * FROM conference_group WHERE name = :name LIMIT 1")
 	abstract fun getConferenceGroupByName(name: String): ConferenceGroup?
 
-	override fun updateOrInsertInternal(group: ConferenceGroup) {
-		if (!group.id.equals(0)) {
-			update(group)
+	override fun updateOrInsertInternal(item: ConferenceGroup) {
+		if (item.id != 0L) {
+			update(item)
 		} else {
-			val existingGroup = getConferenceGroupByName(group.name)
+			val existingGroup = getConferenceGroupByName(item.name)
 			if (existingGroup != null) {
-				group.id = existingGroup.id
-				update(group)
+				item.id = existingGroup.id
+				update(item)
 			} else {
-				group.id = insert(group)
+				item.id = insert(item)
 			}
 		}
 	}

@@ -16,7 +16,7 @@ abstract class RelatedEventDao : BaseDao<PersistentRelatedEvent>() {
 	abstract fun findSpecificRelatedEventSync(parentId: Long, related: String): PersistentRelatedEvent?
 
 	override fun updateOrInsertInternal(item: PersistentRelatedEvent) {
-		if (!item.id.equals(0)) {
+		if (item.id != 0L) {
 			update(item)
 		} else {
 			val existingItem = findSpecificRelatedEventSync(item.parentEventId, item.relatedEventGuid)

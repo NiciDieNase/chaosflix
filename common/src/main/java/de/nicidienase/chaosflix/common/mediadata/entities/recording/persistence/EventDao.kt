@@ -49,7 +49,7 @@ abstract class EventDao: BaseDao<PersistentEvent>() {
     abstract fun findEventsByFrontendurl(url: String):LiveData<PersistentEvent?>
 
     override fun updateOrInsertInternal(item: PersistentEvent) {
-        if (!item.id.equals(0)) {
+        if (item.id != 0L) {
             update(item)
         } else {
             val existingEvent = findEventByGuidSync(item.guid)
