@@ -138,12 +138,9 @@ class Downloader(private val recordingApi: RecordingService,
 			val conferenceGroup: ConferenceGroup = getOrCreateConferenceGroup(entry.key)
 			val conferenceList = entry.value
 					.map { PersistentConference(it) }
-					.map { it.conferenceGroupId = conferenceGroup.id; it }.toTypedArray()
-			val conferenceIds = database.conferenceDao().insert(*conferenceList).toList()
-			return@map conferenceList.zip(conferenceIds) { conf: PersistentConference, id: Long ->
-				conf.id = id
-				return@zip conf
-			}
+					.map { it.conferenceGroupId = conferenceGroup.id; it }
+			database.conferenceDao().updateOrInsert(*conferenceList.toTypedArray())
+			return conferenceList
 		}.flatten()
 	}
 
@@ -165,19 +162,7 @@ class Downloader(private val recordingApi: RecordingService,
 
 	private fun saveEvents(persistentConference: PersistentConference, events: List<Event>): List<PersistentEvent> {
 		val persistantEvents = events.map { PersistentEvent(it,persistentConference.id) }
-		val insertEventIds = database.eventDao().insert(*(persistantEvents.toTypedArray())).asList()
-//		val oldEvents = database.eventDao()
-//				.findEventsByConferenceSync(persistentConference.id)
-//				.filter { !insertEventIds.contains(it.id) }
-//				.toTypedArray()
-//		try {
-//			database.eventDao().delete(*oldEvents)
-//		} catch (ex: SQLiteConstraintException){
-//			Log.d(TAG,"SQLiteException",ex)
-//		}
-		persistantEvents.zip(insertEventIds) {event: PersistentEvent, id: Long ->
-			event.id = id
-		}
+		database.eventDao().updateOrInsert(*persistantEvents.toTypedArray())
 		persistantEvents.forEach{
 			saveRelatedEvents(it)
 		}
@@ -197,13 +182,13 @@ class Downloader(private val recordingApi: RecordingService,
 
 	private fun saveRelatedEvents(event: PersistentEvent): List<PersistentRelatedEvent> {
 		val list = event.related?.map { it.parentEventId = event.id; it }
-		database.relatedEventDao().insert(*list?.toTypedArray()?: emptyArray())
+		database.relatedEventDao().updateOrInsert(*list?.toTypedArray()?: emptyArray())
 		return list ?: emptyList()
 	}
 
 	private fun saveRecordings(event: PersistentEvent,recordings: List<Recording>): List<PersistentRecording> {
 		val persistentRecordings = recordings.map { PersistentRecording(it, event.id) }
-		database.recordingDao().insert(*persistentRecordings.toTypedArray())
+		database.recordingDao().updateOrInsert(*persistentRecordings.toTypedArray())
 		return persistentRecordings
 	}
 }
