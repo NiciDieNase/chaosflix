@@ -42,19 +42,27 @@ class DetailsActivity : FragmentActivity() {
 		val TYPE_STREAM = 1
 
 		@JvmStatic
-		fun start(context: Context, event: PersistentEvent, transistion: Bundle? = null){
+		fun start(context: Context, event: PersistentEvent, transition: Bundle? = null){
 			val i = Intent(context, DetailsActivity::class.java)
 			i.putExtra(DetailsActivity.TYPE, DetailsActivity.TYPE_RECORDING)
 			i.putExtra(DetailsActivity.EVENT, event)
-			context.startActivity(i, transistion)
+			if(transition != null){
+				context.startActivity(i, transition)
+			} else {
+				context.startActivity(i)
+			}
 		}
 
 		@JvmStatic
-		fun start(context: Context, room: Room, transition: Bundle){
+		fun start(context: Context, room: Room, transition: Bundle? = null){
 			val i = Intent(context, DetailsActivity::class.java)
 			i.putExtra(DetailsActivity.TYPE, DetailsActivity.TYPE_STREAM)
 			i.putExtra(DetailsActivity.ROOM, room)
-			context.startActivity(i, transition)
+			if(transition != null){
+				context.startActivity(i, transition)
+			} else {
+				context.startActivity(i)
+			}
 		}
 	}
 

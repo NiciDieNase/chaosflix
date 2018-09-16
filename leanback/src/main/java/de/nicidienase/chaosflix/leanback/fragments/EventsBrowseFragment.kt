@@ -87,21 +87,21 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 					}
 				}
 			}
-			val events = it?.data
-			if (events != null) {
-				Log.d(TAG, "Got ${events.size} events")
-				val eventsByTags = getEventsByTags(events, conference.acronym)
-				Log.d(TAG, "Got ${eventsByTags.keys.size} Tags")
-				for (item in eventsByTags) {
-					updateRowForTag(cardPresenter, item.key, item.value)
-				}
-				errorFragment?.dismiss()
-			}
+//			val events = it?.data
+//			if (events != null) {
+//				Log.d(TAG, "Got ${events.size} events")
+//				val eventsByTags = getEventsByTags(events, conference.acronym)
+//				Log.d(TAG, "Got ${eventsByTags.keys.size} Tags")
+//				for (item in eventsByTags) {
+//					updateRowForTag(cardPresenter, item.key, item.value)
+//				}
+//				errorFragment?.dismiss()
+//			}
 		})
 		viewModel.getEventsforConference(conference).observe(
 				this,
 				Observer {
-					if (it != null) {
+					if (it != null && it.size > 0) {
 						val eventsByTags = getEventsByTags(it, conference.acronym)
 						for (item in eventsByTags) {
 							updateRowForTag(cardPresenter, item.key, item.value)

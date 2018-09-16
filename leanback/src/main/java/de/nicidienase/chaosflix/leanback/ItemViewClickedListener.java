@@ -34,12 +34,12 @@ public class ItemViewClickedListener implements OnItemViewClickedListener {
 		FragmentActivity activity = fragment.requireActivity();
 		if (item instanceof PersistentConference) {
 			PersistentConference conference = (PersistentConference) item;
-			// Start EventsActivity for this conference
 			Bundle transition = ActivityOptionsCompat.makeSceneTransitionAnimation(
 					activity,
 					((ImageCardView) itemViewHolder.view).getMainImageView(),
 					EventsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
 			EventsActivity.start(fragment.requireContext(),conference,transition);
+//			EventsActivity.start(fragment.requireContext(),conference);
 		} else if (item instanceof PersistentEvent) {
 			Bundle transistion = ActivityOptionsCompat.makeSceneTransitionAnimation(
 					activity,
@@ -54,7 +54,6 @@ public class ItemViewClickedListener implements OnItemViewClickedListener {
 					EventDetailsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
 			Room room = (Room) item;
 			DetailsActivity.start(fragment.requireContext(), room, transition);
-
 		}
 	}
 }

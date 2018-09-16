@@ -30,10 +30,15 @@ class EventsActivity : FragmentActivity() {
 		val SHARED_ELEMENT_NAME = "shared_element"
 
 		@JvmStatic
-		fun start(context: Context ,conference: PersistentConference, transition: Bundle){
+		@JvmOverloads
+		fun start(context: Context ,conference: PersistentConference, transition: Bundle? = null){
 			val i = Intent(context, EventsActivity::class.java)
 			i.putExtra(EventsActivity.CONFERENCE, conference)
-			context.startActivity(i, transition)
+			if(transition != null){
+				context.startActivity(i, transition)
+			} else {
+				context.startActivity(i)
+			}
 		}
 	}
 }

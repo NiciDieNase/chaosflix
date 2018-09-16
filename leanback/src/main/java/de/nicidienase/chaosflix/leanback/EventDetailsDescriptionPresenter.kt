@@ -24,15 +24,15 @@ class EventDetailsDescriptionPresenter(private val context: Context) : Presenter
 		}
 		val dataHolder: DetailDataHolder
 		if (item is PersistentEvent) {
-			val (_, _, _, _, title, subtitle, _, _, description, _, _, releaseDate, _, _, _, _, _, _, _, _, _, persons, tags) = item
+			val persistentEvent = item
 			val sb = StringBuilder()
-			val speaker = TextUtils.join(", ", persons!!)
-			sb.append(description)
+			val speaker = TextUtils.join(", ", persistentEvent.persons)
+			sb.append(persistentEvent.description)
 					.append("\n")
-					.append("\nreleased at: ").append(releaseDate)
-					.append("\nTags: ").append(android.text.TextUtils.join(", ", tags!!))
-			dataHolder = DetailDataHolder(title,
-					subtitle,
+					.append("\nreleased at: ").append(persistentEvent.releaseDate)
+					.append("\nTags: ").append(android.text.TextUtils.join(", ", persistentEvent.tags!!))
+			dataHolder = DetailDataHolder(persistentEvent.title,
+					persistentEvent.subtitle,
 					speaker,
 					sb.toString())
 		} else if (item is Room) {
