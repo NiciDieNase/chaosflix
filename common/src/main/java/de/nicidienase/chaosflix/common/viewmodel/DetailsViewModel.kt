@@ -42,7 +42,7 @@ class DetailsViewModel(
 		return database.recordingDao().findRecordingByEvent(persistentEvent.id)
 	}
 
-	fun getBookmarkForEvent(guid: String): LiveData<WatchlistItem> =
+	fun getBookmarkForEvent(guid: String): LiveData<WatchlistItem?> =
 			database.watchlistItemDao().getItemForEvent(guid)
 
 	fun createBookmark(guid: String) {
