@@ -124,6 +124,9 @@ class DetailsViewModel(
 
 	fun getAutoselectStream() = preferencesManager.getAutoselectStream()
 
+	fun getAutoselectRecording() = preferencesManager.getAutoselectRecording()
+
+
 	enum class DetailsViewModelState{
 		PlayOfflineItem, PlayOnlineItem, SelectRecording, Error
 	}

@@ -14,6 +14,7 @@
 
 package de.nicidienase.chaosflix.leanback;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
@@ -21,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
@@ -81,12 +83,7 @@ public class CardPresenter extends Presenter {
 			cardView.setTitleText(conference.getTitle());
 			cardView.setContentText(conference.getAcronym());
 			if (conference.getLogoUrl() != null) {
-
-				Glide.with(viewHolder.view.getContext())
-						.load(conference.getLogoUrl())
-						.fitCenter()
-						.error(defaultCardImage)
-						.into(cardView.getMainImageView());
+				loadImage(viewHolder.view.getContext(),conference.getLogoUrl(), cardView.getMainImageView());
 			}
 		} else if (item instanceof PersistentEvent) {
 			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_16);
@@ -95,11 +92,7 @@ public class CardPresenter extends Presenter {
 			cardView.setContentText(event.getSubtitle());
 //			cardView.setContentText(android.text.TextUtils.join(", ",event.getPersons()));
 			if (event.getThumbUrl() != null) {
-				Glide.with(viewHolder.view.getContext())
-						.load(event.getThumbUrl())
-						.fitCenter()
-						.error(defaultCardImage)
-						.into(cardView.getMainImageView());
+				loadImage(viewHolder.view.getContext(),event.getThumbUrl(), cardView.getMainImageView());
 			}
 		} else if (item instanceof LiveConference) {
 			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_4);
@@ -113,11 +106,7 @@ public class CardPresenter extends Presenter {
 			cardView.setTitleText(room.getDisplay());
 			cardView.setContentText(room.getSchedulename());
 			if (room.getThumb() != null) {
-				Glide.with(viewHolder.view.getContext())
-						.load(room.getThumb())
-						.fitCenter()
-						.error(defaultCardImage)
-						.into(cardView.getMainImageView());
+				loadImage(viewHolder.view.getContext(),room.getThumb(), cardView.getMainImageView());
 			}
 		} else if(item instanceof String) {
 			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_4);
@@ -127,6 +116,16 @@ public class CardPresenter extends Presenter {
 					.into(cardView.getMainImageView());
 		}
 
+	}
+
+	public void loadImage(Context context, String source, ImageView destination){
+		RequestOptions options = new RequestOptions();
+		options.fitCenter();
+		options.fallback(R.drawable.default_background);
+		Glide.with(context)
+				.load(source)
+				.apply(options)
+				.into(destination);
 	}
 
 	@Override

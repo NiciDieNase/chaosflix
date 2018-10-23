@@ -2,7 +2,7 @@ package de.nicidienase.chaosflix.common.mediadata.sync
 
 import android.arch.lifecycle.LiveData
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
-import de.nicidienase.chaosflix.common.Util
+import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.Event
@@ -151,7 +151,7 @@ class Downloader(private val recordingApi: RecordingService,
 			return conferenceGroup
 		}
 		val group = ConferenceGroup(name)
-		val index = Util.orderedConferencesList.indexOf(group.name)
+		val index = ChaosflixUtil.orderedConferencesList.indexOf(group.name)
 		if (index != -1)
 			group.index = index
 		else if (group.name == "other conferences")

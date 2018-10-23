@@ -18,16 +18,16 @@ data class Stream(
 ) : Parcelable {
 
     protected constructor(`in`: Parcel) : this(
-            slug = `in`.readString(),
-            display = `in`.readString(),
-            type = `in`.readString(),
+            slug = `in`.readString() ?: "",
+            display = `in`.readString() ?: "",
+            type = `in`.readString() ?: "",
             isTranslated = `in`.readByte().toInt() != 0,
             videoSize = `in`.createIntArray(),
             urls = HashMap<String, StreamUrl>()
     ) {
         val mapSize = `in`.readInt()
         for (i in 0 until mapSize) {
-            urls.put(`in`.readString(), `in`.readParcelable(StreamUrl::class.java.classLoader))
+            urls.put(`in`.readString()?: "", `in`.readParcelable(StreamUrl::class.java.classLoader))
         }
     }
 

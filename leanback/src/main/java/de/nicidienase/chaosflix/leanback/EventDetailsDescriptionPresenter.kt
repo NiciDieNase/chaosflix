@@ -19,7 +19,7 @@ class EventDetailsDescriptionPresenter(private val context: Context) : Presenter
 	}
 
 	override fun onBindViewHolder(viewHolder: Presenter.ViewHolder, item: Any) {
-		if (viewHolder !is DescriptionViewHolder) {
+		if (viewHolder !is DescriptionViewHolder) {context
 			throw IllegalStateException("Wrong ViewHolder")
 		}
 		val dataHolder: DetailDataHolder

@@ -22,14 +22,13 @@ import android.view.ViewGroup
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.common.Util
+import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.databinding.FragmentEventDetailsBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
-import de.nicidienase.chaosflix.common.PreferencesManager
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 
@@ -176,8 +175,8 @@ class EventDetailsFragment : Fragment() {
 	}
 
 	private fun selectRecording(persistentRecordings: List<PersistentRecording>, action: (recording: PersistentRecording) -> Unit) {
-		val stream = Util.getOptimalStream(persistentRecordings)
-		if (stream != null && viewModel.getAutoselectStream()) {
+		val stream = ChaosflixUtil.getOptimalRecording(persistentRecordings)
+		if (stream != null && viewModel.getAutoselectRecording()) {
 			action.invoke(stream)
 		} else {
 			val items: List<String> = persistentRecordings.map { getStringForRecording(it) }

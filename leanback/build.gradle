@@ -71,8 +71,10 @@ dependencies {
     kapt "android.arch.lifecycle:compiler:${rootProject.ext.archCompVersion}"
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.2.61"
 
-    implementation 'com.google.android.exoplayer:exoplayer:r2.5.2'
-    implementation 'com.github.bumptech.glide:glide:3.8.0'
+    implementation 'com.google.android.exoplayer:exoplayer:2.6.1'
+    implementation 'com.google.android.exoplayer:extension-leanback:2.6.1'
+
+    implementation 'com.github.bumptech.glide:glide:4.3.1'
 
     debugImplementation 'com.facebook.stetho:stetho:1.4.2'
     debugImplementation 'com.facebook.stetho:stetho-okhttp:1.4.2'

@@ -19,9 +19,9 @@ import android.support.v17.leanback.widget.RowPresenter
 import android.util.DisplayMetrics
 import android.util.Log
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.GlideDrawable
-import com.bumptech.glide.request.animation.GlideAnimation
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
@@ -41,7 +41,7 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 	private lateinit var viewModel: BrowseViewModel
 	private val handler = Handler()
 	private var rowsAdapter: ArrayObjectAdapter = ArrayObjectAdapter(ListRowPresenter())
-	private var defaultBackground: Drawable? = null
+	private lateinit var defaultBackground: Drawable
 	private var metrics: DisplayMetrics? = null
 	private var backgroundTimer: Timer? = null
 	private var backgroundURI: URI? = null
@@ -53,6 +53,8 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+
+		defaultBackground = resources.getDrawable(R.drawable.default_background)
 
 		viewModel = ViewModelProviders
 				.of(this, ViewModelFactory(requireContext()))
@@ -176,22 +178,13 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 	private fun prepareBackgroundManager() {
 		backgroundManager = BackgroundManager.getInstance(activity)
 		backgroundManager?.attach(activity?.window)
-		defaultBackground = resources.getDrawable(R.drawable.default_background)
 		metrics = DisplayMetrics()
 		activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
 	}
 
 	private fun setupUIElements(conference: PersistentConference) {
-		Glide.with(activity)
-				.load(conference.logoUrl)
-				.centerCrop()
-				.error(defaultBackground)
-				.into(object : SimpleTarget<GlideDrawable>(432, 243) {
-					override fun onResourceReady(resource: GlideDrawable,
-					                             glideAnimation: GlideAnimation<in GlideDrawable>) {
-						badgeDrawable = resource
-					}
-				})
+
+		loadImage(conference.logoUrl, this::setBadgeDrawable)
 		title = conference.title // Badge, when set, takes precedent
 		// over title
 		headersState = BrowseSupportFragment.HEADERS_ENABLED
@@ -204,19 +197,25 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 
 	}
 
-	protected fun updateBackground(uri: String) {
-		val width = metrics?.widthPixels ?: 100
-		val height = metrics?.heightPixels ?: 100
-		Glide.with(activity)
-				.load(uri)
-				.centerCrop()
-				.error(defaultBackground)
-				.into<SimpleTarget<GlideDrawable>>(object : SimpleTarget<GlideDrawable>(width, height) {
-					override fun onResourceReady(resource: GlideDrawable,
-					                             glideAnimation: GlideAnimation<in GlideDrawable>) {
-						backgroundManager?.drawable = resource
+	fun loadImage(url: String, consumer: (Drawable)-> Unit) {
+		val options = RequestOptions()
+		options.centerCrop()
+
+		Glide.with(this)
+				.load(url)
+				.apply(options)
+				.into(object : SimpleTarget<Drawable>() {
+					override fun onResourceReady(resource: Drawable?, transition: Transition<in Drawable>?) {
+						consumer.invoke(resource ?: defaultBackground)
 					}
+
 				})
+	}
+
+	protected fun updateBackground(uri: String) {
+		loadImage(uri) {
+			backgroundManager?.drawable = it
+		}
 		backgroundTimer?.cancel()
 	}
 
@@ -225,7 +224,7 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 			backgroundTimer!!.cancel()
 		}
 		backgroundTimer = Timer()
-		backgroundTimer!!.schedule(UpdateBackgroundTask(), BACKGROUND_UPDATE_DELAY.toLong())
+		backgroundTimer?.schedule(UpdateBackgroundTask(), BACKGROUND_UPDATE_DELAY.toLong())
 	}
 
 	private inner class ItemViewSelectedListener : OnItemViewSelectedListener {

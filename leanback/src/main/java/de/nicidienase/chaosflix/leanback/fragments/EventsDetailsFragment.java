@@ -6,10 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v17.leanback.app.BackgroundManager;
 import android.support.v17.leanback.app.DetailsSupportFragment;
@@ -30,10 +27,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -225,16 +218,16 @@ public class EventsDetailsFragment extends DetailsSupportFragment {
 	}
 
 	private void updateBackground(String uri) {
-		Glide.with(this)
-				.load(uri)
-				.asBitmap()
-				.centerCrop()
-				.into(new SimpleTarget<Bitmap>() {
-					@Override
-					public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-						backgroundManager.setBitmap(resource);
-					}
-				});
+//		Glide.with(this)
+//				.load(uri)
+//				.asBitmap()
+//				.centerCrop()
+//				.into(new SimpleTarget<Bitmap>() {
+//					@Override
+//					public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+//						backgroundManager.setBitmap(resource);
+//					}
+//				});
 	}
 
 	private Room getRoom(Room room, List<LiveConference> liveConferences) {
@@ -298,22 +291,22 @@ public class EventsDetailsFragment extends DetailsSupportFragment {
 		} else {
 			thumbUrl = ((Room) event).getThumb();
 		}
-		Glide.with(getActivity())
-				.load(thumbUrl)
-				.asBitmap()
-				.into(new SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH, DETAIL_THUMB_HEIGHT) {
-					@Override
-					public void onResourceReady(Bitmap resource,
-												GlideAnimation<? super Bitmap> glideAnimation) {
-						row.setImageBitmap(requireActivity(), resource);
-					}
-
-					@Override
-					public void onLoadFailed(Exception e, Drawable errorDrawable) {
-//						super.onLoadFailed(e, errorDrawable);
-						row.setImageDrawable(getResources().getDrawable(DEFAULT_DRAWABLE));
-					}
-				});
+//		Glide.with(getActivity())
+//				.load(thumbUrl)
+//				.asBitmap()
+//				.into(new SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH, DETAIL_THUMB_HEIGHT) {
+//					@Override
+//					public void onResourceReady(Bitmap resource,
+//												GlideAnimation<? super Bitmap> glideAnimation) {
+//						row.setImageBitmap(requireActivity(), resource);
+//					}
+//
+//					@Override
+//					public void onLoadFailed(Exception e, Drawable errorDrawable) {
+////						super.onLoadFailed(e, errorDrawable);
+//						row.setImageDrawable(getResources().getDrawable(DEFAULT_DRAWABLE));
+//					}
+//				});
 		return row;
 	}
 

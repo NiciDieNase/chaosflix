@@ -168,6 +168,11 @@ public class PlayerActivity extends FragmentActivity
 			}
 
 			@Override
+			public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+
+			}
+
+			@Override
 			public void onPlayerError(ExoPlaybackException error) {
 				String errorMessage = error.getCause().getMessage();
 				Toast.makeText(PlayerActivity.this,errorMessage,Toast.LENGTH_SHORT).show();
@@ -176,12 +181,17 @@ public class PlayerActivity extends FragmentActivity
 			}
 
 			@Override
-			public void onPositionDiscontinuity() {
+			public void onPositionDiscontinuity(int reason) {
 
 			}
 
 			@Override
 			public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
+			}
+
+			@Override
+			public void onSeekProcessed() {
 
 			}
 		});
