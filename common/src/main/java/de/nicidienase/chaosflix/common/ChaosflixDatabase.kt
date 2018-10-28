@@ -74,8 +74,7 @@ abstract class ChaosflixDatabase : RoomDatabase() {
 			override fun migrate(database: SupportSQLiteDatabase) {
 				database.execSQL("ALTER TABLE playback_progress RENAME TO old_playback_progress")
 				database.execSQL("CREATE TABLE IF NOT EXISTS `playback_progress` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `event_guid` TEXT NOT NULL, `progress` INTEGER NOT NULL, `watch_date` INTEGER NOT NULL)")
-				database.execSQL("CREATE UNIQUE INDEX `index_playback_progress_event_guid` ON `playback_progress` (`event_guid`)")
-				database.execSQL("INSERT INTO `playback_progress` (id, event_guid, progress) SELECT id, event_guid, progress from old_playback_progress")
+				database.execSQL("INSERT INTO `playback_progress` (id, event_guid, progress, watch_date) SELECT id, event_guid, progress, 0 from old_playback_progress")
 				database.execSQL("DROP TABLE old_playback_progress")
 			}
 		}
