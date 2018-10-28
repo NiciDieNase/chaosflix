@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.common.mediadata.entities.streaming
 import android.os.Parcel
 import android.os.Parcelable
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import okhttp3.internal.connection.StreamAllocation
 
 import kotlin.collections.HashMap
 
@@ -17,19 +18,14 @@ data class Stream(
 
 ) : Parcelable {
 
-    protected constructor(`in`: Parcel) : this(
-            slug = `in`.readString() ?: "",
-            display = `in`.readString() ?: "",
-            type = `in`.readString() ?: "",
-            isTranslated = `in`.readByte().toInt() != 0,
-            videoSize = `in`.createIntArray(),
-            urls = HashMap<String, StreamUrl>()
-    ) {
-        val mapSize = `in`.readInt()
-        for (i in 0 until mapSize) {
-            urls.put(`in`.readString()?: "", `in`.readParcelable(StreamUrl::class.java.classLoader))
-        }
-    }
+    protected constructor(input: Parcel) : this(
+            slug = input.readString() ?: "",
+            display = input.readString() ?: "",
+            type = input.readString() ?: "",
+            isTranslated = input.readByte().toInt() != 0,
+            videoSize = input.createIntArray(),
+            urls = readMap(input)
+    )
 
     override fun describeContents(): Int {
         return 0
@@ -41,12 +37,12 @@ data class Stream(
         dest.writeString(type)
         dest.writeByte((if (isTranslated) 1 else 0).toByte())
         dest.writeIntArray(videoSize)
+
         dest.writeInt(urls.size)
-        val keys = urls.keys
-        for (s in keys) {
-            dest.writeString(s)
-            dest.writeParcelable(urls[s], 0)
-        }
+        val urlKeys = urls.keys.toTypedArray()
+        dest.writeStringArray(urlKeys)
+        val urls = urlKeys.map { urls[it] }.toTypedArray()
+        dest.writeTypedArray(urls,0)
     }
 
      companion object CREATOR : Parcelable.Creator<Stream> {
@@ -57,6 +53,20 @@ data class Stream(
         override fun newArray(size: Int): Array<Stream?> {
             return arrayOfNulls(size)
         }
+
+         fun readMap(input: Parcel): MutableMap<String, StreamUrl> {
+             val result = HashMap<String, StreamUrl>()
+             val keys = input.createStringArray() ?: emptyArray()
+             val urls = input.createTypedArray(StreamUrl.CREATOR) ?: emptyArray()
+             for(i in 0 until keys.size - 1){
+                 val key = keys[i]
+                 val value = urls[i]
+                 if(key != null && value != null){
+                     result.put(key, value)
+                 }
+             }
+             return result
+         }
 
         private val MAP_KEY = "map-key"
 

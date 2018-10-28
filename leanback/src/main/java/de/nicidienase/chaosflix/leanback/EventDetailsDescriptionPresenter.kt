@@ -36,8 +36,13 @@ class EventDetailsDescriptionPresenter(private val context: Context) : Presenter
 					speaker,
 					sb.toString())
 		} else if (item is Room) {
-			val (_, schedulename, _, _, display) = item
-			dataHolder = DetailDataHolder(display, schedulename, "", "")
+
+			val currentTalk = item.talks?.get("current")
+			val nextTalk = item.talks?.get("next")
+			dataHolder = DetailDataHolder(title = item.display,
+					subtitle = item.schedulename,
+					speakers = currentTalk?.description ?: "",
+					description = "Next Talk: ${nextTalk?.description ?: "no talk scheduled"}")
 		} else {
 			Log.e(TAG, "Item is neither PersistentEvent nor Room, this should not be happening")
 			dataHolder = DetailDataHolder("", "", "", "")

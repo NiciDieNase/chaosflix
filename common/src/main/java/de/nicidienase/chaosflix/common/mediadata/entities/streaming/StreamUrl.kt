@@ -5,15 +5,15 @@ import android.os.Parcelable
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class StreamUrl(var display: String,
-    var tech: String,
-    var url: String) : Parcelable {
+data class StreamUrl(var display: String = "",
+    var tech: String = "",
+    var url: String = "") : Parcelable {
 
 
     protected constructor(`in`: Parcel) : this(
-        display = `in`.readString(),
-        tech = `in`.readString(),
-        url = `in`.readString())
+        display = `in`.readString() ?: "",
+        tech = `in`.readString() ?: "",
+        url = `in`.readString() ?: "")
 
     override fun describeContents(): Int {
         return 0

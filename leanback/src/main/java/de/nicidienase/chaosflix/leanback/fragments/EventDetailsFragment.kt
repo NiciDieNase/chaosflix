@@ -65,7 +65,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
 	private lateinit var detailsViewModel: DetailsViewModel
 	private lateinit var playerViewModel: PlayerViewModel
 
-	private var eventType: Int = DetailsActivity.TYPE_RECORDING
 	private var event: PersistentEvent? = null
 	private var room: Room? = null
 
@@ -91,9 +90,13 @@ class EventDetailsFragment : DetailsSupportFragment() {
 		detailsViewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java)
 		playerViewModel = ViewModelProviders.of(this, viewModelFactory).get(PlayerViewModel::class.java)
 
-		eventType = activity!!.intent.getIntExtra(DetailsActivity.TYPE, -1)
 		event = activity?.intent?.getParcelableExtra(DetailsActivity.EVENT)
 		room = activity?.intent?.getParcelableExtra(DetailsActivity.ROOM)
+
+		val eventType =
+				if(event != null) DetailsActivity.TYPE_RECORDING
+				else if(room != null) DetailsActivity.TYPE_STREAM
+				else -1
 
 		title = event?.title
 
@@ -178,10 +181,10 @@ class EventDetailsFragment : DetailsSupportFragment() {
 		setThumb(room.thumb, detailsOverview)
 		initializeBackgroundWithImage(room.thumb)
 
-		val dashStreams = room.streams.filter { it.slug == "dash-native" }
+		val dashStreams = room.streams.filter { it?.slug == "dash-native" }
 		if (dashStreams.size > 0){
 //				&& detailsViewModel.getAutoselectStream()) {
-			dashStreams.first().urls["dash"]?.url?.let { preparePlayer(it, "") }
+			dashStreams.first()?.urls?.get("dash")?.url?.let { preparePlayer(it, "") }
 		}
 
 		val actionAdapter = ArrayObjectAdapter()

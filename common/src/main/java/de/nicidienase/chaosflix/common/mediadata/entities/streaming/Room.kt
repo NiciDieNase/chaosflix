@@ -4,10 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.util.*
-
-/**
- * Created by felix on 23.03.17.
- */
+import kotlin.collections.HashMap
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Room(var slug: String,
@@ -15,16 +12,19 @@ data class Room(var slug: String,
                 var thumb: String,
                 var link: String,
                 var display: String,
-                var streams: MutableList<Stream>) : Parcelable {
+                var talks: Map<String,StreamEvent>?,
+                var streams: MutableList<Stream?>) : Parcelable {
 
 
-	protected constructor(`in`: Parcel) : this(
-			slug = `in`.readString(),
-			schedulename = `in`.readString(),
-			thumb = `in`.readString(),
-			link = `in`.readString(),
-			display = `in`.readString(),
-			streams = `in`.createTypedArrayList<Stream>(Stream.CREATOR))
+	protected constructor(input: Parcel) : this(
+			slug = input.readString() ?: "",
+			schedulename = input.readString() ?: "",
+			thumb = input.readString() ?: "",
+			link = input.readString() ?: "",
+			display = input.readString() ?: "",
+			talks = readMap(input),
+			streams = input.createTypedArrayList<Stream>(Stream.CREATOR) ?: emptyList<Stream>().toMutableList())
+
 
 	override fun describeContents(): Int {
 		return 0
@@ -36,6 +36,10 @@ data class Room(var slug: String,
 		dest.writeString(thumb)
 		dest.writeString(link)
 		dest.writeString(display)
+		val talkKeys = talks?.keys?.toTypedArray()
+		dest.writeStringArray(talkKeys)
+		val talks = talkKeys?.map { talks?.get(it) }?.toTypedArray()
+		dest.writeTypedArray(talks,0)
 		dest.writeTypedList(streams)
 	}
 
@@ -51,6 +55,20 @@ data class Room(var slug: String,
 			return arrayOfNulls(size)
 		}
 
+		fun readMap(input: Parcel): MutableMap<String, StreamEvent> {
+			val result = HashMap<String, StreamEvent>()
+			val keys = input.createStringArray() ?: emptyArray()
+			val urls = input.createTypedArray(StreamEvent.CREATOR) ?: emptyArray()
+			for(i in 0 until keys.size - 1){
+				val key = keys[i]
+				val value = urls[i]
+				if(key != null && value != null){
+					result.put(key, value)
+				}
+			}
+			return result
+		}
+
 		val dummyObject: Room
 			get() {
 				val dummy = Room(
@@ -59,6 +77,7 @@ data class Room(var slug: String,
 						"https://static.media.ccc.de/media/unknown.png",
 						"",
 						"Dummy Room",
+						HashMap(),
 						ArrayList())
 				dummy.streams.add(Stream.dummyObject)
 				return dummy

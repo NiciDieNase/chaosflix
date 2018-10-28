@@ -174,6 +174,8 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 				if (!con.getConference().equals("Sendeschleife") || BuildConfig.DEBUG) {
 					for (Group g : con.getGroups()) {
 						// setup header
+						rowsAdapter.add(new SectionRow(new HeaderItem(con.getConference())));
+
 						String group = g.getGroup().length() > 0 ? g.getGroup() : con.getConference();
 						HeaderItem header = new HeaderItem(group);
 						header.setDescription(con.getConference() + " - " + con.getDescription());
