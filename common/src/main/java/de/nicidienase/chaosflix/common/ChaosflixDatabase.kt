@@ -33,7 +33,7 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 		PlaybackProgress::class,
 		WatchlistItem::class,
 		OfflineEvent::class
-), version = 5, exportSchema = true)
+), version = 6, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class ChaosflixDatabase : RoomDatabase() {
 
@@ -67,6 +67,16 @@ abstract class ChaosflixDatabase : RoomDatabase() {
 				database.execSQL("CREATE INDEX IF NOT EXISTS index_event_eventId ON event (eventId)")
 				database.execSQL("CREATE INDEX IF NOT EXISTS index_event_frontendLink ON event (frontendLink)")
 				database.execSQL("CREATE INDEX IF NOT EXISTS index_event_conferenceId ON event (conferenceId)")
+			}
+		}
+
+		val migration_5_6 = object : Migration(5,6) {
+			override fun migrate(database: SupportSQLiteDatabase) {
+				database.execSQL("ALTER TABLE playback_progress RENAME TO old_playback_progress")
+				database.execSQL("CREATE TABLE IF NOT EXISTS `playback_progress` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `event_guid` TEXT NOT NULL, `progress` INTEGER NOT NULL, `watch_date` INTEGER NOT NULL)")
+				database.execSQL("CREATE UNIQUE INDEX `index_playback_progress_event_guid` ON `playback_progress` (`event_guid`)")
+				database.execSQL("INSERT INTO `playback_progress` (id, event_guid, progress) SELECT id, event_guid, progress from old_playback_progress")
+				database.execSQL("DROP TABLE old_playback_progress")
 			}
 		}
 	}

@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModel
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
 import de.nicidienase.chaosflix.common.util.ThreadHandler
+import java.util.*
 
 class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
 
@@ -16,7 +17,10 @@ class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
     fun setPlaybackProgress(eventGuid: String, progress: Long) {
         handler.runOnBackgroundThread {
             database.playbackProgressDao().saveProgress(
-                    PlaybackProgress(progress = progress, eventGuid = eventGuid))
+                    PlaybackProgress(
+                            progress = progress,
+                            eventGuid = eventGuid,
+                            watchDate = Date().time))
         }
     }
 

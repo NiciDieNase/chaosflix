@@ -1,0 +1,148 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "b104a79ad8f880ee14d994f9338f5475",
+    "entities": [
+      {
+        "tableName": "playback_progress",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `event_guid` TEXT NOT NULL, `progress` INTEGER NOT NULL, `watch_date` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventGuid",
+            "columnName": "event_guid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "progress",
+            "columnName": "progress",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "watchDate",
+            "columnName": "watch_date",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_playback_progress_event_guid",
+            "unique": true,
+            "columnNames": [
+              "event_guid"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_playback_progress_event_guid` ON `${TABLE_NAME}` (`event_guid`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "watchlist_item",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `event_guid` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventGuid",
+            "columnName": "event_guid",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_watchlist_item_event_guid",
+            "unique": true,
+            "columnNames": [
+              "event_guid"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_watchlist_item_event_guid` ON `${TABLE_NAME}` (`event_guid`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "offline_event",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `event_guid` TEXT NOT NULL, `recording_id` INTEGER NOT NULL, `download_reference` INTEGER NOT NULL, `local_path` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventGuid",
+            "columnName": "event_guid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recordingId",
+            "columnName": "recording_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadReference",
+            "columnName": "download_reference",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "localPath",
+            "columnName": "local_path",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_offline_event_event_guid",
+            "unique": true,
+            "columnNames": [
+              "event_guid"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_offline_event_event_guid` ON `${TABLE_NAME}` (`event_guid`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"b104a79ad8f880ee14d994f9338f5475\")"
+    ]
+  }
+}
