@@ -13,7 +13,7 @@ data class Room(var slug: String,
                 var link: String,
                 var display: String,
                 var talks: Map<String,StreamEvent>?,
-                var streams: MutableList<Stream?>) : Parcelable {
+                var streams: List<Stream>) : Parcelable {
 
 
 	protected constructor(input: Parcel) : this(
@@ -23,7 +23,7 @@ data class Room(var slug: String,
 			link = input.readString() ?: "",
 			display = input.readString() ?: "",
 			talks = readMap(input),
-			streams = input.createTypedArrayList<Stream>(Stream.CREATOR) ?: emptyList<Stream>().toMutableList())
+			streams = input.createTypedArrayList<Stream>(Stream.CREATOR).filterNotNull())
 
 
 	override fun describeContents(): Int {
@@ -79,7 +79,7 @@ data class Room(var slug: String,
 						"Dummy Room",
 						HashMap(),
 						ArrayList())
-				dummy.streams.add(Stream.dummyObject)
+				dummy.streams = listOf(Stream.dummyObject)
 				return dummy
 			}
 

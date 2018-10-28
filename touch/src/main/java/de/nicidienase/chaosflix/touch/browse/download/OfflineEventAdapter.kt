@@ -33,7 +33,7 @@ class OfflineEventAdapter(var items: List<Pair<OfflineEvent, PersistentEvent>>, 
 			buttonDelete.setOnClickListener {
 				viewModel.deleteOfflineItem(item.first)
 			}
-			content?.setOnClickListener { view ->
+			content?.setOnClickListener { _ ->
 				listener.onEventSelected(item.second)
 
 			}

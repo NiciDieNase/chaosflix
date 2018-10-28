@@ -181,10 +181,10 @@ class EventDetailsFragment : DetailsSupportFragment() {
 		setThumb(room.thumb, detailsOverview)
 		initializeBackgroundWithImage(room.thumb)
 
-		val dashStreams = room.streams.filter { it?.slug == "dash-native" }
+		val dashStreams = room.streams.filter { it.slug == "dash-native" }
 		if (dashStreams.size > 0){
 //				&& detailsViewModel.getAutoselectStream()) {
-			dashStreams.first()?.urls?.get("dash")?.url?.let { preparePlayer(it, "") }
+			dashStreams.first().urls.get("dash")?.url?.let { preparePlayer(it, "") }
 		}
 
 		val actionAdapter = ArrayObjectAdapter()
@@ -349,13 +349,13 @@ class EventDetailsFragment : DetailsSupportFragment() {
 		fun showWatchlistInfoDialog(preferences: SharedPreferences) {
 			val builder = AlertDialog.Builder(activity)
 			builder.setTitle(R.string.watchlist_message)
-			builder.setNegativeButton(R.string.return_to_homescreen) { dialog, which ->
+			builder.setNegativeButton(R.string.return_to_homescreen) { _, _ ->
 				val i = Intent(activity, ConferencesActivity::class.java)
 				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
 				startActivity(i)
 				//						getActivity().finish();
 			}
-			builder.setPositiveButton("OK") { dialog, which -> }
+			builder.setPositiveButton("OK") { _, _ -> }
 			val edit = preferences.edit()
 			edit.putBoolean(getString(R.string.watchlist_dialog_needed), false)
 			edit.apply()
