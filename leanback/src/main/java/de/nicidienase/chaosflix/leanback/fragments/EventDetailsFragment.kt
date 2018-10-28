@@ -60,7 +60,7 @@ import de.nicidienase.chaosflix.leanback.activities.DetailsActivity
 import de.nicidienase.chaosflix.leanback.activities.EventDetailsActivity
 
 
-class NewEventsDetailsFragment : DetailsSupportFragment() {
+class EventDetailsFragment : DetailsSupportFragment() {
 
 	private lateinit var detailsViewModel: DetailsViewModel
 	private lateinit var playerViewModel: PlayerViewModel
@@ -248,7 +248,7 @@ class NewEventsDetailsFragment : DetailsSupportFragment() {
 	private fun loadPlaybackProgress(eventGuid: String? = null) {
 		if (eventGuid != null) {
 			playerViewModel.getPlaybackProgress(eventGuid)
-					.observe(this@NewEventsDetailsFragment, Observer { progress ->
+					.observe(this@EventDetailsFragment, Observer { progress ->
 						progress?.let {
 							playerAdapter.seekTo(it.progress)
 						}
@@ -309,7 +309,7 @@ class NewEventsDetailsFragment : DetailsSupportFragment() {
 	companion object {
 		private val BANDWIDTH_METER = DefaultBandwidthMeter()
 		@JvmStatic
-		val TAG = NewEventsDetailsFragment::class.java.simpleName
+		val TAG = EventDetailsFragment::class.java.simpleName
 
 		@JvmStatic
 		private val DETAIL_THUMB_WIDTH = 254
