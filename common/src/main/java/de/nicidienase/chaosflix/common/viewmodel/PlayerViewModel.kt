@@ -6,7 +6,7 @@ import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
 import de.nicidienase.chaosflix.common.util.ThreadHandler
 
-internal class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
+class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
 
     val handler = ThreadHandler()
 

@@ -39,9 +39,9 @@ class ChaosMediaPlayerGlue(context: Context,
 
 	override fun onCreateSecondaryActions(adapter: ArrayObjectAdapter) {
 		super.onCreateSecondaryActions(adapter)
-		adapter.add(mThumbsDownAction)
+//		adapter.add(mThumbsDownAction)
 		adapter.add(mThumbsUpAction)
-		adapter.add(mRepeatAction)
+//		adapter.add(mRepeatAction)
 	}
 
 	override fun onActionClicked(action: Action) {
@@ -57,9 +57,9 @@ class ChaosMediaPlayerGlue(context: Context,
 	private fun shouldDispatchAction(action: Action): Boolean {
 		return (action === mRewindAction
 				|| action === mFastForwardAction
-				|| action === mThumbsDownAction
-				|| action === mThumbsUpAction
-				|| action === mRepeatAction)
+//				|| action === mRepeatAction
+//				|| action === mThumbsDownAction
+				|| action === mThumbsUpAction)
 	}
 
 	private fun dispatchAction(action: Action) {
@@ -68,6 +68,7 @@ class ChaosMediaPlayerGlue(context: Context,
 			rewind()
 		} else if (action === mFastForwardAction) {
 			fastForward()
+		} else if (action === mThumbsUpAction){
 		} else if (action is PlaybackControlsRow.MultiAction) {
 			action.nextIndex()
 			// Notify adapter of action changes to handle secondary actions, such as, thumbs up/down
