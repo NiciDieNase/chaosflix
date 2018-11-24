@@ -140,6 +140,7 @@ class Downloader(private val recordingApi: RecordingService,
 					.map { PersistentConference(it) }
 					.map { it.conferenceGroupId = conferenceGroup.id; it }
 			database.conferenceDao().updateOrInsert(*conferenceList.toTypedArray())
+			database.conferenceGroupDao().deleteEmptyGroups()
 			return@map conferenceList
 		}.flatten()
 	}

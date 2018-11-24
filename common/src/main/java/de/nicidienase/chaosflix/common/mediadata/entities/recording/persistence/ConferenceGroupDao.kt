@@ -12,6 +12,9 @@ abstract class ConferenceGroupDao : BaseDao<ConferenceGroup>() {
 	@Query("SELECT * FROM conference_group WHERE name = :name LIMIT 1")
 	abstract fun getConferenceGroupByName(name: String): ConferenceGroup?
 
+	@Query("DELETE FROM conference_group WHERE id NOT IN (SELECT conference.conferenceGroupId FROM conference)")
+	abstract fun deleteEmptyGroups()
+
 	override fun updateOrInsertInternal(item: ConferenceGroup) {
 		if (item.id != 0L) {
 			update(item)
