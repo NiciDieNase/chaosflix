@@ -133,6 +133,17 @@ class Downloader(private val recordingApi: RecordingService,
 		}
 	}
 
+	fun deleteNonUserData(){
+		with(database){
+			conferenceGroupDao().delete()
+			conferenceDao().delete()
+			eventDao().delete()
+			recordingDao().delete()
+			relatedEventDao().delete()
+		}
+
+	}
+
 	private fun saveConferences(conferencesWrapper: ConferencesWrapper): List<PersistentConference> {
 		return conferencesWrapper.conferencesMap.map { entry ->
 			val conferenceGroup: ConferenceGroup = getOrCreateConferenceGroup(entry.key)

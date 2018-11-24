@@ -15,6 +15,9 @@ abstract class ConferenceGroupDao : BaseDao<ConferenceGroup>() {
 	@Query("DELETE FROM conference_group WHERE id NOT IN (SELECT conference.conferenceGroupId FROM conference)")
 	abstract fun deleteEmptyGroups()
 
+	@Query("DElETE FROM conference_group")
+	abstract fun delete()
+
 	override fun updateOrInsertInternal(item: ConferenceGroup) {
 		if (item.id != 0L) {
 			update(item)

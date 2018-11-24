@@ -1,17 +1,29 @@
 package de.nicidienase.chaosflix.touch.settings
 
+import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.preference.PreferenceFragmentCompat
 import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.touch.ChaosflixApplication
+import de.nicidienase.chaosflix.common.viewmodel.PreferencesViewModel
+import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import net.rdrei.android.dirchooser.DirectoryChooserActivity
 import net.rdrei.android.dirchooser.DirectoryChooserConfig
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
     private val REQUEST_DIRECTORY: Int = 0
+
+	private lateinit var viewModel: PreferencesViewModel
+
+	override fun onAttach(context: Context?) {
+		super.onAttach(context)
+		context?.let {context ->
+			viewModel = ViewModelProviders.of(this, ViewModelFactory(context)).get(PreferencesViewModel::class.java)
+		}
+	}
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -38,23 +50,28 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
 		setPreferencesFromResource(R.xml.preferences,rootKey)
         updateSummary()
-		val pref = this.findPreference("download_folder")
+		val downloadFolderPref = this.findPreference("download_folder")
+	    val cleanCachePref = this.findPreference("delete_data")
 
-		pref.setOnPreferenceClickListener({
-            val chooserIntent = Intent(context, DirectoryChooserActivity::class.java)
+		downloadFolderPref?.setOnPreferenceClickListener {
+			val chooserIntent = Intent(context, DirectoryChooserActivity::class.java)
 
-            val config = DirectoryChooserConfig.builder()
-                    .newDirectoryName("Download folder")
-                    .allowReadOnlyDirectory(false)
-                    .allowNewDirectoryNameModification(true)
-                    .build()
+			val config = DirectoryChooserConfig.builder()
+					.newDirectoryName("Download folder")
+					.allowReadOnlyDirectory(false)
+					.allowNewDirectoryNameModification(true)
+					.build()
 
-            chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_CONFIG, config)
-            startActivityForResult(chooserIntent, REQUEST_DIRECTORY)
+			chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_CONFIG, config)
+			startActivityForResult(chooserIntent, REQUEST_DIRECTORY)
 
-            return@setOnPreferenceClickListener true
+			return@setOnPreferenceClickListener true
+		}
 
-        })
+		cleanCachePref?.setOnPreferenceClickListener {
+			viewModel.cleanNonUserData()
+			return@setOnPreferenceClickListener true
+			}
 	}
 
 	companion object {

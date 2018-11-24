@@ -15,6 +15,9 @@ abstract class RelatedEventDao : BaseDao<PersistentRelatedEvent>() {
 	@Query("SELECT * FROM related WHERE parentEventId = :parentId AND relatedEventGuid = :related")
 	abstract fun findSpecificRelatedEventSync(parentId: Long, related: String): PersistentRelatedEvent?
 
+	@Query("DElETE FROM related")
+	abstract fun delete()
+
 	override fun updateOrInsertInternal(item: PersistentRelatedEvent) {
 		if (item.id != 0L) {
 			update(item)

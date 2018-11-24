@@ -25,6 +25,9 @@ abstract class RecordingDao: BaseDao<PersistentRecording>() {
     @Query("DELETE FROM recording WHERE eventId = :eventId")
     abstract fun deleteRecordingsForEvent(eventId: Long)
 
+    @Query("DElETE FROM recording")
+    abstract fun delete()
+
     override fun updateOrInsertInternal(item: PersistentRecording) {
         if (item.id != 0L) {
             update(item)

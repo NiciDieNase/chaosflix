@@ -37,4 +37,9 @@
     <string name="watchlist_preferences_key">watchlist</string>
     <string name="watchlist_dialog_needed">new-watchlist</string>
     <string name="return_to_homescreen">Return to Homescreen</string>
+	<string name="clean_cache">Clean Cache</string>
+    <string name="download_folder">Download folder</string>
+    <string name="pref_autoselect_recording">Don\'t show selection dialog, just use HD-mp4</string>
+    <string name="pref_autoselect_stream">Don\'t show selection dialog, just use DASH</string>
+    <string name="pref_mobile_downloads">Enable downloads over mobile or payed networks</string>
 </resources>

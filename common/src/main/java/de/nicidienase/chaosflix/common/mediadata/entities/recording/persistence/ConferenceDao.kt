@@ -23,6 +23,9 @@ abstract class ConferenceDao : BaseDao<PersistentConference>() {
 	@Query("SELECT * FROM conference WHERE conferenceGroupId = :id ORDER BY acronym DESC")
 	abstract fun findConferenceByGroup(id: Long): LiveData<List<PersistentConference>>
 
+	@Query("DELETE FROM conference")
+	abstract fun delete()
+
 	override fun updateOrInsertInternal(item: PersistentConference) {
 		if (item.id != 0L) {
 			update(item)

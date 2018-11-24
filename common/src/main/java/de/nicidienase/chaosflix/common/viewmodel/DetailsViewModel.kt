@@ -21,13 +21,13 @@ class DetailsViewModel(
 		val database: ChaosflixDatabase,
 		recordingApi: RecordingService,
 		val offlineItemManager: OfflineItemManager,
-		val preferencesManager: PreferencesManager
+		val preferencesManager: PreferencesManager,
+		val downloader: Downloader
 ) : ViewModel() {
 
 	val state: SingleLiveEvent<LiveEvent<DetailsViewModelState,Bundle,String>>
 			= SingleLiveEvent()
 
-	val downloader = Downloader(recordingApi, database)
 	var writeExternalStorageAllowed: Boolean = false
 
 	private val handler = ThreadHandler()

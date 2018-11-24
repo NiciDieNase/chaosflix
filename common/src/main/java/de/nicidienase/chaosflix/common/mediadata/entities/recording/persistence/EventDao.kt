@@ -48,6 +48,9 @@ abstract class EventDao: BaseDao<PersistentEvent>() {
     @Query("SELECT * FROM event WHERE frontendLink = :url ")
     abstract fun findEventsByFrontendurl(url: String):LiveData<PersistentEvent?>
 
+    @Query("DElETE FROM event")
+    abstract fun delete()
+
     override fun updateOrInsertInternal(item: PersistentEvent) {
         if (item.id != 0L) {
             update(item)

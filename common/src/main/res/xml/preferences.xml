@@ -5,24 +5,28 @@
         android:key="allow_metered_networks"
         android:defaultValue="false"
         android:title="Allow downloads over metered networks"
-        android:summary="Enable downloads over mobile or payed networks"/>
+        android:summary="@string/pref_mobile_downloads"/>
 
     <CheckBoxPreference
         android:key="auto_select_stream"
         android:defaultValue="false"
         android:title="Automatically chose stream"
-        android:summary="Don't show selection dialog, just use DASH"/>
+        android:summary="@string/pref_autoselect_stream"/>
 
     <CheckBoxPreference
         android:key="auto_select_recording"
         android:defaultValue="false"
         android:title="Automatically chose recording"
-        android:summary="Don't show selection dialog, just use HD-mp4"/>
+        android:summary="@string/pref_autoselect_recording"/>
 
     <Preference
         android:id="@+id/download_folder"
         android:key="download_folder"
-        android:title="Download folder"
-        android:focusable="false" />
+        android:title="@string/download_folder"/>
+
+    <Preference
+        android:id="@+id/deleteData"
+        android:key="delete_data"
+        android:title="@string/clean_cache"/>
 
 </PreferenceScreen>
