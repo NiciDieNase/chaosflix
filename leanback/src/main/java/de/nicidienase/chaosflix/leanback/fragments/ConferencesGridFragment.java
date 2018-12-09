@@ -6,6 +6,7 @@ import android.support.v17.leanback.app.VerticalGridSupportFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.VerticalGridPresenter;
 
+import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.leanback.CardPresenter;
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
 
@@ -18,7 +19,7 @@ public class ConferencesGridFragment extends VerticalGridSupportFragment {
 	private static final int NUM_COLUMNS = 5;
 	private static final String TAG = ConferencesGridFragment.class.getSimpleName();
 	private final ArrayObjectAdapter mConferenceAdapter =
-			new ArrayObjectAdapter(new CardPresenter());
+			new ArrayObjectAdapter(new CardPresenter(R.style.ConferenceCardStyle));
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

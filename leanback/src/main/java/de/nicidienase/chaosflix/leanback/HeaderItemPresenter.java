@@ -25,7 +25,6 @@ public class HeaderItemPresenter extends RowHeaderPresenter {
 		LayoutInflater inflater = (LayoutInflater) parent.getContext()
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.header_item_layout, null);
-
 		return new ViewHolder(view);
 	}
 
@@ -33,8 +32,8 @@ public class HeaderItemPresenter extends RowHeaderPresenter {
 	public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
 		HeaderItem headerItem = ((ListRow) item).getHeaderItem();
 		View view = viewHolder.view;
-		ImageView headerIcon = (ImageView) view.findViewById(R.id.header_icon);
-		TextView headerLabel = (TextView) view.findViewById(R.id.header_label);
+		ImageView headerIcon = view.findViewById(R.id.header_icon);
+		TextView headerLabel = view.findViewById(R.id.header_label);
 
 		Resources resources = view.getContext().getResources();
 		String streamingPrefix = resources.getString(R.string.streaming_prefix);

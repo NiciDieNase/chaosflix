@@ -2,5 +2,61 @@
 <resources>
 
     <style name="AppTheme" parent="@style/Theme.Leanback">
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorAccent">@color/accent</item><!--loading-spinner-->
+		<item name="defaultBrandColor">@color/primary_darker</item><!--sidebar-->
+		<item name="defaultBrandColorDark">@color/primary_darker</item>
+		<item name="defaultSearchColor">@color/accent</item>
+
+		<!--<item name="headerStyle">@style/HeaderStyle</item>-->
+	</style>
+
+	<!--<style name="HeaderStyle" parent="@style/Widget.Leanback.Header">-->
+		<!--<item name="android:textAppearance">@style/HeaderTextAppearance</item>-->
+	<!--</style>-->
+
+	<!--<style name="HeaderTextAppearance" parent="@style/TextAppearance.Leanback.Header">-->
+		<!--<item name="android:textColor">@color/accent</item>-->
+	<!--</style>-->
+
+    <style name="TitleOnlyStyle" parent="Widget.Leanback.ImageCardViewStyle">
+        <item name="lbImageCardViewType">Title</item>
     </style>
+
+    <style name="TitleAndDescriptionStyle" parent="Widget.Leanback.ImageCardViewStyle">
+        <item name="lbImageCardViewType">Title|Content</item>
+    </style>
+
+    <style name="MultiLineTitleStyle" parent="Widget.Leanback.ImageCardView.TitleStyle">
+        <item name="android:minLines">1</item>
+        <item name="android:maxLines">2</item>
+    </style>
+
+    <style name="MultiLineContentStyle" parent="Widget.Leanback.ImageCardView.ContentStyle">
+        <item name="android:minLines">2</item>
+        <item name="android:maxLines">3</item>
+    </style>
+
+    <style name="ConferenceCardImageStyle" parent="Widget.Leanback.ImageCardView.ImageStyle">
+        <item name="android:layout_width">@dimen/conference_card_width</item>
+        <item name="android:layout_height">@dimen/conference_card_height</item>
+    </style>
+
+    <style name="EventCardImageStyle" parent="Widget.Leanback.ImageCardView.ImageStyle">
+        <item name="android:layout_width">@dimen/event_card_width</item>
+        <item name="android:layout_height">@dimen/event_card_height</item>
+    </style>
+
+    <style name="ConferenceCardStyle" parent="Theme.Leanback">
+        <item name="imageCardViewStyle">@style/TitleOnlyStyle</item>
+        <item name="imageCardViewTitleStyle">@style/MultiLineTitleStyle</item>
+        <item name="imageCardViewImageStyle">@style/ConferenceCardImageStyle</item>
+    </style>
+
+    <style name="EventCardStyle" parent="Theme.Leanback">
+        <item name="imageCardViewTitleStyle">@style/MultiLineTitleStyle</item>
+        <item name="imageCardViewContentStyle">@style/MultiLineContentStyle</item>
+        <item name="imageCardViewImageStyle">@style/EventCardImageStyle</item>
+    </style>
+
 </resources>

@@ -18,6 +18,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
+import android.view.ContextThemeWrapper;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -37,39 +38,44 @@ import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room;
 public class CardPresenter extends Presenter {
 	private static final String TAG = "CardPresenter";
 
-	private static final int CARD_WIDTH = 313;
-	private static final int CARD_HEIGHT_4 = 235;
-	private static final int CARD_HEIGHT_16 = 177;
-	private static int sSelectedBackgroundColor;
-	private static int sDefaultBackgroundColor;
+//	private static int sSelectedBackgroundColor;
+//	private static int sDefaultBackgroundColor;
 	private Drawable defaultCardImage;
+	private int style;
 
-	private static void updateCardBackgroundColor(ImageCardView view, boolean selected) {
-		int color = selected ? sSelectedBackgroundColor : sDefaultBackgroundColor;
+	public CardPresenter(){
+		this(R.style.Theme_Leanback);
+	}
+
+	public CardPresenter(int style){
+		this.style = style;
+	}
+
+//	private static void updateCardBackgroundColor(ImageCardView view, boolean selected) {
+//		int color = selected ? sSelectedBackgroundColor : sDefaultBackgroundColor;
 		// Both background colors should be set because the view's background is temporarily visible
 		// during animations.
-		view.setBackgroundColor(color);
-		view.findViewById(R.id.info_field).setBackgroundColor(color);
-	}
+//		view.setBackgroundColor(color);
+//		view.findViewById(R.id.info_field).setBackgroundColor(color);
+//	}
 
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup parent) {
-		sDefaultBackgroundColor = parent.getResources().getColor(R.color.default_background);
-		sSelectedBackgroundColor = parent.getResources().getColor(R.color.selected_background);
+//		sDefaultBackgroundColor = parent.getResources().getColor(R.color.default_background);
+//		sSelectedBackgroundColor = parent.getResources().getColor(R.color.selected_background);
 		defaultCardImage = parent.getResources().getDrawable(R.drawable.default_background);
 
-		ImageCardView cardView = new ImageCardView(parent.getContext()) {
+		ImageCardView cardView = new ImageCardView(new ContextThemeWrapper(parent.getContext(), style)) {
 			@Override
 			public void setSelected(boolean selected) {
-				updateCardBackgroundColor(this, selected);
+//				updateCardBackgroundColor(this, selected);
 				super.setSelected(selected);
 			}
 		};
-		cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_4);
 
 		cardView.setFocusable(true);
 		cardView.setFocusableInTouchMode(true);
-		updateCardBackgroundColor(cardView, false);
+//		updateCardBackgroundColor(cardView, false);
 		return new ViewHolder(cardView);
 	}
 
@@ -78,7 +84,6 @@ public class CardPresenter extends Presenter {
 		ImageCardView cardView = (ImageCardView) viewHolder.view;
 		cardView.setMainImageScaleType(ImageView.ScaleType.FIT_CENTER);
 		if (item instanceof PersistentConference) {
-			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_4);
 			PersistentConference conference = (PersistentConference) item;
 			cardView.setTitleText(conference.getTitle());
 			cardView.setContentText(conference.getAcronym());
@@ -86,7 +91,6 @@ public class CardPresenter extends Presenter {
 				loadImage(viewHolder.view.getContext(),conference.getLogoUrl(), cardView.getMainImageView());
 			}
 		} else if (item instanceof PersistentEvent) {
-			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_16);
 			PersistentEvent event = (PersistentEvent) item;
 			cardView.setTitleText(event.getTitle());
 			cardView.setContentText(event.getSubtitle());
@@ -95,13 +99,11 @@ public class CardPresenter extends Presenter {
 				loadImage(viewHolder.view.getContext(),event.getThumbUrl(), cardView.getMainImageView());
 			}
 		} else if (item instanceof LiveConference) {
-			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_4);
 			LiveConference con = (LiveConference) item;
 			cardView.setTitleText(con.getConference());
 			cardView.setMainImage(defaultCardImage);
 			cardView.setContentText(con.getDescription());
 		} else if (item instanceof Room) {
-			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_16);
 			Room room = (Room) item;
 			cardView.setTitleText(room.getDisplay());
 			cardView.setContentText(room.getSchedulename());
@@ -109,7 +111,6 @@ public class CardPresenter extends Presenter {
 				loadImage(viewHolder.view.getContext(),room.getThumb(), cardView.getMainImageView());
 			}
 		} else if(item instanceof String) {
-			cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT_4);
 			cardView.setTitleText((String) item);
 			Glide.with(viewHolder.view.getContext())
 					.load(R.drawable.icon)

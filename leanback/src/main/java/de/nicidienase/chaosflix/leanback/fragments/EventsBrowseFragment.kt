@@ -69,7 +69,7 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 		}
 		setupUIElements(conference)
 
-		val cardPresenter = CardPresenter()
+		val cardPresenter = CardPresenter(R.style.EventCardStyle)
 
 		prepareBackgroundManager()
 		onItemViewClickedListener = ItemViewClickedListener(this)
@@ -191,10 +191,9 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 		isHeadersTransitionOnBackEnabled = true
 
 		// set fastLane (or headers) background color
-		brandColor = resources.getColor(R.color.fastlane_background)
+//		brandColor = resources.getColor(R.color.fastlane_background)
 		// set search icon color
-		searchAffordanceColor = resources.getColor(R.color.search_opaque)
-
+//		searchAffordanceColor = resources.getColor(R.color.search_opaque)
 	}
 
 	fun loadImage(url: String, consumer: (Drawable)-> Unit) {

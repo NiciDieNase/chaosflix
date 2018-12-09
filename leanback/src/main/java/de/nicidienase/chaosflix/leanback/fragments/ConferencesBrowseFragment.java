@@ -10,6 +10,8 @@ import android.support.v17.leanback.widget.DividerRow;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
+import android.support.v17.leanback.widget.Presenter;
+import android.support.v17.leanback.widget.PresenterSelector;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.SectionRow;
 
@@ -29,6 +31,7 @@ import de.nicidienase.chaosflix.common.util.ConferenceUtil;
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel;
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory;
 import de.nicidienase.chaosflix.leanback.CardPresenter;
+import de.nicidienase.chaosflix.leanback.HeaderItemPresenter;
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
 
 public class ConferencesBrowseFragment extends BrowseSupportFragment {
@@ -37,21 +40,34 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 	public static final int FRAGMENT = R.id.browse_fragment;
 	private ArrayObjectAdapter rowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 	private ArrayObjectAdapter watchListAdapter;
+	private ArrayObjectAdapter inProgressAdapter;
 	private ListRow watchlistRow;
+	private ListRow inProgressRow;
 
 	private SectionRow streamingSection;
 	private SectionRow recomendationsSectionsRow;
 	private SectionRow conferencesSection;
 
-	private boolean watchlistVisible = false;
 	private BrowseViewModel viewModel;
 
-	private Map<String,ListRow> conferencesGroupRows = new HashMap<>();
+	private Map<String,ListRow>           conferencesGroupRows = new HashMap<>();
+	private DiffCallback<PersistentEvent> eventDiffCallback    = new DiffCallback<PersistentEvent>() {
+		@Override
+		public boolean areItemsTheSame(@NonNull PersistentEvent oldItem, @NonNull PersistentEvent newItem) {
+			return oldItem.getGuid().equals(newItem.getGuid());
+		}
+
+		@Override
+		public boolean areContentsTheSame(@NonNull PersistentEvent oldItem, @NonNull PersistentEvent newItem) {
+			return oldItem.getGuid().equals(newItem.getGuid());
+		}
+	};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setTitle(getResources().getString(R.string.app_name));
+		setBadgeDrawable(getResources().getDrawable(R.drawable.chaosflix_icon));
 
 //		setHeaderPresenterSelector(new PresenterSelector() {
 //			@Override
@@ -65,9 +81,11 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 
 		final BrowseErrorFragment errorFragment =
 				BrowseErrorFragment.showErrorFragment(getFragmentManager(), FRAGMENT);
-		CardPresenter cardPresenter = new CardPresenter();
+		CardPresenter conferencePresenter = new CardPresenter(R.style.ConferenceCardStyle);
+		CardPresenter eventPresenter = new CardPresenter(R.style.EventCardStyle);
 
-		watchListAdapter = new ArrayObjectAdapter(cardPresenter);
+		watchListAdapter = new ArrayObjectAdapter(eventPresenter);
+		inProgressAdapter = new ArrayObjectAdapter(eventPresenter);
 
 		// Streams
 		streamingSection = new SectionRow(new HeaderItem(getString(R.string.livestreams)));
@@ -78,6 +96,8 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 		rowsAdapter.add(recomendationsSectionsRow);
 		watchlistRow = new ListRow(new HeaderItem(getString(R.string.watchlist)), watchListAdapter);
 		rowsAdapter.add(watchlistRow);
+		inProgressRow = new ListRow(new HeaderItem("Continue Watching"), inProgressAdapter);
+		rowsAdapter.add(inProgressRow);
 		rowsAdapter.add(new DividerRow());
 		// Conferences
 		conferencesSection = new SectionRow(getString(R.string.conferences));
@@ -113,11 +133,11 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 					if(conferencesGroupRows.containsKey(group.getName())){
 						row = conferencesGroupRows.get(group.getName());
 					} else {
-						row = buildRow(Collections.EMPTY_LIST, cardPresenter, group.getName(), ConferenceUtil.getStringForTag(group.getName()));
+						row = buildRow(Collections.EMPTY_LIST, conferencePresenter, group.getName(), ConferenceUtil.getStringForTag(group.getName()));
 						rowsAdapter.add(row);
 						conferencesGroupRows.put(group.getName(), row);
 					}
-					bindConferencesToRow(cardPresenter, group, row);
+					bindConferencesToRow(conferencePresenter, group, row);
 
 				}
 			}
@@ -125,17 +145,12 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 
 		viewModel.getBookmarkedEvents().observe(this, (bookmarks) -> {
 			if (bookmarks != null) {
-				watchListAdapter.setItems(bookmarks, new DiffCallback<PersistentEvent>() {
-					@Override
-					public boolean areItemsTheSame(@NonNull PersistentEvent oldItem, @NonNull PersistentEvent newItem) {
-						return oldItem.getGuid().equals(newItem.getGuid());
-					}
-
-					@Override
-					public boolean areContentsTheSame(@NonNull PersistentEvent oldItem, @NonNull PersistentEvent newItem) {
-						return oldItem.getGuid().equals(newItem.getGuid());
-					}
-				});
+				watchListAdapter.setItems(bookmarks, eventDiffCallback);
+			}
+		});
+		viewModel.getInProgressEvents().observe(this, (inProgress) -> {
+			if(inProgress != null){
+				inProgressAdapter.setItems(inProgress, eventDiffCallback);
 			}
 		});
 
@@ -144,7 +159,7 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 //				if (BuildConfig.DEBUG) {
 //					liveConferences.add(LiveConference.getDummyObject());
 //				}
-				addStreams(cardPresenter, liveConferences);
+				addStreams(conferencePresenter, liveConferences);
 //				errorFragment.dismiss();
 			}
 		});
@@ -201,7 +216,7 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 		ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
 		listRowAdapter.addAll(0, conferences);
 		HeaderItem header = new HeaderItem(ConferenceUtil.getStringForTag(tag));
-		header.setDescription(description);
+//		header.setDescription(description);
 		return new ListRow(header, listRowAdapter);
 	}
 
