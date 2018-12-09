@@ -33,8 +33,6 @@
 
         <activity android:name=".leanback.activities.EventsActivity"
                   android:exported="true"/>
-        <activity android:name=".leanback.activities.EventDetailsActivity"
-                  android:exported="true"/>
         <activity android:name=".leanback.activities.DetailsActivity"
                   android:exported="true"/>
         <activity android:name=".leanback.activities.PlayerActivity"/>

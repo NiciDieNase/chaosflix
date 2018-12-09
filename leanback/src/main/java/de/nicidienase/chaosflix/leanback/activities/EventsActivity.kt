@@ -8,6 +8,7 @@ import android.support.v17.leanback.widget.ImageCardView
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
+import android.view.WindowManager
 
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference

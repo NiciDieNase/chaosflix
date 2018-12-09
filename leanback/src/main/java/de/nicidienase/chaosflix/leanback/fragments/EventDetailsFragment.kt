@@ -25,6 +25,7 @@ import android.support.v17.leanback.widget.ListRowPresenter
 import android.support.v17.leanback.widget.OnActionClickedListener
 import android.text.TextUtils
 import android.util.Log
+import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
@@ -57,7 +58,6 @@ import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.EventDetailsDescriptionPresenter
 import de.nicidienase.chaosflix.leanback.activities.ConferencesActivity
 import de.nicidienase.chaosflix.leanback.activities.DetailsActivity
-import de.nicidienase.chaosflix.leanback.activities.EventDetailsActivity
 
 
 class EventDetailsFragment : DetailsSupportFragment() {
@@ -83,9 +83,8 @@ class EventDetailsFragment : DetailsSupportFragment() {
 	private lateinit var playerAdapter: LeanbackPlayerAdapter
 	private lateinit var playerGlue: ChaosMediaPlayerGlue
 
-
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 		val viewModelFactory = ViewModelFactory(requireContext())
 		detailsViewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java)
 		playerViewModel = ViewModelProviders.of(this, viewModelFactory).get(PlayerViewModel::class.java)
@@ -106,7 +105,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
 		val helper = FullWidthDetailsOverviewSharedElementHelper()
 		helper.setSharedElementEnterTransition(activity,
-				EventDetailsActivity.SHARED_ELEMENT_NAME)
+				DetailsActivity.SHARED_ELEMENT_NAME)
 		detailsPresenter.setListener(helper)
 		prepareEntranceTransition()
 
@@ -126,7 +125,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
 			DetailsActivity.TYPE_STREAM -> room?.let { onCreateStream(it, rowsAdapter) }
 		}
 		adapter = this.rowsAdapter
-
 
 		Handler().postDelayed(this::startEntranceTransition, 500);
 	}

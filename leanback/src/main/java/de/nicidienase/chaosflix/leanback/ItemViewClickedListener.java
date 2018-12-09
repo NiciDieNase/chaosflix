@@ -15,43 +15,38 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room;
 import de.nicidienase.chaosflix.leanback.activities.DetailsActivity;
-import de.nicidienase.chaosflix.leanback.activities.EventDetailsActivity;
 import de.nicidienase.chaosflix.leanback.activities.EventsActivity;
 
 public class ItemViewClickedListener implements OnItemViewClickedListener {
 
-	private static final String TAG = ItemViewClickedListener.class.getSimpleName();
-	private Fragment fragment;
+	private static final String   TAG = ItemViewClickedListener.class.getSimpleName();
+	private              Fragment fragment;
 
 	public ItemViewClickedListener(Fragment fragment) {
 		this.fragment = fragment;
 	}
 
 	@Override
-	public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
-							  RowPresenter.ViewHolder rowViewHolder, Row row) {
+	public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
 		Log.d(TAG, "onItemClicked");
 		FragmentActivity activity = fragment.requireActivity();
 		if (item instanceof PersistentConference) {
 			PersistentConference conference = (PersistentConference) item;
-			Bundle transition = ActivityOptionsCompat.makeSceneTransitionAnimation(
-					activity,
-					((ImageCardView) itemViewHolder.view).getMainImageView(),
-					EventsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
-			EventsActivity.start(fragment.requireContext(),conference,transition);
-//			EventsActivity.start(fragment.requireContext(),conference);
+			Bundle transition = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+			                                                                       ((ImageCardView) itemViewHolder.view).getMainImageView(),
+			                                                                       EventsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
+			EventsActivity.start(fragment.requireContext(), conference, transition);
+			//			EventsActivity.start(fragment.requireContext(),conference);
 		} else if (item instanceof PersistentEvent) {
-			Bundle transistion = ActivityOptionsCompat.makeSceneTransitionAnimation(
-					activity,
-					((ImageCardView) itemViewHolder.view).getMainImageView(),
-					EventDetailsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
+			Bundle transistion = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+			                                                                        ((ImageCardView) itemViewHolder.view).getMainImageView(),
+			                                                                        DetailsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
 			PersistentEvent event = (PersistentEvent) item;
-			DetailsActivity.start(fragment.requireContext(),event,transistion);
+			DetailsActivity.start(fragment.requireContext(), event, transistion);
 		} else if (item instanceof Room) {
-			Bundle transition = ActivityOptionsCompat.makeSceneTransitionAnimation(
-					activity,
-					((ImageCardView) itemViewHolder.view).getMainImageView(),
-					EventDetailsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
+			Bundle transition = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+			                                                                       ((ImageCardView) itemViewHolder.view).getMainImageView(),
+			                                                                       DetailsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
 			Room room = (Room) item;
 			DetailsActivity.start(fragment.requireContext(), room, transition);
 		}
