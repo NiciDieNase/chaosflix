@@ -3,7 +3,7 @@ package de.nicidienase.chaosflix.common
 import android.arch.persistence.room.Room
 import android.content.Context
 
-class DatabaseFactory private constructor(context: Context) {
+class DatabaseFactory private constructor() {
 
 	companion object : SingletonHolder<ChaosflixDatabase, Context>({
 		Room.databaseBuilder(

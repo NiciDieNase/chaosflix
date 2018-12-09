@@ -9,7 +9,6 @@ import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.PreferencesManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
-import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
@@ -19,7 +18,6 @@ import java.io.File
 
 class DetailsViewModel(
 		val database: ChaosflixDatabase,
-		recordingApi: RecordingService,
 		val offlineItemManager: OfflineItemManager,
 		val preferencesManager: PreferencesManager,
 		val downloader: Downloader

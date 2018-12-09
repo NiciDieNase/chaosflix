@@ -45,7 +45,7 @@ class OfflineItemManager(context: Context,
 
 	fun updateDownloadStatus(offlineEvents: List<OfflineEvent>) {
 		if (offlineEvents.size > 0) {
-			val downloadRef = offlineEvents.map { it.downloadReference }.toTypedArray().toLongArray() ?: longArrayOf()
+			val downloadRef = offlineEvents.map { it.downloadReference }.toTypedArray().toLongArray()
 			updateDownloads(downloadRef)
 		}
 	}

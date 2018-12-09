@@ -7,6 +7,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.AppBarLayout
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
@@ -85,7 +86,7 @@ class EventDetailsFragment : Fragment() {
 			binding.relatedItemsList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
 		}
 
-		binding.appbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+		binding.appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
 			val v = Math.abs(verticalOffset).toDouble() / appBarLayout.totalScrollRange
 			if (appBarExpanded xor (v > 0.8)) {
 				if (listener != null) {
@@ -94,7 +95,7 @@ class EventDetailsFragment : Fragment() {
 				appBarExpanded = v > 0.8
 //                binding.collapsingToolbar.isTitleEnabled = appBarExpanded
 			}
-		}
+		})
 
 		viewModel = ViewModelProviders.of(
 				requireActivity(),

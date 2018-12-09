@@ -218,9 +218,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 				.load(thumbUrl)
 				.into(object : SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH, DETAIL_THUMB_HEIGHT) {
 					override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-						if (resource != null) {
-							detailsOverview.setImageBitmap(requireContext(), resource)
-						}
+						detailsOverview.setImageBitmap(requireContext(), resource)
 					}
 
 					override fun onLoadFailed(errorDrawable: Drawable?) {
@@ -239,9 +237,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 				.apply(options)
 				.into(object : SimpleTarget<Bitmap>() {
 					override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-						if(resource != null){
-							detailsBackgroundController.coverBitmap = resource
-						}
+						detailsBackgroundController.coverBitmap = resource
 					}
 
 				})

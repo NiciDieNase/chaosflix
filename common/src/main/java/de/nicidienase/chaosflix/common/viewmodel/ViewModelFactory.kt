@@ -30,7 +30,7 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
 		} else if (modelClass.isAssignableFrom(PlayerViewModel::class.java)) {
 			return PlayerViewModel(database) as T
 		} else if (modelClass.isAssignableFrom(DetailsViewModel::class.java)) {
-			return DetailsViewModel(database, recordingApi, offlineItemManager, preferencesManager, downloader) as T
+			return DetailsViewModel(database, offlineItemManager, preferencesManager, downloader) as T
 		} else if (modelClass.isAssignableFrom(PreferencesViewModel::class.java)){
 			return PreferencesViewModel(downloader) as T
 		} else {

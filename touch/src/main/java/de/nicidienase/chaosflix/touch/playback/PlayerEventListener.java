@@ -24,7 +24,7 @@ class PlayerEventListener implements Player.EventListener, SimpleExoPlayer.Video
 	}
 
 	@Override
-	public void onTimelineChanged(Timeline timeline, Object manifest) {
+	public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
 
 	}
 
@@ -68,6 +68,11 @@ class PlayerEventListener implements Player.EventListener, SimpleExoPlayer.Video
 	}
 
 	@Override
+	public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+
+	}
+
+	@Override
 	public void onPlayerError(ExoPlaybackException error) {
 		String errorMessage = error.getCause().getMessage();
 		listener.notifyError(errorMessage);
@@ -75,12 +80,17 @@ class PlayerEventListener implements Player.EventListener, SimpleExoPlayer.Video
 	}
 
 	@Override
-	public void onPositionDiscontinuity() {
+	public void onPositionDiscontinuity(int reason) {
 
 	}
 
 	@Override
 	public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
+	}
+
+	@Override
+	public void onSeekProcessed() {
 
 	}
 

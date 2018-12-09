@@ -10,9 +10,10 @@ import android.support.v17.leanback.widget.DividerRow;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
-import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.SectionRow;
+import android.support.v4.app.FragmentManager;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -78,7 +79,13 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 
 		viewModel = ViewModelProviders.of(this, new ViewModelFactory(requireContext())).get(BrowseViewModel.class);
 
-		final BrowseErrorFragment errorFragment = BrowseErrorFragment.showErrorFragment(getFragmentManager(), FRAGMENT);
+		FragmentManager fragmentManager = getFragmentManager();
+		final BrowseErrorFragment errorFragment;
+		if(fragmentManager != null){
+				errorFragment = BrowseErrorFragment.showErrorFragment(fragmentManager, FRAGMENT);
+		}else {
+			errorFragment = null;
+		}
 		CardPresenter conferencePresenter = new CardPresenter(R.style.ConferenceCardStyle);
 		CardPresenter eventPresenter = new CardPresenter(R.style.EventCardStyle);
 
@@ -113,7 +120,7 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 			if (downloaderEvent.getData() != null) {
 			}
 			if (downloaderEvent.getError() != null) {
-				if (!errorFragment.isDetached()) {
+				if (errorFragment != null && !errorFragment.isDetached()) {
 					errorFragment.setErrorContent(downloaderEvent.getError());
 				}
 			}
@@ -121,14 +128,18 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 				case RUNNING:
 					break;
 				case DONE:
-					errorFragment.dismiss();
+					if(errorFragment != null){
+						errorFragment.dismiss();
+					}
 					break;
 			}
 		});
 
 		viewModel.getConferenceGroups().observe(this, conferenceGroups -> {
 			if (conferenceGroups != null && conferenceGroups.size() > 0) {
-				errorFragment.dismiss();
+				if(errorFragment != null){
+					errorFragment.dismiss();
+				}
 				Collections.sort(conferenceGroups);
 				for (ConferenceGroup group : conferenceGroups) {
 					ListRow row;
@@ -136,7 +147,7 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 					if (conferencesGroupRows.containsKey(group.getName())) {
 						row = conferencesGroupRows.get(group.getName());
 					} else {
-						row = buildRow(Collections.EMPTY_LIST, conferencePresenter, group.getName(), ConferenceUtil.getStringForTag(group.getName()));
+						row = buildRow(new ArrayList<>(), conferencePresenter, group.getName(), ConferenceUtil.getStringForTag(group.getName()));
 						rowsAdapter.add(row);
 						conferencesGroupRows.put(group.getName(), row);
 					}
@@ -168,9 +179,11 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 		});
 	}
 
-	private Row bindConferencesToRow(CardPresenter cardPresenter, ConferenceGroup group, ListRow row) {
+	private void bindConferencesToRow(CardPresenter cardPresenter, ConferenceGroup group, ListRow row) {
 		viewModel.getConferencesByGroup(group.getId()).observe(this, conferences -> {
-			Collections.sort(conferences);
+			if(conferences != null){
+				Collections.sort(conferences);
+			}
 			((ArrayObjectAdapter) row.getAdapter()).setItems(conferences, new DiffCallback<PersistentConference>() {
 				@Override
 				public boolean areItemsTheSame(@NonNull PersistentConference oldItem, @NonNull PersistentConference newItem) {
@@ -183,7 +196,6 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 				}
 			});
 		});
-		return row;
 	}
 
 	private void addStreams(CardPresenter cardPresenter, List<LiveConference> liveConferences) {
