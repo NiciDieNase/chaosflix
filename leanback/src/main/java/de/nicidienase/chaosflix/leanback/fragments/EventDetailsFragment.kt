@@ -23,6 +23,7 @@ import android.support.v17.leanback.widget.FullWidthDetailsOverviewSharedElement
 import android.support.v17.leanback.widget.ListRow
 import android.support.v17.leanback.widget.ListRowPresenter
 import android.support.v17.leanback.widget.OnActionClickedListener
+import android.support.v4.content.ContextCompat
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -212,18 +213,18 @@ class EventDetailsFragment : DetailsSupportFragment() {
 	}
 
 	fun setThumb(thumbUrl: String, detailsOverview: DetailsOverviewRow) {
-		Glide.with(activity)
+		Glide.with(requireActivity())
 				.asBitmap()
 				.load(thumbUrl)
 				.into(object : SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH, DETAIL_THUMB_HEIGHT) {
-					override fun onResourceReady(resource: Bitmap?, transition: Transition<in Bitmap>?) {
+					override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
 						if (resource != null) {
 							detailsOverview.setImageBitmap(requireContext(), resource)
 						}
 					}
 
 					override fun onLoadFailed(errorDrawable: Drawable?) {
-						detailsOverview.setImageDrawable(resources.getDrawable(DEFAULT_DRAWABLE))
+						detailsOverview.setImageDrawable(ContextCompat.getDrawable(requireContext(),DEFAULT_DRAWABLE))
 					}
 				})
 	}
@@ -232,12 +233,12 @@ class EventDetailsFragment : DetailsSupportFragment() {
 		detailsBackgroundController.enableParallax()
 		val options = RequestOptions()
 		options.fallback(R.drawable.default_background)
-		Glide.with(context)
+		Glide.with(requireContext())
 				.asBitmap()
 				.load(url)
 				.apply(options)
 				.into(object : SimpleTarget<Bitmap>() {
-					override fun onResourceReady(resource: Bitmap?, transition: Transition<in Bitmap>?) {
+					override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
 						if(resource != null){
 							detailsBackgroundController.coverBitmap = resource
 						}

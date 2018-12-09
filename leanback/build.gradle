@@ -56,29 +56,22 @@ android {
 dependencies {
     implementation project(':common')
 
-    implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
     implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
     implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
-    implementation 'com.android.support:multidex:1.0.3'
-
     implementation "com.android.support:leanback-v17:${rootProject.ext.supportLibraryVersion}"
     implementation "com.android.support:preference-leanback-v17:${rootProject.ext.supportLibraryVersion}"
+    implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
 
-    implementation "android.arch.lifecycle:extensions:${rootProject.ext.archCompVersion}"
-    implementation "android.arch.lifecycle:common-java8:1.1.1"
-    implementation "android.arch.persistence.room:runtime:${rootProject.ext.archCompVersion}"
+    implementation "android.arch.lifecycle:common-java8:${rootProject.ext.archCompVersion}"
     kapt "android.arch.lifecycle:compiler:${rootProject.ext.archCompVersion}"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:1.2.61"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.2.71"
 
-    implementation 'com.google.android.exoplayer:exoplayer:2.6.1'
+    implementation 'com.google.android.exoplayer:exoplayer:2.7.0'
     implementation 'com.google.android.exoplayer:extension-leanback:2.6.1'
 
-    implementation 'com.github.bumptech.glide:glide:4.3.1'
+    implementation 'com.github.bumptech.glide:glide:4.6.1'
 
-    debugImplementation 'com.facebook.stetho:stetho:1.4.2'
-    debugImplementation 'com.facebook.stetho:stetho-okhttp:1.4.2'
-    debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.4.2'
+
     androidTestImplementation('com.android.support.test:rules:0.5') {
         exclude module: 'support-annotations'
     }

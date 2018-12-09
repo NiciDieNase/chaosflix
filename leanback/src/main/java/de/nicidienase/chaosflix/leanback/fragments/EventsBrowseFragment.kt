@@ -16,6 +16,7 @@ import android.support.v17.leanback.widget.OnItemViewSelectedListener
 import android.support.v17.leanback.widget.Presenter
 import android.support.v17.leanback.widget.Row
 import android.support.v17.leanback.widget.RowPresenter
+import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.util.Log
 import com.bumptech.glide.Glide
@@ -54,7 +55,9 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
-		defaultBackground = resources.getDrawable(R.drawable.default_background)
+		ContextCompat.getDrawable(requireContext(), R.drawable.default_background)?.apply {
+			defaultBackground = this
+		}
 
 		viewModel = ViewModelProviders
 				.of(this, ViewModelFactory(requireContext()))
@@ -204,8 +207,8 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 				.load(url)
 				.apply(options)
 				.into(object : SimpleTarget<Drawable>() {
-					override fun onResourceReady(resource: Drawable?, transition: Transition<in Drawable>?) {
-						consumer.invoke(resource ?: defaultBackground)
+					override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+						consumer.invoke(resource)
 					}
 
 				})

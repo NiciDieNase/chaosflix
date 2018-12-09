@@ -33,6 +33,9 @@ abstract class EventDao: BaseDao<PersistentEvent>() {
     @Query("SELECT * FROM event WHERE guid in (:guids)")
     abstract fun findEventsByGUIDsSync(guids: List<String>): List<PersistentEvent>
 
+    @Query("SELECT * FROM event WHERE isPromoted IS 1")
+    abstract fun findPromotedEvents(): LiveData<List<PersistentEvent>>
+
     @Query("SELECT * FROM event WHERE conferenceId = :id ORDER BY title ASC")
     abstract fun findEventsByConference(id: Long):LiveData<List<PersistentEvent>>
 
