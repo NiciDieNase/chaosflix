@@ -7,17 +7,7 @@
 		<item name="defaultBrandColor">@color/primary_darker</item><!--sidebar-->
 		<item name="defaultBrandColorDark">@color/primary_darker</item>
 		<item name="defaultSearchColor">@color/accent</item>
-
-		<!--<item name="headerStyle">@style/HeaderStyle</item>-->
 	</style>
-
-	<!--<style name="HeaderStyle" parent="@style/Widget.Leanback.Header">-->
-		<!--<item name="android:textAppearance">@style/HeaderTextAppearance</item>-->
-	<!--</style>-->
-
-	<!--<style name="HeaderTextAppearance" parent="@style/TextAppearance.Leanback.Header">-->
-		<!--<item name="android:textColor">@color/accent</item>-->
-	<!--</style>-->
 
     <style name="TitleOnlyStyle" parent="Widget.Leanback.ImageCardViewStyle">
         <item name="lbImageCardViewType">Title</item>
