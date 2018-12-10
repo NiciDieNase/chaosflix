@@ -35,7 +35,7 @@ ext{
     targetSDK = 28
     compileSdkVersion = 28
     buildToolsVersion = "28.0.3"
-    supportLibraryVersion = "27.1.1"
+    supportLibraryVersion = "28.0.0"
     constraintLayoutVersion = "1.1.3"
     archCompVersion = "1.1.1"
 }
