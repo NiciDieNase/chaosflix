@@ -10,9 +10,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.databinding.FragmentLivestreamsBinding
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment
+import de.nicidienase.chaosflix.touch.databinding.FragmentLivestreamsBinding
 
 class LivestreamListFragment : BrowseFragment() {
 
@@ -52,7 +52,7 @@ class LivestreamListFragment : BrowseFragment() {
 		binding.swipeRefreshLayout.setOnRefreshListener {
 			updateList()
 		}
-		snackbar = Snackbar.make(binding.root,R.string.no_livestreams,Snackbar.LENGTH_INDEFINITE)
+		snackbar = Snackbar.make(binding.root, R.string.no_livestreams, Snackbar.LENGTH_INDEFINITE)
 				.setAction(R.string.reload, View.OnClickListener { this.updateList() })
 		return binding.root
 	}
@@ -69,11 +69,11 @@ class LivestreamListFragment : BrowseFragment() {
 //			binding.swipeRefreshLayout.isRefreshing = true
 //		}, 500)
 		binding.swipeRefreshLayout.isRefreshing = true
-		Log.d(TAG,"Refresh starting")
+		Log.d(TAG, "Refresh starting")
 		viewModel.getLivestreams().observe(this, Observer {
 			it?.let { adapter.setContent(it) }
 			binding.swipeRefreshLayout.isRefreshing = false
-			if(it?.size == 0 && !snackbar.isShown){
+			if (it?.size == 0 && !snackbar.isShown) {
 				snackbar.show()
 			} else {
 				snackbar.dismiss()

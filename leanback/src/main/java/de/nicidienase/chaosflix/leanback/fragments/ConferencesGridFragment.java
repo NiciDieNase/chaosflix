@@ -6,7 +6,7 @@ import android.support.v17.leanback.app.VerticalGridSupportFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.VerticalGridPresenter;
 
-import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.leanback.R;
 import de.nicidienase.chaosflix.leanback.CardPresenter;
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
 

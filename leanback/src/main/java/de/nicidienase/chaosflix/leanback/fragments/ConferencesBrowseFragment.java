@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.nicidienase.chaosflix.BuildConfig;
-import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.leanback.R;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent;

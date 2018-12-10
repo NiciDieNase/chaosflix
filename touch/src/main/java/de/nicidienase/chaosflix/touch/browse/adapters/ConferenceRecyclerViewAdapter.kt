@@ -1,8 +1,8 @@
 package de.nicidienase.chaosflix.touch.browse.adapters
 
 import com.squareup.picasso.Picasso
-import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.ConferencesTabBrowseFragment
 import java.util.*
 

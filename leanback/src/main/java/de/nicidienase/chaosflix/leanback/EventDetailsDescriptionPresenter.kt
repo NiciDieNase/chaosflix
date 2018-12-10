@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
-import de.nicidienase.chaosflix.databinding.DetailViewBinding
+import de.nicidienase.chaosflix.leanback.databinding.DetailViewBinding
 
 class EventDetailsDescriptionPresenter(private val context: Context) : Presenter() {
 

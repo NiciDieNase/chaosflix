@@ -9,7 +9,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.touch.R;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup;
 import de.nicidienase.chaosflix.touch.browse.ConferenceGroupFragment;
 

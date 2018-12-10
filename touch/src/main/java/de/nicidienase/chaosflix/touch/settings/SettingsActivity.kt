@@ -3,8 +3,8 @@ package de.nicidienase.chaosflix.touch.settings
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.databinding.ActivitySettingsBinding
+import de.nicidienase.chaosflix.touch.R
+import de.nicidienase.chaosflix.touch.databinding.ActivitySettingsBinding
 
 class SettingsActivity: AppCompatActivity(){
 	override fun onCreate(savedInstanceState: Bundle?) {

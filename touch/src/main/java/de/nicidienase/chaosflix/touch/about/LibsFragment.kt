@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.mikepenz.aboutlibraries.LibsBuilder
 import com.mikepenz.aboutlibraries.ui.LibsSupportFragment
-import de.nicidienase.chaosflix.R
+import de.nicidienase.chaosflix.touch.R
 
 class LibsFragment: DialogFragment(){
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

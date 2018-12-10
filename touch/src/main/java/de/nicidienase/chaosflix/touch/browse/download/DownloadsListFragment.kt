@@ -9,11 +9,10 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
-import de.nicidienase.chaosflix.databinding.FragmentDownloadsBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment
+import de.nicidienase.chaosflix.touch.databinding.FragmentDownloadsBinding
 
 class DownloadsListFragment : BrowseFragment() {
 
@@ -51,7 +50,7 @@ class DownloadsListFragment : BrowseFragment() {
 			binding.list.layoutManager = GridLayoutManager(context, columnCount - 1)
 		}
 		viewModel.getOfflineEvents().observe(this, Observer { events ->
-			if(events != null){
+			if (events != null) {
 				offlineEventAdapter.items = events
 				offlineEventAdapter.notifyDataSetChanged()
 				setLoadingOverlayVisibility(false)
@@ -64,7 +63,7 @@ class DownloadsListFragment : BrowseFragment() {
 
 	override fun onResume() {
 		super.onResume()
-		updateRunnable = object: Runnable {
+		updateRunnable = object : Runnable {
 			override fun run() {
 				viewModel.updateDownloadStatus()
 				handler.postDelayed(this, UPDATE_DELAY)
@@ -86,7 +85,7 @@ class DownloadsListFragment : BrowseFragment() {
 	companion object {
 		private val ARG_COLUMN_COUNT = "column_count"
 
-		fun getInstance(columnCount: Int = 1): DownloadsListFragment{
+		fun getInstance(columnCount: Int = 1): DownloadsListFragment {
 			val fragment = DownloadsListFragment()
 			val args = Bundle()
 			args.putInt(ARG_COLUMN_COUNT, columnCount)
@@ -95,6 +94,6 @@ class DownloadsListFragment : BrowseFragment() {
 		}
 	}
 
-	interface InteractionListener: OnEventSelectedListener {
+	interface InteractionListener : OnEventSelectedListener {
 	}
 }

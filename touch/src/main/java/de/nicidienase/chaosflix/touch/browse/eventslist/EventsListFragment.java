@@ -3,7 +3,6 @@ package de.nicidienase.chaosflix.touch.browse.eventslist;
 import android.app.SearchManager;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -21,14 +20,14 @@ import android.widget.SearchView;
 
 import java.util.List;
 
-import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.touch.R;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader;
-import de.nicidienase.chaosflix.databinding.FragmentEventsListBinding;
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener;
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment;
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter;
+import de.nicidienase.chaosflix.touch.databinding.FragmentEventsListBinding;
 
 public class EventsListFragment extends BrowseFragment implements SearchView.OnQueryTextListener {
 
@@ -42,15 +41,15 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 	public static final int TYPE_BOOKMARKS   = 1;
 	public static final int TYPE_IN_PROGRESS = 2;
 
-	private int columnCount = 1;
+	private int                     columnCount = 1;
 	private OnEventSelectedListener listener;
 
 	private EventRecyclerViewAdapter eventAdapter;
-	private PersistentConference conference;
+	private PersistentConference     conference;
 
-	private LinearLayoutManager       layoutManager;
-	private Snackbar snackbar;
-	private int type;
+	private LinearLayoutManager layoutManager;
+	private Snackbar            snackbar;
+	private int                 type;
 
 	public static EventsListFragment newInstance(int type, PersistentConference conference, int columnCount) {
 		EventsListFragment fragment = new EventsListFragment();
@@ -102,7 +101,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		binding.list.setAdapter(eventAdapter);
 
 		Observer<List<PersistentEvent>> listObserver = persistentEvents -> {
-			if(persistentEvents != null){
+			if (persistentEvents != null) {
 				setEvents(persistentEvents);
 				if (persistentEvents.size() > 0) {
 					setLoadingOverlayVisibility(false);
@@ -125,7 +124,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 				getViewModel().getEventsforConference(conference).observe(this, listObserver);
 				getViewModel().updateEventsForConference(conference).observe(this, state -> {
 					Downloader.DownloaderState downloaderState = state.getState();
-					switch (downloaderState){
+					switch (downloaderState) {
 						case RUNNING:
 							setLoadingOverlayVisibility(true);
 							break;
@@ -133,7 +132,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 							setLoadingOverlayVisibility(false);
 							break;
 					}
-					if(state.getError() != null){
+					if (state.getError() != null) {
 						showSnackbar(state.getError());
 					}
 				});
@@ -143,7 +142,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 	}
 
 	private void showSnackbar(String message) {
-		if(snackbar!= null){
+		if (snackbar != null) {
 			snackbar.dismiss();
 		}
 		snackbar = Snackbar.make(getView(), message, Snackbar.LENGTH_LONG);
@@ -174,7 +173,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
 
 		searchView.setSearchableInfo(searchManager.
-				getSearchableInfo(getActivity().getComponentName()));
+				                                          getSearchableInfo(getActivity().getComponentName()));
 		searchView.setSubmitButtonEnabled(true);
 		searchView.setIconified(false);
 		searchView.setOnQueryTextListener(this);

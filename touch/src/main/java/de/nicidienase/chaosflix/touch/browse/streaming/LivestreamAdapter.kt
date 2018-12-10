@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.squareup.picasso.Picasso
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
-import de.nicidienase.chaosflix.databinding.ItemLiveeventCardviewBinding
+import de.nicidienase.chaosflix.touch.databinding.ItemLiveeventCardviewBinding
 
 class LivestreamAdapter(val listener: LivestreamListFragment.InteractionListener , liveConferences: List<LiveConference> = emptyList()) : RecyclerView.Adapter<LivestreamAdapter.ViewHolder>(){
 

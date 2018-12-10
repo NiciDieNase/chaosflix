@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.touch.R;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup;
 import de.nicidienase.chaosflix.touch.browse.adapters.ConferenceRecyclerViewAdapter;
 

@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.touch
+package de.nicidienase.chaosflix
 
 import android.app.Application
 import android.content.Context

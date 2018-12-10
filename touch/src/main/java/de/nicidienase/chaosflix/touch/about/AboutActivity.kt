@@ -5,8 +5,8 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.databinding.ActivityAboutBinding
+import de.nicidienase.chaosflix.touch.R
+import de.nicidienase.chaosflix.touch.databinding.ActivityAboutBinding
 import mehdi.sakout.aboutpage.AboutPage
 import mehdi.sakout.aboutpage.Element
 

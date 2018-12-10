@@ -8,7 +8,7 @@ import android.widget.Filter
 import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
-import de.nicidienase.chaosflix.R
+import de.nicidienase.chaosflix.touch.R
 import java.util.*
 
 abstract class ItemRecyclerViewAdapter<T>()

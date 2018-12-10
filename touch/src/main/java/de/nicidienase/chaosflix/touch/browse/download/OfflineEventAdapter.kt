@@ -6,10 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.squareup.picasso.Picasso
-import de.nicidienase.chaosflix.R
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
-import de.nicidienase.chaosflix.databinding.ItemOfflineEventBinding
+import de.nicidienase.chaosflix.touch.databinding.ItemOfflineEventBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 

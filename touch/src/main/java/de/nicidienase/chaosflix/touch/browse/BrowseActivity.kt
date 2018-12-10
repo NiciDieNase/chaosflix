@@ -7,7 +7,6 @@ import android.content.res.Configuration
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -20,15 +19,14 @@ import android.transition.TransitionInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import de.nicidienase.chaosflix.R
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
-import de.nicidienase.chaosflix.databinding.ActivityBrowseBinding
-import de.nicidienase.chaosflix.touch.OnEventSelectedListener
-import de.nicidienase.chaosflix.common.PreferencesManager
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import de.nicidienase.chaosflix.touch.databinding.ActivityBrowseBinding
+import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.about.AboutActivity
 import de.nicidienase.chaosflix.touch.browse.download.DownloadsListFragment
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity
@@ -145,7 +143,7 @@ class BrowseActivity : AppCompatActivity(),
 			playStream(streamingItem.conference.conference,
 					streamingItem.room.display,
 					dashStreams.first().urls["dash"]
-					)
+			)
 		} else {
 			streamingItem.room.streams.flatMap { stream ->
 				stream.urls.map { entry ->
@@ -244,8 +242,8 @@ class BrowseActivity : AppCompatActivity(),
 	}
 
 	companion object {
-		fun launch(context: Context){
-			context.startActivity(Intent(context,BrowseActivity::class.java))
+		fun launch(context: Context) {
+			context.startActivity(Intent(context, BrowseActivity::class.java))
 		}
 	}
 }

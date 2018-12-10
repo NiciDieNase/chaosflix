@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
-import de.nicidienase.chaosflix.databinding.FragmentTabPagerLayoutBinding;
+import de.nicidienase.chaosflix.touch.databinding.FragmentTabPagerLayoutBinding;
 import de.nicidienase.chaosflix.touch.browse.adapters.ConferenceGroupsFragmentPager;
 
 

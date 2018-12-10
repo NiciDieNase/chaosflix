@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import de.nicidienase.chaosflix.R
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl

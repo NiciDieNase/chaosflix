@@ -3,7 +3,7 @@ package de.nicidienase.chaosflix.touch.browse.adapters
 import android.support.v4.view.ViewCompat
 import android.view.View
 import com.squareup.picasso.Picasso
-import de.nicidienase.chaosflix.R
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import java.util.*

@@ -23,7 +23,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
@@ -31,6 +30,7 @@ import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.CardPresenter
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
+import de.nicidienase.chaosflix.leanback.R
 import de.nicidienase.chaosflix.leanback.activities.EventsActivity
 import java.net.URI
 import java.net.URISyntaxException

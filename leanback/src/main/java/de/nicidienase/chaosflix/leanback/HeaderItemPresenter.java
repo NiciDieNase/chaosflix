@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.leanback.R;
 
 /**
  * Created by felix on 16.04.17.

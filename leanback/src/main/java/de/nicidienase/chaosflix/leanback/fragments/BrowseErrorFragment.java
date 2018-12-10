@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
-import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.leanback.R;
 
 public class BrowseErrorFragment extends ErrorSupportFragment {
 

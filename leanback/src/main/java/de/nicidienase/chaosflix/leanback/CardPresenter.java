@@ -25,7 +25,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
-import de.nicidienase.chaosflix.R;
+import de.nicidienase.chaosflix.leanback.R;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent;
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference;
