@@ -18,8 +18,8 @@ class AboutActivity : AppCompatActivity() {
 		val binding = DataBindingUtil.setContentView<ActivityAboutBinding>(
 				this, R.layout.activity_about)
 
-		binding.toolbarInc?.toolbar?.title = getString(R.string.about_chaosflix)
-		setSupportActionBar(binding.toolbarInc?.toolbar)
+		binding.toolbarInc.toolbar.title = getString(R.string.about_chaosflix)
+		setSupportActionBar(binding.toolbarInc.toolbar)
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 		val showLibs = Element()
