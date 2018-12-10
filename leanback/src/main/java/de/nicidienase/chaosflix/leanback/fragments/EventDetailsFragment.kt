@@ -213,7 +213,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 	}
 
 	fun setThumb(thumbUrl: String, detailsOverview: DetailsOverviewRow) {
-		Glide.with(requireActivity())
+		Glide.with(requireContext())
 				.asBitmap()
 				.load(thumbUrl)
 				.into(object : SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH, DETAIL_THUMB_HEIGHT) {
