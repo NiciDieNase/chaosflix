@@ -93,6 +93,7 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 
 		watchListAdapter = new ChaosflixEventAdapter(eventPresenter);
 		inProgressAdapter = new ChaosflixEventAdapter(eventPresenter);
+		promotedAdapter = new ChaosflixEventAdapter(eventPresenter);
 
 		streamingSection = new SectionRow(new HeaderItem(getString(R.string.livestreams)));
 		streamsDivider = new DividerRow();
@@ -105,10 +106,13 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 		rowsAdapter.add(streamsDivider);
 
 		// Recomendations
-		rowsAdapter.add(recomendationsSectionsRow);
+		Row promotedRow = new ListRow(new HeaderItem("Promoted"), promotedAdapter);
 		watchlistRow = new ListRow(new HeaderItem(getString(R.string.watchlist)), watchListAdapter);
-		rowsAdapter.add(watchlistRow);
 		inProgressRow = new ListRow(new HeaderItem("Continue Watching"), inProgressAdapter);
+
+		rowsAdapter.add(recomendationsSectionsRow);
+		rowsAdapter.add(promotedRow);
+		rowsAdapter.add(watchlistRow);
 		rowsAdapter.add(inProgressRow);
 		rowsAdapter.add(recomendationsDivider);
 
@@ -167,6 +171,12 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 		viewModel.getInProgressEvents().observe(this, (inProgress) -> {
 			if (inProgress != null) {
 				inProgressAdapter.setItems(inProgress, eventDiffCallback);
+			}
+		});
+
+		viewModel.getPromotedEvents().observe(this, (promoted) -> {
+			if(promoted != null){
+				promotedAdapter.setItems(promoted, eventDiffCallback);
 			}
 		});
 

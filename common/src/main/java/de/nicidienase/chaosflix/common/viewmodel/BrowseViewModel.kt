@@ -69,6 +69,8 @@ class BrowseViewModel(
 				.getAllSync()
 				.map { it.eventGuid } }
 
+	fun getPromotedEvents(): LiveData<List<PersistentEvent>> = database.eventDao().findPromotedEvents()
+
 	private fun updateAndGetEventsForGuids(guidProvider: ()->List<String>):LiveData<List<PersistentEvent>>{
 		val result = MutableLiveData<List<PersistentEvent>>()
 		handler.runOnBackgroundThread {
