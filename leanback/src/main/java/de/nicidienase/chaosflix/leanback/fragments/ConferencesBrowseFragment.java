@@ -10,6 +10,7 @@ import android.support.v17.leanback.widget.DividerRow;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
+import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.SectionRow;
 import android.support.v4.app.FragmentManager;
 
@@ -102,8 +103,8 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 		conferencesSection = new SectionRow(new HeaderItem(getString(R.string.conferences)));
 
 		// Streams
-		rowsAdapter.add(0, streamingSection);
-		rowsAdapter.add(streamsDivider);
+//		rowsAdapter.add(0, streamingSection);
+//		rowsAdapter.add(streamsDivider);
 
 		// Recomendations
 		Row promotedRow = new ListRow(new HeaderItem("Promoted"), promotedAdapter);
@@ -185,7 +186,7 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 				//				if (BuildConfig.DEBUG) {
 				//					liveConferences.add(LiveConference.getDummyObject());
 				//				}
-				addStreams(conferencePresenter, liveConferences);
+				addStreams(eventPresenter, liveConferences);
 				//				errorFragment.dismiss();
 			}
 		});
@@ -225,7 +226,7 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 						// setup list
 						ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
 						listRowAdapter.addAll(listRowAdapter.size(), g.getRooms());
-						int index = getSectionIndex(recomendationsSectionsRow);
+						int index = getSectionIndex(streamsDivider);
 						if (index >= 0) {
 							rowsAdapter.add(index, new ListRow(header, listRowAdapter));
 						} else {
@@ -246,7 +247,7 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 		return new ListRow(header, listRowAdapter);
 	}
 
-	private int getSectionIndex(SectionRow section) {
+	private int getSectionIndex(Row section) {
 		if (rowsAdapter != null && section != null) {
 			return rowsAdapter.indexOf(recomendationsSectionsRow);
 		} else {
