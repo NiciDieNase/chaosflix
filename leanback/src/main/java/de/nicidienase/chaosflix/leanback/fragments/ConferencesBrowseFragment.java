@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.nicidienase.chaosflix.BuildConfig;
+import de.nicidienase.chaosflix.leanback.ChaosflixEventAdapter;
 import de.nicidienase.chaosflix.leanback.R;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
@@ -34,13 +35,14 @@ import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
 
 public class ConferencesBrowseFragment extends BrowseSupportFragment {
 
-	public static final  int                FRAGMENT    = R.id.browse_fragment;
-	private static final String             TAG         = ConferencesBrowseFragment.class.getSimpleName();
-	private              ArrayObjectAdapter rowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
-	private              ArrayObjectAdapter watchListAdapter;
-	private              ArrayObjectAdapter inProgressAdapter;
-	private              ListRow            watchlistRow;
-	private              ListRow            inProgressRow;
+	public static final  int                   FRAGMENT    = R.id.browse_fragment;
+	private static final String                TAG         = ConferencesBrowseFragment.class.getSimpleName();
+	private              ArrayObjectAdapter    rowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
+	private              ChaosflixEventAdapter watchListAdapter;
+	private              ChaosflixEventAdapter inProgressAdapter;
+	private              ChaosflixEventAdapter promotedAdapter;
+	private              ListRow               watchlistRow;
+	private              ListRow               inProgressRow;
 
 	private SectionRow streamingSection;
 	private DividerRow streamsDivider;
@@ -89,8 +91,8 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 		CardPresenter conferencePresenter = new CardPresenter(R.style.ConferenceCardStyle);
 		CardPresenter eventPresenter = new CardPresenter(R.style.EventCardStyle);
 
-		watchListAdapter = new ArrayObjectAdapter(eventPresenter);
-		inProgressAdapter = new ArrayObjectAdapter(eventPresenter);
+		watchListAdapter = new ChaosflixEventAdapter(eventPresenter);
+		inProgressAdapter = new ChaosflixEventAdapter(eventPresenter);
 
 		streamingSection = new SectionRow(new HeaderItem(getString(R.string.livestreams)));
 		streamsDivider = new DividerRow();
