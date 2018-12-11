@@ -15,6 +15,10 @@ open class EventRecyclerViewAdapter(val listener: OnEventSelectedListener) :
 		return Comparator { o1, o2 -> o1.title.compareTo(o2.title) }
 	}
 
+	override fun getItemId(position: Int): Long {
+		return items.get(position).id
+	}
+
 	override fun getFilteredProperties(item: PersistentEvent): List<String> {
 		return listOf(item.title,
 				item.subtitle,

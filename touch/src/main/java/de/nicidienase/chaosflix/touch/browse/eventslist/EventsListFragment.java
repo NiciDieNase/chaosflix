@@ -98,6 +98,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		binding.list.setLayoutManager(layoutManager);
 
 		eventAdapter = new EventRecyclerViewAdapter(listener);
+		eventAdapter.setHasStableIds(true);
 		binding.list.setAdapter(eventAdapter);
 
 		Observer<List<PersistentEvent>> listObserver = persistentEvents -> {

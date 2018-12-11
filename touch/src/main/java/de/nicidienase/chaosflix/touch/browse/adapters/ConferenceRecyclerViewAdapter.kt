@@ -18,6 +18,10 @@ class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseF
 		return null
 	}
 
+	override fun getItemId(position: Int): Long {
+		return items.get(position).id
+	}
+
 	override fun onBindViewHolder(holder: ItemRecyclerViewAdapter<PersistentConference>.ViewHolder, position: Int) {
 		holder.titleText.setText(items[position].title)
 		holder.subtitle.setText(items[position].acronym)

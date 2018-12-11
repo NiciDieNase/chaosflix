@@ -67,6 +67,7 @@ public class ConferenceGroupFragment extends BrowseFragment {
 			recyclerView.setLayoutManager(layoutManager);
 
 			conferencesAdapter = new ConferenceRecyclerViewAdapter(listener);
+			conferencesAdapter.setHasStableIds(true);
 			recyclerView.setAdapter(conferencesAdapter);
 			getViewModel().getConferencesByGroup(conferenceGroup.getId()).observe(this, conferenceList -> {
 				if(conferenceList != null){
