@@ -21,8 +21,8 @@ import android.widget.SearchView;
 import java.util.List;
 
 import de.nicidienase.chaosflix.touch.R;
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event;
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader;
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener;
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment;
@@ -45,13 +45,13 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 	private OnEventSelectedListener listener;
 
 	private EventRecyclerViewAdapter eventAdapter;
-	private PersistentConference     conference;
+	private Conference               conference;
 
 	private LinearLayoutManager layoutManager;
 	private Snackbar            snackbar;
 	private int                 type;
 
-	public static EventsListFragment newInstance(int type, PersistentConference conference, int columnCount) {
+	public static EventsListFragment newInstance(int type, Conference conference, int columnCount) {
 		EventsListFragment fragment = new EventsListFragment();
 		Bundle args = new Bundle();
 		args.putInt(ARG_TYPE, type);
@@ -101,7 +101,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		eventAdapter.setHasStableIds(true);
 		binding.list.setAdapter(eventAdapter);
 
-		Observer<List<PersistentEvent>> listObserver = persistentEvents -> {
+		Observer<List<Event>> listObserver = persistentEvents -> {
 			if (persistentEvents != null) {
 				setEvents(persistentEvents);
 				if (persistentEvents.size() > 0) {
@@ -151,8 +151,8 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		snackbar.show();
 	}
 
-	private void setEvents(List<PersistentEvent> persistentEvents) {
-		eventAdapter.setItems(persistentEvents);
+	private void setEvents(List<Event> events) {
+		eventAdapter.setItems(events);
 
 		Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
 		if (layoutState != null) { layoutManager.onRestoreInstanceState(layoutState); }

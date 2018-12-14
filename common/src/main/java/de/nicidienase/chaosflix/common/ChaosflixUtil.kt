@@ -1,12 +1,12 @@
 package de.nicidienase.chaosflix.common
 
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import java.util.*
 import kotlin.collections.ArrayList
 
 object ChaosflixUtil {
-    fun getOptimalRecording(recordings: List<PersistentRecording>): PersistentRecording? {
-        val result = ArrayList<PersistentRecording>()
+    fun getOptimalRecording(recordings: List<Recording>): Recording? {
+        val result = ArrayList<Recording>()
 
         result.addAll(recordings.filter { it.isHighQuality && it.mimeType == "video/mp4" }.sortedBy { it.language.length })
         result.addAll(recordings.filter { !it.isHighQuality && it.mimeType == "video/mp4" }.sortedBy { it.language.length })

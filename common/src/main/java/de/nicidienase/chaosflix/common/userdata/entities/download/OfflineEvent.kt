@@ -7,8 +7,8 @@ import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 
 @Entity(tableName = "offline_event",
         indices = arrayOf(Index(value = ["event_guid"], unique = true)))
@@ -19,8 +19,8 @@ data class OfflineEvent(
         @ColumnInfo(name = "download_reference") var downloadReference: Long,
         @ColumnInfo(name = "local_path") var localPath: String) : Parcelable {
 
-    @Ignore var event: PersistentEvent? = null
-    @Ignore var recording: PersistentRecording? = null
+    @Ignore var event: Event? = null
+    @Ignore var recording: Recording? = null
 
     constructor(parcel: Parcel) : this(
             parcel.readLong(),
@@ -28,8 +28,8 @@ data class OfflineEvent(
             parcel.readLong(),
             parcel.readLong(),
             parcel.readString() ?: "") {
-        event = parcel.readParcelable(PersistentEvent::class.java.classLoader)
-        recording = parcel.readParcelable(PersistentRecording::class.java.classLoader)
+        event = parcel.readParcelable(Event::class.java.classLoader)
+        recording = parcel.readParcelable(Recording::class.java.classLoader)
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

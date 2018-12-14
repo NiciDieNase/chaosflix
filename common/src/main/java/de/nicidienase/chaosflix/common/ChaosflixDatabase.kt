@@ -10,10 +10,10 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroupDao
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.EventDao
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRelatedEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RelatedEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RecordingDao
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RelatedEventDao
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
@@ -24,10 +24,10 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 
 @Database(entities = arrayOf(
-		PersistentConference::class,
-		PersistentEvent::class,
-		PersistentRecording::class,
-		PersistentRelatedEvent::class,
+		Conference::class,
+		Event::class,
+		Recording::class,
+		RelatedEvent::class,
 		ConferenceGroup::class,
 
 		PlaybackProgress::class,

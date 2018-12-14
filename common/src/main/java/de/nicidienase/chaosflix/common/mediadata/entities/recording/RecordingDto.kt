@@ -2,7 +2,7 @@ package de.nicidienase.chaosflix.common.mediadata.entities.recording
 
 import com.google.gson.annotations.SerializedName;
 
-data class Recording(
+data class RecordingDto(
         var size: Int = 0,
         var length: Int = 0,
         @SerializedName("mime_type")

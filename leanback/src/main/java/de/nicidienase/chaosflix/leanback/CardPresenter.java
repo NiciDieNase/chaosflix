@@ -25,9 +25,8 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
-import de.nicidienase.chaosflix.leanback.R;
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event;
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference;
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room;
 
@@ -83,15 +82,15 @@ public class CardPresenter extends Presenter {
 	public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
 		ImageCardView cardView = (ImageCardView) viewHolder.view;
 		cardView.setMainImageScaleType(ImageView.ScaleType.FIT_CENTER);
-		if (item instanceof PersistentConference) {
-			PersistentConference conference = (PersistentConference) item;
+		if (item instanceof Conference) {
+			Conference conference = (Conference) item;
 			cardView.setTitleText(conference.getTitle());
 			cardView.setContentText(conference.getAcronym());
 			if (conference.getLogoUrl() != null) {
 				loadImage(viewHolder.view.getContext(),conference.getLogoUrl(), cardView.getMainImageView());
 			}
-		} else if (item instanceof PersistentEvent) {
-			PersistentEvent event = (PersistentEvent) item;
+		} else if (item instanceof Event) {
+			Event event = (Event) item;
 			cardView.setTitleText(event.getTitle());
 			cardView.setContentText(event.getSubtitle());
 //			cardView.setContentText(android.text.TextUtils.join(", ",event.getPersons()));

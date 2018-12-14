@@ -7,13 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.squareup.picasso.Picasso
 import de.nicidienase.chaosflix.touch.R
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.touch.databinding.ItemOfflineEventBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 
-class OfflineEventAdapter(var items: List<Pair<OfflineEvent, PersistentEvent>>, val viewModel: BrowseViewModel, val listener: OnEventSelectedListener) :
+class OfflineEventAdapter(var items: List<Pair<OfflineEvent, Event>>, val viewModel: BrowseViewModel, val listener: OnEventSelectedListener) :
 		RecyclerView.Adapter<OfflineEventAdapter.ViewHolder>() {
 
 	override fun onBindViewHolder(holder: OfflineEventAdapter.ViewHolder, position: Int) {

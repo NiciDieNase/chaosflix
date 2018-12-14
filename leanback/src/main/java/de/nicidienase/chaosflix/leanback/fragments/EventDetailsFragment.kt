@@ -51,7 +51,7 @@ import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.Util
 import de.nicidienase.chaosflix.leanback.R
 import de.nicidienase.chaosflix.common.ChaosflixUtil
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.common.viewmodel.PlayerViewModel
@@ -66,7 +66,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 	private lateinit var detailsViewModel: DetailsViewModel
 	private lateinit var playerViewModel: PlayerViewModel
 
-	private var event: PersistentEvent? = null
+	private var event: Event? = null
 	private var room: Room? = null
 
 	private lateinit var rowsAdapter: ArrayObjectAdapter
@@ -130,7 +130,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 		Handler().postDelayed(this::startEntranceTransition, 500);
 	}
 
-	private fun onCreateRecording(event: PersistentEvent, rowsAdapter: ArrayObjectAdapter) {
+	private fun onCreateRecording(event: Event, rowsAdapter: ArrayObjectAdapter) {
 
 		val detailsOverview = DetailsOverviewRow(event)
 		val actionAdapter = ArrayObjectAdapter()

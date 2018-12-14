@@ -2,38 +2,38 @@ package de.nicidienase.chaosflix.common.mediadata.entities.recording
 
 import com.google.gson.annotations.SerializedName
 
-data class Event(@SerializedName("conference_id")
+data class EventDto(@SerializedName("conference_id")
                  var conferenceId: Long = 0,
-                 var guid: String = "",
-                 var title: String = "",
-                 var subtitle: String? = "",
-                 var slug: String = "",
-                 var link: String? = "",
-                 var description: String? = "",
-                 @SerializedName("original_language")
+                    var guid: String = "",
+                    var title: String = "",
+                    var subtitle: String? = "",
+                    var slug: String = "",
+                    var link: String? = "",
+                    var description: String? = "",
+                    @SerializedName("original_language")
                  var originalLanguage: String = "",
-                 var persons: Array<String>?,
-                 var tags: Array<String>?,
-                 var date: String? = "",
-                 @SerializedName("release_date")
+                    var persons: Array<String>?,
+                    var tags: Array<String>?,
+                    var date: String? = "",
+                    @SerializedName("release_date")
                  var releaseDate: String = "",
-                 @SerializedName("updated_at")
+                    @SerializedName("updated_at")
                  var updatedAt: String = "",
-                 var length: Long = 0,
-                 @SerializedName("thumb_url")
+                    var length: Long = 0,
+                    @SerializedName("thumb_url")
                  var thumbUrl: String = "",
-                 @SerializedName("poster_url")
+                    @SerializedName("poster_url")
                  var posterUrl: String = "",
-                 @SerializedName("frontend_link")
+                    @SerializedName("frontend_link")
                  var frontendLink: String? = "",
-                 var url: String = "",
-                 @SerializedName("conference_url")
+                    var url: String = "",
+                    @SerializedName("conference_url")
                  var conferenceUrl: String = "",
-                 var recordings: List<Recording>?,
-                 var related: List<RelatedEvent>?,
-                 @SerializedName("promoted")
+                    var recordings: List<RecordingDto>?,
+                    var related: List<RelatedEventDto>?,
+                    @SerializedName("promoted")
                  var isPromoted: Boolean = false
-) : Comparable<Event> {
+) : Comparable<EventDto> {
 
     var eventID: Long
     @SerializedName("view_count")
@@ -57,12 +57,12 @@ data class Event(@SerializedName("conference_id")
     fun getSpeakerString(): String?
         = persons?.joinToString(", ")
 
-    override fun compareTo(other: Event): Int {
+    override fun compareTo(other: EventDto): Int {
         return slug.compareTo(other.slug)
     }
 
     override fun equals(other: Any?): Boolean {
-        return if (other is Event) {
+        return if (other is EventDto) {
             guid == other.guid
         } else {
             super.equals(other)

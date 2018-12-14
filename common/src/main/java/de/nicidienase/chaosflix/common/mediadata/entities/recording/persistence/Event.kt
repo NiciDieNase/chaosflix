@@ -9,11 +9,11 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.text.Html
 import android.text.Spanned
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.Event
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventDto
 
 @Entity(tableName = "event",
 		foreignKeys = arrayOf(ForeignKey(
-				entity = PersistentConference::class,
+				entity = Conference::class,
 				onDelete = ForeignKey.CASCADE,
 				parentColumns = (arrayOf("id")),
 				childColumns = arrayOf("conferenceId"))),
@@ -22,7 +22,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.Event
 			Index("frontendLink"),
 			Index("conferenceId")])
 
-data class PersistentEvent(
+data class Event(
 		@PrimaryKey(autoGenerate = true)
 		var id: Long = 0,
 		var conferenceId: Long = 0,
@@ -50,12 +50,12 @@ data class PersistentEvent(
 
 		var tags: Array<String>? = null,
 		@Ignore
-		var related: List<PersistentRelatedEvent>? = null,
+		var related: List<RelatedEvent>? = null,
 		@Ignore
-		var recordings: List<PersistentRecording>? = null
-) : Parcelable, Comparable<PersistentEvent> {
+		var recordings: List<Recording>? = null
+) : Parcelable, Comparable<Event> {
 
-	override fun compareTo(other: PersistentEvent): Int = title.compareTo(other.title)
+	override fun compareTo(other: Event): Int = title.compareTo(other.title)
 
 	constructor(parcel: Parcel) : this(
 			parcel.readLong(),
@@ -81,12 +81,12 @@ data class PersistentEvent(
 			parcel.readInt(),
 			parcel.createStringArray(),
 			parcel.createStringArray(),
-			parcel.createTypedArrayList(PersistentRelatedEvent),
-			parcel.createTypedArrayList(PersistentRecording)) {
+			parcel.createTypedArrayList(RelatedEvent),
+			parcel.createTypedArrayList(Recording)) {
 	}
 
 	@Ignore
-	constructor(event: Event,conferenceId: Long = 0) : this(
+	constructor(event: EventDto, conferenceId: Long = 0) : this(
 			conferenceId = conferenceId,
 			guid = event.guid,
 			title = event.title,
@@ -107,8 +107,8 @@ data class PersistentEvent(
 			viewCount = event.viewCount,
 			persons = event.persons,
 			tags = event.tags,
-			related = event.related?.map { PersistentRelatedEvent(event.eventID,it) },
-			recordings = event.recordings?.map { PersistentRecording(it) }
+			related = event.related?.map { RelatedEvent(event.eventID,it) },
+			recordings = event.recordings?.map { Recording(it) }
 	)
 
 	fun getExtendedDescription(): Spanned {
@@ -156,12 +156,12 @@ data class PersistentEvent(
 		return 0
 	}
 
-	companion object CREATOR : Parcelable.Creator<PersistentEvent> {
-		override fun createFromParcel(parcel: Parcel): PersistentEvent {
-			return PersistentEvent(parcel)
+	companion object CREATOR : Parcelable.Creator<Event> {
+		override fun createFromParcel(parcel: Parcel): Event {
+			return Event(parcel)
 		}
 
-		override fun newArray(size: Int): Array<PersistentEvent?> {
+		override fun newArray(size: Int): Array<Event?> {
 			return arrayOfNulls(size)
 		}
 	}

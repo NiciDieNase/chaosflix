@@ -4,14 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.leanback.R
 
 class EventsActivity : FragmentActivity() {
 
 	public override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		val conference = intent.getParcelableExtra<PersistentConference>(CONFERENCE)
+		val conference = intent.getParcelableExtra<Conference>(CONFERENCE)
 		if (conference.tagsUsefull) {
 			// TODO determin if we should use a Browse or a Grid layout
 		}
@@ -26,7 +26,7 @@ class EventsActivity : FragmentActivity() {
 
 		@JvmStatic
 		@JvmOverloads
-		fun start(context: Context, conference: PersistentConference, transition: Bundle? = null) {
+		fun start(context: Context, conference: Conference, transition: Bundle? = null) {
 			val i = Intent(context, EventsActivity::class.java)
 			i.putExtra(EventsActivity.CONFERENCE, conference)
 			if (transition != null) {

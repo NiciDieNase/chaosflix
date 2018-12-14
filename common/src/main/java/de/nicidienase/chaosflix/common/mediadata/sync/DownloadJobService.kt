@@ -3,8 +3,8 @@ package de.nicidienase.chaosflix.common.mediadata.sync
 import android.content.Intent
 import android.support.v4.app.JobIntentService
 import de.nicidienase.chaosflix.common.DatabaseFactory
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 
 class DownloadJobService : JobIntentService() {
@@ -19,12 +19,12 @@ class DownloadJobService : JobIntentService() {
 			when (entityType) {
 				ENTITY_KEY_CONFERENCES -> downloader.updateConferencesAndGroups()
 				ENTITY_KEY_EVENTS -> {
-					val item = intent.getParcelableExtra<PersistentConference>(ITEM_KEY)
-					downloader.updateEventsForConference(item as PersistentConference)
+					val item = intent.getParcelableExtra<Conference>(ITEM_KEY)
+					downloader.updateEventsForConference(item as Conference)
 				}
 				ENTITY_KEY_RECORDINGS -> {
-					val item = intent.getParcelableExtra<PersistentEvent>(ITEM_KEY)
-					downloader.updateRecordingsForEvent(item as PersistentEvent)
+					val item = intent.getParcelableExtra<Event>(ITEM_KEY)
+					downloader.updateRecordingsForEvent(item as Event)
 				}
 			}
 		}

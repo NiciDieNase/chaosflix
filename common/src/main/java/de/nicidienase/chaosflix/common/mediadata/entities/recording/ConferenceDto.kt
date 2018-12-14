@@ -3,7 +3,7 @@ package de.nicidienase.chaosflix.common.mediadata.entities.recording
 import com.google.gson.annotations.SerializedName;
 
 
-data class Conference(
+data class ConferenceDto(
         @SerializedName("acronym")            var acronym: String = "",
         @SerializedName("aspect_ratio")       var aspectRatio: String = "",
         @SerializedName("updated_at")         var updatedAt: String = "",
@@ -16,14 +16,14 @@ data class Conference(
         @SerializedName("images_url")         var imagesUrl: String = "",
         @SerializedName("recordings_url")     var recordingsUrl: String = "",
         @SerializedName("url")                var url: String = "",
-        @SerializedName("events")             var events: List<Event>?
+        @SerializedName("events")             var events: List<EventDto>?
 
-) : Comparable<Conference> {
+) : Comparable<ConferenceDto> {
 
     val conferenceID: Long
         get() = getIdFromUrl()
 
-    val eventsByTags: Map<String, List<Event>>
+    val eventsByTags: Map<String, List<EventDto>>
         get() = getEventsMap(events)
     val sensibleTags: Set<String>
     val tagsUsefull: Boolean
@@ -33,19 +33,19 @@ data class Conference(
         tagsUsefull = sensibleTags.size > 0
     }
 
-    private fun getEventsMap(events: List<Event>?): Map<String,List<Event>>{
-        val map = HashMap<String, MutableList<Event>>()
-        val untagged = ArrayList<Event>()
+    private fun getEventsMap(events: List<EventDto>?): Map<String,List<EventDto>>{
+        val map = HashMap<String, MutableList<EventDto>>()
+        val untagged = ArrayList<EventDto>()
         if (events != null) {
             for (event in events) {
                 if (event.tags?.isNotEmpty() ?: false) {
                     for (tag in event.tags!!) {
 
-                        val list: MutableList<Event>
+                        val list: MutableList<EventDto>
                         if (map.keys.contains(tag)) {
                             list = map[tag]!!
                         } else {
-                            list = ArrayList<Event>()
+                            list = ArrayList<EventDto>()
                             map.put(tag, list)
                         }
                         list.add(event)
@@ -82,7 +82,7 @@ data class Conference(
         return hashSet
     }
 
-    override fun compareTo(other: Conference): Int {
+    override fun compareTo(other: ConferenceDto): Int {
         return slug.compareTo(other.slug)
     }
 }

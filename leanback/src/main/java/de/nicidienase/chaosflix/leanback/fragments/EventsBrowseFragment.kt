@@ -23,8 +23,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
@@ -66,7 +66,7 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 
 		val conference = this.activity
 				?.intent
-				?.getParcelableExtra<PersistentConference>(EventsActivity.CONFERENCE)
+				?.getParcelableExtra<Conference>(EventsActivity.CONFERENCE)
 		if (conference == null) {
 			throw IllegalStateException("No conference passed")
 		}
@@ -126,9 +126,9 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 		}
 	}
 
-	private fun getEventsByTags(events: List<PersistentEvent>, conferenceAcronym: String): Map<String, List<PersistentEvent>> {
-		val eventsByTags = HashMap<String, MutableList<PersistentEvent>>()
-		val other = LinkedList<PersistentEvent>()
+	private fun getEventsByTags(events: List<Event>, conferenceAcronym: String): Map<String, List<Event>> {
+		val eventsByTags = HashMap<String, MutableList<Event>>()
+		val other = LinkedList<Event>()
 		for (event in events) {
 			val tags: List<String> = event
 					.tags
@@ -151,7 +151,7 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 		return eventsByTags
 	}
 
-	private fun updateRowForTag(cardPresenter: CardPresenter, tag: String, items: List<PersistentEvent>): Row {
+	private fun updateRowForTag(cardPresenter: CardPresenter, tag: String, items: List<Event>): Row {
 		var row = eventRows[tag]
 		val header: HeaderItem
 		val listRowAdapter: ArrayObjectAdapter
@@ -165,12 +165,12 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 			listRowAdapter = row.adapter as ArrayObjectAdapter
 		}
 		Collections.sort(items)
-		listRowAdapter.setItems(items, object : DiffCallback<PersistentEvent>() {
-			override fun areItemsTheSame(oldItem: PersistentEvent, newItem: PersistentEvent): Boolean {
+		listRowAdapter.setItems(items, object : DiffCallback<Event>() {
+			override fun areItemsTheSame(oldItem: Event, newItem: Event): Boolean {
 				return oldItem.guid == newItem.guid
 			}
 
-			override fun areContentsTheSame(oldItem: PersistentEvent, newItem: PersistentEvent): Boolean {
+			override fun areContentsTheSame(oldItem: Event, newItem: Event): Boolean {
 				return oldItem.title == newItem.title
 			}
 
@@ -185,7 +185,7 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 		activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
 	}
 
-	private fun setupUIElements(conference: PersistentConference) {
+	private fun setupUIElements(conference: Conference) {
 
 		loadImage(conference.logoUrl, this::setBadgeDrawable)
 		title = conference.title // Badge, when set, takes precedent
@@ -232,7 +232,7 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 	private inner class ItemViewSelectedListener : OnItemViewSelectedListener {
 		override fun onItemSelected(itemViewHolder: Presenter.ViewHolder, item: Any,
 		                            rowViewHolder: RowPresenter.ViewHolder, row: Row) {
-			if (item is PersistentEvent) {
+			if (item is Event) {
 				try {
 					backgroundURI = URI(item.posterUrl)
 				} catch (e: URISyntaxException) {

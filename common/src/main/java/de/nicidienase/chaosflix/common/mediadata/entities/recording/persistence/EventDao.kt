@@ -4,57 +4,57 @@ import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 
 @Dao
-abstract class EventDao: BaseDao<PersistentEvent>() {
+abstract class EventDao: BaseDao<Event>() {
 
     @Query("SELECT * FROM event")
-    abstract fun getAllEvents(): LiveData<List<PersistentEvent>>
+    abstract fun getAllEvents(): LiveData<List<Event>>
 
     @Query("SELECT * FROM event")
-    abstract fun getAllEventsSync(): List<PersistentEvent>
+    abstract fun getAllEventsSync(): List<Event>
 
     @Query("SELECT * FROM event WHERE title LIKE :search ORDER BY title ASC")
-    abstract fun findEventByTitle(search: String): LiveData<PersistentEvent?>
+    abstract fun findEventByTitle(search: String): LiveData<Event?>
 
     @Query("SELECT * FROM event WHERE id = :id ORDER BY title ASC")
-    abstract fun findEventById(id: Long): LiveData<PersistentEvent?>
+    abstract fun findEventById(id: Long): LiveData<Event?>
 
     @Query("SELECT * FROM event WHERE guid = :guid LIMIT 1")
-    abstract fun findEventByGuid(guid: String): LiveData<PersistentEvent?>
+    abstract fun findEventByGuid(guid: String): LiveData<Event?>
 
     @Query("SELECT * FROM event WHERE guid = :guid LIMIT 1")
-    abstract fun findEventByGuidSync(guid: String): PersistentEvent?
+    abstract fun findEventByGuidSync(guid: String): Event?
 
     @Query("SELECT * FROM event WHERE id in (:ids)")
-    abstract fun findEventsByIds(ids: LongArray): LiveData<List<PersistentEvent>>
+    abstract fun findEventsByIds(ids: LongArray): LiveData<List<Event>>
 
     @Query("SELECT * FROM event WHERE guid in (:ids)")
-    abstract fun findEventsByGUIDs(ids: List<String>): LiveData<List<PersistentEvent>>
+    abstract fun findEventsByGUIDs(ids: List<String>): LiveData<List<Event>>
 
     @Query("SELECT * FROM event WHERE guid in (:guids)")
-    abstract fun findEventsByGUIDsSync(guids: List<String>): List<PersistentEvent>
+    abstract fun findEventsByGUIDsSync(guids: List<String>): List<Event>
 
     @Query("SELECT * FROM event WHERE isPromoted IS 1")
-    abstract fun findPromotedEvents(): LiveData<List<PersistentEvent>>
+    abstract fun findPromotedEvents(): LiveData<List<Event>>
 
     @Query("SELECT * FROM event WHERE conferenceId = :id ORDER BY title ASC")
-    abstract fun findEventsByConference(id: Long):LiveData<List<PersistentEvent>>
+    abstract fun findEventsByConference(id: Long):LiveData<List<Event>>
 
     @Query("SELECT * FROM event WHERE conferenceId = :id ORDER BY title ASC")
-    abstract fun findEventsByConferenceSync(id: Long):List<PersistentEvent>
+    abstract fun findEventsByConferenceSync(id: Long):List<Event>
 
     @Query("SELECT * FROM event INNER JOIN watchlist_item WHERE event.guid = watchlist_item.event_guid")
-    abstract fun findBookmarkedEvents(): LiveData<List<PersistentEvent>>
+    abstract fun findBookmarkedEvents(): LiveData<List<Event>>
 
     @Query("SELECT * FROM event INNER JOIN playback_progress WHERE event.guid = playback_progress.event_guid")
-    abstract fun findInProgressEvents(): LiveData<List<PersistentEvent>>
+    abstract fun findInProgressEvents(): LiveData<List<Event>>
 
     @Query("SELECT * FROM event WHERE frontendLink = :url ")
-    abstract fun findEventsByFrontendurl(url: String):LiveData<PersistentEvent?>
+    abstract fun findEventsByFrontendurl(url: String):LiveData<Event?>
 
     @Query("DElETE FROM event")
     abstract fun delete()
 
-    override fun updateOrInsertInternal(item: PersistentEvent) {
+    override fun updateOrInsertInternal(item: Event) {
         if (item.id != 0L) {
             update(item)
         } else {

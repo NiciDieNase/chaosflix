@@ -4,14 +4,14 @@ import java.util.*
 import kotlin.collections.HashMap
 
 
-data class ConferencesWrapper(var conferences: List<Conference>) {
+data class ConferencesWrapper(var conferences: List<ConferenceDto>) {
 
 
-    val conferencesMap: Map<String, List<Conference>>
+    val conferencesMap: Map<String, List<ConferenceDto>>
         get() = generateConferencesMap()
 
-    private fun generateConferencesMap(): HashMap<String, MutableList<Conference>> {
-        val map = HashMap<String,MutableList<Conference>>()
+    private fun generateConferencesMap(): HashMap<String, MutableList<ConferenceDto>> {
+        val map = HashMap<String,MutableList<ConferenceDto>>()
         for (conference in conferences) {
             val split = conference.slug.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             when (split[0]) {
@@ -58,11 +58,11 @@ data class ConferencesWrapper(var conferences: List<Conference>) {
         return map
     }
 
-    private fun getListForTag(map: MutableMap<String,MutableList<Conference>>, s: String): MutableList<Conference> {
+    private fun getListForTag(map: MutableMap<String,MutableList<ConferenceDto>>, s: String): MutableList<ConferenceDto> {
         if (map.keys.contains(s)) {
             return map[s]!!
         } else {
-            val list = ArrayList<Conference>()
+            val list = ArrayList<ConferenceDto>()
             map.put(s, list)
             return list
         }

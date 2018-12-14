@@ -24,8 +24,8 @@ import de.nicidienase.chaosflix.BuildConfig;
 import de.nicidienase.chaosflix.leanback.ChaosflixEventAdapter;
 import de.nicidienase.chaosflix.leanback.R;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup;
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event;
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Group;
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference;
 import de.nicidienase.chaosflix.common.util.ConferenceUtil;
@@ -54,15 +54,15 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 
 	private BrowseViewModel viewModel;
 
-	private Map<String, ListRow>          conferencesGroupRows = new HashMap<>();
-	private DiffCallback<PersistentEvent> eventDiffCallback    = new DiffCallback<PersistentEvent>() {
+	private Map<String, ListRow> conferencesGroupRows = new HashMap<>();
+	private DiffCallback<Event>  eventDiffCallback    = new DiffCallback<Event>() {
 		@Override
-		public boolean areItemsTheSame(@NonNull PersistentEvent oldItem, @NonNull PersistentEvent newItem) {
+		public boolean areItemsTheSame(@NonNull Event oldItem, @NonNull Event newItem) {
 			return oldItem.getGuid().equals(newItem.getGuid());
 		}
 
 		@Override
-		public boolean areContentsTheSame(@NonNull PersistentEvent oldItem, @NonNull PersistentEvent newItem) {
+		public boolean areContentsTheSame(@NonNull Event oldItem, @NonNull Event newItem) {
 			return oldItem.getGuid().equals(newItem.getGuid());
 		}
 	};
@@ -103,8 +103,8 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 		conferencesSection = new SectionRow(new HeaderItem(getString(R.string.conferences)));
 
 		// Streams
-//		rowsAdapter.add(0, streamingSection);
-//		rowsAdapter.add(streamsDivider);
+		rowsAdapter.add(0, streamingSection);
+		rowsAdapter.add(streamsDivider);
 
 		// Recomendations
 		Row promotedRow = new ListRow(new HeaderItem("Promoted"), promotedAdapter);
@@ -183,11 +183,8 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 
 		viewModel.getLivestreams().observe(this, liveConferences -> {
 			if (liveConferences != null) {
-				//				if (BuildConfig.DEBUG) {
-				//					liveConferences.add(LiveConference.getDummyObject());
-				//				}
+
 				addStreams(eventPresenter, liveConferences);
-				//				errorFragment.dismiss();
 			}
 		});
 	}
@@ -197,14 +194,14 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 			if(conferences != null){
 				Collections.sort(conferences);
 			}
-			((ArrayObjectAdapter) row.getAdapter()).setItems(conferences, new DiffCallback<PersistentConference>() {
+			((ArrayObjectAdapter) row.getAdapter()).setItems(conferences, new DiffCallback<Conference>() {
 				@Override
-				public boolean areItemsTheSame(@NonNull PersistentConference oldItem, @NonNull PersistentConference newItem) {
+				public boolean areItemsTheSame(@NonNull Conference oldItem, @NonNull Conference newItem) {
 					return oldItem.getUrl().equals(newItem.getUrl());
 				}
 
 				@Override
-				public boolean areContentsTheSame(@NonNull PersistentConference oldItem, @NonNull PersistentConference newItem) {
+				public boolean areContentsTheSame(@NonNull Conference oldItem, @NonNull Conference newItem) {
 					return oldItem.getUpdatedAt().equals(newItem.getUpdatedAt());
 				}
 			});
@@ -239,7 +236,7 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 		}
 	}
 
-	private ListRow buildRow(List<PersistentConference> conferences, CardPresenter cardPresenter, String tag, String description) {
+	private ListRow buildRow(List<Conference> conferences, CardPresenter cardPresenter, String tag, String description) {
 		ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(cardPresenter);
 		listRowAdapter.addAll(0, conferences);
 		HeaderItem header = new HeaderItem(ConferenceUtil.getStringForTag(tag));

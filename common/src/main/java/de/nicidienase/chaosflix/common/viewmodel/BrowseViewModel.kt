@@ -7,8 +7,8 @@ import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.PreferencesManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
 import de.nicidienase.chaosflix.common.mediadata.network.StreamingService
@@ -49,30 +49,30 @@ class BrowseViewModel(
 	fun getConferencesByGroup(groupId: Long)
 			= database.conferenceDao().findConferenceByGroup(groupId)
 
-	fun getEventsforConference(conference: PersistentConference)
+	fun getEventsforConference(conference: Conference)
 			= database.eventDao().findEventsByConference(conference.id)
 
 	fun updateConferences()
 			= downloader.updateConferencesAndGroups()
 
-	fun updateEventsForConference(conference: PersistentConference)
+	fun updateEventsForConference(conference: Conference)
 			= downloader.updateEventsForConference(conference)
 
-	fun getBookmarkedEvents(): LiveData<List<PersistentEvent>> = updateAndGetEventsForGuids {
+	fun getBookmarkedEvents(): LiveData<List<Event>> = updateAndGetEventsForGuids {
 		database
 				.watchlistItemDao()
 				.getAllSync().map { it.eventGuid } }
 
-	fun getInProgressEvents(): LiveData<List<PersistentEvent>> = updateAndGetEventsForGuids {
+	fun getInProgressEvents(): LiveData<List<Event>> = updateAndGetEventsForGuids {
 		database
 				.playbackProgressDao()
 				.getAllSync()
 				.map { it.eventGuid } }
 
-	fun getPromotedEvents(): LiveData<List<PersistentEvent>> = database.eventDao().findPromotedEvents()
+	fun getPromotedEvents(): LiveData<List<Event>> = database.eventDao().findPromotedEvents()
 
-	private fun updateAndGetEventsForGuids(guidProvider: ()->List<String>):LiveData<List<PersistentEvent>>{
-		val result = MutableLiveData<List<PersistentEvent>>()
+	private fun updateAndGetEventsForGuids(guidProvider: ()->List<String>):LiveData<List<Event>>{
+		val result = MutableLiveData<List<Event>>()
 		handler.runOnBackgroundThread {
 			val guids = guidProvider.invoke()
 			val events = guids.map { downloader.updateSingleEvent(it) }.filterNotNull()
@@ -103,23 +103,23 @@ class BrowseViewModel(
 		return result
 	}
 
-	fun getOfflineEvents(): LiveData<List<Pair<OfflineEvent,PersistentEvent>>> {
-		val result = MutableLiveData<List<Pair<OfflineEvent, PersistentEvent>>>()
+	fun getOfflineEvents(): LiveData<List<Pair<OfflineEvent,Event>>> {
+		val result = MutableLiveData<List<Pair<OfflineEvent, Event>>>()
 		handler.runOnBackgroundThread {
 			val offlineEventMap = database.offlineEventDao().getAllSync()
 					.map { it.eventGuid to it }.toMap()
 			val persistentEventMap = database.eventDao().findEventsByGUIDsSync(offlineEventMap.keys.toList())
 					.map { it.guid to it }.toMap()
 
-			val resultList = ArrayList<Pair<OfflineEvent, PersistentEvent>>()
+			val resultList = ArrayList<Pair<OfflineEvent, Event>>()
 			for (key in offlineEventMap.keys){
 				val offlineEvent = offlineEventMap[key]
-				var persistentEvent: PersistentEvent? = persistentEventMap[key]
-				if(persistentEvent == null){
-					persistentEvent = downloader.updateSingleEvent(key)
+				var event: Event? = persistentEventMap[key]
+				if(event == null){
+					event = downloader.updateSingleEvent(key)
 				}
-				if(persistentEvent != null && offlineEvent != null){
-					resultList.add(Pair(offlineEvent, persistentEvent))
+				if(event != null && offlineEvent != null){
+					resultList.add(Pair(offlineEvent, event))
 				}
 			}
 			result.postValue(resultList)

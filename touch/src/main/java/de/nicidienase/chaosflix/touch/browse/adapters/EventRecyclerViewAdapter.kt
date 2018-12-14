@@ -4,14 +4,14 @@ import android.support.v4.view.ViewCompat
 import android.view.View
 import com.squareup.picasso.Picasso
 import de.nicidienase.chaosflix.touch.R
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import java.util.*
 
 open class EventRecyclerViewAdapter(val listener: OnEventSelectedListener) :
-		ItemRecyclerViewAdapter<PersistentEvent>() {
+		ItemRecyclerViewAdapter<Event>() {
 
-	override fun getComparator(): Comparator<in PersistentEvent>? {
+	override fun getComparator(): Comparator<in Event>? {
 		return Comparator { o1, o2 -> o1.title.compareTo(o2.title) }
 	}
 
@@ -19,7 +19,7 @@ open class EventRecyclerViewAdapter(val listener: OnEventSelectedListener) :
 		return items.get(position).id
 	}
 
-	override fun getFilteredProperties(item: PersistentEvent): List<String> {
+	override fun getFilteredProperties(item: Event): List<String> {
 		return listOf(item.title,
 				item.subtitle,
 				item.description,
@@ -31,7 +31,7 @@ open class EventRecyclerViewAdapter(val listener: OnEventSelectedListener) :
 	override val layout = R.layout.item_event_cardview
 	var showTags: Boolean = false
 
-	override fun onBindViewHolder(holder: ItemRecyclerViewAdapter<PersistentEvent>.ViewHolder, position: Int) {
+	override fun onBindViewHolder(holder: ItemRecyclerViewAdapter<Event>.ViewHolder, position: Int) {
 		val event = items[position]
 
 		holder.titleText.text = event.title

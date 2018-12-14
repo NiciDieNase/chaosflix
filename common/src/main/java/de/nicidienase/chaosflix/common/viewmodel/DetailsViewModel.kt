@@ -7,8 +7,8 @@ import android.os.Bundle
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.PreferencesManager
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
@@ -30,14 +30,14 @@ class DetailsViewModel(
 
 	private val handler = ThreadHandler()
 
-	fun setEvent(persistentEvent: PersistentEvent): LiveData<PersistentEvent?> {
-		downloader.updateRecordingsForEvent(persistentEvent)
-		return database.eventDao().findEventByGuid(persistentEvent.guid)
+	fun setEvent(event: Event): LiveData<Event?> {
+		downloader.updateRecordingsForEvent(event)
+		return database.eventDao().findEventByGuid(event.guid)
 	}
 
-	fun getRecordingForEvent(persistentEvent: PersistentEvent): LiveData<List<PersistentRecording>> {
-		downloader.updateRecordingsForEvent(persistentEvent)
-		return database.recordingDao().findRecordingByEvent(persistentEvent.id)
+	fun getRecordingForEvent(event: Event): LiveData<List<Recording>> {
+		downloader.updateRecordingsForEvent(event)
+		return database.recordingDao().findRecordingByEvent(event.id)
 	}
 
 	fun getBookmarkForEvent(guid: String): LiveData<WatchlistItem?> =
@@ -55,7 +55,7 @@ class DetailsViewModel(
 		}
 	}
 
-	fun download(event: PersistentEvent, recording: PersistentRecording)
+	fun download(event: Event, recording: Recording)
 			= offlineItemManager.download(event, recording)
 
 	private fun fileExists(guid: String): Boolean {
@@ -63,7 +63,7 @@ class DetailsViewModel(
 		return offlineItem != null && File(offlineItem.localPath).exists()
 	}
 
-	fun deleteOfflineItem(event: PersistentEvent): LiveData<Boolean> {
+	fun deleteOfflineItem(event: Event): LiveData<Boolean> {
 		val result = MutableLiveData<Boolean>()
 		handler.runOnBackgroundThread {
 			database.offlineEventDao().getByEventGuidSync(event.guid)?.let {
@@ -74,8 +74,8 @@ class DetailsViewModel(
 		return result
 	}
 
-	fun getRelatedEvents(event: PersistentEvent): LiveData<List<PersistentEvent>>{
-		val data = MutableLiveData<List<PersistentEvent>>()
+	fun getRelatedEvents(event: Event): LiveData<List<Event>>{
+		val data = MutableLiveData<List<Event>>()
 		handler.runOnBackgroundThread {
 			val guids = database.relatedEventDao().getRelatedEventsForEventSync(event.id).map { it.relatedEventGuid }
 			data.postValue(database.eventDao().findEventsByGUIDsSync(guids))
@@ -83,7 +83,7 @@ class DetailsViewModel(
 		return data
 	}
 
-	fun playEvent(event: PersistentEvent) {
+	fun playEvent(event: Event) {
 		handler.runOnBackgroundThread {
 
 			val offlineEvent = database.offlineEventDao().getByEventGuidSync(event.guid)
@@ -106,13 +106,13 @@ class DetailsViewModel(
 		}
 	}
 
-	fun playRecording(recording: PersistentRecording){
+	fun playRecording(recording: Recording){
 		val bundle = Bundle()
 		bundle.putParcelable(KEY_PLAY_RECORDING, recording)
 		state.postValue(LiveEvent(DetailsViewModelState.PlayOnlineItem, data = bundle))
 	}
 
-	fun offlineItemExists(event: PersistentEvent): LiveData<Boolean> {
+	fun offlineItemExists(event: Event): LiveData<Boolean> {
 		val liveData = MutableLiveData<Boolean>()
 		handler.runOnBackgroundThread {
 			database.offlineEventDao().getByEventGuidSync(event.guid)

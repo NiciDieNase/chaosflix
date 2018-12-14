@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import de.nicidienase.chaosflix.touch.R
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 
 class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInteractionListener {
@@ -20,8 +20,8 @@ class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInter
 			val contentType = intent.getStringExtra(CONTENT_TYPE)
 			var playbackItem = PlaybackItem("Empty", "Empty", "", "")
 			if (contentType.equals(CONTENT_RECORDING)) {
-				val event = intent.extras.getParcelable<PersistentEvent>(EVENT_KEY)
-				val recording = intent.extras.getParcelable<PersistentRecording>(RECORDING_KEY)
+				val event = intent.extras.getParcelable<Event>(EVENT_KEY)
+				val recording = intent.extras.getParcelable<Recording>(RECORDING_KEY)
 				val recordingUri = intent.extras.getString(OFFLINE_URI)
 				playbackItem = PlaybackItem(
 						event?.title ?: "",
@@ -64,7 +64,7 @@ class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInter
 
 		val OFFLINE_URI = "recording_uri"
 
-		fun launch(context: Context, event: PersistentEvent, uri: String) {
+		fun launch(context: Context, event: Event, uri: String) {
 			val i = Intent(context, PlayerActivity::class.java)
 			i.putExtra(CONTENT_TYPE, CONTENT_RECORDING)
 			i.putExtra(PlayerActivity.EVENT_KEY, event)
@@ -72,7 +72,7 @@ class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInter
 			context.startActivity(i)
 		}
 
-		fun launch(context: Context, event: PersistentEvent, recording: PersistentRecording) {
+		fun launch(context: Context, event: Event, recording: Recording) {
 			val i = Intent(context, PlayerActivity::class.java)
 			i.putExtra(CONTENT_TYPE, CONTENT_RECORDING)
 			i.putExtra(PlayerActivity.EVENT_KEY, event)

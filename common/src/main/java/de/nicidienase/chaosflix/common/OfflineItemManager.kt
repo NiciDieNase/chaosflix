@@ -14,8 +14,8 @@ import android.net.Uri
 import android.os.Environment
 import android.preference.PreferenceManager
 import android.util.Log
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventDao
 import de.nicidienase.chaosflix.common.util.ThreadHandler
@@ -88,7 +88,7 @@ class OfflineItemManager(context: Context,
 		}
 	}
 
-	fun download(event: PersistentEvent, recording: PersistentRecording): LiveData<Boolean> {
+	fun download(event: Event, recording: Recording): LiveData<Boolean> {
 		val result = MutableLiveData<Boolean>()
 		handler.runOnBackgroundThread {
 

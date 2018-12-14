@@ -6,11 +6,11 @@ import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.Conference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferenceDto
 
 @Entity(tableName = "conference",
 		indices = [Index(value = ["acronym"], unique = true)])
-data class PersistentConference(
+data class Conference(
 		@PrimaryKey(autoGenerate = true)
 		var id: Long = 0,
 		var conferenceGroupId: Long = 0,
@@ -27,7 +27,7 @@ data class PersistentConference(
 		var updatedAt: String = "",
 		var tagsUsefull: Boolean = false,
 		var lastReleasedAt: String = ""
-) : Parcelable, Comparable<PersistentConference> {
+) : Parcelable, Comparable<Conference> {
 
 	@Ignore
 	constructor(parcel: Parcel) : this(
@@ -49,7 +49,7 @@ data class PersistentConference(
 	}
 
 	@Ignore
-	constructor(con: Conference) : this(
+	constructor(con: ConferenceDto) : this(
 			acronym = con.acronym,
 			aspectRatio = con.aspectRatio,
 			title = con.title,
@@ -64,7 +64,7 @@ data class PersistentConference(
 			tagsUsefull = con.tagsUsefull,
 			lastReleasedAt = con.lastReleaseAt ?: "")
 
-	override fun compareTo(other: PersistentConference) = lastReleasedAt.compareTo(other.lastReleasedAt) * -1
+	override fun compareTo(other: Conference) = lastReleasedAt.compareTo(other.lastReleasedAt) * -1
 
 	override fun writeToParcel(parcel: Parcel, flags: Int) {
 		parcel.writeLong(id)
@@ -88,12 +88,12 @@ data class PersistentConference(
 		return 0
 	}
 
-	companion object CREATOR : Parcelable.Creator<PersistentConference> {
-		override fun createFromParcel(parcel: Parcel): PersistentConference {
-			return PersistentConference(parcel)
+	companion object CREATOR : Parcelable.Creator<Conference> {
+		override fun createFromParcel(parcel: Parcel): Conference {
+			return Conference(parcel)
 		}
 
-		override fun newArray(size: Int): Array<PersistentConference?> {
+		override fun newArray(size: Int): Array<Conference?> {
 			return arrayOfNulls(size)
 		}
 	}

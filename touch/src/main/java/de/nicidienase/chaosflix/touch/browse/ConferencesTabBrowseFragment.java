@@ -8,10 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.jetbrains.annotations.NotNull;
-
 import de.nicidienase.chaosflix.R;
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference;
 import de.nicidienase.chaosflix.touch.databinding.FragmentTabPagerLayoutBinding;
 import de.nicidienase.chaosflix.touch.browse.adapters.ConferenceGroupsFragmentPager;
 
@@ -122,6 +120,6 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 	}
 
 	public interface OnInteractionListener {
-		void onConferenceSelected(PersistentConference conference);
+		void onConferenceSelected(Conference conference);
 	}
 }

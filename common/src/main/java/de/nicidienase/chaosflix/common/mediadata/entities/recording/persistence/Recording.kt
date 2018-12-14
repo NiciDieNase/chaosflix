@@ -7,11 +7,11 @@ import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.Recording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.RecordingDto
 
 @Entity(tableName = "recording",
 		foreignKeys = arrayOf(ForeignKey(
-				entity = PersistentEvent::class,
+				entity = Event::class,
 				onDelete = ForeignKey.CASCADE,
 				parentColumns = (arrayOf("id")),
 				childColumns = arrayOf("eventId"))),
@@ -19,7 +19,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.Recording
 				Index("eventId"),
 				Index("url", unique = true),
 				Index("backendId", unique = true)))
-data class PersistentRecording(
+data class Recording(
 		@PrimaryKey(autoGenerate = true)
 		var id: Long = 0,
 		var eventId: Long = 0,
@@ -64,7 +64,7 @@ data class PersistentRecording(
 	}
 
 	@Ignore
-	constructor(rec: Recording, eventId: Long = 0) : this(
+	constructor(rec: RecordingDto, eventId: Long = 0) : this(
 			eventId = eventId,
 			size = rec.size,
 			length = rec.length,
@@ -108,12 +108,12 @@ data class PersistentRecording(
 		return 0
 	}
 
-	companion object CREATOR : Parcelable.Creator<PersistentRecording> {
-		override fun createFromParcel(parcel: Parcel): PersistentRecording {
-			return PersistentRecording(parcel)
+	companion object CREATOR : Parcelable.Creator<Recording> {
+		override fun createFromParcel(parcel: Parcel): Recording {
+			return Recording(parcel)
 		}
 
-		override fun newArray(size: Int): Array<PersistentRecording?> {
+		override fun newArray(size: Int): Array<Recording?> {
 			return arrayOfNulls(size)
 		}
 	}

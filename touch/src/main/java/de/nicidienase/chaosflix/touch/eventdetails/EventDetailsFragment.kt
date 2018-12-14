@@ -24,8 +24,8 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.ChaosflixUtil
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventDetailsBinding
@@ -38,7 +38,7 @@ class EventDetailsFragment : Fragment() {
 	private var listener: OnEventDetailsFragmentInteractionListener? = null
 
 	private var appBarExpanded: Boolean = false
-	private lateinit var event: PersistentEvent
+	private lateinit var event: Event
 	private var watchlistItem: WatchlistItem? = null
 	private var eventSelectedListener: OnEventSelectedListener? = null
 	private var selectDialog: AlertDialog? = null
@@ -56,7 +56,7 @@ class EventDetailsFragment : Fragment() {
 //        sharedElementEnterTransition = transition
 
 		if (arguments != null) {
-			val parcelable = arguments?.getParcelable<PersistentEvent>(EVENT_PARAM)
+			val parcelable = arguments?.getParcelable<Event>(EVENT_PARAM)
 			if(parcelable != null){
 				event = parcelable
 			} else {
@@ -137,14 +137,14 @@ class EventDetailsFragment : Fragment() {
 					}
 				}
 				DetailsViewModel.DetailsViewModelState.PlayOnlineItem -> {
-					liveEvent.data?.getParcelable<PersistentRecording>(DetailsViewModel.KEY_PLAY_RECORDING)?.let {
+					liveEvent.data?.getParcelable<Recording>(DetailsViewModel.KEY_PLAY_RECORDING)?.let {
 						listener?.playItem(event,it)
 					}
 
 				}
 				DetailsViewModel.DetailsViewModelState.SelectRecording -> {
-					val selectItems: Array<PersistentRecording> =
-							liveEvent.data?.getParcelableArray(DetailsViewModel.KEY_SELECT_RECORDINGS) as Array<PersistentRecording>
+					val selectItems: Array<Recording> =
+							liveEvent.data?.getParcelableArray(DetailsViewModel.KEY_SELECT_RECORDINGS) as Array<Recording>
 					selectRecording(selectItems.asList()) {
 						viewModel.playRecording(it)
 					}
@@ -175,19 +175,19 @@ class EventDetailsFragment : Fragment() {
 		viewModel.playEvent(event)
 	}
 
-	private fun selectRecording(persistentRecordings: List<PersistentRecording>, action: (recording: PersistentRecording) -> Unit) {
-		val stream = ChaosflixUtil.getOptimalRecording(persistentRecordings)
+	private fun selectRecording(recordings: List<Recording>, action: (recording: Recording) -> Unit) {
+		val stream = ChaosflixUtil.getOptimalRecording(recordings)
 		if (stream != null && viewModel.getAutoselectRecording()) {
 			action.invoke(stream)
 		} else {
-			val items: List<String> = persistentRecordings.map { getStringForRecording(it) }
+			val items: List<String> = recordings.map { getStringForRecording(it) }
 			selectRecordingFromList(items, DialogInterface.OnClickListener { dialogInterface, i ->
-				action.invoke(persistentRecordings[i])
+				action.invoke(recordings[i])
 			})
 		}
 	}
 
-	private fun getStringForRecording(recording: PersistentRecording): String {
+	private fun getStringForRecording(recording: Recording): String {
 		return "${if (recording.isHighQuality) "HD" else "SD"}  ${recording.folder}  [${recording.language}]"
 	}
 
@@ -304,7 +304,7 @@ class EventDetailsFragment : Fragment() {
 		}
 	}
 
-	private fun downloadRecording(recording: PersistentRecording) {
+	private fun downloadRecording(recording: Recording) {
 		viewModel.download(event, recording).observe(this, Observer {
 			if (it != null) {
 				val message = if (it) "Download started" else "Error starting download"
@@ -316,15 +316,15 @@ class EventDetailsFragment : Fragment() {
 	interface OnEventDetailsFragmentInteractionListener {
 		fun onToolbarStateChange()
 		fun invalidateOptionsMenu()
-		fun playItem(event: PersistentEvent, recording: PersistentRecording)
-		fun playItem(event: PersistentEvent, uri: String)
+		fun playItem(event: Event, recording: Recording)
+		fun playItem(event: Event, uri: String)
 	}
 
 	companion object {
 		private val TAG = EventDetailsFragment::class.java.simpleName
 		private val EVENT_PARAM = "event_param"
 
-		fun newInstance(event: PersistentEvent): EventDetailsFragment {
+		fun newInstance(event: Event): EventDetailsFragment {
 			val fragment = EventDetailsFragment()
 			val args = Bundle()
 			args.putParcelable(EVENT_PARAM, event)

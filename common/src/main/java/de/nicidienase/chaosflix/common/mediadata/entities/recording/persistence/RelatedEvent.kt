@@ -7,11 +7,11 @@ import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.RelatedEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.RelatedEventDto
 
 @Entity(tableName = "related",
 		foreignKeys = arrayOf(ForeignKey(
-				entity = PersistentEvent::class,
+				entity = Event::class,
 				onDelete = ForeignKey.CASCADE,
 				parentColumns = arrayOf("id"),
 				childColumns = arrayOf("parentEventId"))),
@@ -19,7 +19,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.RelatedEvent
 		)
 
 
-class PersistentRelatedEvent(
+class RelatedEvent(
 		@PrimaryKey(autoGenerate = true)
 		var id: Long = 0,
 		var parentEventId: Long,
@@ -34,7 +34,7 @@ class PersistentRelatedEvent(
 	}
 
 	@Ignore
-	constructor(parentEventId: Long, relatedEvent: RelatedEvent): this(
+	constructor(parentEventId: Long, relatedEvent: RelatedEventDto): this(
 			parentEventId= parentEventId,
 			relatedEventGuid = relatedEvent.eventGuid,
 			weight = relatedEvent.weight)
@@ -50,12 +50,12 @@ class PersistentRelatedEvent(
 		return 0
 	}
 
-	companion object CREATOR : Parcelable.Creator<PersistentRelatedEvent> {
-		override fun createFromParcel(parcel: Parcel): PersistentRelatedEvent {
-			return PersistentRelatedEvent(parcel)
+	companion object CREATOR : Parcelable.Creator<RelatedEvent> {
+		override fun createFromParcel(parcel: Parcel): RelatedEvent {
+			return RelatedEvent(parcel)
 		}
 
-		override fun newArray(size: Int): Array<PersistentRelatedEvent?> {
+		override fun newArray(size: Int): Array<RelatedEvent?> {
 			return arrayOfNulls(size)
 		}
 	}

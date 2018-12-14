@@ -20,8 +20,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import de.nicidienase.chaosflix.touch.R
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentConference
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
@@ -130,7 +130,7 @@ class BrowseActivity : AppCompatActivity(),
 		return super.onOptionsItemSelected(item)
 	}
 
-	override fun onConferenceSelected(conference: PersistentConference) {
+	override fun onConferenceSelected(conference: Conference) {
 		EventsListActivity.start(this, conference)
 	}
 
@@ -237,7 +237,7 @@ class BrowseActivity : AppCompatActivity(),
 		ft.commit()
 	}
 
-	override fun onEventSelected(event: PersistentEvent) {
+	override fun onEventSelected(event: Event) {
 		EventDetailsActivity.launch(this, event)
 	}
 

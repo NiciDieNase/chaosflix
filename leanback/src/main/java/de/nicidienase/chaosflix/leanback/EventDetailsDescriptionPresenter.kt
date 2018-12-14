@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
 import de.nicidienase.chaosflix.leanback.databinding.DetailViewBinding
 
@@ -23,7 +23,7 @@ class EventDetailsDescriptionPresenter(private val context: Context) : Presenter
 			throw IllegalStateException("Wrong ViewHolder")
 		}
 		val dataHolder: DetailDataHolder
-		if (item is PersistentEvent) {
+		if (item is Event) {
 			val sb = StringBuilder()
 			val speaker = TextUtils.join(", ", item.persons ?: emptyArray())
 			sb.append(item.description)
@@ -51,7 +51,7 @@ class EventDetailsDescriptionPresenter(private val context: Context) : Presenter
 
 	inner class DetailDataHolder internal constructor(val title: String, val subtitle: String?, val speakers: String, val description: String) {
 
-		internal constructor(event: PersistentEvent) : this(
+		internal constructor(event: Event) : this(
 				event.title,
 				event.subtitle,
 				TextUtils.join(", ", event.persons!!),

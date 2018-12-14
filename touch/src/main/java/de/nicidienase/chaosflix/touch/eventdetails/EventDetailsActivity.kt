@@ -10,8 +10,8 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import de.nicidienase.chaosflix.touch.R
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentEvent
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.PersistentRecording
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
@@ -30,7 +30,7 @@ class EventDetailsActivity : AppCompatActivity(),
 		viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(DetailsViewModel::class.java)
 		viewModel.writeExternalStorageAllowed = hasWriteStoragePermission()
 
-		val event = intent.getParcelableExtra<PersistentEvent>(EXTRA_EVENT)
+		val event = intent.getParcelableExtra<Event>(EXTRA_EVENT)
 
 		showFragmentForEvent(event)
 		if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -39,7 +39,7 @@ class EventDetailsActivity : AppCompatActivity(),
 		}
 	}
 
-	private fun showFragmentForEvent(event: PersistentEvent, addToBackStack: Boolean = false) {
+	private fun showFragmentForEvent(event: Event, addToBackStack: Boolean = false) {
 		val detailsFragment = EventDetailsFragment.newInstance(event)
 
 		detailsFragment.allowEnterTransitionOverlap = true
@@ -55,7 +55,7 @@ class EventDetailsActivity : AppCompatActivity(),
 		ft.commit()
 	}
 
-	override fun onEventSelected(event: PersistentEvent) {
+	override fun onEventSelected(event: Event) {
 		showFragmentForEvent(event, true)
 	}
 
@@ -63,11 +63,11 @@ class EventDetailsActivity : AppCompatActivity(),
 		invalidateOptionsMenu()
 	}
 
-	override fun playItem(event: PersistentEvent, recording: PersistentRecording) {
+	override fun playItem(event: Event, recording: Recording) {
 		PlayerActivity.launch(this, event, recording)
 	}
 
-	override fun playItem(event: PersistentEvent, uri: String) {
+	override fun playItem(event: Event, uri: String) {
 		PlayerActivity.launch(this, event, uri)
 	}
 
@@ -98,7 +98,7 @@ class EventDetailsActivity : AppCompatActivity(),
 		private val EXTRA_EVENT = "extra_event"
 		private val EXTRA_URI = "extra_uri"
 
-		fun launch(context: Context, event: PersistentEvent) {
+		fun launch(context: Context, event: Event) {
 			val intent = Intent(context, EventDetailsActivity::class.java)
 			intent.putExtra(EXTRA_EVENT, event)
 			context.startActivity(intent)
