@@ -158,7 +158,7 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 						rowsAdapter.add(row);
 						conferencesGroupRows.put(group.getName(), row);
 					}
-					bindConferencesToRow(conferencePresenter, group, row);
+					bindConferencesToRow(group, row);
 
 				}
 			}
@@ -183,13 +183,32 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 
 		viewModel.getLivestreams().observe(this, liveConferences -> {
 			if (liveConferences != null) {
+				int startStreams = rowsAdapter.indexOf(streamingSection);
+				int endStreams = rowsAdapter.indexOf(streamsDivider);
+				if(liveConferences.size() > 0){
+					List<Row> streamRows = buildStreamRows(eventPresenter, liveConferences);
+					int insertIndex;
+					if(startStreams == -1 && endStreams == -1){
+						streamRows.add(0,streamingSection);
+						streamRows.add(streamRows.size()-1, streamsDivider);
+						insertIndex = 0;
+					} else {
+						insertIndex = rowsAdapter.indexOf(streamsDivider);
+					}
+					rowsAdapter.addAll(insertIndex,streamRows);
+				} else {
+					if(startStreams != -1 && endStreams != -1){
+						rowsAdapter.removeItems(startStreams, endStreams-startStreams);
+					} else {
+						// nothing to do, items not in list
+					}
 
-				addStreams(eventPresenter, liveConferences);
+				}
 			}
 		});
 	}
 
-	private void bindConferencesToRow(CardPresenter cardPresenter, ConferenceGroup group, ListRow row) {
+	private void bindConferencesToRow(ConferenceGroup group, ListRow row) {
 		viewModel.getConferencesByGroup(group.getId()).observe(this, conferences -> {
 			if(conferences != null){
 				Collections.sort(conferences);
@@ -208,13 +227,14 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 		});
 	}
 
-	private void addStreams(CardPresenter cardPresenter, List<LiveConference> liveConferences) {
+	private List<Row> buildStreamRows(CardPresenter cardPresenter, List<LiveConference> liveConferences) {
+		List<Row> rows = new ArrayList<>();
 		if (liveConferences.size() > 0) {
 			for (LiveConference con : liveConferences) {
 				if (!con.getConference().equals("Sendeschleife") || BuildConfig.DEBUG) {
 					for (Group g : con.getGroups()) {
 						// setup header
-						rowsAdapter.add(new SectionRow(new HeaderItem(con.getConference())));
+						rows.add(new SectionRow(new HeaderItem(con.getConference())));
 
 						String group = g.getGroup().length() > 0 ? g.getGroup() : con.getConference();
 						HeaderItem header = new HeaderItem(group);
@@ -225,15 +245,16 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 						listRowAdapter.addAll(listRowAdapter.size(), g.getRooms());
 						int index = getSectionIndex(streamsDivider);
 						if (index >= 0) {
-							rowsAdapter.add(index, new ListRow(header, listRowAdapter));
+							rows.add(index, new ListRow(header, listRowAdapter));
 						} else {
-							rowsAdapter.add(new ListRow(header, listRowAdapter));
+							rows.add(new ListRow(header, listRowAdapter));
 						}
 					}
 				}
 
 			}
 		}
+		return rows;
 	}
 
 	private ListRow buildRow(List<Conference> conferences, CardPresenter cardPresenter, String tag, String description) {
