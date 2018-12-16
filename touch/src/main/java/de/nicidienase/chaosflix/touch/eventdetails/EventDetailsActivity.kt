@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
@@ -16,6 +17,8 @@ import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.playback.PlayerActivity
+import pl.droidsonroids.casty.Casty
+import pl.droidsonroids.casty.MediaData
 
 class EventDetailsActivity : AppCompatActivity(),
 		EventDetailsFragment.OnEventDetailsFragmentInteractionListener,
@@ -24,9 +27,14 @@ class EventDetailsActivity : AppCompatActivity(),
 
 	private val PERMISSION_REQUEST_CODE: Int = 1;
 
+	private lateinit var casty: Casty
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_eventdetails)
+
+		casty = Casty.create(this).withMiniController()
+
 		viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(DetailsViewModel::class.java)
 		viewModel.writeExternalStorageAllowed = hasWriteStoragePermission()
 
@@ -63,12 +71,23 @@ class EventDetailsActivity : AppCompatActivity(),
 		invalidateOptionsMenu()
 	}
 
-	override fun playItem(event: Event, recording: Recording) {
-		PlayerActivity.launch(this, event, recording)
-	}
-
-	override fun playItem(event: Event, uri: String) {
-		PlayerActivity.launch(this, event, uri)
+	override fun playItem(event: Event, recording: Recording, localFileUri: String?) {
+		if(casty.isConnected) {
+			val mediaData = MediaData.Builder(recording.recordingUrl)
+					.setStreamType(MediaData.STREAM_TYPE_BUFFERED)
+					.setContentType(recording.mimeType)
+					.setTitle(event.title)
+					.setSubtitle(event.subtitle)
+					.addPhotoUrl(event.thumbUrl)
+					.build()
+			casty.player.loadMediaAndPlay(mediaData)
+		} else {
+			if(localFileUri != null){
+				PlayerActivity.launch(this, event, localFileUri)
+			} else {
+				PlayerActivity.launch(this, event, recording)
+			}
+		}
 	}
 
 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -81,6 +100,13 @@ class EventDetailsActivity : AppCompatActivity(),
 				invalidateOptionsMenu()
 			}
 		}
+	}
+	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+		super.onCreateOptionsMenu(menu)
+		menu?.let {
+			casty.addMediaRouteMenuItem(it)
+		}
+		return true
 	}
 
 	private fun requestWriteStoragePermission() {

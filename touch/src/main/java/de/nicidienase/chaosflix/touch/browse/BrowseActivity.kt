@@ -16,6 +16,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.transition.TransitionInflater
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -36,6 +37,7 @@ import de.nicidienase.chaosflix.touch.browse.streaming.StreamingItem
 import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
 import de.nicidienase.chaosflix.touch.playback.PlayerActivity
 import de.nicidienase.chaosflix.touch.settings.SettingsActivity
+import pl.droidsonroids.casty.Casty
 
 class BrowseActivity : AppCompatActivity(),
 		ConferencesTabBrowseFragment.OnInteractionListener,
@@ -55,9 +57,13 @@ class BrowseActivity : AppCompatActivity(),
 	protected val numColumns: Int
 		get() = resources.getInteger(R.integer.num_columns)
 
+	private lateinit var casty: Casty
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_browse)
+
+		casty = Casty.create(this).withMiniController()
 
 		val navigationView = findViewById<NavigationView>(R.id.navigation_view)
 		navigationView.setNavigationItemSelectedListener { item ->
@@ -121,6 +127,14 @@ class BrowseActivity : AppCompatActivity(),
 	override fun onConfigurationChanged(newConfig: Configuration) {
 		super.onConfigurationChanged(newConfig)
 		drawerToggle.onConfigurationChanged(newConfig)
+	}
+
+	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+		super.onCreateOptionsMenu(menu)
+		menu?.let {
+			casty.addMediaRouteMenuItem(it)
+		}
+		return true
 	}
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -80,8 +80,8 @@ class EventDetailsFragment : Fragment() {
 			(activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 		}
 
-		eventSelectedListener?.let {
-			relatedEventsAdapter = RelatedEventsRecyclerViewAdapter(eventSelectedListener!!)
+		eventSelectedListener?.let { listener ->
+			relatedEventsAdapter = RelatedEventsRecyclerViewAdapter(listener)
 			binding.relatedItemsList.adapter = relatedEventsAdapter
 			binding.relatedItemsList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
 		}
@@ -89,9 +89,7 @@ class EventDetailsFragment : Fragment() {
 		binding.appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
 			val v = Math.abs(verticalOffset).toDouble() / appBarLayout.totalScrollRange
 			if (appBarExpanded xor (v > 0.8)) {
-				if (listener != null) {
-					listener!!.onToolbarStateChange()
-				}
+				listener?.onToolbarStateChange()
 				appBarExpanded = v > 0.8
 //                binding.collapsingToolbar.isTitleEnabled = appBarExpanded
 			}
@@ -131,9 +129,10 @@ class EventDetailsFragment : Fragment() {
 			}
 			when(liveEvent.state){
 				DetailsViewModel.DetailsViewModelState.PlayOfflineItem -> {
-					val recording = liveEvent.data?.getString(DetailsViewModel.KEY_LOCAL_PATH)
+					val localFile = liveEvent.data?.getString(DetailsViewModel.KEY_LOCAL_PATH)
+					val recording = liveEvent.data?.getParcelable<Recording>(DetailsViewModel.KEY_PLAY_RECORDING)
 					if(recording != null){
-						listener?.playItem(event, recording)
+						listener?.playItem(event, recording, localFile)
 					}
 				}
 				DetailsViewModel.DetailsViewModelState.PlayOnlineItem -> {
@@ -316,8 +315,7 @@ class EventDetailsFragment : Fragment() {
 	interface OnEventDetailsFragmentInteractionListener {
 		fun onToolbarStateChange()
 		fun invalidateOptionsMenu()
-		fun playItem(event: Event, recording: Recording)
-		fun playItem(event: Event, uri: String)
+		fun playItem(event: Event, recording: Recording, localFile: String? = null)
 	}
 
 	companion object {

@@ -89,12 +89,14 @@ class DetailsViewModel(
 			val offlineEvent = database.offlineEventDao().getByEventGuidSync(event.guid)
 			if(offlineEvent != null){
 				// Play offlineEvent
+				val recording = database.recordingDao().findRecordingByIdSync(offlineEvent.recordingId)
 				if(!fileExists(event.guid)){
 					state.postValue(LiveEvent(DetailsViewModelState.Error, error = "File is gone"))
 					return@runOnBackgroundThread
 				}
 				val bundle = Bundle()
 				bundle.putString(KEY_LOCAL_PATH, offlineEvent.localPath)
+				bundle.putParcelable(KEY_PLAY_RECORDING, recording)
 				state.postValue(LiveEvent(DetailsViewModelState.PlayOfflineItem, data = bundle))
 			} else {
 				// select quality then playEvent

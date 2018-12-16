@@ -4,17 +4,23 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
 import android.view.MenuItem
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
+import pl.droidsonroids.casty.Casty
 
 class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInteractionListener {
+
+	private lateinit var casty: Casty
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_player)
+
+		casty = Casty.create(this)
 
 		if (savedInstanceState == null && intent.extras != null) {
 			val contentType = intent.getStringExtra(CONTENT_TYPE)
@@ -41,6 +47,14 @@ class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInter
 			ft.replace(R.id.fragment_container, playerFragment)
 			ft.commit()
 		}
+	}
+
+	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+		super.onCreateOptionsMenu(menu)
+		menu?.let {
+			casty.addMediaRouteMenuItem(it)
+		}
+		return true
 	}
 
 	override fun onOptionsItemSelected(item: MenuItem?): Boolean {

@@ -4,20 +4,26 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
+import pl.droidsonroids.casty.Casty
 
 class EventsListActivity : AppCompatActivity(), OnEventSelectedListener {
 
 	protected val numColumns: Int
 		get() = resources.getInteger(R.integer.num_columns)
 
+	private lateinit var casty: Casty
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_events_list)
+
+		casty = Casty.create(this).withMiniController()
 
 		val conference = intent.getParcelableExtra<Conference>(CONFERENCE_KEY)
 
@@ -28,6 +34,14 @@ class EventsListActivity : AppCompatActivity(), OnEventSelectedListener {
 					.replace(R.id.fragment_container, eventsListFragment)
 					.commit();
 		}
+	}
+
+	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+		super.onCreateOptionsMenu(menu)
+		menu?.let {
+			casty.addMediaRouteMenuItem(it)
+		}
+		return true
 	}
 
 	override fun onEventSelected(event: Event) {

@@ -13,6 +13,9 @@ abstract class RecordingDao: BaseDao<Recording>() {
     @Query("SELECT * FROM recording WHERE id = :id LIMIT 1")
     abstract fun findRecordingById(id: Long): LiveData<Recording>
 
+    @Query("SELECT * FROM recording WHERE id = :id LIMIT 1")
+    abstract fun findRecordingByIdSync(id: Long): Recording
+
     @Query("SELECT * FROM recording WHERE eventId = :id")
     abstract fun findRecordingByEvent(id: Long): LiveData<List<Recording>>
 
