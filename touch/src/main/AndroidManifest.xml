@@ -14,13 +14,13 @@
         android:name="de.nicidienase.chaosflix.ChaosflixApplication"
         android:allowBackup="true"
         android:icon="@drawable/icon_notext"
-        android:label="@string/app_name"
+        android:label="${label}"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:theme">
+        tools:replace="android:label,android:theme">
         <activity
             android:name=".SplashActivity"
-            android:label="@string/app_name"
+            android:label="${label}"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

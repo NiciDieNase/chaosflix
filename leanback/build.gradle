@@ -2,12 +2,16 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
+
+String appName = "Chaosflix"
+
 android {
     buildToolsVersion '27.0.3'
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
         applicationId "de.nicidienase.chaosflix"
+        manifestPlaceholders = [label: appName]
         minSdkVersion rootProject.ext.minSDK
         targetSdkVersion rootProject.ext.targetSDK
         // odd for touch, even for leanback
@@ -17,6 +21,8 @@ android {
     }
     buildTypes {
         debug {
+            applicationIdSuffix ".dev"
+            manifestPlaceholders = [label: appName + "-dev"]
             minifyEnabled false
             useProguard false
         }
