@@ -23,7 +23,7 @@ class DetailsViewModel(
 		val downloader: Downloader
 ) : ViewModel() {
 
-	val state: SingleLiveEvent<LiveEvent<DetailsViewModelState,Bundle,String>>
+	val state: SingleLiveEvent<LiveEvent<State,Bundle,String>>
 			= SingleLiveEvent()
 
 	var writeExternalStorageAllowed: Boolean = false
@@ -91,19 +91,19 @@ class DetailsViewModel(
 				// Play offlineEvent
 				val recording = database.recordingDao().findRecordingByIdSync(offlineEvent.recordingId)
 				if(!fileExists(event.guid)){
-					state.postValue(LiveEvent(DetailsViewModelState.Error, error = "File is gone"))
+					state.postValue(LiveEvent(State.Error, error = "File is gone"))
 					return@runOnBackgroundThread
 				}
 				val bundle = Bundle()
 				bundle.putString(KEY_LOCAL_PATH, offlineEvent.localPath)
 				bundle.putParcelable(KEY_PLAY_RECORDING, recording)
-				state.postValue(LiveEvent(DetailsViewModelState.PlayOfflineItem, data = bundle))
+				state.postValue(LiveEvent(State.PlayOfflineItem, data = bundle))
 			} else {
 				// select quality then playEvent
 				val items = database.recordingDao().findRecordingByEventSync(event.id).toTypedArray()
 				val bundle = Bundle()
 				bundle.putParcelableArray(KEY_SELECT_RECORDINGS, items)
-				state.postValue(LiveEvent(DetailsViewModelState.SelectRecording, data = bundle ))
+				state.postValue(LiveEvent(State.SelectRecording, data = bundle ))
 			}
 		}
 	}
@@ -111,7 +111,7 @@ class DetailsViewModel(
 	fun playRecording(recording: Recording){
 		val bundle = Bundle()
 		bundle.putParcelable(KEY_PLAY_RECORDING, recording)
-		state.postValue(LiveEvent(DetailsViewModelState.PlayOnlineItem, data = bundle))
+		state.postValue(LiveEvent(State.PlayOnlineItem, data = bundle))
 	}
 
 	fun offlineItemExists(event: Event): LiveData<Boolean> {
@@ -127,7 +127,7 @@ class DetailsViewModel(
 	fun getAutoselectRecording() = preferencesManager.getAutoselectRecording()
 
 
-	enum class DetailsViewModelState{
+	enum class State{
 		PlayOfflineItem, PlayOnlineItem, SelectRecording, Error
 	}
 

@@ -128,27 +128,27 @@ class EventDetailsFragment : Fragment() {
 				return@Observer
 			}
 			when(liveEvent.state){
-				DetailsViewModel.DetailsViewModelState.PlayOfflineItem -> {
+				DetailsViewModel.State.PlayOfflineItem -> {
 					val localFile = liveEvent.data?.getString(DetailsViewModel.KEY_LOCAL_PATH)
 					val recording = liveEvent.data?.getParcelable<Recording>(DetailsViewModel.KEY_PLAY_RECORDING)
 					if(recording != null){
 						listener?.playItem(event, recording, localFile)
 					}
 				}
-				DetailsViewModel.DetailsViewModelState.PlayOnlineItem -> {
+				DetailsViewModel.State.PlayOnlineItem -> {
 					liveEvent.data?.getParcelable<Recording>(DetailsViewModel.KEY_PLAY_RECORDING)?.let {
 						listener?.playItem(event,it)
 					}
 
 				}
-				DetailsViewModel.DetailsViewModelState.SelectRecording -> {
+				DetailsViewModel.State.SelectRecording -> {
 					val selectItems: Array<Recording> =
 							liveEvent.data?.getParcelableArray(DetailsViewModel.KEY_SELECT_RECORDINGS) as Array<Recording>
 					selectRecording(selectItems.asList()) {
 						viewModel.playRecording(it)
 					}
 				}
-				DetailsViewModel.DetailsViewModelState.Error -> liveEvent.error?.let { showSnackbar(it) }
+				DetailsViewModel.State.Error -> liveEvent.error?.let { showSnackbar(it) }
 			}
 		})
 	}
