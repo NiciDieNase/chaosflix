@@ -12,7 +12,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import pl.droidsonroids.casty.Casty
 
-class PlayerActivity : AppCompatActivity(), ExoPlayerFragment.OnMediaPlayerInteractionListener {
+class PlayerActivity : AppCompatActivity() {
 
 	private lateinit var casty: Casty
 

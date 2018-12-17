@@ -4,13 +4,12 @@ package de.nicidienase.chaosflix.touch.browse.streaming
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import com.squareup.picasso.Picasso
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.touch.databinding.ItemLiveeventCardviewBinding
 
-class LivestreamAdapter(val listener: LivestreamListFragment.InteractionListener , liveConferences: List<LiveConference> = emptyList()) : RecyclerView.Adapter<LivestreamAdapter.ViewHolder>(){
+class LivestreamAdapter(val listener: LivestreamListFragment.InteractionListener, liveConferences: List<LiveConference> = emptyList()) : RecyclerView.Adapter<LivestreamAdapter.ViewHolder>() {
 
 	lateinit var items: MutableList<StreamingItem>
 
@@ -30,10 +29,10 @@ class LivestreamAdapter(val listener: LivestreamListFragment.InteractionListener
 
 	private val TAG = LivestreamAdapter::class.simpleName
 
-	fun setContent(liveConferences: List<LiveConference>){
+	fun setContent(liveConferences: List<LiveConference>) {
 		items = ArrayList()
 		convertToStreamingItemList(liveConferences)
-		Log.d(TAG,"Size:" + items.size)
+		Log.d(TAG, "Size:" + items.size)
 		notifyDataSetChanged()
 	}
 
@@ -43,7 +42,7 @@ class LivestreamAdapter(val listener: LivestreamListFragment.InteractionListener
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 		val binding =
-				ItemLiveeventCardviewBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+				ItemLiveeventCardviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 		return ViewHolder(binding)
 	}
 
@@ -58,9 +57,7 @@ class LivestreamAdapter(val listener: LivestreamListFragment.InteractionListener
 				.centerInside()
 				.into(holder.binding.imageView)
 
-		holder.binding.root.setOnClickListener(View.OnClickListener {
-			listener.onStreamSelected(item)
-		})
+		holder.binding.root.setOnClickListener { listener.onStreamSelected(item) }
 	}
 
 

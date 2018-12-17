@@ -10,15 +10,15 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
-import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
-import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import de.nicidienase.chaosflix.touch.OnEventSelectedListener
+import de.nicidienase.chaosflix.touch.R
+import de.nicidienase.chaosflix.touch.buildCastMediaData
 import de.nicidienase.chaosflix.touch.playback.PlayerActivity
 import pl.droidsonroids.casty.Casty
-import pl.droidsonroids.casty.MediaData
 
 class EventDetailsActivity : AppCompatActivity(),
 		EventDetailsFragment.OnEventDetailsFragmentInteractionListener,
@@ -42,7 +42,7 @@ class EventDetailsActivity : AppCompatActivity(),
 
 		showFragmentForEvent(event)
 		if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
-				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+						Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 			requestWriteStoragePermission()
 		}
 	}

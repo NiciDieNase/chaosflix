@@ -56,7 +56,6 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	private static final String PLAYBACK_STATE = "playback_state";
 	private static final String ARG_item = "item";
 
-	private OnMediaPlayerInteractionListener listener;
 	private final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
 	private String userAgent;
@@ -187,22 +186,6 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	}
 
 	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-		if (context instanceof OnMediaPlayerInteractionListener) {
-			listener = (OnMediaPlayerInteractionListener) context;
-		} else {
-			throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
-		}
-	}
-
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		listener = null;
-	}
-
-	@Override
 	public void notifyLoadingStart() {
 		if (binding.progressBar != null) {
 			binding.progressBar.setVisibility(View.VISIBLE);
@@ -224,9 +207,6 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	@Override
 	public void notifyEnd() {
 		viewModel.deletePlaybackProgress(item.getEventGuid());
-	}
-
-	public interface OnMediaPlayerInteractionListener {
 	}
 
 	private MediaSource buildMediaSource(Uri uri, String overrideExtension) {
