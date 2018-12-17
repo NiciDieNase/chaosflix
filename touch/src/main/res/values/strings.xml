@@ -50,4 +50,5 @@
 	<string name="about_beta">Become a Beta-Tester</string>
 	<string name="about_twitter">Follow the developer on Twitter</string>
 	<string name="about_playstore">Rate us on Google Play</string>
+	<string name="select_stream">Select Stream</string>
 </resources>

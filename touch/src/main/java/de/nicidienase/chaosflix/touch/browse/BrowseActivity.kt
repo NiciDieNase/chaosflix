@@ -23,6 +23,7 @@ import android.widget.Toast
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Stream
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
@@ -38,6 +39,7 @@ import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
 import de.nicidienase.chaosflix.touch.playback.PlayerActivity
 import de.nicidienase.chaosflix.touch.settings.SettingsActivity
 import pl.droidsonroids.casty.Casty
+import pl.droidsonroids.casty.MediaData
 
 class BrowseActivity : AppCompatActivity(),
 		ConferencesTabBrowseFragment.OnInteractionListener,
@@ -151,33 +153,70 @@ class BrowseActivity : AppCompatActivity(),
 	override fun onStreamSelected(streamingItem: StreamingItem) {
 		val entries = HashMap<String, StreamUrl>()
 
-		val dashStreams = streamingItem.room.streams.filter { it.slug == "dash-native" }
-		if (dashStreams.size > 0
-				&& viewModel.getAutoselectStream()) {
-			playStream(streamingItem.conference.conference,
-					streamingItem.room.display,
-					dashStreams.first().urls["dash"]
-			)
-		} else {
-			streamingItem.room.streams.flatMap { stream ->
-				stream.urls.map { entry ->
-					entries.put(stream.slug + " " + entry.key, entry.value)
-				}
+		if(casty.isConnected){
+			val hdStreams = streamingItem.room.streams.filter { it.slug.startsWith("hd-") }
+			if(hdStreams.size > 1){
+				AlertDialog.Builder(this)
+						.setTitle(getString(R.string.select_stream))
+						.setItems(hdStreams.map { it.display }.toTypedArray()) {_, i ->
+							castStream(streamingItem,hdStreams[i])
+						}
 			}
+		} else {
+			val dashStreams = streamingItem.room.streams.filter { it.slug == "dash-native" }
+			if (dashStreams.size > 0
+					&& viewModel.getAutoselectStream()) {
+				playStream(streamingItem.conference.conference,
+						streamingItem.room.display,
+						dashStreams.first().urls["dash"]
+				)
+			} else {
+				streamingItem.room.streams.flatMap { stream ->
+					stream.urls.map { entry ->
+						entries.put(stream.slug + " " + entry.key, entry.value)
+					}
+				}
 
-			val builder = AlertDialog.Builder(this)
-			val strings = entries.keys.sorted().toTypedArray()
-			builder.setTitle("Select Stream")
-					.setItems(strings, { _, i ->
-						Toast.makeText(this, strings[i], Toast.LENGTH_LONG).show()
-
-						playStream(
-								streamingItem.conference.conference,
-								streamingItem.room.display,
-								entries[strings[i]])
-					})
-			builder.create().show()
+				val builder = AlertDialog.Builder(this)
+				val strings = entries.keys.sorted().toTypedArray()
+				builder.setTitle(getString(R.string.select_stream))
+						.setItems(strings) { _, i ->
+							Toast.makeText(this, strings[i], Toast.LENGTH_LONG).show()
+							playStream(
+									streamingItem.conference.conference,
+									streamingItem.room.display,
+									entries[strings[i]])
+						}
+				builder.create().show()
+			}
 		}
+	}
+
+	private fun castStream(streamingItem: StreamingItem, stream: Stream) {
+		val streamUrl: String?
+		val contentType: String?
+		if(stream.urls.containsKey("hsl")){
+			streamUrl = stream.urls["hls"]?.url
+			contentType = "application/vnd.apple.mpegurl"
+		} else if(stream.urls.containsKey("webm")){
+			streamUrl = stream.urls["webm"]?.url
+			contentType = "video/webm"
+		} else {
+			streamUrl = null
+			contentType = null
+		}
+		if(streamUrl == null){
+			Snackbar.make(binding.root, "No suitable Stream found", Snackbar.LENGTH_SHORT).show()
+			return
+		}
+		val mediaData = MediaData.Builder(streamUrl)
+				.setStreamType(MediaData.STREAM_TYPE_BUFFERED)
+				.setContentType(contentType)
+				.setTitle(streamingItem.conference.conference)
+				.setSubtitle(streamingItem.room.display)
+				.addPhotoUrl(streamingItem.room.thumb)
+				.build()
+		casty.player.loadMediaAndPlay(mediaData)
 	}
 
 	private fun playStream(conference: String, room: String, streamUrl: StreamUrl?) {

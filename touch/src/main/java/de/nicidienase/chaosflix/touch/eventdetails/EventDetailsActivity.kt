@@ -71,19 +71,13 @@ class EventDetailsActivity : AppCompatActivity(),
 		invalidateOptionsMenu()
 	}
 
-	override fun playItem(event: Event, recording: Recording, localFileUri: String?) {
-		if(casty.isConnected) {
-			val mediaData = MediaData.Builder(recording.recordingUrl)
-					.setStreamType(MediaData.STREAM_TYPE_BUFFERED)
-					.setContentType(recording.mimeType)
-					.setTitle(event.title)
-					.setSubtitle(event.subtitle)
-					.addPhotoUrl(event.thumbUrl)
-					.build()
+	override fun playItem(event: Event, recording: Recording, localFile: String?) {
+		if (casty.isConnected) {
+			val mediaData = buildCastMediaData(recording, event)
 			casty.player.loadMediaAndPlay(mediaData)
 		} else {
-			if(localFileUri != null){
-				PlayerActivity.launch(this, event, localFileUri)
+			if (localFile != null) {
+				PlayerActivity.launch(this, event, localFile)
 			} else {
 				PlayerActivity.launch(this, event, recording)
 			}
@@ -101,6 +95,7 @@ class EventDetailsActivity : AppCompatActivity(),
 			}
 		}
 	}
+
 	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 		super.onCreateOptionsMenu(menu)
 		menu?.let {
@@ -123,6 +118,7 @@ class EventDetailsActivity : AppCompatActivity(),
 
 		private val EXTRA_EVENT = "extra_event"
 		private val EXTRA_URI = "extra_uri"
+		private val TAG = EventDetailsActivity.javaClass.simpleName
 
 		fun launch(context: Context, event: Event) {
 			val intent = Intent(context, EventDetailsActivity::class.java)
