@@ -3,10 +3,10 @@
 
 	<item android:drawable="@color/white"/>
 
-	<item>
-		<bitmap
-			android:gravity="center"
-			android:src="@drawable/icon_notext_144x144"/>
-	</item>
+	<item
+		android:gravity="center"
+		android:width="144dp"
+		android:height="144dp"
+		android:drawable="@drawable/icon_notext"/>
 
 </layer-list>

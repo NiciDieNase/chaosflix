@@ -139,7 +139,7 @@
 			android:layout_height="wrap_content"
 			android:layout_margin="16dp"
 			android:clickable="true"
-			android:src="@drawable/ic_action_play"
+			android:src="@drawable/ic_play"
 			app:backgroundTint="@color/primary"
 			app:fabSize="normal"
 			app:layout_anchor="@+id/appbar"
