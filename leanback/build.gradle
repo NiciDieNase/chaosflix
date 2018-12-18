@@ -26,6 +26,9 @@ android {
             minifyEnabled false
             useProguard false
         }
+        streamDebug{
+            initWith debug
+        }
         release {
             minifyEnabled false
             useProguard false

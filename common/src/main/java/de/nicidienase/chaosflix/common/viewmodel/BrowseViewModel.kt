@@ -52,7 +52,7 @@ class BrowseViewModel(
 	fun getEventsforConference(conference: Conference)
 			= database.eventDao().findEventsByConference(conference.id)
 
-	fun updateConferences()
+	fun getUpdateState()
 			= downloader.updateConferencesAndGroups()
 
 	fun updateEventsForConference(conference: Conference)

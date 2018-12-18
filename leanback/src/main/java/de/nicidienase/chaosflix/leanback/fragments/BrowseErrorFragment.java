@@ -49,12 +49,7 @@ public class BrowseErrorFragment extends ErrorSupportFragment {
 		setDefaultBackground(TRANSLUCENT);
 
 		setButtonText(getResources().getString(R.string.dismiss_error));
-		setButtonClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				dismiss();
-			}
-		});
+		setButtonClickListener(arg0 -> dismiss());
 	}
 
 	public void dismiss() {

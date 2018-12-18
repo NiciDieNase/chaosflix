@@ -75,7 +75,7 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 				setLoadingOverlayVisibility(false);
 			}
 		});
-		getViewModel().updateConferences().observe(this, state -> {
+		getViewModel().getUpdateState().observe(this, state -> {
 			if(state == null){
 				return;
 			}

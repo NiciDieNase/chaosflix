@@ -2,6 +2,7 @@ package de.nicidienase.chaosflix.common.mediadata.network
 
 import android.content.res.Resources
 import com.google.gson.Gson
+import de.nicidienase.chaosflix.BuildConfig
 import de.nicidienase.chaosflix.R
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -29,7 +30,7 @@ class ApiFactory(val res: Resources) {
     }
 
     val streamingApi: StreamingService by lazy { Retrofit.Builder()
-            .baseUrl(res.getString(R.string.streaming_url))
+            .baseUrl(BuildConfig.STREAMING_API_BASE_URL)
             .client(client)
             .addConverterFactory(gsonConverterFactory)
             .build()
