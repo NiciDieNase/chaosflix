@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.leanback.fragments
+package de.nicidienase.chaosflix.leanback.detail
 
 import android.content.Context
 import android.support.v17.leanback.media.PlaybackTransportControlGlue

@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.leanback.fragments;
+package de.nicidienase.chaosflix.leanback;
 
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -12,8 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-
-import de.nicidienase.chaosflix.leanback.R;
 
 public class BrowseErrorFragment extends ErrorSupportFragment {
 

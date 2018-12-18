@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.leanback.activities
+package de.nicidienase.chaosflix.leanback.detail
 
 import android.content.Context
 import android.content.Intent
@@ -45,8 +45,8 @@ class DetailsActivity : FragmentActivity() {
 		@JvmStatic
 		fun start(context: Context, event: Event, transition: Bundle? = null){
 			val i = Intent(context, DetailsActivity::class.java)
-			i.putExtra(DetailsActivity.TYPE, DetailsActivity.TYPE_RECORDING)
-			i.putExtra(DetailsActivity.EVENT, event)
+			i.putExtra(TYPE, TYPE_RECORDING)
+			i.putExtra(EVENT, event)
 			if(transition != null){
 				context.startActivity(i, transition)
 			} else {
@@ -57,8 +57,8 @@ class DetailsActivity : FragmentActivity() {
 		@JvmStatic
 		fun start(context: Context, room: Room, transition: Bundle? = null){
 			val i = Intent(context, DetailsActivity::class.java)
-			i.putExtra(DetailsActivity.TYPE, DetailsActivity.TYPE_STREAM)
-			i.putExtra(DetailsActivity.ROOM, room)
+			i.putExtra(TYPE, TYPE_STREAM)
+			i.putExtra(ROOM, room)
 			if(transition != null){
 				context.startActivity(i, transition)
 			} else {

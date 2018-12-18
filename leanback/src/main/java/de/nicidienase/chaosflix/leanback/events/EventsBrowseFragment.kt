@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.leanback.fragments
+package de.nicidienase.chaosflix.leanback.events
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -31,7 +31,7 @@ import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.CardPresenter
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
 import de.nicidienase.chaosflix.leanback.R
-import de.nicidienase.chaosflix.leanback.activities.EventsActivity
+import de.nicidienase.chaosflix.leanback.BrowseErrorFragment
 import java.net.URI
 import java.net.URISyntaxException
 import java.util.*

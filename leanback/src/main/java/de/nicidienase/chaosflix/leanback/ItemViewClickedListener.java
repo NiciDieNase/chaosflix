@@ -14,8 +14,8 @@ import android.util.Log;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event;
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room;
-import de.nicidienase.chaosflix.leanback.activities.DetailsActivity;
-import de.nicidienase.chaosflix.leanback.activities.EventsActivity;
+import de.nicidienase.chaosflix.leanback.detail.DetailsActivity;
+import de.nicidienase.chaosflix.leanback.events.EventsActivity;
 
 public class ItemViewClickedListener implements OnItemViewClickedListener {
 

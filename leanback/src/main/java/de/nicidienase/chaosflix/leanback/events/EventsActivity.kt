@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.leanback.activities
+package de.nicidienase.chaosflix.leanback.events
 
 import android.content.Context
 import android.content.Intent
@@ -28,7 +28,7 @@ class EventsActivity : FragmentActivity() {
 		@JvmOverloads
 		fun start(context: Context, conference: Conference, transition: Bundle? = null) {
 			val i = Intent(context, EventsActivity::class.java)
-			i.putExtra(EventsActivity.CONFERENCE, conference)
+			i.putExtra(CONFERENCE, conference)
 			if (transition != null) {
 				context.startActivity(i, transition)
 			} else {

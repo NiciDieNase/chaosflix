@@ -19,7 +19,7 @@
         android:name="de.nicidienase.chaosflix.ChaosflixApplication"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.ConferencesActivity"
+            android:name=".conferences.ConferencesActivity"
             android:banner="@drawable/banner"
             android:icon="@drawable/icon_notext"
             android:label="${label}"
@@ -31,9 +31,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.EventsActivity"
+        <activity android:name=".events.EventsActivity"
                   android:exported="true"/>
-        <activity android:name=".activities.DetailsActivity"
+        <activity android:name=".detail.DetailsActivity"
                   android:exported="true"/>
     </application>
 

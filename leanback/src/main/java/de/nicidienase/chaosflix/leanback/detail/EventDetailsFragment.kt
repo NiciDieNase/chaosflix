@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.leanback.fragments
+package de.nicidienase.chaosflix.leanback.detail
 
 import android.app.AlertDialog
 import android.arch.lifecycle.Observer
@@ -57,8 +57,7 @@ import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.common.viewmodel.PlayerViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.EventDetailsDescriptionPresenter
-import de.nicidienase.chaosflix.leanback.activities.ConferencesActivity
-import de.nicidienase.chaosflix.leanback.activities.DetailsActivity
+import de.nicidienase.chaosflix.leanback.conferences.ConferencesActivity
 
 
 class EventDetailsFragment : DetailsSupportFragment() {
@@ -222,7 +221,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 					}
 
 					override fun onLoadFailed(errorDrawable: Drawable?) {
-						detailsOverview.setImageDrawable(ContextCompat.getDrawable(requireContext(),DEFAULT_DRAWABLE))
+						detailsOverview.setImageDrawable(ContextCompat.getDrawable(requireContext(), DEFAULT_DRAWABLE))
 					}
 				})
 	}

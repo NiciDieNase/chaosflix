@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.leanback.fragments
+package de.nicidienase.chaosflix.leanback.conferences
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -17,6 +17,7 @@ import de.nicidienase.chaosflix.leanback.CardPresenter
 import de.nicidienase.chaosflix.leanback.ChaosflixEventAdapter
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
 import de.nicidienase.chaosflix.leanback.R
+import de.nicidienase.chaosflix.leanback.BrowseErrorFragment
 import java.util.*
 
 class ConferencesBrowseFragment : BrowseSupportFragment() {
@@ -241,9 +242,9 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 
 	private fun sectionVisible(section: Section): Boolean {
 		val index = when (section) {
-			ConferencesBrowseFragment.Section.Streaming -> rowsAdapter.indexOf(streamingSection)
-			ConferencesBrowseFragment.Section.Recomendations -> rowsAdapter.indexOf(recomendationsSections)
-			ConferencesBrowseFragment.Section.Conferences -> rowsAdapter.indexOf(conferencesSection)
+			Section.Streaming -> rowsAdapter.indexOf(streamingSection)
+			Section.Recomendations -> rowsAdapter.indexOf(recomendationsSections)
+			Section.Conferences -> rowsAdapter.indexOf(conferencesSection)
 		}
 		return index != -1
 	}

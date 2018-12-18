@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.leanback.activities
+package de.nicidienase.chaosflix.leanback.conferences
 
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity

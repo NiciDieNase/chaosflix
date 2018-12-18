@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.leanback.fragments;
+package de.nicidienase.chaosflix.leanback.conferences;
 
 import android.os.Bundle;
 import android.os.Handler;
