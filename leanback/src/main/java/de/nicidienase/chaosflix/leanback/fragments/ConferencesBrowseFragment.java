@@ -21,10 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import de.nicidienase.chaosflix.BuildConfig;
-import de.nicidienase.chaosflix.leanback.ChaosflixEventAdapter;
-import de.nicidienase.chaosflix.leanback.R;
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference;
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event;
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Group;
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference;
@@ -32,24 +30,26 @@ import de.nicidienase.chaosflix.common.util.ConferenceUtil;
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel;
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory;
 import de.nicidienase.chaosflix.leanback.CardPresenter;
+import de.nicidienase.chaosflix.leanback.ChaosflixEventAdapter;
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener;
+import de.nicidienase.chaosflix.leanback.R;
 
 public class ConferencesBrowseFragment extends BrowseSupportFragment {
 
 	public static final  int                   FRAGMENT    = R.id.browse_fragment;
 	private static final String                TAG         = ConferencesBrowseFragment.class.getSimpleName();
 	private              ArrayObjectAdapter    rowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
-	private              ChaosflixEventAdapter watchListAdapter;
-	private              ChaosflixEventAdapter inProgressAdapter;
-	private              ChaosflixEventAdapter promotedAdapter;
+	private              SectionRow            streamingSection;
+	private              SectionRow            recomendationsSectionsRow;
+	private              SectionRow            conferencesSection;
+	private              DividerRow            streamsDivider;
+	private              DividerRow            recomendationsDivider;
+	private              ListRow               promotedRow;
 	private              ListRow               watchlistRow;
 	private              ListRow               inProgressRow;
-
-	private SectionRow streamingSection;
-	private DividerRow streamsDivider;
-	private SectionRow recomendationsSectionsRow;
-	private DividerRow recomendationsDivider;
-	private SectionRow conferencesSection;
+	private              ChaosflixEventAdapter promotedAdapter;
+	private              ChaosflixEventAdapter watchListAdapter;
+	private              ChaosflixEventAdapter inProgressAdapter;
 
 
 	private BrowseViewModel viewModel;
@@ -84,9 +84,9 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 
 		FragmentManager fragmentManager = getFragmentManager();
 		final BrowseErrorFragment errorFragment;
-		if(fragmentManager != null){
-				errorFragment = BrowseErrorFragment.showErrorFragment(fragmentManager, FRAGMENT);
-		}else {
+		if (fragmentManager != null) {
+			errorFragment = BrowseErrorFragment.showErrorFragment(fragmentManager, FRAGMENT);
+		} else {
 			errorFragment = null;
 		}
 		CardPresenter conferencePresenter = new CardPresenter(R.style.ConferenceCardStyle);
@@ -102,12 +102,9 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 		recomendationsDivider = new DividerRow();
 		conferencesSection = new SectionRow(new HeaderItem(getString(R.string.conferences)));
 
-		// Streams
-		rowsAdapter.add(0, streamingSection);
-		rowsAdapter.add(streamsDivider);
 
 		// Recomendations
-		Row promotedRow = new ListRow(new HeaderItem("Promoted"), promotedAdapter);
+		promotedRow = new ListRow(new HeaderItem("Promoted"), promotedAdapter);
 		watchlistRow = new ListRow(new HeaderItem(getString(R.string.watchlist)), watchListAdapter);
 		inProgressRow = new ListRow(new HeaderItem("Continue Watching"), inProgressAdapter);
 
@@ -135,7 +132,7 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 				case RUNNING:
 					break;
 				case DONE:
-					if(errorFragment != null){
+					if (errorFragment != null) {
 						errorFragment.dismiss();
 					}
 					break;
@@ -144,7 +141,7 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 
 		viewModel.getConferenceGroups().observe(this, conferenceGroups -> {
 			if (conferenceGroups != null && conferenceGroups.size() > 0) {
-				if(errorFragment != null){
+				if (errorFragment != null) {
 					errorFragment.dismiss();
 				}
 				Collections.sort(conferenceGroups);
@@ -167,17 +164,20 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 		viewModel.getBookmarkedEvents().observe(this, (bookmarks) -> {
 			if (bookmarks != null) {
 				watchListAdapter.setItems(bookmarks, eventDiffCallback);
+				watchListAdapter.notifyItemRangeChanged(0, bookmarks.size());
 			}
 		});
 		viewModel.getInProgressEvents().observe(this, (inProgress) -> {
 			if (inProgress != null) {
 				inProgressAdapter.setItems(inProgress, eventDiffCallback);
+				inProgressAdapter.notifyItemRangeChanged(0, inProgress.size());
 			}
 		});
 
 		viewModel.getPromotedEvents().observe(this, (promoted) -> {
-			if(promoted != null){
+			if (promoted != null) {
 				promotedAdapter.setItems(promoted, eventDiffCallback);
+				promotedAdapter.notifyItemRangeChanged(0, promoted.size());
 			}
 		});
 
@@ -185,20 +185,20 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 			if (liveConferences != null) {
 				int startStreams = rowsAdapter.indexOf(streamingSection);
 				int endStreams = rowsAdapter.indexOf(streamsDivider);
-				if(liveConferences.size() > 0){
+				if (liveConferences.size() > 0) {
 					List<Row> streamRows = buildStreamRows(eventPresenter, liveConferences);
 					int insertIndex;
-					if(startStreams == -1 && endStreams == -1){
-						streamRows.add(0,streamingSection);
-						streamRows.add(streamRows.size()-1, streamsDivider);
+					if (startStreams == -1 && endStreams == -1) {
+						streamRows.add(0, streamingSection);
+						streamRows.add(streamRows.size() - 1, streamsDivider);
 						insertIndex = 0;
 					} else {
 						insertIndex = rowsAdapter.indexOf(streamsDivider);
 					}
-					rowsAdapter.addAll(insertIndex,streamRows);
+					rowsAdapter.addAll(insertIndex, streamRows);
 				} else {
-					if(startStreams != -1 && endStreams != -1){
-						rowsAdapter.removeItems(startStreams, endStreams-startStreams);
+					if (startStreams != -1 && endStreams != -1) {
+						rowsAdapter.removeItems(startStreams, endStreams - startStreams);
 					} else {
 						// nothing to do, items not in list
 					}
@@ -210,7 +210,7 @@ public class ConferencesBrowseFragment extends BrowseSupportFragment {
 
 	private void bindConferencesToRow(ConferenceGroup group, ListRow row) {
 		viewModel.getConferencesByGroup(group.getId()).observe(this, conferences -> {
-			if(conferences != null){
+			if (conferences != null) {
 				Collections.sort(conferences);
 			}
 			((ArrayObjectAdapter) row.getAdapter()).setItems(conferences, new DiffCallback<Conference>() {
