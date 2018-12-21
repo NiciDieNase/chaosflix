@@ -15,12 +15,12 @@ class EventsActivity : FragmentActivity() {
 		val conference = intent.getParcelableExtra<Conference>(CONFERENCE)
 		setContentView(R.layout.activity_events_browse)
 		if(savedInstanceState == null){
-			val fragment: Fragment = EventsRowsBrowseFragment.create(conference)
-//					if (conference.tagsUsefull) {
-//				EventsRowsBrowseFragment.create(conference)
-//			} else {
-//				EventsGridBrowseFragment.create(conference)
-//			}
+			val fragment: Fragment = //EventsRowsBrowseFragment.create(conference)
+					if (conference.tagsUsefull) {
+						EventsRowsBrowseFragment.create(conference)
+					} else {
+						EventsGridBrowseFragment.create(conference)
+					}
 			supportFragmentManager.beginTransaction().replace(R.id.browse_fragment, fragment).commit()
 		}
 	}

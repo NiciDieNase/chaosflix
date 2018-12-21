@@ -102,7 +102,8 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 		viewModel.getUpdateState().observe(this, Observer { downloaderEvent ->
 			downloaderEvent?.error?.let {
 				if (errorFragment != null && !errorFragment.isDetached) {
-					errorFragment.setErrorContent(downloaderEvent.error)
+					val errorMessage = downloaderEvent.error ?: "Error Refreshing Events"
+					errorFragment.setErrorContent(errorMessage)
 				}
 			}
 			when (downloaderEvent?.state) {

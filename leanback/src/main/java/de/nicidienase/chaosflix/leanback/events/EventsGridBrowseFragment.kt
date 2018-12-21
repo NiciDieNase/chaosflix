@@ -64,7 +64,7 @@ class EventsGridBrowseFragment : VerticalGridSupportFragment() {
 		val presenter = VerticalGridPresenter(FocusHighlight.ZOOM_FACTOR_MEDIUM)
 		presenter.numberOfColumns = NUM_COLUMNS
 		gridPresenter = presenter
-		val cardPresenter = CardPresenter(R.style.EventCardStyle)
+		val cardPresenter = CardPresenter(R.style.EventGridCardStyle)
 		rowsAdapter = ArrayObjectAdapter(cardPresenter)
 
 //		prepareBackgroundManager()
@@ -75,11 +75,14 @@ class EventsGridBrowseFragment : VerticalGridSupportFragment() {
 		viewModel.updateEventsForConference(conference).observe(this, Observer { event ->
 			when (event?.state) {
 				Downloader.DownloaderState.RUNNING -> {
-					errorFragment = BrowseErrorFragment.showErrorFragment(fragmentManager, FRAGMENT)
+					fragmentManager?.let {
+						errorFragment = BrowseErrorFragment.showErrorFragment(it, FRAGMENT)
+					}
 				}
 				Downloader.DownloaderState.DONE -> {
 					if (event.error != null) {
-						errorFragment?.setErrorContent(event.error)
+						val errorMessage = event.error ?: "Error refreshing events"
+						errorFragment?.setErrorContent(errorMessage)
 					} else {
 						errorFragment?.dismiss()
 					}

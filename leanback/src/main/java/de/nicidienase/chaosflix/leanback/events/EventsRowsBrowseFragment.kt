@@ -72,11 +72,14 @@ class EventsRowsBrowseFragment : BrowseSupportFragment() {
 		viewModel.updateEventsForConference(conference).observe(this, Observer {
 			when (it?.state) {
 				Downloader.DownloaderState.RUNNING -> {
-					errorFragment = BrowseErrorFragment.showErrorFragment(fragmentManager, FRAGMENT)
+					fragmentManager?.let {
+						errorFragment = BrowseErrorFragment.showErrorFragment(it, FRAGMENT)
+					}
 				}
 				Downloader.DownloaderState.DONE -> {
 					if (it.error != null) {
-						errorFragment?.setErrorContent(it.error)
+						val errorMessage = it.error ?: "Error refreshing events"
+						errorFragment?.setErrorContent(errorMessage)
 					} else {
 						errorFragment?.dismiss()
 					}

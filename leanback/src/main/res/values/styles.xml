@@ -17,13 +17,23 @@
         <item name="lbImageCardViewType">Title|Content</item>
     </style>
 
-    <style name="MultiLineTitleStyle" parent="Widget.Leanback.ImageCardView.TitleStyle">
+    <style name="FlexLineTitleStyle" parent="Widget.Leanback.ImageCardView.TitleStyle">
         <item name="android:minLines">1</item>
         <item name="android:maxLines">2</item>
     </style>
 
-    <style name="MultiLineContentStyle" parent="Widget.Leanback.ImageCardView.ContentStyle">
+    <style name="FlexLineContentStyle" parent="Widget.Leanback.ImageCardView.ContentStyle">
         <item name="android:minLines">2</item>
+        <item name="android:maxLines">3</item>
+    </style>
+
+    <style name="FixedLineTitleStyle" parent="Widget.Leanback.ImageCardView.TitleStyle">
+        <item name="android:minLines">2</item>
+        <item name="android:maxLines">2</item>
+    </style>
+
+    <style name="FixedLineContentStyle" parent="Widget.Leanback.ImageCardView.ContentStyle">
+        <item name="android:minLines">3</item>
         <item name="android:maxLines">3</item>
     </style>
 
@@ -39,14 +49,19 @@
 
     <style name="ConferenceCardStyle" parent="Theme.Leanback">
         <item name="imageCardViewStyle">@style/TitleOnlyStyle</item>
-        <item name="imageCardViewTitleStyle">@style/MultiLineTitleStyle</item>
+        <item name="imageCardViewTitleStyle">@style/FlexLineTitleStyle</item>
         <item name="imageCardViewImageStyle">@style/ConferenceCardImageStyle</item>
     </style>
 
     <style name="EventCardStyle" parent="Theme.Leanback">
-        <item name="imageCardViewTitleStyle">@style/MultiLineTitleStyle</item>
-        <item name="imageCardViewContentStyle">@style/MultiLineContentStyle</item>
+        <item name="imageCardViewTitleStyle">@style/FlexLineTitleStyle</item>
+        <item name="imageCardViewContentStyle">@style/FlexLineContentStyle</item>
         <item name="imageCardViewImageStyle">@style/EventCardImageStyle</item>
+    </style>
+
+    <style name="EventGridCardStyle" parent="EventCardStyle">
+        <item name="imageCardViewTitleStyle">@style/FixedLineTitleStyle</item>
+        <item name="imageCardViewContentStyle">@style/FixedLineContentStyle</item>
     </style>
 
 </resources>
