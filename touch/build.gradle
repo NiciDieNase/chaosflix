@@ -25,9 +25,7 @@ android {
             minifyEnabled false
             useProguard false
         }
-        streamDebug{
-            initWith debug
-        }
+
         release {
             shrinkResources true
             minifyEnabled true
@@ -36,6 +34,15 @@ android {
                     'proguard-rules.pro'
         }
     }
+
+    flavorDimensions "streaming"
+
+    productFlavors {
+        prod {}
+
+        mock {}
+    }
+
     packagingOptions {
         exclude 'META-INF/ASL2.0'
         exclude 'META-INF/LICENSE'
@@ -59,10 +66,15 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 }
 
+configurations {
+    mockDebugCompile
+    prodDebugCompile
+    mockReleaseCompile
+    prodReleaseCompile
+}
 
 dependencies {
     implementation project(':common')
-
     implementation('com.mikepenz:aboutlibraries:6.1.1@aar') {
         transitive = true
     }
