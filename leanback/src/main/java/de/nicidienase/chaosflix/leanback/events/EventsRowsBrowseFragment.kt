@@ -7,15 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v17.leanback.app.BackgroundManager
 import android.support.v17.leanback.app.BrowseSupportFragment
-import android.support.v17.leanback.widget.ArrayObjectAdapter
-import android.support.v17.leanback.widget.DiffCallback
-import android.support.v17.leanback.widget.HeaderItem
-import android.support.v17.leanback.widget.ListRow
-import android.support.v17.leanback.widget.ListRowPresenter
-import android.support.v17.leanback.widget.OnItemViewSelectedListener
-import android.support.v17.leanback.widget.Presenter
-import android.support.v17.leanback.widget.Row
-import android.support.v17.leanback.widget.RowPresenter
+import android.support.v17.leanback.widget.*
 import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.util.Log
@@ -28,16 +20,16 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import de.nicidienase.chaosflix.leanback.BrowseErrorFragment
 import de.nicidienase.chaosflix.leanback.CardPresenter
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
 import de.nicidienase.chaosflix.leanback.R
-import de.nicidienase.chaosflix.leanback.BrowseErrorFragment
 import java.net.URI
 import java.net.URISyntaxException
 import java.util.*
 import kotlin.collections.HashMap
 
-class EventsBrowseFragment : BrowseSupportFragment() {
+class EventsRowsBrowseFragment : BrowseSupportFragment() {
 
 	private lateinit var viewModel: BrowseViewModel
 	private val handler = Handler()
@@ -64,9 +56,7 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 				.get(BrowseViewModel::class.java)
 
 
-		val conference = this.activity
-				?.intent
-				?.getParcelableExtra<Conference>(EventsActivity.CONFERENCE)
+		val conference: Conference? = arguments?.getParcelable(CONFERENCE)
 		if (conference == null) {
 			throw IllegalStateException("No conference passed")
 		}
@@ -261,9 +251,17 @@ class EventsBrowseFragment : BrowseSupportFragment() {
 	}
 
 	companion object {
-		private val TAG = EventsBrowseFragment::class.java.simpleName
+		private val TAG = EventsRowsBrowseFragment::class.java.simpleName
 
 		private val BACKGROUND_UPDATE_DELAY = 300
 		private val FRAGMENT = R.id.browse_fragment
+
+		val CONFERENCE = "conference"
+
+		fun create(conference: Conference): EventsRowsBrowseFragment {
+			return EventsRowsBrowseFragment().apply {
+				arguments = Bundle().apply { putParcelable(CONFERENCE, conference) }
+			}
+		}
 	}
 }

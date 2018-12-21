@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.leanback.events
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.leanback.R
@@ -12,10 +13,16 @@ class EventsActivity : FragmentActivity() {
 	public override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		val conference = intent.getParcelableExtra<Conference>(CONFERENCE)
-		if (conference.tagsUsefull) {
-			// TODO determin if we should use a Browse or a Grid layout
-		}
 		setContentView(R.layout.activity_events_browse)
+		if(savedInstanceState == null){
+			val fragment: Fragment = EventsRowsBrowseFragment.create(conference)
+//					if (conference.tagsUsefull) {
+//				EventsRowsBrowseFragment.create(conference)
+//			} else {
+//				EventsGridBrowseFragment.create(conference)
+//			}
+			supportFragmentManager.beginTransaction().replace(R.id.browse_fragment, fragment).commit()
+		}
 	}
 
 	companion object {

@@ -35,8 +35,8 @@ public class ItemViewClickedListener implements OnItemViewClickedListener {
 			Bundle transition = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
 			                                                                       ((ImageCardView) itemViewHolder.view).getMainImageView(),
 			                                                                       EventsActivity.Companion.getSHARED_ELEMENT_NAME()).toBundle();
-			EventsActivity.start(fragment.requireContext(), conference, transition);
-			//			EventsActivity.start(fragment.requireContext(),conference);
+//			EventsActivity.start(fragment.requireContext(), conference, transition);
+			EventsActivity.start(fragment.requireContext(),conference);
 		} else if (item instanceof Event) {
 			Bundle transistion = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
 			                                                                        ((ImageCardView) itemViewHolder.view).getMainImageView(),
