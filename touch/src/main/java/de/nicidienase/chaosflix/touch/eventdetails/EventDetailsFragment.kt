@@ -240,7 +240,7 @@ class EventDetailsFragment : Fragment() {
 	override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
 		super.onCreateOptionsMenu(menu, inflater)
 		//		if (appBarExpanded)
-		inflater!!.inflate(R.menu.details_menu, menu)
+		inflater?.inflate(R.menu.details_menu, menu)
 	}
 
 	override fun onOptionsItemSelected(item: MenuItem?): Boolean {

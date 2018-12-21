@@ -11,7 +11,9 @@
 			android:layout_height="?attr/actionBarSize"
 			android:minHeight="?attr/actionBarSize"
 			app:layout_scrollFlags="scroll|enterAlways|snap"
-			app:titleTextColor="@color/white"
+			tools:title="Title"
+			app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+			app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
 			tools:showIn="@layout/activity_browse"/>
 	</merge>
 </layout>
