@@ -302,6 +302,6 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 
 	companion object {
 		const val FRAGMENT = R.id.browse_fragment
-//		private val TAG = ConferencesBrowseFragment::class.java.simpleName
+		private val TAG = ConferencesBrowseFragment::class.java.simpleName
 	}
 }

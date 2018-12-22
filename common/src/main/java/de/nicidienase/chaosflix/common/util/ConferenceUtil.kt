@@ -29,6 +29,10 @@ object ConferenceUtil {
 		}
 	}
 
+	fun getSensibleTags(tags: Set<String>, acronym: String): Set<String>{
+		return tags.filterNot { it.matches("\\d+".toRegex()) }.filterNot { it==acronym }.toSet()
+	}
+
 	@JvmStatic
 	val orderedConferencesList: List<String> = Arrays.asList(
 			"congress", "sendezentrum", "camp",

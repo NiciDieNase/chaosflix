@@ -1,7 +1,6 @@
 package de.nicidienase.chaosflix.leanback.events
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
@@ -19,7 +18,6 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.BrowseErrorFragment
 import de.nicidienase.chaosflix.leanback.CardPresenter
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
@@ -29,7 +27,7 @@ import java.net.URISyntaxException
 import java.util.*
 import kotlin.collections.HashMap
 
-class EventsRowsBrowseFragment : BrowseSupportFragment() {
+class EventsRowsBrowseFragment : BrowseSupportFragment(), EventsActivity.EventsFragment {
 
 	private lateinit var viewModel: BrowseViewModel
 	private val handler = Handler()
@@ -44,16 +42,14 @@ class EventsRowsBrowseFragment : BrowseSupportFragment() {
 
 	private val useTalksAsBackground = false
 
+	private var cardPresenter: CardPresenter = CardPresenter(R.style.EventCardStyle)
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
 		ContextCompat.getDrawable(requireContext(), R.drawable.default_background)?.apply {
 			defaultBackground = this
 		}
-
-		viewModel = ViewModelProviders
-				.of(this, ViewModelFactory(requireContext()))
-				.get(BrowseViewModel::class.java)
 
 
 		val conference: Conference? = arguments?.getParcelable(CONFERENCE)
@@ -62,53 +58,19 @@ class EventsRowsBrowseFragment : BrowseSupportFragment() {
 		}
 		setupUIElements(conference)
 
-		val cardPresenter = CardPresenter(R.style.EventCardStyle)
 
 		prepareBackgroundManager()
 		onItemViewClickedListener = ItemViewClickedListener(this)
 //		onItemViewSelectedListener = ItemViewSelectedListener()
 
-		var errorFragment: BrowseErrorFragment? = null
-		viewModel.updateEventsForConference(conference).observe(this, Observer {
-			when (it?.state) {
-				Downloader.DownloaderState.RUNNING -> {
-					fragmentManager?.let {
-						errorFragment = BrowseErrorFragment.showErrorFragment(it, FRAGMENT)
-					}
-				}
-				Downloader.DownloaderState.DONE -> {
-					if (it.error != null) {
-						val errorMessage = it.error ?: "Error refreshing events"
-						errorFragment?.setErrorContent(errorMessage)
-					} else {
-						errorFragment?.dismiss()
-					}
-				}
-			}
-//			val events = it?.data
-//			if (events != null) {
-//				Log.d(TAG, "Got ${events.size} events")
-//				val eventsByTags = getEventsByTags(events, conference.acronym)
-//				Log.d(TAG, "Got ${eventsByTags.keys.size} Tags")
-//				for (item in eventsByTags) {
-//					updateRowForTag(cardPresenter, item.key, item.value)
-//				}
-//				errorFragment?.dismiss()
-//			}
-		})
-		viewModel.getEventsforConference(conference).observe(
-				this,
-				Observer {
-					if (it != null && it.size > 0) {
-						val eventsByTags = getEventsByTags(it, conference.acronym)
-						for (item in eventsByTags) {
-							updateRowForTag(cardPresenter, item.key, item.value)
-						}
-						errorFragment?.dismiss()
-					}
-				}
-		)
 		adapter = rowsAdapter
+	}
+
+	override fun updateEvents(conference: Conference, events: List<Event>) {
+		val eventsByTags = getEventsByTags(events, conference.acronym)
+		for (item in eventsByTags) {
+			updateRowForTag(item.key, item.value, cardPresenter)
+		}
 	}
 
 	override fun onDestroy() {
@@ -144,7 +106,7 @@ class EventsRowsBrowseFragment : BrowseSupportFragment() {
 		return eventsByTags
 	}
 
-	private fun updateRowForTag(cardPresenter: CardPresenter, tag: String, items: List<Event>): Row {
+	private fun updateRowForTag(tag: String, items: List<Event>, cardPresenter: CardPresenter): Row {
 		var row = eventRows[tag]
 		val header: HeaderItem
 		val listRowAdapter: ArrayObjectAdapter
@@ -157,8 +119,7 @@ class EventsRowsBrowseFragment : BrowseSupportFragment() {
 		} else {
 			listRowAdapter = row.adapter as ArrayObjectAdapter
 		}
-		Collections.sort(items)
-		listRowAdapter.setItems(items, object : DiffCallback<Event>() {
+		listRowAdapter.setItems(items.sorted(), object : DiffCallback<Event>() {
 			override fun areItemsTheSame(oldItem: Event, newItem: Event): Boolean {
 				return oldItem.guid == newItem.guid
 			}

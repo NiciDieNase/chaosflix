@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording
 
 import com.google.gson.annotations.SerializedName;
+import de.nicidienase.chaosflix.common.util.ConferenceUtil
 
 
 data class ConferenceDto(
@@ -23,13 +24,12 @@ data class ConferenceDto(
     val conferenceID: Long
         get() = getIdFromUrl()
 
-    val eventsByTags: Map<String, List<EventDto>>
-        get() = getEventsMap(events)
+    val eventsByTags: Map<String, List<EventDto>> by lazy { getEventsMap(events) }
     val sensibleTags: Set<String>
     val tagsUsefull: Boolean
 
     init {
-        sensibleTags = getSensibleTags(eventsByTags.keys)
+        sensibleTags = ConferenceUtil.getSensibleTags(eventsByTags.keys, acronym)
         tagsUsefull = sensibleTags.size > 0
     }
 
@@ -70,16 +70,6 @@ data class ConferenceDto(
         } catch (e: NumberFormatException){
             return 0
         }
-    }
-
-    private fun getSensibleTags(tags: Set<String>): Set<String>{
-        val hashSet = HashSet<String>()
-        for (s in tags) {
-            if (!(acronym.equals(s) || s.matches(Regex.fromLiteral("\\d+")))) {
-                hashSet.add(s)
-            }
-        }
-        return hashSet
     }
 
     override fun compareTo(other: ConferenceDto): Int {

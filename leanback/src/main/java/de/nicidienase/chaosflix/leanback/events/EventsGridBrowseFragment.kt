@@ -1,7 +1,5 @@
 package de.nicidienase.chaosflix.leanback.events
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
@@ -17,10 +15,6 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
-import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
-import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
-import de.nicidienase.chaosflix.leanback.BrowseErrorFragment
 import de.nicidienase.chaosflix.leanback.CardPresenter
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
 import de.nicidienase.chaosflix.leanback.R
@@ -28,21 +22,18 @@ import java.net.URI
 import java.net.URISyntaxException
 import java.util.*
 
-class EventsGridBrowseFragment : VerticalGridSupportFragment() {
-
+class EventsGridBrowseFragment : VerticalGridSupportFragment(), EventsActivity.EventsFragment {
 	private val NUM_COLUMNS = 4;
 
-	private lateinit var viewModel: BrowseViewModel
 	private val handler = Handler()
-	private lateinit var rowsAdapter: ArrayObjectAdapter
+	private val rowsAdapter: ArrayObjectAdapter = ArrayObjectAdapter(CardPresenter(R.style.EventGridCardStyle))
 	private lateinit var defaultBackground: Drawable
 	private var metrics: DisplayMetrics? = null
 	private var backgroundTimer: Timer? = null
 	private var backgroundURI: URI? = null
 	private var backgroundManager: BackgroundManager? = null
-
-
 	private val useTalksAsBackground = false
+
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -50,9 +41,6 @@ class EventsGridBrowseFragment : VerticalGridSupportFragment() {
 		ContextCompat.getDrawable(requireContext(), R.drawable.default_background)?.apply {
 			defaultBackground = this
 		}
-
-		viewModel = ViewModelProviders.of(this, ViewModelFactory(requireContext())).get(BrowseViewModel::class.java)
-
 
 		val conference: Conference? = arguments?.getParcelable(EventsRowsBrowseFragment.CONFERENCE)
 		if (conference == null) {
@@ -64,38 +52,16 @@ class EventsGridBrowseFragment : VerticalGridSupportFragment() {
 		val presenter = VerticalGridPresenter(FocusHighlight.ZOOM_FACTOR_MEDIUM)
 		presenter.numberOfColumns = NUM_COLUMNS
 		gridPresenter = presenter
-		val cardPresenter = CardPresenter(R.style.EventGridCardStyle)
-		rowsAdapter = ArrayObjectAdapter(cardPresenter)
 
 //		prepareBackgroundManager()
 		onItemViewClickedListener = ItemViewClickedListener(this)
 //		onItemViewSelectedListener = ItemViewSelectedListener()
 
-		var errorFragment: BrowseErrorFragment? = null
-		viewModel.updateEventsForConference(conference).observe(this, Observer { event ->
-			when (event?.state) {
-				Downloader.DownloaderState.RUNNING -> {
-					fragmentManager?.let {
-						errorFragment = BrowseErrorFragment.showErrorFragment(it, FRAGMENT)
-					}
-				}
-				Downloader.DownloaderState.DONE -> {
-					if (event.error != null) {
-						val errorMessage = event.error ?: "Error refreshing events"
-						errorFragment?.setErrorContent(errorMessage)
-					} else {
-						errorFragment?.dismiss()
-					}
-				}
-			}
-		})
-		viewModel.getEventsforConference(conference).observe(this, Observer { events ->
-			events?.let {
-				rowsAdapter.setItems(events, null)
-				errorFragment?.dismiss()
-			}
-		})
 		adapter = rowsAdapter
+	}
+
+	override fun updateEvents(conference: Conference, events: List<Event>) {
+		rowsAdapter.setItems(events, null)
 	}
 
 	override fun onDestroy() {
@@ -178,7 +144,7 @@ class EventsGridBrowseFragment : VerticalGridSupportFragment() {
 		private val TAG = EventsGridBrowseFragment::class.java.simpleName
 
 		private val BACKGROUND_UPDATE_DELAY = 300
-		private val FRAGMENT = R.id.browse_fragment
+		val FRAGMENT = R.id.browse_fragment
 		val CONFERENCE = "conference"
 
 		fun create(conference: Conference): EventsGridBrowseFragment {
