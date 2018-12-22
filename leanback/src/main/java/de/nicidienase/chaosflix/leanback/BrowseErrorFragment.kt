@@ -75,18 +75,7 @@ class BrowseErrorFragment : ErrorSupportFragment() {
 
 	class SpinnerFragment : Fragment() {
 		override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-			return container?.context?.let {context ->
-				val progressBar = ProgressBar(context)
-				if (container is FrameLayout) {
-					val res = resources
-					val width = res.getDimensionPixelSize(R.dimen.spinner_width)
-					val height = res.getDimensionPixelSize(R.dimen.spinner_height)
-					val layoutParams = FrameLayout.LayoutParams(width, height, Gravity.CENTER)
-					progressBar.layoutParams = layoutParams
-				}
-				return progressBar
-			}
-//			return inflater.inflate(R.layout.loading_fragment, container, false)
+			return inflater.inflate(R.layout.loading_fragment, container, false)
 		}
 	}
 

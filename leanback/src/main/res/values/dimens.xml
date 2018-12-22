@@ -5,4 +5,7 @@
 
 	<dimen name="event_card_width">200dp</dimen>
 	<dimen name="event_card_height">112dp</dimen>
+
+	<dimen name="spinner_width">120dp</dimen>
+	<dimen name="spinner_height">120dp</dimen>
 </resources>
