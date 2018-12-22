@@ -56,6 +56,8 @@ import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.common.viewmodel.PlayerViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import de.nicidienase.chaosflix.leanback.CardPresenter
+import de.nicidienase.chaosflix.leanback.DiffCallbacks
 import de.nicidienase.chaosflix.leanback.EventDetailsDescriptionPresenter
 import de.nicidienase.chaosflix.leanback.conferences.ConferencesActivity
 
@@ -69,6 +71,8 @@ class EventDetailsFragment : DetailsSupportFragment() {
 	private var room: Room? = null
 
 	private lateinit var rowsAdapter: ArrayObjectAdapter
+
+	private var relatedEventsAdapter: ArrayObjectAdapter? = null
 
 	private val detailsBackgroundController
 			= DetailsSupportFragmentBackgroundController(this)
@@ -112,8 +116,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 		detailsPresenter.onActionClickedListener = DetailActionClickedListener()
 
 		selector.addClassPresenter(DetailsOverviewRow::class.java, detailsPresenter)
-		selector.addClassPresenter(ListRow::class.java,
-				ListRowPresenter())
+		selector.addClassPresenter(ListRow::class.java, ListRowPresenter())
 		rowsAdapter = ArrayObjectAdapter(selector)
 
 		detailsBackgroundController.enableParallax()
@@ -164,6 +167,15 @@ class EventDetailsFragment : DetailsSupportFragment() {
 				val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings)
 				optimalRecording?.recordingUrl?.let { preparePlayer(it, event.guid) }
 			}
+		})
+
+		detailsViewModel.getRelatedEvents(event).observe(this, Observer {events ->
+			if(relatedEventsAdapter == null){
+				relatedEventsAdapter = ArrayObjectAdapter(CardPresenter(R.style.EventCardStyle))
+				val header = HeaderItem(getString(R.string.related_talks))
+				rowsAdapter.add(ListRow(header, relatedEventsAdapter))
+			}
+			relatedEventsAdapter?.setItems(events, DiffCallbacks.eventDiffCallback)
 		})
 	}
 

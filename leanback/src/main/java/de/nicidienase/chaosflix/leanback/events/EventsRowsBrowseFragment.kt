@@ -119,16 +119,7 @@ class EventsRowsBrowseFragment : BrowseSupportFragment(), EventsActivity.EventsF
 		} else {
 			listRowAdapter = row.adapter as ArrayObjectAdapter
 		}
-		listRowAdapter.setItems(items.sorted(), object : DiffCallback<Event>() {
-			override fun areItemsTheSame(oldItem: Event, newItem: Event): Boolean {
-				return oldItem.guid == newItem.guid
-			}
-
-			override fun areContentsTheSame(oldItem: Event, newItem: Event): Boolean {
-				return oldItem.title == newItem.title
-			}
-
-		})
+		listRowAdapter.setItems(items.sorted(), DiffCallbacks.eventDiffCallback)
 		return row
 	}
 

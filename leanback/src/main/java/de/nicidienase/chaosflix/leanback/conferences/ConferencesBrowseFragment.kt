@@ -38,15 +38,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 	private lateinit var viewModel: BrowseViewModel
 
 	private val conferencesGroupRows = HashMap<String, ListRow>()
-	private val eventDiffCallback = object : DiffCallback<Event>() {
-		override fun areItemsTheSame(oldItem: Event, newItem: Event): Boolean {
-			return oldItem.guid == newItem.guid
-		}
 
-		override fun areContentsTheSame(oldItem: Event, newItem: Event): Boolean {
-			return oldItem.guid == newItem.guid
-		}
-	}
 
 	private enum class Section {
 		Streaming,
@@ -135,18 +127,18 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 
 		viewModel.getBookmarkedEvents().observe(this, Observer { bookmarks ->
 			if (bookmarks != null) {
-				watchListAdapter.setItems(bookmarks, eventDiffCallback)
+				watchListAdapter.setItems(bookmarks, DiffCallbacks.eventDiffCallback)
 				watchListAdapter.notifyItemRangeChanged(0, bookmarks.size)
-				if(rowsAdapter.indexOf(watchlistRow) == -1){
+				if (rowsAdapter.indexOf(watchlistRow) == -1) {
 					updateSectionRecomendations()
 				}
 			}
 		})
 		viewModel.getInProgressEvents().observe(this, Observer { inProgress ->
 			if (inProgress != null) {
-				inProgressAdapter.setItems(inProgress, eventDiffCallback)
+				inProgressAdapter.setItems(inProgress, DiffCallbacks.eventDiffCallback)
 				inProgressAdapter.notifyItemRangeChanged(0, inProgress.size)
-				if(rowsAdapter.indexOf(inProgressRow) == -1){
+				if (rowsAdapter.indexOf(inProgressRow) == -1) {
 					updateSectionRecomendations()
 				}
 			}
@@ -185,6 +177,8 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 	private fun updateConferencesSection(rows: List<Row>) {
 		clearSection(Section.Conferences)
 		rowsAdapter.addAll(rowsAdapter.size(), rows)
+		val i = rowsAdapter.indexOf(conferencesSection)
+		rowsAdapter.notifyArrayItemRangeChanged(i, rows.size)
 	}
 
 	private fun updateSection(section: Section, rowProvider: () -> List<Row>, before: Row) {
@@ -195,7 +189,9 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 			} else {
 				addSectionIfNecessary(section)
 			}
-			rowsAdapter.addAll(rowsAdapter.indexOf(before), rows)
+			val i = rowsAdapter.indexOf(before)
+			rowsAdapter.addAll(i, rows)
+			rowsAdapter.notifyArrayItemRangeChanged(i, rows.size)
 		} else {
 			if (sectionVisible(section)) {
 				removeSection(section)
@@ -208,14 +204,18 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 			Section.Streaming -> {
 				rowsAdapter.add(0, streamsDivider)
 				rowsAdapter.add(0, streamingSection)
+				rowsAdapter.notifyArrayItemRangeChanged(0,2)
 			}
 			Section.Recomendations -> {
 				val index = rowsAdapter.indexOf(conferencesSection)
 				rowsAdapter.add(index, recomendationsDivider)
 				rowsAdapter.add(index, recomendationsSections)
+				rowsAdapter.notifyArrayItemRangeChanged(index,2)
 			}
 			Section.Conferences -> {
-				rowsAdapter.add(rowsAdapter.size(), conferencesSection)
+				val i = rowsAdapter.size()
+				rowsAdapter.add(i, conferencesSection)
+				rowsAdapter.notifyArrayItemRangeChanged(i,1)
 			}
 		}
 	}
@@ -226,6 +226,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 		}
 		val pair = getSectionIndices(section)
 		rowsAdapter.removeItems(pair.first, pair.second - pair.first + 1)
+		rowsAdapter.notifyArrayItemRangeChanged(pair.first, pair.second - pair.first + 1)
 	}
 
 	private fun getSectionIndices(section: Section): Pair<Int, Int> {
@@ -255,20 +256,13 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 		val (i, j) = getSectionIndices(section)
 		if (i + 1 < rowsAdapter.size() - 1) {
 			rowsAdapter.removeItems(i + 1, j - i - 1)
+			rowsAdapter.notifyArrayItemRangeChanged(i + 1, j - i - 1)
 		}
 	}
 
 	private fun bindConferencesToRow(group: ConferenceGroup, row: ListRow) {
 		viewModel.getConferencesByGroup(group.id).observe(this, Observer { conferences ->
-			(row.adapter as ArrayObjectAdapter).setItems(conferences?.sorted(), object : DiffCallback<Conference>() {
-				override fun areItemsTheSame(oldItem: Conference, newItem: Conference): Boolean {
-					return oldItem.url == newItem.url
-				}
-
-				override fun areContentsTheSame(oldItem: Conference, newItem: Conference): Boolean {
-					return oldItem.updatedAt == newItem.updatedAt
-				}
-			})
+			(row.adapter as ArrayObjectAdapter).setItems(conferences?.sorted(), DiffCallbacks.conferenceDiffCallback)
 		})
 	}
 
