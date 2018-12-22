@@ -5,12 +5,9 @@ import android.support.v17.leanback.app.ErrorSupportFragment
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ProgressBar
 
 class BrowseErrorFragment : ErrorSupportFragment() {
 	private var spinnerFragment: SpinnerFragment? = null
@@ -33,7 +30,7 @@ class BrowseErrorFragment : ErrorSupportFragment() {
 	}
 
 	fun setErrorContent(message: String, fragmentManager: FragmentManager? = activity?.supportFragmentManager) {
-		if(!isDetached){
+		if (!isDetached) {
 			spinnerFragment?.let {
 				fragmentManager?.beginTransaction()?.remove(it)?.commit()
 			}
@@ -42,7 +39,7 @@ class BrowseErrorFragment : ErrorSupportFragment() {
 			setDefaultBackground(TRANSLUCENT)
 			buttonText = resources.getString(R.string.dismiss_error)
 
-			if(fragmentManager != null){
+			if (fragmentManager != null) {
 				setButtonClickListener { v -> dismiss(fragmentManager) }
 			} else {
 				setButtonClickListener { v -> dismiss() }
@@ -65,10 +62,10 @@ class BrowseErrorFragment : ErrorSupportFragment() {
 				}
 				remove(this@BrowseErrorFragment)
 				commit()
-	    		fragmentManager.popBackStack();
+				fragmentManager.popBackStack();
 			}
 		} else {
-			Log.e(TAG,"Cannot dismiss, fragmentManager is null")
+			Log.e(TAG, "Cannot dismiss, fragmentManager is null")
 		}
 	}
 
@@ -90,7 +87,7 @@ class BrowseErrorFragment : ErrorSupportFragment() {
 			val args = Bundle()
 			args.putInt(BrowseErrorFragment.FRAGMENT, fragmentId)
 			errorFragment.arguments = args
-			if(addToBackstack){
+			if (addToBackstack) {
 				manager.beginTransaction().add(fragmentId, errorFragment).addToBackStack(null).commit()
 			} else {
 				manager.beginTransaction().add(fragmentId, errorFragment).commit()
