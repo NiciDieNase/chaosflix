@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|center_horizontal">
 
-            <de.nicidienase.chaosflix.touch.ChaosflixLoadingSpinner
+            <de.nicidienase.chaosflix.ChaosflixLoadingSpinner
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:src="@drawable/vector_loading_icon"
