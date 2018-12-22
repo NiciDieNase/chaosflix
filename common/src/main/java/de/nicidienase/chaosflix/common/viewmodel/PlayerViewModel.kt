@@ -15,6 +15,9 @@ class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
             = database.playbackProgressDao().getProgressForEvent(guid)
 
     fun setPlaybackProgress(eventGuid: String, progress: Long) {
+        if(progress < 5_000){
+            return
+        }
         handler.runOnBackgroundThread {
             database.playbackProgressDao().saveProgress(
                     PlaybackProgress(
