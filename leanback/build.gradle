@@ -26,19 +26,16 @@ android {
             minifyEnabled false
             useProguard false
         }
-
         release {
-            minifyEnabled false
-            useProguard false
-//            shrinkResources true
-//            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                    'proguard-rules.pro'
+            manifestPlaceholders = [label: appName]
+            minifyEnabled true
+            useProguard true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),'proguard-rules.pro'
+//            signingConfig signingConfigs.config
         }
     }
-
     flavorDimensions "streaming"
-
     productFlavors {
         prod {}
         mock {}
@@ -76,19 +73,14 @@ configurations {
 
 dependencies {
     implementation project(':common')
-
     implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
     implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
     implementation "com.android.support:leanback-v17:${rootProject.ext.supportLibraryVersion}"
     implementation "com.android.support:preference-leanback-v17:${rootProject.ext.supportLibraryVersion}"
     implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
-
-    implementation "com.google.android.exoplayer:exoplayer:2.6.1"
-    implementation "com.google.android.exoplayer:extension-leanback:2.6.1"
-
+    implementation 'com.google.android.exoplayer:exoplayer:2.6.1'
+    implementation 'com.google.android.exoplayer:extension-leanback:2.6.1'
     implementation 'com.github.bumptech.glide:glide:4.6.1'
-
-
     androidTestImplementation('com.android.support.test:rules:0.5') {
         exclude module: 'support-annotations'
     }
