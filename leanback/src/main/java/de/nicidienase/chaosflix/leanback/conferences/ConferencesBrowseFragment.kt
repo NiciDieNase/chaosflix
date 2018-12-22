@@ -27,10 +27,10 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 	private lateinit var conferencesSection: SectionRow
 	private lateinit var streamsDivider: DividerRow
 	private lateinit var recomendationsDivider: DividerRow
-	private lateinit var promotedRow: ListRow
+//	private lateinit var promotedRow: ListRow
 	private lateinit var watchlistRow: ListRow
 	private lateinit var inProgressRow: ListRow
-	private lateinit var promotedAdapter: ChaosflixEventAdapter
+//	private lateinit var promotedAdapter: ChaosflixEventAdapter
 	private lateinit var watchListAdapter: ChaosflixEventAdapter
 	private lateinit var inProgressAdapter: ChaosflixEventAdapter
 
@@ -82,8 +82,8 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 		// Recomendation Rows and Adapter
 		watchListAdapter = ChaosflixEventAdapter(eventPresenter)
 		inProgressAdapter = ChaosflixEventAdapter(eventPresenter)
-		promotedAdapter = ChaosflixEventAdapter(eventPresenter)
-		promotedRow = ListRow(HeaderItem("Promoted"), promotedAdapter)
+//		promotedAdapter = ChaosflixEventAdapter(eventPresenter)
+//		promotedRow = ListRow(HeaderItem("Promoted"), promotedAdapter)
 		watchlistRow = ListRow(HeaderItem(getString(R.string.watchlist)), watchListAdapter)
 		inProgressRow = ListRow(HeaderItem("Continue Watching"), inProgressAdapter)
 
@@ -152,15 +152,15 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 			}
 		})
 
-		viewModel.getPromotedEvents().observe(this, Observer { promoted ->
-			if (promoted != null) {
-				promotedAdapter.setItems(promoted, eventDiffCallback)
-				promotedAdapter.notifyItemRangeChanged(0, promoted.size)
-				if(rowsAdapter.indexOf(promotedRow) == -1 ){
-					updateSectionRecomendations()
-				}
-			}
-		})
+//		viewModel.getPromotedEvents().observe(this, Observer { promoted ->
+//			if (promoted != null) {
+//				promotedAdapter.setItems(promoted, eventDiffCallback)
+//				promotedAdapter.notifyItemRangeChanged(0, promoted.size)
+//				if(rowsAdapter.indexOf(promotedRow) == -1 ){
+//					updateSectionRecomendations()
+//				}
+//			}
+//		})
 
 		viewModel.getLivestreams().observe(this, Observer { liveConferences ->
 			if (liveConferences != null && liveConferences.isNotEmpty()) {
@@ -173,7 +173,8 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 	private fun updateSectionRecomendations() =
 			updateSection(
 					Section.Recomendations,
-					{ listOf(promotedRow, watchlistRow, inProgressRow).filter { it.adapter.size() > 0 } },
+//					{ listOf(promotedRow, watchlistRow, inProgressRow).filter { it.adapter.size() > 0 } },
+					{ listOf(watchlistRow, inProgressRow).filter { it.adapter.size() > 0 } },
 					recomendationsDivider)
 
 	private fun updateStreams(streamRows: List<Row>) = updateSection(
