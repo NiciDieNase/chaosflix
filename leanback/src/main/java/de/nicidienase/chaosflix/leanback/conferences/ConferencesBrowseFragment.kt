@@ -109,7 +109,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 			when (downloaderEvent?.state) {
 				Downloader.DownloaderState.RUNNING -> {
 				}
-				Downloader.DownloaderState.DONE -> errorFragment?.dismiss()
+				Downloader.DownloaderState.DONE -> errorFragment?.dismiss(fragmentManager)
 			}
 		})
 
