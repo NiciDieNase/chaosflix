@@ -27,9 +27,8 @@ android {
             useProguard false
         }
         release {
-            manifestPlaceholders = [label: appName]
-            minifyEnabled true
             useProguard true
+            minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'),'proguard-rules.pro'
 //            signingConfig signingConfigs.config
@@ -39,6 +38,12 @@ android {
     productFlavors {
         prod {}
         mock {}
+    }
+
+    variantFilter { variant ->
+        if (variant.buildType.name == "mockRelease") {
+            setIgnore(true)
+        }
     }
 
     packagingOptions {
@@ -67,7 +72,6 @@ android {
 configurations {
     mockDebugCompile
     prodDebugCompile
-    mockReleaseCompile
     prodReleaseCompile
 }
 

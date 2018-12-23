@@ -19,7 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
-
+-ignorewarnings
 -dontwarn com.squareup.okhttp.**
 
 # Proguard configuration for Jackson 2.x (fasterxml package instead of codehaus package)

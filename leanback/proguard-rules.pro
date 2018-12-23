@@ -67,3 +67,4 @@
 -keepclassmembers public class com.cypressworks.kotlinreflectionproguard.** {
     public *;
 }
+-ignorewarnings
