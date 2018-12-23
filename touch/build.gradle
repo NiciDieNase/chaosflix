@@ -14,8 +14,8 @@ android {
         targetSdkVersion rootProject.ext.targetSDK
         manifestPlaceholders = [label: appName]
         // odd for touch, even for leanback
-        versionCode 29
-        versionName "0.4"
+        versionCode rootProject.ext.touchVersionCode
+        versionName rootProject.ext.touchVersionName
 //        multiDexEnabled true
     }
     buildTypes {
