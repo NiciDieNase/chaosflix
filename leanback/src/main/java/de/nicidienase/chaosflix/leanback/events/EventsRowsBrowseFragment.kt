@@ -1,12 +1,18 @@
 package de.nicidienase.chaosflix.leanback.events
 
-import android.arch.lifecycle.Observer
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.support.v17.leanback.app.BackgroundManager
 import android.support.v17.leanback.app.BrowseSupportFragment
-import android.support.v17.leanback.widget.*
+import android.support.v17.leanback.widget.ArrayObjectAdapter
+import android.support.v17.leanback.widget.HeaderItem
+import android.support.v17.leanback.widget.ListRow
+import android.support.v17.leanback.widget.ListRowPresenter
+import android.support.v17.leanback.widget.OnItemViewSelectedListener
+import android.support.v17.leanback.widget.Presenter
+import android.support.v17.leanback.widget.Row
+import android.support.v17.leanback.widget.RowPresenter
 import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.util.Log
@@ -16,10 +22,8 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
-import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
-import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
-import de.nicidienase.chaosflix.leanback.BrowseErrorFragment
 import de.nicidienase.chaosflix.leanback.CardPresenter
+import de.nicidienase.chaosflix.leanback.DiffCallbacks
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
 import de.nicidienase.chaosflix.leanback.R
 import java.net.URI
@@ -29,7 +33,6 @@ import kotlin.collections.HashMap
 
 class EventsRowsBrowseFragment : BrowseSupportFragment(), EventsActivity.EventsFragment {
 
-	private lateinit var viewModel: BrowseViewModel
 	private val handler = Handler()
 	private var rowsAdapter: ArrayObjectAdapter = ArrayObjectAdapter(ListRowPresenter())
 	private lateinit var defaultBackground: Drawable
@@ -40,7 +43,7 @@ class EventsRowsBrowseFragment : BrowseSupportFragment(), EventsActivity.EventsF
 
 	private val eventRows: MutableMap<String, ListRow> = HashMap()
 
-	private val useTalksAsBackground = false
+	private var useTalksAsBackground: Boolean = false
 
 	private var cardPresenter: CardPresenter = CardPresenter(R.style.EventCardStyle)
 
@@ -51,18 +54,15 @@ class EventsRowsBrowseFragment : BrowseSupportFragment(), EventsActivity.EventsF
 			defaultBackground = this
 		}
 
-
 		val conference: Conference? = arguments?.getParcelable(CONFERENCE)
+		useTalksAsBackground = arguments?.getBoolean(THUMBNAIL_BACKGROUND) ?: false
 		if (conference == null) {
 			throw IllegalStateException("No conference passed")
 		}
 		setupUIElements(conference)
 
-
 		prepareBackgroundManager()
 		onItemViewClickedListener = ItemViewClickedListener(this)
-//		onItemViewSelectedListener = ItemViewSelectedListener()
-
 		adapter = rowsAdapter
 	}
 
@@ -144,7 +144,7 @@ class EventsRowsBrowseFragment : BrowseSupportFragment(), EventsActivity.EventsF
 //		searchAffordanceColor = resources.getColor(R.color.search_opaque)
 	}
 
-	fun loadImage(url: String, consumer: (Drawable)-> Unit) {
+	fun loadImage(url: String, consumer: (Drawable) -> Unit) {
 		val options = RequestOptions()
 		options.centerCrop()
 
@@ -183,39 +183,36 @@ class EventsRowsBrowseFragment : BrowseSupportFragment(), EventsActivity.EventsF
 				} catch (e: URISyntaxException) {
 					e.printStackTrace()
 				}
-
 				// TODO make configurable (enable/disable)
 				if (useTalksAsBackground) {
 					startBackgroundTimer();
 				}
 			}
-
 		}
 	}
 
 	private inner class UpdateBackgroundTask : TimerTask() {
-
 		override fun run() {
 			handler.post {
 				if (backgroundURI != null) {
 					updateBackground(backgroundURI!!.toString())
 				}
 			}
-
 		}
 	}
 
 	companion object {
 		private val TAG = EventsRowsBrowseFragment::class.java.simpleName
-
 		private val BACKGROUND_UPDATE_DELAY = 300
-		private val FRAGMENT = R.id.browse_fragment
+		const val THUMBNAIL_BACKGROUND = "thumbnail_background"
+		const val CONFERENCE = "conference"
 
-		val CONFERENCE = "conference"
-
-		fun create(conference: Conference): EventsRowsBrowseFragment {
+		fun create(conference: Conference, thumbnailBackground: Boolean = false): EventsRowsBrowseFragment {
 			return EventsRowsBrowseFragment().apply {
-				arguments = Bundle().apply { putParcelable(CONFERENCE, conference) }
+				arguments = Bundle().apply {
+					putParcelable(CONFERENCE, conference)
+					putBoolean(THUMBNAIL_BACKGROUND, thumbnailBackground)
+				}
 			}
 		}
 	}

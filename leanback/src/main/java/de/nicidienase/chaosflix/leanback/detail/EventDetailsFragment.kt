@@ -20,6 +20,7 @@ import android.support.v17.leanback.widget.ClassPresenterSelector
 import android.support.v17.leanback.widget.DetailsOverviewRow
 import android.support.v17.leanback.widget.FullWidthDetailsOverviewRowPresenter
 import android.support.v17.leanback.widget.FullWidthDetailsOverviewSharedElementHelper
+import android.support.v17.leanback.widget.HeaderItem
 import android.support.v17.leanback.widget.ListRow
 import android.support.v17.leanback.widget.ListRowPresenter
 import android.support.v17.leanback.widget.OnActionClickedListener
@@ -49,7 +50,6 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.Util
-import de.nicidienase.chaosflix.leanback.R
 import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
@@ -59,6 +59,7 @@ import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.CardPresenter
 import de.nicidienase.chaosflix.leanback.DiffCallbacks
 import de.nicidienase.chaosflix.leanback.EventDetailsDescriptionPresenter
+import de.nicidienase.chaosflix.leanback.R
 import de.nicidienase.chaosflix.leanback.conferences.ConferencesActivity
 
 
@@ -74,8 +75,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
 	private var relatedEventsAdapter: ArrayObjectAdapter? = null
 
-	private val detailsBackgroundController
-			= DetailsSupportFragmentBackgroundController(this)
+	private val detailsBackgroundController = DetailsSupportFragmentBackgroundController(this)
 
 	private val playerDelegate = lazy {
 		ExoPlayerFactory.newSimpleInstance(
@@ -97,8 +97,8 @@ class EventDetailsFragment : DetailsSupportFragment() {
 		room = activity?.intent?.getParcelableExtra(DetailsActivity.ROOM)
 
 		val eventType =
-				if(event != null) DetailsActivity.TYPE_RECORDING
-				else if(room != null) DetailsActivity.TYPE_STREAM
+				if (event != null) DetailsActivity.TYPE_RECORDING
+				else if (room != null) DetailsActivity.TYPE_STREAM
 				else -1
 
 		title = event?.title
@@ -169,8 +169,8 @@ class EventDetailsFragment : DetailsSupportFragment() {
 			}
 		})
 
-		detailsViewModel.getRelatedEvents(event).observe(this, Observer {events ->
-			if(relatedEventsAdapter == null){
+		detailsViewModel.getRelatedEvents(event).observe(this, Observer { events ->
+			if (relatedEventsAdapter == null) {
 				relatedEventsAdapter = ArrayObjectAdapter(CardPresenter(R.style.EventCardStyle))
 				val header = HeaderItem(getString(R.string.related_talks))
 				rowsAdapter.add(ListRow(header, relatedEventsAdapter))
@@ -192,7 +192,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 		initializeBackgroundWithImage(room.thumb)
 
 		val dashStreams = room.streams.filter { it.slug == "dash-native" }
-		if (dashStreams.size > 0){
+		if (dashStreams.size > 0) {
 //				&& detailsViewModel.getAutoselectStream()) {
 			dashStreams.first().urls.get("dash")?.url?.let { preparePlayer(it, "") }
 		}
@@ -208,7 +208,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
 	override fun onPause() {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || activity?.isInPictureInPictureMode == false) {
-			event?.let {event ->
+			event?.let { event ->
 				playerViewModel.setPlaybackProgress(event.guid, playerAdapter.currentPosition)
 			}
 			playerAdapter.pause()
@@ -218,7 +218,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
 	override fun onStop() {
 		super.onStop()
-		if(playerDelegate.isInitialized()){
+		if (playerDelegate.isInitialized()) {
 			player.release()
 		}
 	}
@@ -238,7 +238,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 				})
 	}
 
-	private fun initializeBackgroundWithImage(url: String){
+	private fun initializeBackgroundWithImage(url: String) {
 		detailsBackgroundController.enableParallax()
 		val options = RequestOptions()
 		options.fallback(R.drawable.default_background)
@@ -270,7 +270,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 		return ChaosMediaPlayerGlue(requireContext(), playerAdapter)
 	}
 
-	private fun preparePlayer(url: String, overrideExtension: String = ""){
+	private fun preparePlayer(url: String, overrideExtension: String = "") {
 		player.prepare(buildMediaSource(Uri.parse(url), overrideExtension))
 
 	}
@@ -279,14 +279,13 @@ class EventDetailsFragment : DetailsSupportFragment() {
 		val mediaDataSourceFactory = buildDataSourceFactory(true)
 		val type = if (TextUtils.isEmpty(overrideExtension)) {
 			Util.inferContentType(uri)
-		}
-		else
+		} else
 			Util.inferContentType(".$overrideExtension")
 		when (type) {
 			C.TYPE_DASH -> return DashMediaSource.Factory(
-						DefaultDashChunkSource.Factory(mediaDataSourceFactory),
-						buildDataSourceFactory(true))
-						.createMediaSource(uri)
+					DefaultDashChunkSource.Factory(mediaDataSourceFactory),
+					buildDataSourceFactory(true))
+					.createMediaSource(uri)
 			C.TYPE_HLS -> return HlsMediaSource.Factory(buildDataSourceFactory(true))
 					.createMediaSource(uri)
 			C.TYPE_SS, C.TYPE_OTHER -> return ExtractorMediaSource.Factory(mediaDataSourceFactory)

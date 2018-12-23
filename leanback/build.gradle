@@ -40,6 +40,7 @@ android {
         prod {}
         mock {}
     }
+
     packagingOptions {
         exclude 'META-INF/ASL2.0'
         exclude 'META-INF/LICENSE'

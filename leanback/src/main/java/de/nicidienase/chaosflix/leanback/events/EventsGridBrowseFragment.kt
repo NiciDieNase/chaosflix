@@ -144,7 +144,6 @@ class EventsGridBrowseFragment : VerticalGridSupportFragment(), EventsActivity.E
 		private val TAG = EventsGridBrowseFragment::class.java.simpleName
 
 		private val BACKGROUND_UPDATE_DELAY = 300
-		val FRAGMENT = R.id.browse_fragment
 		val CONFERENCE = "conference"
 
 		fun create(conference: Conference): EventsGridBrowseFragment {
