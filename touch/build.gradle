@@ -14,7 +14,7 @@ android {
         targetSdkVersion rootProject.ext.targetSDK
         manifestPlaceholders = [label: appName]
         // odd for touch, even for leanback
-        versionCode 27
+        versionCode 29
         versionName "0.4"
 //        multiDexEnabled true
     }
