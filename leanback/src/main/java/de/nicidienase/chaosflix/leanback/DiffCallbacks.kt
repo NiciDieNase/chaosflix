@@ -17,7 +17,7 @@ object DiffCallbacks {
 
 	val conferenceDiffCallback = object: DiffCallback<Conference>() {
 		override fun areItemsTheSame(oldItem: Conference, newItem: Conference): Boolean {
-			return oldItem.url == newItem.url
+			return oldItem.id == newItem.id
 		}
 
 		override fun areContentsTheSame(oldItem: Conference, newItem: Conference): Boolean {

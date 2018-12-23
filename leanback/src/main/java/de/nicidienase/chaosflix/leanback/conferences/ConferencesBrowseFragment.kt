@@ -88,10 +88,24 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 
 		onItemViewClickedListener = ItemViewClickedListener(this)
 		adapter = rowsAdapter
-	}
 
-	override fun onStart() {
-		super.onStart()
+		viewModel.getConferenceGroups().observe(this, Observer { conferenceGroups ->
+			if (conferenceGroups != null && conferenceGroups.isNotEmpty()) {
+				val conferenceRows = ArrayList<Row>()
+				errorFragment?.dismiss(fragmentManager)
+				for (group in conferenceGroups.sorted()) {
+					var row = conferencesGroupRows.get(group.name)
+					if (row == null) {
+						row = buildRow(ArrayList(), conferencePresenter, ConferenceUtil.getStringForTag(group.name))
+						conferencesGroupRows[group.name] = row
+						bindConferencesToRow(group, row)
+					}
+					conferenceRows.add(row)
+				}
+				Log.i(TAG, "got ${conferenceGroups.size} conference-groups, loading ${conferenceRows.size} rows")
+				updateConferencesSection(conferenceRows)
+			}
+		})
 
 		viewModel.getUpdateState().observe(this, Observer { downloaderEvent ->
 			when (downloaderEvent?.state) {
@@ -106,31 +120,9 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 						val errorMessage = downloaderEvent.error ?: "Error refreshing events"
 						errorFragment?.setErrorContent(errorMessage, fragmentManager)
 					} else {
-						if (downloaderEvent.data?.isEmpty() ?: false) {
-							errorFragment?.setErrorContent("No Events found for this conference", fragmentManager)
-						} else {
-							errorFragment?.dismiss(fragmentManager)
-						}
+						errorFragment?.dismiss(fragmentManager)
 					}
 				}
-			}
-		})
-
-		viewModel.getConferenceGroups().observe(this, Observer { conferenceGroups ->
-			if (conferenceGroups != null && conferenceGroups.isNotEmpty()) {
-				val conferenceRows = ArrayList<Row>()
-				errorFragment?.dismiss(fragmentManager)
-				for (group in conferenceGroups.sorted()) {
-					var row = conferencesGroupRows.get(group.name)
-					if (row == null) {
-						row = buildRow(ArrayList(), conferencePresenter, ConferenceUtil.getStringForTag(group.name))
-						conferencesGroupRows[group.name] = row
-					}
-					conferenceRows.add(row)
-					bindConferencesToRow(group, row)
-				}
-				Log.i(TAG, "got ${conferenceGroups?.size} conference-groups, loading ${conferenceRows.size} rows")
-				updateConferencesSection(conferenceRows)
 			}
 		})
 
@@ -183,6 +175,10 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 			streamsDivider)
 
 	private fun updateConferencesSection(rows: List<Row>) {
+		if (! rows.map { rowsAdapter.indexOf(it) }.contains(-1)){
+			Log.i(TAG, "skipping conf-section update, all rows allready contained")
+			return
+		}
 		clearSection(Section.Conferences)
 		val i = rowsAdapter.indexOf(conferencesSection)
 		rowsAdapter.addAll(i + 1, rows)
@@ -191,6 +187,10 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 
 	private fun updateSection(section: Section, rowProvider: () -> List<Row>, before: Row) {
 		val rows = rowProvider.invoke()
+		if(!rows.map { rowsAdapter.indexOf(it) }.contains(-1)){
+			Log.i(TAG, "skipping adding section, all rows allready contained")
+			return
+		}
 		if (rows.isNotEmpty()) {
 			if (sectionVisible(section)) {
 				clearSection(section)
