@@ -1,7 +1,9 @@
 <resources>
     <color name="primary">#ee4c4c</color>
     <color name="primary_dark">#dc4646</color>
-    <color name="primary_darker">#973030</color>
+    <color name="brand">#973030</color>
+    <color name="brand_dark">#692121</color>
+
     <color name="accent">#f3b500</color>
 
     <!--<color name="primary_500">#3F51B5</color>-->

@@ -3,9 +3,10 @@
 
     <style name="AppTheme" parent="@style/Theme.Leanback">
         <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
         <item name="android:colorAccent">@color/accent</item><!--loading-spinner-->
-		<item name="defaultBrandColor">@color/primary_darker</item><!--sidebar-->
-		<item name="defaultBrandColorDark">@color/primary_darker</item>
+		<item name="defaultBrandColor">@color/brand</item><!--sidebar-->
+		<item name="defaultBrandColorDark">@color/brand_dark</item>
 		<item name="defaultSearchColor">@color/accent</item>
 	</style>
 

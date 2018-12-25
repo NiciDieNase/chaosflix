@@ -92,6 +92,7 @@
                         android:layout_width="@dimen/del_button_size"
                         android:layout_height="match_parent"
                         android:background="@drawable/button_rect_normal"
+                        android:contentDescription="@string/delete_item"
                         app:srcCompat="@drawable/ic_delete_dark"/>
                 </LinearLayout>
 

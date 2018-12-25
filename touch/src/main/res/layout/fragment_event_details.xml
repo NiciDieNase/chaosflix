@@ -140,6 +140,7 @@
 			android:layout_margin="16dp"
 			android:clickable="true"
 			android:src="@drawable/ic_play"
+			android:contentDescription="@string/play_button"
 			app:backgroundTint="@color/primary"
 			app:fabSize="normal"
 			app:layout_anchor="@+id/appbar"
