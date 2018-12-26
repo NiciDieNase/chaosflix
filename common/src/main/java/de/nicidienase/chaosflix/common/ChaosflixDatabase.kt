@@ -81,7 +81,10 @@ abstract class ChaosflixDatabase : RoomDatabase() {
 				database.execSQL("INSERT INTO `playback_progress` (id, event_guid, progress, watch_date) " +
 						"SELECT id, event_guid, progress, 0 from old_playback_progress")
 				database.execSQL("DROP TABLE old_playback_progress")
-				database.execSQL("ALTER TABLE conference ADD COLUMN lastReleasedAt varchar default '1970-01-01'")
+				database.execSQL("ALTER TABLE conference ADD COLUMN lastReleasedAt TEXT NOT NULL DEFAULT '1970-01-01'")
+				database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_recording_backendId ON recording (backendId)")
+				database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_related_parentEventId_relatedEventGuid ON related (parentEventId, relatedEventGuid)")
+				database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_playback_progress_event_guid ON playback_progress (event_guid)")
 			}
 		}
 	}
