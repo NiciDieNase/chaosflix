@@ -73,8 +73,13 @@ abstract class ChaosflixDatabase : RoomDatabase() {
 		val migration_5_6 = object : Migration(5,6) {
 			override fun migrate(database: SupportSQLiteDatabase) {
 				database.execSQL("ALTER TABLE playback_progress RENAME TO old_playback_progress")
-				database.execSQL("CREATE TABLE IF NOT EXISTS `playback_progress` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `event_guid` TEXT NOT NULL, `progress` INTEGER NOT NULL, `watch_date` INTEGER NOT NULL)")
-				database.execSQL("INSERT INTO `playback_progress` (id, event_guid, progress, watch_date) SELECT id, event_guid, progress, 0 from old_playback_progress")
+				database.execSQL("CREATE TABLE IF NOT EXISTS `playback_progress` " +
+						"(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+						"`event_guid` TEXT NOT NULL, " +
+						"`progress` INTEGER NOT NULL, " +
+						"`watch_date` INTEGER NOT NULL)")
+				database.execSQL("INSERT INTO `playback_progress` (id, event_guid, progress, watch_date) " +
+						"SELECT id, event_guid, progress, 0 from old_playback_progress")
 				database.execSQL("DROP TABLE old_playback_progress")
 				database.execSQL("ALTER TABLE conference ADD COLUMN lastReleasedAt varchar default '1970-01-01'")
 			}
