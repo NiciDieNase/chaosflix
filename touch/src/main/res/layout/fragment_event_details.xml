@@ -30,6 +30,7 @@
 				android:layout_height="match_parent"
 				android:fitsSystemWindows="true"
 				android:title="@{event.title}"
+				app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
 				app:titleEnabled="true"
 				app:contentScrim="@color/primary"
 				app:statusBarScrim="@color/primary"
@@ -62,6 +63,7 @@
 					app:titleTextColor="@color/white"
 					app:subtitleTextColor="@color/white"
 					app:layout_collapseMode="pin"
+					app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
 					app:popupTheme="@style/AppTheme"/>
 
 			</net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout>
