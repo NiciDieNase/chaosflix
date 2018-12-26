@@ -19,6 +19,20 @@ android {
         versionName rootProject.ext.leanbackVersionName
 //        multiDexEnabled true
     }
+    signingConfigs {
+        //noinspection GroovyMissingReturnStatement, GroovyAssignabilityCheck
+        release {
+            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore).exists() && file(chaosflixKeystore).isFile()) {
+                println "Release app signing is configured: will sign APK"
+                storeFile file(chaosflixKeystore)
+                storePassword chaosflixStorePassword
+                keyAlias chaosflixKeyName
+                keyPassword chaosflixKeyPassword
+            } else {
+                println "App signing data not found. Will not sign."
+            }
+        }
+    }
     buildTypes {
         debug {
             applicationIdSuffix ".dev"
@@ -31,6 +45,9 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'),'proguard-rules.pro'
+            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore).exists() && file(chaosflixKeystore).isFile()) {
+                signingConfig signingConfigs.release
+            }
         }
     }
     flavorDimensions "streaming"
