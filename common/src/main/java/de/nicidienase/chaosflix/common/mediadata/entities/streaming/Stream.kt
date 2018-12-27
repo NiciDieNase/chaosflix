@@ -56,9 +56,10 @@ data class Stream(
 
          fun readMap(input: Parcel): MutableMap<String, StreamUrl> {
              val result = HashMap<String, StreamUrl>()
+             val size = input.readInt()
              val keys = input.createStringArray() ?: emptyArray()
              val urls = input.createTypedArray(StreamUrl.CREATOR) ?: emptyArray()
-             for(i in 0 until keys.size - 1){
+             for(i in 0 until size){
                  val key = keys[i]
                  val value = urls[i]
                  if(key != null && value != null){
