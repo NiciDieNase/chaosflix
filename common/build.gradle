@@ -50,7 +50,7 @@ android {
 
         mock {
             buildConfigField "String", "STREAMING_API_BASE_URL", "\"https://gist.githubusercontent.com\""
-            buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/MaZderMind/a91f242efb2f446a2237d4596896efd6/raw/7ab4e206f19ed4d63a67917fe6e3a15a96218ac9/streams-v2.json\""
+            buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/NiciDieNase/1ca017f180242f0ee683a1f592efc4ed/raw/0104592b57f4b29863fd0684a510462af276f30e/example_streams_v2.json\""
         }
     }
 
