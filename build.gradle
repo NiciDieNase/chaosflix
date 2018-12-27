@@ -28,7 +28,7 @@ allprojects {
 
 
 ext{
-    touchVersionCode = 35
+    touchVersionCode = 37
     touchVersionName = "0.4.1"
     leanbackVersionCode = 16
     leanbackVersionName = "0.4"
