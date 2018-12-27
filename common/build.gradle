@@ -44,7 +44,7 @@ android {
 
     productFlavors {
         prod {
-            buildConfigField "String", "STREAMING_API_BASE_URL", "\"http://streaming.media.ccc.de\""
+            buildConfigField "String", "STREAMING_API_BASE_URL", "\"https://streaming.media.ccc.de\""
             buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/streams/v2.json\""
         }
 
