@@ -2,7 +2,8 @@
 
 An app to watch streams and recordings from media.ccc.de on your Android Phone/Tablet/TV and FireTV
 
-[<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="200">][playstore]
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="250">][playstore]
+
 [<img src="https://images-na.ssl-images-amazon.com/images/G/01/mobile-apps/devportal2/res/images/amazon-underground-app-us-black.png" width="200">][amazon]
 
 You can get an APK you can install under [Releases](https://github.com/NiciDieNase/chaosflix/releases).
