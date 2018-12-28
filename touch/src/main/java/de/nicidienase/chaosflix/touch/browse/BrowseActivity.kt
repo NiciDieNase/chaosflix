@@ -16,6 +16,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.transition.TransitionInflater
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -155,12 +156,17 @@ class BrowseActivity : AppCompatActivity(),
 
 		if(casty.isConnected){
 			val hdStreams = streamingItem.room.streams.filter { it.slug.startsWith("hd-") }
+			Log.i(TAG,"found ${hdStreams.size} suitable streams, starting selection")
 			if(hdStreams.size > 1){
-				AlertDialog.Builder(this)
+				val dialog = AlertDialog.Builder(this)
 						.setTitle(getString(R.string.select_stream))
-						.setItems(hdStreams.map { it.display }.toTypedArray()) {_, i ->
-							castStream(streamingItem,hdStreams[i])
+						.setItems(hdStreams.map { it.display }.toTypedArray()) { _, i ->
+							castStream(streamingItem, hdStreams[i])
 						}
+						.create()
+				dialog.show()
+			} else {
+				Log.i(TAG,"Found no HD-Stream")
 			}
 		} else {
 			val dashStreams = streamingItem.room.streams.filter { it.slug == "dash-native" }
