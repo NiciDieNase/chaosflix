@@ -42,4 +42,7 @@
     <string name="pref_autoselect_recording">Don\'t show selection dialog, just use HD-mp4</string>
     <string name="pref_autoselect_stream">Don\'t show selection dialog, just use DASH</string>
     <string name="pref_mobile_downloads">Enable downloads over mobile or payed networks</string>
+    <string name="setting_choose_stream">Automatically choose stream</string>
+    <string name="setting_metered_networks">Allow downloads over metered networks</string>
+    <string name="settings_choose_recording">Automatically choose recording</string>
 </resources>

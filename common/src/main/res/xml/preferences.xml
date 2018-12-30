@@ -4,19 +4,19 @@
     <CheckBoxPreference
         android:key="allow_metered_networks"
         android:defaultValue="false"
-        android:title="Allow downloads over metered networks"
+        android:title="@string/setting_metered_networks"
         android:summary="@string/pref_mobile_downloads"/>
 
     <CheckBoxPreference
         android:key="auto_select_stream"
         android:defaultValue="false"
-        android:title="Automatically chose stream"
+        android:title="@string/setting_choose_stream"
         android:summary="@string/pref_autoselect_stream"/>
 
     <CheckBoxPreference
         android:key="auto_select_recording"
         android:defaultValue="false"
-        android:title="Automatically chose recording"
+        android:title="@string/settings_choose_recording"
         android:summary="@string/pref_autoselect_recording"/>
 
     <Preference
