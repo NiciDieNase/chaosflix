@@ -2,6 +2,7 @@ package de.nicidienase.chaosflix.touch.browse
 
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.databinding.DataBindingUtil
@@ -21,21 +22,21 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Stream
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
-import de.nicidienase.chaosflix.touch.databinding.ActivityBrowseBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.about.AboutActivity
 import de.nicidienase.chaosflix.touch.browse.download.DownloadsListFragment
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListFragment
 import de.nicidienase.chaosflix.touch.browse.streaming.LivestreamListFragment
 import de.nicidienase.chaosflix.touch.browse.streaming.StreamingItem
+import de.nicidienase.chaosflix.touch.databinding.ActivityBrowseBinding
 import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
 import de.nicidienase.chaosflix.touch.playback.PlayerActivity
 import de.nicidienase.chaosflix.touch.settings.SettingsActivity
@@ -155,7 +156,7 @@ class BrowseActivity : AppCompatActivity(),
 		val entries = HashMap<String, StreamUrl>()
 
 		if(casty.isConnected){
-			val hdStreams = streamingItem.room.streams.filter { it.slug.startsWith("hd-") }
+			val hdStreams = streamingItem.room.streams//.filter { it.slug.startsWith("hd-") }
 			Log.i(TAG,"found ${hdStreams.size} suitable streams, starting selection")
 			if(hdStreams.size > 1){
 				val dialog = AlertDialog.Builder(this)
@@ -199,30 +200,38 @@ class BrowseActivity : AppCompatActivity(),
 	}
 
 	private fun castStream(streamingItem: StreamingItem, stream: Stream) {
-		val streamUrl: String?
-		val contentType: String?
-		if(stream.urls.containsKey("hsl")){
-			streamUrl = stream.urls["hls"]?.url
-			contentType = "application/vnd.apple.mpegurl"
-		} else if(stream.urls.containsKey("webm")){
-			streamUrl = stream.urls["webm"]?.url
-			contentType = "video/webm"
-		} else {
-			streamUrl = null
-			contentType = null
+		val keys = stream.urls.keys.toTypedArray()
+		val dialog = AlertDialog.Builder(this)
+				.setTitle(getString(R.string.select_stream))
+				.setItems(keys) {dialog: DialogInterface?, which: Int ->
+					val streamUrl = stream.urls[keys[which]]
+					val contentType = getContentTypeForKey(keys[which])
+					if(streamUrl != null){
+						val mediaData = MediaData.Builder(streamUrl.url)
+								.setStreamType(MediaData.STREAM_TYPE_BUFFERED)
+								.setContentType(contentType)
+								.setTitle(streamingItem.conference.conference)
+								.setSubtitle(streamingItem.room.display)
+								.addPhotoUrl(streamingItem.room.thumb)
+								.build()
+						casty.player.loadMediaAndPlay(mediaData)
+					} else {
+								Snackbar.make(binding.root, "could not play stream", Snackbar.LENGTH_SHORT).show()
+					}
+				}
+				.create()
+		dialog.show()
+	}
+
+	private fun getContentTypeForKey(s: String): String? {
+		return when(s){
+			"hls" -> "application/x-mpegurl"
+			"webm" -> "video/webm"
+			"mp3" -> "audio/mp3"
+			"opus" -> "audio/webm"
+			"dash" -> "application/dash+xml"
+			else -> ""
 		}
-		if(streamUrl == null){
-			Snackbar.make(binding.root, "No suitable Stream found", Snackbar.LENGTH_SHORT).show()
-			return
-		}
-		val mediaData = MediaData.Builder(streamUrl)
-				.setStreamType(MediaData.STREAM_TYPE_BUFFERED)
-				.setContentType(contentType)
-				.setTitle(streamingItem.conference.conference)
-				.setSubtitle(streamingItem.room.display)
-				.addPhotoUrl(streamingItem.room.thumb)
-				.build()
-		casty.player.loadMediaAndPlay(mediaData)
 	}
 
 	private fun playStream(conference: String, room: String, streamUrl: StreamUrl?) {
