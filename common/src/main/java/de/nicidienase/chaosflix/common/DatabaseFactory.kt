@@ -10,9 +10,11 @@ class DatabaseFactory private constructor() {
 				it.applicationContext,
 				ChaosflixDatabase::class.java, "mediaccc.de")
 				.addMigrations(
-						ChaosflixDatabase.migration_2_3,
 						ChaosflixDatabase.migration_5_6)
 				.fallbackToDestructiveMigrationFrom(4)
+				.fallbackToDestructiveMigrationFrom(3)
+				.fallbackToDestructiveMigrationFrom(2)
+				.fallbackToDestructiveMigrationFrom(1)
 				.build()
 	})
 }
