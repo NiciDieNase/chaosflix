@@ -47,10 +47,8 @@ data class EventDto(@SerializedName("conference_id")
 			eventID = 0
 		}
 
-		val split = conferenceUrl?.split("/".toRegex())?.dropLastWhile { it.isEmpty() }?.toTypedArray()
-		if (split != null) {
-			conferenceId = (split[split.size - 1]).toLong()
-		}
+		val split = conferenceUrl.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+		conferenceId = (split[split.size - 1]).toLong()
 	}
 
 	fun getExtendedDescription(): String = "$description\n\nreleased at: $releaseDate\n\nTags: ${tags?.joinToString(", ")}"
@@ -70,3 +68,5 @@ data class EventDto(@SerializedName("conference_id")
 
 	}
 }
+
+class EventsResponse (var events: List<EventDto>)

@@ -3,10 +3,12 @@ package de.nicidienase.chaosflix.common.mediadata.network
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferenceDto
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventDto
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventsResponse
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.RecordingDto
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface RecordingService {
 
@@ -24,6 +26,9 @@ interface RecordingService {
 
     @GET("public/events/{guid}")
     fun getEventByGUID(@Path("guid") guid: String): Call<EventDto>
+
+    @GET("public/events/search")
+    fun searchEvents(@Query("q") query: String): Call<EventsResponse>
 
     @GET("public/recordings/{id}")
     fun getRecording(@Path("id") id: Long): Call<RecordingDto>
