@@ -29,7 +29,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:fitsSystemWindows="true"
-				android:title="@{event.title}"
+				android:title="@{event.title.trim()}"
 				app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
 				app:titleEnabled="true"
 				app:contentScrim="@color/primary"
