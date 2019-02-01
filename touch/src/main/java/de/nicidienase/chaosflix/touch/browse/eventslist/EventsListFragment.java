@@ -102,27 +102,28 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		binding.list.setAdapter(eventAdapter);
 
 		Observer<List<Event>> listObserver = persistentEvents -> {
+			setLoadingOverlayVisibility(false);
 			if (persistentEvents != null) {
 				setEvents(persistentEvents);
-				if (persistentEvents.size() > 0) {
-					setLoadingOverlayVisibility(false);
-				}
 			}
 		};
 
 		if (type == TYPE_BOOKMARKS) {
 			setupToolbar(binding.incToolbar.toolbar, R.string.bookmarks);
 			getViewModel().getBookmarkedEvents().observe(this, listObserver);
-			setLoadingOverlayVisibility(false);
 		} else if (type == TYPE_IN_PROGRESS) {
 			setupToolbar(binding.incToolbar.toolbar, R.string.continue_watching);
 			getViewModel().getInProgressEvents().observe(this, listObserver);
-			setLoadingOverlayVisibility(false);
 		} else if (type == TYPE_EVENTS) {
 			{
 				setupToolbar(binding.incToolbar.toolbar, conference.getTitle(), false);
 				eventAdapter.setShowTags(conference.getTagsUsefull());
-				getViewModel().getEventsforConference(conference).observe(this, listObserver);
+				getViewModel().getEventsforConference(conference).observe(this, events -> {
+					if(events != null){
+						setEvents(events);
+						setLoadingOverlayVisibility(false);
+					}
+				});
 				getViewModel().updateEventsForConference(conference).observe(this, state -> {
 					Downloader.DownloaderState downloaderState = state.getState();
 					switch (downloaderState) {
