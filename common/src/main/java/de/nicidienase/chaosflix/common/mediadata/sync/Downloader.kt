@@ -13,6 +13,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RelatedEvent
 import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
+import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import de.nicidienase.chaosflix.common.util.ThreadHandler
@@ -163,7 +164,7 @@ class Downloader(private val recordingApi: RecordingService,
 			return conferenceGroup
 		}
 		val group = ConferenceGroup(name)
-		val index = ChaosflixUtil.orderedConferencesList.indexOf(group.name)
+		val index = ConferenceUtil.orderedConferencesList.indexOf(group.name)
 		if (index != -1)
 			group.index = index
 		else if (group.name == "other conferences")

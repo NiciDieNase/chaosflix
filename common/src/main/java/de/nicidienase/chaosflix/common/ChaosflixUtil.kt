@@ -19,34 +19,36 @@ object ChaosflixUtil {
 
     fun getStringForTag(tag: String): String {
         when (tag) {
-            "congress" -> return "Congress"
-            "sendezentrum" -> return "Sendezentrum"
-            "camp" -> return "Camp"
             "broadcast/chaosradio" -> return "Chaosradio"
-            "eh" -> return "Easterhegg"
-            "gpn" -> return "GPN"
-            "froscon" -> return "FrOSCon"
-            "mrmcd" -> return "MRMCD"
-            "sigint" -> return "SIGINT"
-            "datenspuren" -> return "Datenspuren"
-            "fiffkon" -> return "FifFKon"
             "blinkenlights" -> return "Blinkenlights"
+            "camp" -> return "Camp"
             "chaoscologne" -> return "1c2 Chaos Cologne"
             "cryptocon" -> return "CryptoCon"
-            "other conferences" -> return "Other Conferences"
+            "congress" -> return "Congress"
             "denog" -> return "DENOG"
-            "vcfb" -> return "Vintage Computing Festival Berlin"
+            "datenspuren" -> return "Datenspuren"
+            "easterhegg" -> return "Easterhegg"
+            "fiffkon" -> return "FifFKon"
+            "froscon" -> return "FrOSCon"
+            "gpn" -> return "GPN"
             "hackover" -> return "Hackover"
+            "mrmcd" -> return "MRMCD"
             "netzpolitik" -> return "Das ist Netzpolitik!"
+            "sendezentrum" -> return "Sendezentrum"
+            "sigint" -> return "SIGINT"
+            "vcfb" -> return "Vintage Computing Festival Berlin"
+
+            "other conferences" -> return "Other Conferences"
             else -> return tag
         }
     }
 
-    val orderedConferencesList: List<String> = Arrays.asList("congress",
+    val orderedConferencesList: List<String> = Arrays.asList(
+            "congress",
             "gpn",
             "mrmcd",
             "broadcast/chaosradio",
-            "eh",
+            "easterhegg",
             "camp",
             "froscon",
             "sendezentrum",
