@@ -1,37 +1,38 @@
 package de.nicidienase.chaosflix.touch.browse.adapters
 
-import com.squareup.picasso.Picasso
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
-import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.ConferencesTabBrowseFragment
-import java.util.*
+import de.nicidienase.chaosflix.touch.databinding.ItemConferenceCardviewBinding
 
-class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseFragment.OnInteractionListener?) : ItemRecyclerViewAdapter<Conference>() {
-	override fun getFilteredProperties(item: Conference): List<String> {
-		return listOf(item.title)
-	}
+class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseFragment.OnInteractionListener?) :
+		RecyclerView.Adapter<ConferenceRecyclerViewAdapter.ViewHolder>() {
 
-	override val layout = R.layout.item_conference_cardview
+	var items: List<Conference> = ArrayList()
+		set(value) {
+			field = value
+			notifyDataSetChanged()
+		}
 
-	override fun getComparator(): Comparator<in Conference>? {
-//        return Comparator { o1, o2 -> o1.acronym.compareTo(o2.acronym) * -1 }
-		return null
-	}
+	override fun getItemCount() = items.size
+
+	class ViewHolder(val binding: ItemConferenceCardviewBinding) : RecyclerView.ViewHolder(binding.root)
 
 	override fun getItemId(position: Int): Long {
 		return items.get(position).id
 	}
 
-	override fun onBindViewHolder(holder: ItemRecyclerViewAdapter<Conference>.ViewHolder, position: Int) {
-		holder.titleText.setText(items[position].title)
-		holder.subtitle.setText(items[position].acronym)
-		Picasso.with(holder.icon.context)
-				.load(items[position].logoUrl)
-				.fit()
-				.centerInside()
-				.into(holder.icon)
+	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+		val binding = ItemConferenceCardviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+		return ViewHolder(binding)
+	}
 
-		holder.mView.setOnClickListener { _ ->
+	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+		holder.binding.conference = items[position]
+
+		holder.binding.root.setOnClickListener { _ ->
 			mListener?.onConferenceSelected((items[position]))
 		}
 	}
