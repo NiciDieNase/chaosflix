@@ -24,13 +24,13 @@ import android.view.View
 import android.widget.Toast
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
-import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Stream
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.about.AboutActivity
+import de.nicidienase.chaosflix.touch.browse.cast.CastService
 import de.nicidienase.chaosflix.touch.browse.download.DownloadsListFragment
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListFragment
@@ -40,8 +40,6 @@ import de.nicidienase.chaosflix.touch.databinding.ActivityBrowseBinding
 import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
 import de.nicidienase.chaosflix.touch.playback.PlayerActivity
 import de.nicidienase.chaosflix.touch.settings.SettingsActivity
-import pl.droidsonroids.casty.Casty
-import pl.droidsonroids.casty.MediaData
 
 class BrowseActivity : AppCompatActivity(),
 		ConferencesTabBrowseFragment.OnInteractionListener,
@@ -61,13 +59,13 @@ class BrowseActivity : AppCompatActivity(),
 	protected val numColumns: Int
 		get() = resources.getInteger(R.integer.num_columns)
 
-	private lateinit var casty: Casty
+	private lateinit var castService: CastService
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_browse)
 
-		casty = Casty.create(this).withMiniController()
+		castService = CastService(this)
 
 		val navigationView = findViewById<NavigationView>(R.id.navigation_view)
 		navigationView.setNavigationItemSelectedListener { item ->
@@ -136,7 +134,7 @@ class BrowseActivity : AppCompatActivity(),
 	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 		super.onCreateOptionsMenu(menu)
 		menu?.let {
-			casty.addMediaRouteMenuItem(it)
+			castService.addMediaRouteMenuItem(it)
 		}
 		return true
 	}
@@ -155,19 +153,32 @@ class BrowseActivity : AppCompatActivity(),
 	override fun onStreamSelected(streamingItem: StreamingItem) {
 		val entries = HashMap<String, StreamUrl>()
 
-		if(casty.isConnected){
+		if (castService.connected) {
 			val hdStreams = streamingItem.room.streams//.filter { it.slug.startsWith("hd-") }
-			Log.i(TAG,"found ${hdStreams.size} suitable streams, starting selection")
-			if(hdStreams.size > 1){
+			Log.i(TAG, "found ${hdStreams.size} suitable streams, starting selection")
+			if (hdStreams.size > 1) {
 				val dialog = AlertDialog.Builder(this)
 						.setTitle(getString(R.string.select_stream))
 						.setItems(hdStreams.map { it.display }.toTypedArray()) { _, i ->
-							castStream(streamingItem, hdStreams[i])
+							val stream = hdStreams[i]
+							val keys = stream.urls.keys.toTypedArray()
+							val dialog = AlertDialog.Builder(this)
+									.setTitle(this.getString(R.string.select_stream))
+									.setItems(keys) { dialog: DialogInterface?, which: Int ->
+										val streamUrl = stream.urls[keys[which]]
+										if (streamUrl != null) {
+											castService.castStream(streamingItem, streamUrl, keys[which])
+										} else {
+											Snackbar.make(binding.root, "could not play stream", Snackbar.LENGTH_SHORT).show()
+										}
+									}
+									.create()
+							dialog.show()
 						}
 						.create()
 				dialog.show()
 			} else {
-				Log.i(TAG,"Found no HD-Stream")
+				Log.i(TAG, "Found no HD-Stream")
 			}
 		} else {
 			val dashStreams = streamingItem.room.streams.filter { it.slug == "dash-native" }
@@ -196,41 +207,6 @@ class BrowseActivity : AppCompatActivity(),
 						}
 				builder.create().show()
 			}
-		}
-	}
-
-	private fun castStream(streamingItem: StreamingItem, stream: Stream) {
-		val keys = stream.urls.keys.toTypedArray()
-		val dialog = AlertDialog.Builder(this)
-				.setTitle(getString(R.string.select_stream))
-				.setItems(keys) {dialog: DialogInterface?, which: Int ->
-					val streamUrl = stream.urls[keys[which]]
-					val contentType = getContentTypeForKey(keys[which])
-					if(streamUrl != null){
-						val mediaData = MediaData.Builder(streamUrl.url)
-								.setStreamType(MediaData.STREAM_TYPE_BUFFERED)
-								.setContentType(contentType)
-								.setTitle(streamingItem.conference.conference)
-								.setSubtitle(streamingItem.room.display)
-								.addPhotoUrl(streamingItem.room.thumb)
-								.build()
-						casty.player.loadMediaAndPlay(mediaData)
-					} else {
-								Snackbar.make(binding.root, "could not play stream", Snackbar.LENGTH_SHORT).show()
-					}
-				}
-				.create()
-		dialog.show()
-	}
-
-	private fun getContentTypeForKey(s: String): String? {
-		return when(s){
-			"hls" -> "application/x-mpegurl"
-			"webm" -> "video/webm"
-			"mp3" -> "audio/mp3"
-			"opus" -> "audio/webm"
-			"dash" -> "application/dash+xml"
-			else -> ""
 		}
 	}
 

@@ -50,10 +50,20 @@ android {
             }
         }
     }
-    flavorDimensions "streaming"
+    flavorDimensions "streaming", "libs"
     productFlavors {
-        prod {}
-        mock {}
+        prod {
+            dimension "streaming"
+        }
+        mock {
+            dimension "streaming"
+        }
+        free {
+            dimension "libs"
+        }
+        noFree{
+            dimension "libs"
+        }
     }
 
     variantFilter { variant ->
@@ -102,8 +112,8 @@ dependencies {
     implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
     implementation "com.android.support:preference-v14:${rootProject.ext.supportLibraryVersion}"
     implementation "com.android.support:mediarouter-v7:${rootProject.ext.supportLibraryVersion}"
-    implementation 'com.google.android.gms:play-services-cast-framework:16.1.0'
-    implementation('pl.droidsonroids:casty:1.0.8') {
+    noFreeImplementation 'com.google.android.gms:play-services-cast-framework:16.1.0'
+    noFreeImplementation('pl.droidsonroids:casty:1.0.8') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
     }
     implementation 'com.google.android.exoplayer:exoplayer:r2.5.2'

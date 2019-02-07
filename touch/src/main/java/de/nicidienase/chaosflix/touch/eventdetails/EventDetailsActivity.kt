@@ -16,9 +16,8 @@ import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.R
-import de.nicidienase.chaosflix.touch.buildCastMediaData
+import de.nicidienase.chaosflix.touch.browse.cast.CastService
 import de.nicidienase.chaosflix.touch.playback.PlayerActivity
-import pl.droidsonroids.casty.Casty
 
 class EventDetailsActivity : AppCompatActivity(),
 		EventDetailsFragment.OnEventDetailsFragmentInteractionListener,
@@ -27,13 +26,13 @@ class EventDetailsActivity : AppCompatActivity(),
 
 	private val PERMISSION_REQUEST_CODE: Int = 1;
 
-	private lateinit var casty: Casty
+	private lateinit var casty: CastService
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_eventdetails)
 
-		casty = Casty.create(this).withMiniController()
+		casty = CastService(this)
 
 		viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(DetailsViewModel::class.java)
 		viewModel.writeExternalStorageAllowed = hasWriteStoragePermission()
@@ -72,9 +71,8 @@ class EventDetailsActivity : AppCompatActivity(),
 	}
 
 	override fun playItem(event: Event, recording: Recording, localFile: String?) {
-		if (casty.isConnected) {
-			val mediaData = buildCastMediaData(recording, event)
-			casty.player.loadMediaAndPlay(mediaData)
+		if (casty.connected) {
+			casty.loadMediaAndPlay(recording, event)
 		} else {
 			if (localFile != null) {
 				PlayerActivity.launch(this, event, localFile)

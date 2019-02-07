@@ -10,17 +10,17 @@ import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
-import pl.droidsonroids.casty.Casty
+import de.nicidienase.chaosflix.touch.browse.cast.CastService
 
 class PlayerActivity : AppCompatActivity() {
 
-	private lateinit var casty: Casty
+	private lateinit var casty: CastService
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_player)
 
-		casty = Casty.create(this)
+		casty = CastService(this,false)
 
 		if (savedInstanceState == null && intent.extras != null) {
 			val contentType = intent.getStringExtra(CONTENT_TYPE)
