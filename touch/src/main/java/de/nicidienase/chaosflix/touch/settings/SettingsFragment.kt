@@ -1,10 +1,12 @@
 package de.nicidienase.chaosflix.touch.settings
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.support.design.widget.Snackbar
 import android.support.v7.preference.PreferenceFragmentCompat
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.viewmodel.PreferencesViewModel
@@ -30,7 +32,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         if (requestCode == REQUEST_DIRECTORY) {
             if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
-                val dir = data!!.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR)
+                val dir = data?.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR)
                 val sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext().applicationContext)
                 val edit = sharedPref.edit()
                 edit.putString("download_folder", dir)
@@ -52,6 +54,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         updateSummary()
 		val downloadFolderPref = this.findPreference("download_folder")
 	    val cleanCachePref = this.findPreference("delete_data")
+	    val exportFavorites = this.findPreference("export_favorites")
+	    val importFavorites = this.findPreference("import_favorites")
 
 		downloadFolderPref?.setOnPreferenceClickListener {
 			val chooserIntent = Intent(context, DirectoryChooserActivity::class.java)
@@ -72,6 +76,36 @@ class SettingsFragment : PreferenceFragmentCompat() {
 			viewModel.cleanNonUserData()
 			return@setOnPreferenceClickListener true
 			}
+
+		exportFavorites?.setOnPreferenceClickListener {
+			viewModel.exportFavorites()
+			return@setOnPreferenceClickListener true
+		}
+
+		importFavorites?.setOnPreferenceClickListener {
+			var snackbar: Snackbar? = null
+			viewModel.importFavorites().observe(this, Observer { event ->
+				when {
+					event?.state == PreferencesViewModel.State.Loading -> {
+						snackbar?.dismiss()
+						snackbar = Snackbar.make(listView,"Importing",Snackbar.LENGTH_INDEFINITE)
+						snackbar?.show()
+					}
+					event?.error != null -> {
+						snackbar?.dismiss()
+						val message: String = event.error?.message ?: event.error.toString()
+						snackbar = Snackbar.make(listView, message, Snackbar.LENGTH_SHORT)
+						snackbar?.show()
+					}
+					event?.state == PreferencesViewModel.State.Done -> {
+						snackbar?.dismiss()
+						snackbar = Snackbar.make(listView,"Import Done",Snackbar.LENGTH_SHORT)
+						snackbar?.show()
+					}
+				}
+			})
+			return@setOnPreferenceClickListener true
+		}
 	}
 
 	companion object {

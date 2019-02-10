@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.common.viewmodel
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
+import android.os.Environment
 import android.preference.PreferenceManager
 import de.nicidienase.chaosflix.common.DatabaseFactory
 import de.nicidienase.chaosflix.common.OfflineItemManager
@@ -22,6 +23,7 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
 	val offlineItemManager =
 			OfflineItemManager(context.applicationContext, database.offlineEventDao(),preferencesManager)
 	val downloader by lazy { Downloader(recordingApi, database) }
+	val externalFilesDir = Environment.getExternalStorageDirectory()
 
 	@Suppress("UNCHECKED_CAST")
 	override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -32,7 +34,7 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
 		} else if (modelClass.isAssignableFrom(DetailsViewModel::class.java)) {
 			return DetailsViewModel(database, offlineItemManager, preferencesManager, downloader) as T
 		} else if (modelClass.isAssignableFrom(PreferencesViewModel::class.java)){
-			return PreferencesViewModel(downloader) as T
+			return PreferencesViewModel(downloader, database.watchlistItemDao(), externalFilesDir) as T
 		} else {
 			throw UnsupportedOperationException("The requested ViewModel is currently unsupported. " +
 					"Please make sure to implement are correct creation of it. " +
