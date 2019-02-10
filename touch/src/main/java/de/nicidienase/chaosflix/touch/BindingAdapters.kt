@@ -2,14 +2,14 @@ package de.nicidienase.chaosflix.touch
 
 import android.databinding.BindingAdapter
 import android.widget.ImageView
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 
 
 @BindingAdapter("bind:imageUrl")
 fun loadImage(imageView: ImageView, url: String){
-	Picasso.with(imageView.context)
+	Glide.with(imageView.context)
 			.load(url)
-			.fit()
-			.centerInside()
+			.apply(RequestOptions().fitCenter())
 			.into(imageView)
 }

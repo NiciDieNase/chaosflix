@@ -3,7 +3,9 @@
 		xmlns:tools="http://schemas.android.com/tools">
 
 	<data>
-
+		<variable
+			name="event"
+			type="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event"/>
 	</data>
 
 	<LinearLayout
@@ -24,11 +26,24 @@
 				android:layout_margin="8dp"
 				android:orientation="horizontal">
 
+				<FrameLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content">
+
 				<ImageView
 					android:id="@+id/imageView"
+					imageUrl="@{event.thumbUrl}"
 					android:layout_width="@dimen/thumbnail_width"
 					android:layout_height="@dimen/thumbnail_height"
 					android:scaleType="fitCenter"/>
+
+				<TextView
+					android:id="@+id/duration"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+					<!--android:text="@{event.length}"-->
+
+				</FrameLayout>
 
 				<LinearLayout
 					android:layout_width="wrap_content"
@@ -46,7 +61,7 @@
 						android:layout_gravity="center_vertical"
 						android:layout_marginTop="4dp"
 						android:layout_weight="1"
-						android:text=""
+						android:text="@{event.title}"
 						tools:text="Title"
 						android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
@@ -55,7 +70,7 @@
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:layout_weight="1"
-						android:text=""
+						android:text="@{event.subtitle}"
 						tools:text="Subtitle"
 						android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"/>
 

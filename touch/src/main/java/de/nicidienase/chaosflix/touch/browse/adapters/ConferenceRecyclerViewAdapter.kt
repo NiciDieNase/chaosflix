@@ -10,18 +10,18 @@ import de.nicidienase.chaosflix.touch.databinding.ItemConferenceCardviewBinding
 class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseFragment.OnInteractionListener?) :
 		RecyclerView.Adapter<ConferenceRecyclerViewAdapter.ViewHolder>() {
 
-	var items: List<Conference> = ArrayList()
+	var conferences: List<Conference> = emptyList()
 		set(value) {
 			field = value
 			notifyDataSetChanged()
 		}
 
-	override fun getItemCount() = items.size
+	override fun getItemCount() = conferences.size
 
 	class ViewHolder(val binding: ItemConferenceCardviewBinding) : RecyclerView.ViewHolder(binding.root)
 
 	override fun getItemId(position: Int): Long {
-		return items.get(position).id
+		return conferences.get(position).id
 	}
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -30,10 +30,10 @@ class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseF
 	}
 
 	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-		holder.binding.conference = items[position]
+		holder.binding.conference = conferences[position]
 
 		holder.binding.root.setOnClickListener { _ ->
-			mListener?.onConferenceSelected((items[position]))
+			mListener?.onConferenceSelected((conferences[position]))
 		}
 	}
 }

@@ -11,10 +11,8 @@ import android.widget.TextView
 import de.nicidienase.chaosflix.touch.R
 import java.util.*
 
-abstract class ItemRecyclerViewAdapter<T>()
-	: RecyclerView.Adapter<ItemRecyclerViewAdapter<T>.ViewHolder>(), Filterable {
-
-	internal abstract val layout: Int
+abstract class ItemRecyclerViewAdapter<T,VH : RecyclerView.ViewHolder?>()
+	: RecyclerView.Adapter<VH>(), Filterable {
 
 	abstract fun getComparator(): Comparator<in T>?
 
@@ -52,21 +50,8 @@ abstract class ItemRecyclerViewAdapter<T>()
 		}
 	}
 
-	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-		val view = LayoutInflater.from(parent.context)
-				.inflate(layout, parent, false)
-		return ViewHolder(view)
-	}
-
 	override fun getItemCount(): Int {
 		return filteredItems.size
-	}
-
-	inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-		val icon: ImageView = mView.findViewById<View>(R.id.imageView) as ImageView
-		val titleText: TextView = mView.findViewById<View>(R.id.title_text) as TextView
-		val subtitle: TextView = mView.findViewById<View>(R.id.subtitle_text) as TextView
-		val tag: TextView = mView.findViewById<View>(R.id.tag_text) as TextView
 	}
 
 	inner class ItemFilter : Filter() {

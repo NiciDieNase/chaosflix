@@ -1,16 +1,16 @@
 package de.nicidienase.chaosflix.touch.browse.adapters
 
 import android.support.v4.view.ViewCompat
-import android.view.View
-import com.squareup.picasso.Picasso
-import de.nicidienase.chaosflix.touch.R
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
+import de.nicidienase.chaosflix.touch.databinding.ItemEventCardviewBinding
 import java.util.*
 
 open class EventRecyclerViewAdapter(val listener: OnEventSelectedListener) :
-		ItemRecyclerViewAdapter<Event>() {
-
+		ItemRecyclerViewAdapter<Event, EventRecyclerViewAdapter.ViewHolder>() {
 	override fun getComparator(): Comparator<in Event>? {
 		return Comparator { o1, o2 -> o1.title.compareTo(o2.title) }
 	}
@@ -27,40 +27,22 @@ open class EventRecyclerViewAdapter(val listener: OnEventSelectedListener) :
 		).filterNotNull()
 	}
 
-
-	override val layout = R.layout.item_event_cardview
-	var showTags: Boolean = false
-
-	override fun onBindViewHolder(holder: ItemRecyclerViewAdapter<Event>.ViewHolder, position: Int) {
-		val event = items[position]
-
-		holder.titleText.text = event.title
-		holder.subtitle.text = event.subtitle
-		if (showTags) {
-			val tagString = StringBuilder()
-			for (tag in event.tags!!) {
-				if (tagString.length > 0) {
-					tagString.append(", ")
-				}
-				tagString.append(tag)
-			}
-			holder.tag.text = tagString
-		}
-		Picasso.with(holder.icon.context)
-				.load(event.thumbUrl)
-				.noFade()
-				.fit()
-				.centerInside()
-				.into(holder.icon)
-
-		val resources = holder.titleText.context.getResources()
-		ViewCompat.setTransitionName(holder.titleText,
-				resources.getString(R.string.title) + event.id)
-		ViewCompat.setTransitionName(holder.subtitle,
-				resources.getString(R.string.subtitle) + event.id)
-		ViewCompat.setTransitionName(holder.icon,
-				resources.getString(R.string.thumbnail) + event.id)
-
-		holder.mView.setOnClickListener({ _: View -> listener.onEventSelected(items[position]) })
+	override fun onCreateViewHolder(p0: ViewGroup, pItemConferenceCardviewBinding1: Int): ViewHolder {
+		val binding = ItemEventCardviewBinding.inflate(LayoutInflater.from(p0.context), p0, false)
+		return ViewHolder(binding)
 	}
+
+	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+		val event = items[position]
+		holder.binding.event = event
+		holder.binding.root.setOnClickListener {
+			listener.onEventSelected(event)
+		}
+
+		ViewCompat.setTransitionName(holder.binding.titleText, "title_${event.guid}")
+		ViewCompat.setTransitionName(holder.binding.subtitleText, "subtitle_${event.guid}")
+		ViewCompat.setTransitionName(holder.binding.imageView, "thumb_${event.guid}")
+	}
+
+	inner class ViewHolder(val binding: ItemEventCardviewBinding) : RecyclerView.ViewHolder(binding.root)
 }

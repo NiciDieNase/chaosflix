@@ -74,7 +74,7 @@ public class ConferenceGroupFragment extends BrowseFragment {
 					if(conferenceList.size() > 0){
 						setLoadingOverlayVisibility(false);
 					}
-					conferencesAdapter.setItems(conferenceList);
+					conferencesAdapter.setConferences(conferenceList);
 					Parcelable layoutState = getArguments().getParcelable(LAYOUTMANAGER_STATE);
 					if (layoutState != null) {
 						layoutManager.onRestoreInstanceState(layoutState);

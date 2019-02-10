@@ -31,7 +31,6 @@ import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventDetailsBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
-import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 
 class EventDetailsFragment : Fragment() {
 
@@ -44,7 +43,7 @@ class EventDetailsFragment : Fragment() {
 	private var selectDialog: AlertDialog? = null
 
 	private lateinit var viewModel: DetailsViewModel
-	private lateinit var relatedEventsAdapter: EventRecyclerViewAdapter
+	private lateinit var relatedEventsAdapter: RelatedEventsRecyclerViewAdapter
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -120,7 +119,9 @@ class EventDetailsFragment : Fragment() {
 
 				})
 		viewModel.getRelatedEvents(event).observe(this, Observer {
-			relatedEventsAdapter.items = ArrayList(it)
+			if(it != null){
+				relatedEventsAdapter.events = it
+			}
 		})
 
 		viewModel.state.observe(this, Observer { liveEvent ->

@@ -5,7 +5,9 @@
 		xmlns:tools="http://schemas.android.com/tools">
 
 	<data>
-
+		<variable
+			name="event"
+			type="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event"/>
 	</data>
 
 	<LinearLayout
@@ -52,7 +54,7 @@
 					android:layout_marginTop="8dp"
 					android:ellipsize="end"
 					android:maxLines="2"
-					android:text=""
+					android:text="@{event.title}"
 					tools:text="Title"
 					android:textAppearance="@style/TextAppearance.AppCompat.Title"
 					app:layout_constraintEnd_toEndOf="@+id/subtitle_text"
@@ -69,7 +71,7 @@
 					android:layout_marginTop="8dp"
 					android:ellipsize="end"
 					android:maxLines="2"
-					android:text=""
+					android:text="@{event.subtitle}"
 					tools:text="subtitle"
 					android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
 					app:layout_constraintBottom_toTopOf="@+id/tag_text"
