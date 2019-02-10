@@ -24,8 +24,6 @@ class EventDetailsActivity : AppCompatActivity(),
 		OnEventSelectedListener {
 	private lateinit var viewModel: DetailsViewModel
 
-	private val PERMISSION_REQUEST_CODE: Int = 1;
-
 	private lateinit var castService: CastService
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,15 +33,10 @@ class EventDetailsActivity : AppCompatActivity(),
 		castService = CastService(this)
 
 		viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(DetailsViewModel::class.java)
-		viewModel.writeExternalStorageAllowed = hasWriteStoragePermission()
 
 		val event = intent.getParcelableExtra<Event>(EXTRA_EVENT)
 
 		showFragmentForEvent(event)
-		if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
-						Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-			requestWriteStoragePermission()
-		}
 	}
 
 	private fun showFragmentForEvent(event: Event, addToBackStack: Boolean = false) {
@@ -82,34 +75,12 @@ class EventDetailsActivity : AppCompatActivity(),
 		}
 	}
 
-	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-		super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-		if (requestCode == PERMISSION_REQUEST_CODE && grantResults.size > 0) {
-			if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-//				requestWriteStoragePermission()
-			} else {
-				viewModel.writeExternalStorageAllowed = true
-				invalidateOptionsMenu()
-			}
-		}
-	}
-
 	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 		super.onCreateOptionsMenu(menu)
 		menu?.let {
 			castService.addMediaRouteMenuItem(it)
 		}
 		return true
-	}
-
-	private fun requestWriteStoragePermission() {
-		ActivityCompat.requestPermissions(this,
-				arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE);
-	}
-
-	private fun hasWriteStoragePermission(): Boolean {
-		return ActivityCompat.checkSelfPermission(
-				this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
 	}
 
 	companion object {

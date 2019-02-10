@@ -1,10 +1,12 @@
 package de.nicidienase.chaosflix.touch.eventdetails
 
+import android.Manifest
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
@@ -24,6 +26,7 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.ChaosflixUtil
+import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
@@ -42,7 +45,10 @@ class EventDetailsFragment : Fragment() {
 	private var eventSelectedListener: OnEventSelectedListener? = null
 	private var selectDialog: AlertDialog? = null
 
+	private var layout: View? = null
+
 	private lateinit var viewModel: DetailsViewModel
+
 	private lateinit var relatedEventsAdapter: RelatedEventsRecyclerViewAdapter
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +72,8 @@ class EventDetailsFragment : Fragment() {
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
 	                          savedInstanceState: Bundle?): View? {
-		return inflater.inflate(R.layout.fragment_event_details, container, false)
+		layout = inflater.inflate(R.layout.fragment_event_details, container, false)
+		return layout
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -225,15 +232,15 @@ class EventDetailsFragment : Fragment() {
 		super.onPrepareOptionsMenu(menu)
 		menu.findItem(R.id.action_bookmark).isVisible = watchlistItem == null
 		menu.findItem(R.id.action_unbookmark).isVisible = watchlistItem != null
-		menu.findItem(R.id.action_download).isVisible = viewModel.writeExternalStorageAllowed
-		viewModel.offlineItemExists(event).observe(this, Observer { itemExists->
-					itemExists?.let {exists ->
-						menu.findItem(R.id.action_download).isVisible =
-								viewModel.writeExternalStorageAllowed && !exists
-						menu.findItem(R.id.action_delete_offline_item).isVisible =
-								viewModel.writeExternalStorageAllowed && exists
-					}
-				})
+//		menu.findItem(R.id.action_download).isVisible = viewModel.writeExternalStorageAllowed
+//		viewModel.offlineItemExists(event).observe(this, Observer { itemExists->
+//					itemExists?.let {exists ->
+//						menu.findItem(R.id.action_download).isVisible =
+//								viewModel.writeExternalStorageAllowed && !exists
+//						menu.findItem(R.id.action_delete_offline_item).isVisible =
+//								viewModel.writeExternalStorageAllowed && exists
+//					}
+//				})
 
 		menu.findItem(R.id.action_play).isVisible = appBarExpanded
 	}
@@ -304,13 +311,33 @@ class EventDetailsFragment : Fragment() {
 		}
 	}
 
+	private var recordingToDownload: Recording? = null
+
 	private fun downloadRecording(recording: Recording) {
+		recordingToDownload = recording
 		viewModel.download(event, recording).observe(this, Observer {
-			if (it != null) {
-				val message = if (it) "Download started" else "Error starting download"
-				Snackbar.make(view!!, message, Snackbar.LENGTH_LONG).show()
+			when(it?.state){
+				OfflineItemManager.State.Downloading -> {
+					layout?.let {
+						Snackbar.make(it, "Download started", Snackbar.LENGTH_LONG).show()
+					}
+				}
+				OfflineItemManager.State.PermissionRequired -> {
+					this.requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+							WRITE_PERMISSION_REQUEST)
+				}
 			}
 		})
+	}
+
+	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+		if(requestCode == WRITE_PERMISSION_REQUEST){
+			if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+				recordingToDownload?.let { viewModel.download(event, it) }
+			}
+		} else {
+			super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+		}
 	}
 
 	interface OnEventDetailsFragmentInteractionListener {
@@ -322,6 +349,7 @@ class EventDetailsFragment : Fragment() {
 	companion object {
 		private val TAG = EventDetailsFragment::class.java.simpleName
 		private val EVENT_PARAM = "event_param"
+		private const val WRITE_PERMISSION_REQUEST = 24
 
 		fun newInstance(event: Event): EventDetailsFragment {
 			val fragment = EventDetailsFragment()

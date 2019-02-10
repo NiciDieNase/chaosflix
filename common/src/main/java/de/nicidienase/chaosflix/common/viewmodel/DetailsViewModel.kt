@@ -26,8 +26,6 @@ class DetailsViewModel(
 	val state: SingleLiveEvent<LiveEvent<State,Bundle,String>>
 			= SingleLiveEvent()
 
-	var writeExternalStorageAllowed: Boolean = false
-
 	private val handler = ThreadHandler()
 
 	fun setEvent(event: Event): LiveData<Event?> {
@@ -113,16 +111,6 @@ class DetailsViewModel(
 		bundle.putParcelable(KEY_PLAY_RECORDING, recording)
 		state.postValue(LiveEvent(State.PlayOnlineItem, data = bundle))
 	}
-
-	fun offlineItemExists(event: Event): LiveData<Boolean> {
-		val liveData = MutableLiveData<Boolean>()
-		handler.runOnBackgroundThread {
-			database.offlineEventDao().getByEventGuidSync(event.guid)
-		}
-		return liveData
-	}
-
-	fun getAutoselectStream() = preferencesManager.getAutoselectStream()
 
 	fun getAutoselectRecording() = preferencesManager.getAutoselectRecording()
 
