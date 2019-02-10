@@ -9,23 +9,25 @@ import android.os.Parcelable
         indices = [Index(value = ["name"], unique = true)])
 data class ConferenceGroup(
         var name: String = ""
-): Parcelable, Comparable<ConferenceGroup> {
+): Comparable<ConferenceGroup>, Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
 
     @ColumnInfo(name = "order_index")
     var index: Int = 1_000_000
+
     constructor(parcel: Parcel) : this(parcel.readString()) {
+        id = parcel.readLong()
         index = parcel.readInt()
     }
 
+    override fun compareTo(other: ConferenceGroup) = index.compareTo(other.index)
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
+        parcel.writeLong(id)
         parcel.writeInt(index)
     }
-
-    override fun compareTo(other: ConferenceGroup) = index.compareTo(other.index)
 
     override fun describeContents(): Int {
         return 0
