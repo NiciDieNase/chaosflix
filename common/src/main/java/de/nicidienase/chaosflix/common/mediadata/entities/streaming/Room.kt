@@ -55,10 +55,13 @@ data class Room(var slug: String,
 			return arrayOfNulls(size)
 		}
 
-		fun readMap(input: Parcel): MutableMap<String, StreamEvent> {
+		fun readMap(input: Parcel): MutableMap<String, StreamEvent>? {
+			val keys = input.createStringArray()
+			val urls = input.createTypedArray(StreamEvent.CREATOR)
+			if(keys == null || urls == null){
+				return null
+			}
 			val result = HashMap<String, StreamEvent>()
-			val keys = input.createStringArray() ?: emptyArray()
-			val urls = input.createTypedArray(StreamEvent.CREATOR) ?: emptyArray()
 			for(i in 0 until keys.size - 1){
 				val key = keys[i]
 				val value = urls[i]

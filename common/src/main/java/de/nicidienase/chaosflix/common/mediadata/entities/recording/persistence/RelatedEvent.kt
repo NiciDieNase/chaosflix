@@ -17,9 +17,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.RelatedEvent
 				childColumns = arrayOf("parentEventId"))),
 		indices = [Index("parentEventId","relatedEventGuid",unique = true)]
 		)
-
-
-class RelatedEvent(
+data class RelatedEvent(
 		@PrimaryKey(autoGenerate = true)
 		var id: Long = 0,
 		var parentEventId: Long,
@@ -29,7 +27,7 @@ class RelatedEvent(
 	constructor(parcel: Parcel) : this(
 			parcel.readLong(),
 			parcel.readLong(),
-			parcel.readString() ?: "",
+			parcel.readString(),
 			parcel.readInt()) {
 	}
 

@@ -45,7 +45,40 @@ data class Stream(
         dest.writeTypedArray(urls,0)
     }
 
-     companion object CREATOR : Parcelable.Creator<Stream> {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Stream
+
+        if (slug != other.slug) return false
+        if (display != other.display) return false
+        if (type != other.type) return false
+        if (isTranslated != other.isTranslated) return false
+        if (videoSize != null) {
+            videoSize?.let {
+                if (other.videoSize == null) return false
+                other.videoSize?.let { other ->
+                    if (!it.contentEquals(other)) return false
+                }
+            }
+        } else if (other.videoSize != null) return false
+        if (urls != other.urls) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = slug.hashCode()
+        result = 31 * result + display.hashCode()
+        result = 31 * result + type.hashCode()
+        result = 31 * result + isTranslated.hashCode()
+        result = 31 * result + (videoSize?.contentHashCode() ?: 0)
+        result = 31 * result + urls.hashCode()
+        return result
+    }
+
+    companion object CREATOR : Parcelable.Creator<Stream> {
         override fun createFromParcel(parcel: Parcel): Stream {
             return Stream(parcel)
         }

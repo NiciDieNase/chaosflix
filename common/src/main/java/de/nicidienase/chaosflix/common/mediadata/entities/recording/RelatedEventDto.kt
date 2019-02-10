@@ -4,11 +4,11 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 
-open class RelatedEventDto(
+data class RelatedEventDto(
 		@SerializedName("event_guid")   var eventGuid: String,
 		@SerializedName("weight")       var weight: Int) : Parcelable {
 	constructor(parcel: Parcel) : this(
-			parcel.readString(),
+			parcel.readString() ?: "",
 			parcel.readInt()) {
 	}
 
