@@ -26,13 +26,13 @@ class EventDetailsActivity : AppCompatActivity(),
 
 	private val PERMISSION_REQUEST_CODE: Int = 1;
 
-	private lateinit var casty: CastService
+	private lateinit var castService: CastService
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_eventdetails)
 
-		casty = CastService(this)
+		castService = CastService(this)
 
 		viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(DetailsViewModel::class.java)
 		viewModel.writeExternalStorageAllowed = hasWriteStoragePermission()
@@ -71,8 +71,8 @@ class EventDetailsActivity : AppCompatActivity(),
 	}
 
 	override fun playItem(event: Event, recording: Recording, localFile: String?) {
-		if (casty.connected) {
-			casty.loadMediaAndPlay(recording, event)
+		if (castService.connected) {
+			castService.loadMediaAndPlay(recording, event)
 		} else {
 			if (localFile != null) {
 				PlayerActivity.launch(this, event, localFile)
@@ -97,7 +97,7 @@ class EventDetailsActivity : AppCompatActivity(),
 	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 		super.onCreateOptionsMenu(menu)
 		menu?.let {
-			casty.addMediaRouteMenuItem(it)
+			castService.addMediaRouteMenuItem(it)
 		}
 		return true
 	}

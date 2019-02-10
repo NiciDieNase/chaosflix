@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording
 
 import com.google.gson.annotations.SerializedName
+import java.lang.NumberFormatException
 
 data class EventDto(@SerializedName("conference_id")
                     var conferenceId: Long = 0,
@@ -41,14 +42,12 @@ data class EventDto(@SerializedName("conference_id")
 
 	init {
 		val strings = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+
 		try {
 			eventID = strings[strings.size - 1].toLong()
-		} catch (ex: NumberFormatException) {
+		} catch (e: NumberFormatException){
 			eventID = 0
 		}
-
-		val split = conferenceUrl.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-		conferenceId = (split[split.size - 1]).toLong()
 	}
 
 	fun getExtendedDescription(): String = "$description\n\nreleased at: $releaseDate\n\nTags: ${tags?.joinToString(", ")}"
@@ -66,6 +65,33 @@ data class EventDto(@SerializedName("conference_id")
 			super.equals(other)
 		}
 
+	}
+
+	override fun hashCode(): Int {
+		var result = guid.hashCode()
+		result = 31 * result + title.hashCode()
+		result = 31 * result + (subtitle?.hashCode() ?: 0)
+		result = 31 * result + slug.hashCode()
+		result = 31 * result + (link?.hashCode() ?: 0)
+		result = 31 * result + (description?.hashCode() ?: 0)
+		result = 31 * result + originalLanguage.hashCode()
+		result = 31 * result + (persons?.contentHashCode() ?: 0)
+		result = 31 * result + (tags?.contentHashCode() ?: 0)
+		result = 31 * result + (date?.hashCode() ?: 0)
+		result = 31 * result + releaseDate.hashCode()
+		result = 31 * result + updatedAt.hashCode()
+		result = 31 * result + length.hashCode()
+		result = 31 * result + thumbUrl.hashCode()
+		result = 31 * result + posterUrl.hashCode()
+		result = 31 * result + (frontendLink?.hashCode() ?: 0)
+		result = 31 * result + url.hashCode()
+		result = 31 * result + (conferenceUrl?.hashCode() ?: 0)
+		result = 31 * result + (recordings?.hashCode() ?: 0)
+		result = 31 * result + (related?.hashCode() ?: 0)
+		result = 31 * result + isPromoted.hashCode()
+		result = 31 * result + eventID.hashCode()
+		result = 31 * result + viewCount
+		return result
 	}
 }
 

@@ -183,8 +183,7 @@ class Downloader(private val recordingApi: RecordingService,
 	}
 
 	private fun saveEvent(event: EventDto): Event {
-		val split = event.conferenceUrl.split("/")
-		val acronym = split[split.size - 1]
+		val acronym = event.conferenceUrl.split("/").last()
 		val conferenceId = database.conferenceDao().findConferenceByAcronymSync(acronym)?.id
 				?: updateConferencesAndGet(acronym)
 
