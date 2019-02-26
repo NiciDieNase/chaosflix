@@ -24,12 +24,7 @@ class AboutActivity : AppCompatActivity() {
 
 		val showLibs = Element()
 		showLibs.title = resources.getString(R.string.showLibs)
-		showLibs.onClickListener = object : View.OnClickListener {
-
-			override fun onClick(p0: View?) {
-				LibsFragment().show(supportFragmentManager, null)
-			}
-		}
+		showLibs.onClickListener = View.OnClickListener { LibsFragment().show(supportFragmentManager, null) }
 
 		val pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
 		val version = pInfo.versionName;

@@ -19,11 +19,8 @@ class LibsFragment: DialogFragment(){
 	}
 
 	private fun getLibsFragment(): LibsSupportFragment {
-		val aboutLibs: LibsSupportFragment = LibsBuilder()
-				//				.withAboutIconShown(true)
-				//				.withAboutVersionShown(true)
-				//				.withAboutDescription(resources.getString(R.string.description))
+		return LibsBuilder()
+				.withFields(R.string::class.java.fields)
 				.supportFragment()
-		return aboutLibs
 	}
 }

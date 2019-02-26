@@ -67,3 +67,9 @@
 -keepclassmembers public class com.cypressworks.kotlinreflectionproguard.** {
     public *;
 }
+
+# aboutlibraries
+-keep class .R
+-keep class **.R$* {
+    <fields>;
+}
