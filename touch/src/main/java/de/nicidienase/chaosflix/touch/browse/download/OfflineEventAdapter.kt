@@ -5,7 +5,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
@@ -20,13 +21,10 @@ class OfflineEventAdapter(var items: List<Pair<OfflineEvent, Event>>, val viewMo
 		val item = items[position]
 
 		holder.binding.event = item.second
-		Picasso.with(holder.thumbnail.context)
+		Glide.with(holder.thumbnail)
 				.load(item.second.thumbUrl)
-				.noFade()
-				.fit()
-				.centerInside()
+				.apply(RequestOptions().fitCenter())
 				.into(holder.thumbnail)
-
 
 		with(holder.binding){
 			downloadStatus = viewModel.offlineItemManager.downloadStatus[item.first.downloadReference]

@@ -5,7 +5,8 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.touch.databinding.ItemLiveeventCardviewBinding
 
@@ -50,11 +51,9 @@ class LivestreamAdapter(val listener: LivestreamListFragment.InteractionListener
 		val item = items[position]
 
 		holder.binding.item = item
-		Picasso.with(holder.binding.root.context)
+		Glide.with(holder.binding.root)
 				.load(item.room.thumb)
-				.noFade()
-				.fit()
-				.centerInside()
+				.apply(RequestOptions().fitCenter())
 				.into(holder.binding.imageView)
 
 		holder.binding.root.setOnClickListener { listener.onStreamSelected(item) }

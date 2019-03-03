@@ -22,8 +22,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.OfflineItemManager
@@ -111,18 +111,11 @@ class EventDetailsFragment : Fragment() {
 					Log.d(TAG,"Loading Event ${event.title}, ${event.guid}")
 					updateBookmark(event.guid)
 					binding.thumbImage.transitionName = getString(R.string.thumbnail) + event.guid
-					Picasso.with(context)
-							.load(event.thumbUrl)
-							.noFade()
-							.into(binding.thumbImage, object : Callback {
-								override fun onSuccess() {
-//                                        startPostponedEnterTransition()
-								}
 
-								override fun onError() {
-//                                        startPostponedEnterTransition()
-								}
-							})
+					Glide.with(binding.thumbImage)
+							.load(event.thumbUrl)
+							.apply(RequestOptions().fitCenter())
+							.into(binding.thumbImage)
 
 				})
 		viewModel.getRelatedEvents(event).observe(this, Observer {
