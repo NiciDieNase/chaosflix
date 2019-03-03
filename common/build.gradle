@@ -94,6 +94,7 @@ dependencies {
     debugImplementation 'com.facebook.stetho:stetho:1.4.2'
     debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.4.2'
     debugImplementation 'com.facebook.stetho:stetho-okhttp:1.4.2'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
 
     testImplementation "org.mockito:mockito-core:2.11.0"
     testImplementation 'junit:junit:4.12'

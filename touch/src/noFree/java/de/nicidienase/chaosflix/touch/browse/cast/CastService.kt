@@ -9,7 +9,7 @@ import de.nicidienase.chaosflix.touch.browse.streaming.StreamingItem
 import pl.droidsonroids.casty.Casty
 import pl.droidsonroids.casty.MediaData
 
-class CastService(val activity: Activity, withMiniController: Boolean = true) {
+class CastService(activity: Activity, withMiniController: Boolean = true) {
 
 	private val casty: Casty
 	val connected: Boolean
