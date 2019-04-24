@@ -2,7 +2,6 @@ package de.nicidienase.chaosflix.common.mediadata.sync
 
 import android.arch.lifecycle.LiveData
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
-import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferenceDto
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventDto
@@ -105,10 +104,13 @@ class Downloader(private val recordingApi: RecordingService,
 				return@runOnBackgroundThread
 			}
 			try {
-				val recordings = response.body()?.recordings?.let { recordings ->
-					return@let saveRecordings(event, recordings)
+				val recordingDtos = response.body()?.recordings
+				if(recordingDtos != null){
+					val recordings: List<Recording> = saveRecordings(event, recordingDtos)
+					updateState.postValue(LiveEvent(DownloaderState.DONE, data = recordings))
+				} else {
+					updateState.postValue(LiveEvent(DownloaderState.DONE))
 				}
-				updateState.postValue(LiveEvent(DownloaderState.DONE, data = recordings))
 			} catch (e: Exception){
 				updateState.postValue(LiveEvent(DownloaderState.DONE, error = "Error updating Recordings for ${event.title}"))
 				e.printStackTrace()}

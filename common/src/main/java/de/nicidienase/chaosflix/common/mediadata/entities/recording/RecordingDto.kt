@@ -23,13 +23,12 @@ data class RecordingDto(
         @SerializedName("event_url")
         var eventUrl: String = "",
         @SerializedName("conference_url")
-        var conferenceUrl: String = "",
-        var recordingID: Long
+        var conferenceUrl: String = ""
 ) {
-
-    init {
+    val recordingID: Long
+    get() {
         val strings = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        recordingID = (strings[strings.size - 1]).toLong()
+        return (strings[strings.size - 1]).toLong()
     }
 
     fun getEventString():String {
