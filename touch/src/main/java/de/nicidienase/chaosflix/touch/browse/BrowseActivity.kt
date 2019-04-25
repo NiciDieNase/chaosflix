@@ -164,7 +164,7 @@ class BrowseActivity : AppCompatActivity(),
 							val keys = stream.urls.keys.toTypedArray()
 							val dialog = AlertDialog.Builder(this)
 									.setTitle(this.getString(R.string.select_stream))
-									.setItems(keys) { dialog: DialogInterface?, which: Int ->
+									.setItems(keys) { _: DialogInterface?, which: Int ->
 										val streamUrl = stream.urls[keys[which]]
 										if (streamUrl != null) {
 											castService.castStream(streamingItem, streamUrl, keys[which])

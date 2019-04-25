@@ -1,9 +1,10 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording
 
+import android.support.annotation.Keep
 import java.util.*
 import kotlin.collections.HashMap
 
-
+@Keep
 data class ConferencesWrapper(var conferences: List<ConferenceDto>) {
 
 

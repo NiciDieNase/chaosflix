@@ -12,7 +12,7 @@ data class StreamUrl(var display: String = "",
     var url: String = "") : Parcelable {
 
 
-    protected constructor(`in`: Parcel) : this(
+    private constructor(`in`: Parcel) : this(
         display = `in`.readString() ?: "",
         tech = `in`.readString() ?: "",
         url = `in`.readString() ?: "")

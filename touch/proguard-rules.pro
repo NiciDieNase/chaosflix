@@ -22,6 +22,8 @@
 -ignorewarnings
 -dontwarn com.squareup.okhttp.**
 
+-keep class pl.droidsonroids.casty.** { *; }
+
 # Proguard configuration for Jackson 2.x (fasterxml package instead of codehaus package)
 -keep class com.fasterxml.jackson.databind.ObjectMapper {
     public <methods>;
@@ -72,4 +74,12 @@
 -keep class .R
 -keep class **.R$* {
     <fields>;
+}
+
+# MediaRouter/Casty
+-keep class android.support.v7.app.MediaRouteActionProvider{
+  *;
+}
+-keep class androidx.mediarouter.app.MediaRouteActionProvider{
+*;
 }

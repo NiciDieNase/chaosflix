@@ -97,4 +97,3 @@ data class EventDto(@SerializedName("conference_id")
 	}
 }
 
-class EventsResponse (var events: List<EventDto>)
