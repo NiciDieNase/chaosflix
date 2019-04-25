@@ -102,7 +102,7 @@ data class Event(
 			thumbUrl = event.thumbUrl,
 			frontendLink = event.frontendLink,
 			url = event.url,
-			conferenceUrl = event.conferenceUrl ?: "",
+			conferenceUrl = event.conferenceUrl,
 			isPromoted = event.isPromoted,
 			viewCount = event.viewCount,
 			persons = event.persons,

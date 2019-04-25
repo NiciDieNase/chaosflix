@@ -27,7 +27,7 @@ data class RelatedEvent(
 	constructor(parcel: Parcel) : this(
 			parcel.readLong(),
 			parcel.readLong(),
-			parcel.readString(),
+			parcel.readString() ?: "",
 			parcel.readInt()) {
 	}
 

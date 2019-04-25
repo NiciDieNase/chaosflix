@@ -40,9 +40,9 @@ class BrowseErrorFragment : ErrorSupportFragment() {
 			buttonText = resources.getString(R.string.dismiss_error)
 
 			if (fragmentManager != null) {
-				setButtonClickListener { v -> dismiss(fragmentManager) }
+				setButtonClickListener { _ -> dismiss(fragmentManager) }
 			} else {
-				setButtonClickListener { v -> dismiss() }
+				setButtonClickListener { _ -> dismiss() }
 			}
 		}
 	}

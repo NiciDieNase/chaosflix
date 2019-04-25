@@ -199,10 +199,7 @@ class OfflineItemManager(context: Context,
 		val sharedPref: SharedPreferences = PreferenceManager
 				.getDefaultSharedPreferences(applicationContext);
 		var dir = sharedPref.getString("download_folder", null)
-		if (dir == null) {
-			dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).path
-		}
-		return dir
+		return dir ?: Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).path
 	}
 
 	private fun getDownloadDir(): String {

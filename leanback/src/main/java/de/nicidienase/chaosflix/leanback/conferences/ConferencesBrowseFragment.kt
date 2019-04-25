@@ -58,7 +58,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		title = resources.getString(R.string.app_name)
-		badgeDrawable = resources.getDrawable(R.drawable.chaosflix_icon)
+		badgeDrawable = resources.getDrawable(R.drawable.chaosflix_icon, null)
 
 		//		setHeaderPresenterSelector(new PresenterSelector() {
 		//			@Override

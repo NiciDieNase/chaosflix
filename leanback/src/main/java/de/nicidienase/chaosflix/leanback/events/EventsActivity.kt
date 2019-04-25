@@ -61,12 +61,12 @@ class EventsActivity : FragmentActivity() {
 			}
 		})
 		viewModel.getEventsforConference(conference).observe(this, Observer { events ->
-			events?.let { events ->
-				if(events.size > 0){
+			events?.let {
+				if(it.size > 0){
 					val tagList = events.map { it.tags ?: emptyArray() }.toTypedArray().flatten()
 					val filteredTags = tagList.filterNot { it.matches("\\d+".toRegex()) }.filterNot { it == conference.acronym }.toSet()
 					updateFragment(filteredTags.size > 1)
-					(fragment as EventsFragment).updateEvents(conference, events)
+					(fragment as EventsFragment).updateEvents(conference, it)
 				}
 			}
 		})

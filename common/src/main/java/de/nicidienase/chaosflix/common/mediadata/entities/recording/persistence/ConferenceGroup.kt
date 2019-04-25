@@ -17,7 +17,7 @@ data class ConferenceGroup(
     @ColumnInfo(name = "order_index")
     var index: Int = 1_000_000
 
-    constructor(parcel: Parcel) : this(parcel.readString()) {
+    constructor(parcel: Parcel) : this(parcel.readString() ?: "") {
         id = parcel.readLong()
         index = parcel.readInt()
     }
