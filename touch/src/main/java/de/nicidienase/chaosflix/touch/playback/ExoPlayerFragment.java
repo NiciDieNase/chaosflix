@@ -174,7 +174,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 		DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(getContext(), null, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
 
 
-		exoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
+		exoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector);
 		PlayerEventListener listener = new PlayerEventListener(exoPlayer, this);
 		exoPlayer.addVideoListener(listener);
 		exoPlayer.addListener(listener);

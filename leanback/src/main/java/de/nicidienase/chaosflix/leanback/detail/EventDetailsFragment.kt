@@ -81,7 +81,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 		ExoPlayerFactory.newSimpleInstance(
 				activity,
 				DefaultTrackSelector(
-						AdaptiveTrackSelection.Factory(DefaultBandwidthMeter())))
+						AdaptiveTrackSelection.Factory()))
 	}
 	private val player: SimpleExoPlayer by playerDelegate
 	private lateinit var playerAdapter: LeanbackPlayerAdapter

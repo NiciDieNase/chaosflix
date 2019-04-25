@@ -24,11 +24,6 @@ class PlayerEventListener implements Player.EventListener, SimpleExoPlayer.Video
 	}
 
 	@Override
-	public void onTimelineChanged(Timeline timeline, Object manifest) {
-
-	}
-
-	@Override
 	public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
 
 	}
@@ -72,11 +67,6 @@ class PlayerEventListener implements Player.EventListener, SimpleExoPlayer.Video
 		String errorMessage = error.getCause().getMessage();
 		listener.notifyError(errorMessage);
 		Log.d(TAG, errorMessage, error);
-	}
-
-	@Override
-	public void onPositionDiscontinuity() {
-
 	}
 
 	@Override
