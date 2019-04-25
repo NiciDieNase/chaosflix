@@ -1,9 +1,10 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording
 
+import android.support.annotation.Keep
 import com.google.gson.annotations.SerializedName;
 import de.nicidienase.chaosflix.common.util.ConferenceUtil
 
-
+@Keep
 data class ConferenceDto(
         @SerializedName("acronym")            var acronym: String = "",
         @SerializedName("aspect_ratio")       var aspectRatio: String = "",

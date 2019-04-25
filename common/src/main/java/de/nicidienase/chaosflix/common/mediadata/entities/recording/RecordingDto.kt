@@ -1,7 +1,9 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording
 
+import android.support.annotation.Keep
 import com.google.gson.annotations.SerializedName;
 
+@Keep
 data class RecordingDto(
         var size: Int = 0,
         var length: Int = 0,

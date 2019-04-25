@@ -1,8 +1,10 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording
 
+import android.support.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import java.lang.NumberFormatException
 
+@Keep
 data class EventDto(@SerializedName("conference_id")
                     var conferenceId: Long = 0,
                     var guid: String = "",
