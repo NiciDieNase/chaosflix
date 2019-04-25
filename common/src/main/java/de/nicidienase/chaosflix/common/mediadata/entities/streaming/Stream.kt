@@ -2,11 +2,13 @@ package de.nicidienase.chaosflix.common.mediadata.entities.streaming
 
 import android.os.Parcel
 import android.os.Parcelable
+import android.support.annotation.Keep
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import okhttp3.internal.connection.StreamAllocation
 
 import kotlin.collections.HashMap
 
+@Keep
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Stream(
         var slug: String,

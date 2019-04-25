@@ -2,10 +2,12 @@ package de.nicidienase.chaosflix.common.mediadata.entities.streaming
 
 import android.os.Parcel
 import android.os.Parcelable
+import android.support.annotation.Keep
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.util.*
 import kotlin.collections.HashMap
 
+@Keep
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Room(var slug: String,
                 var schedulename: String,

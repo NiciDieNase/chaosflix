@@ -2,9 +2,11 @@ package de.nicidienase.chaosflix.common.mediadata.entities.streaming
 
 import android.os.Parcel
 import android.os.Parcelable
+import android.support.annotation.Keep
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.google.gson.annotations.SerializedName
 
+@Keep
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class StreamEvent(var title: String = "",
                        var speaker: String = "",

@@ -2,8 +2,10 @@ package de.nicidienase.chaosflix.common.mediadata.entities.streaming
 
 import android.os.Parcel
 import android.os.Parcelable
+import android.support.annotation.Keep
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
+@Keep
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class StreamUrl(var display: String = "",
     var tech: String = "",

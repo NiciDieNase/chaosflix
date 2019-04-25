@@ -1,8 +1,10 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.streaming
 
+import android.support.annotation.Keep
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import kotlin.collections.ArrayList
 
+@Keep
 @JsonIgnoreProperties(ignoreUnknown = true)
 class LiveConference(
     var conference: String,
