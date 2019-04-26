@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-		xmlns:tools="http://schemas.android.com/tools">
+		xmlns:tools="http://schemas.android.com/tools"
+		xmlns:bind="http://schemas.android.com/apk/res-auto">
 
 	<data>
 		<variable
@@ -8,7 +9,7 @@
 			type="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event"/>
 	</data>
 
-	<LinearLayout
+	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">
 
@@ -17,75 +18,89 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
-			android:foreground="?android:attr/selectableItemBackground"
-			android:elevation="2dp">
+			android:elevation="2dp"
+			android:foreground="?android:attr/selectableItemBackground">
 
-			<LinearLayout
+			<android.support.constraint.ConstraintLayout
+				android:id="@+id/linearLayout4"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_margin="8dp"
-				android:orientation="horizontal">
+				android:orientation="vertical">
 
-				<FrameLayout
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content">
 
 				<ImageView
 					android:id="@+id/imageView"
 					imageUrl="@{event.thumbUrl}"
-					android:layout_width="@dimen/thumbnail_width"
-					android:layout_height="@dimen/thumbnail_height"
-					android:scaleType="fitCenter"/>
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:adjustViewBounds="true"
+					android:scaleType="center"
+					bind:layout_constraintEnd_toEndOf="parent"
+					bind:layout_constraintStart_toStartOf="parent"
+					bind:layout_constraintTop_toTopOf="parent"
+					tools:src="@drawable/cast_album_art_placeholder"/>
 
 				<TextView
 					android:id="@+id/duration"
 					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"/>
-					<!--android:text="@{event.length}"-->
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="8dp"
+					android:layout_marginBottom="8dp"
+					android:background="@color/transparent_black_70"
+					android:padding="2dp"
+					android:textColor="@color/white"
+					bind:layout_constraintBottom_toBottomOf="@+id/imageView"
+					bind:layout_constraintEnd_toEndOf="@+id/imageView"
+					bind:time="@{event.length}"
+					tools:text="1:23:45"/>
 
-				</FrameLayout>
 
-				<LinearLayout
+				<TextView
+					android:id="@+id/title_text"
+					style="@style/TextAppearance.AppCompat.Medium"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_marginLeft="8dp"
-					android:layout_weight="1"
-					android:gravity="right"
-					android:orientation="vertical">
+					android:layout_marginStart="8dp"
+					android:layout_marginTop="8dp"
+					android:layout_marginEnd="8dp"
+					android:text="@{event.title}"
+					android:textAppearance="@style/TextAppearance.AppCompat.Title"
+					bind:layout_constraintEnd_toEndOf="parent"
+					bind:layout_constraintHorizontal_bias="0.0"
+					bind:layout_constraintStart_toStartOf="parent"
+					bind:layout_constraintTop_toBottomOf="@+id/imageView"
+					tools:text="Title"/>
 
-					<TextView
-						android:id="@+id/title_text"
-						style="@style/TextAppearance.AppCompat.Medium"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:layout_gravity="center_vertical"
-						android:layout_marginTop="4dp"
-						android:layout_weight="1"
-						android:text="@{event.title}"
-						tools:text="Title"
-						android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+				<TextView
+					android:id="@+id/subtitle_text"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="8dp"
+					android:layout_marginEnd="8dp"
+					android:layout_marginBottom="8dp"
+					android:text="@{event.subtitle}"
+					android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+					bind:layout_constraintBottom_toBottomOf="parent"
+					bind:layout_constraintEnd_toStartOf="@+id/tag_text"
+					bind:layout_constraintHorizontal_bias="0.0"
+					bind:layout_constraintStart_toStartOf="@+id/title_text"
+					bind:layout_constraintTop_toBottomOf="@+id/title_text"
+					tools:text="Subtitle"/>
 
-					<TextView
-						android:id="@+id/subtitle_text"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:layout_weight="1"
-						android:text="@{event.subtitle}"
-						tools:text="Subtitle"
-						android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"/>
+				<TextView
+					android:id="@+id/tag_text"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="8dp"
+					android:gravity="bottom|end"
+					android:text=""
+					bind:layout_constraintBottom_toBottomOf="parent"
+					bind:layout_constraintEnd_toEndOf="parent"
+					tools:text="Tag"/>
 
-					<TextView
-						android:id="@+id/tag_text"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_weight="1"
-						android:gravity="bottom|right"
-						android:text=""
-						tools:text="Tag"/>
-				</LinearLayout>
 
-			</LinearLayout>
+			</android.support.constraint.ConstraintLayout>
 		</android.support.v7.widget.CardView>
 
-	</LinearLayout>
+	</FrameLayout>
 </layout>

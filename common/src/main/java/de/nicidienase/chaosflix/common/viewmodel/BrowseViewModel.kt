@@ -14,6 +14,8 @@ import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
 import de.nicidienase.chaosflix.common.mediadata.network.StreamingService
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
+import de.nicidienase.chaosflix.common.util.LiveDataMerger
+import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.ThreadHandler
 import retrofit2.Response
 import java.io.IOException
@@ -55,8 +57,15 @@ class BrowseViewModel(
 	fun getUpdateState()
 			= downloader.updateConferencesAndGroups()
 
-	fun updateEventsForConference(conference: Conference)
-			= downloader.updateEventsForConference(conference)
+	fun updateEventsForConference(conference: Conference): LiveData<LiveEvent<Downloader.DownloaderState, List<Event>, String>> =
+		LiveDataMerger<
+				List<Event>,
+				LiveEvent<Downloader.DownloaderState, List<Event>, String>,
+				LiveEvent<Downloader.DownloaderState, List<Event>, String>>()
+				.merge(getEventsforConference(conference),
+						downloader.updateEventsForConference(conference)) { list: List<Event>?, liveEvent: LiveEvent<Downloader.DownloaderState, List<Event>, String>? ->
+					return@merge LiveEvent(liveEvent?.state ?: Downloader.DownloaderState.DONE, list ?: liveEvent?.data, liveEvent?.error)
+				}
 
 	fun getBookmarkedEvents(): LiveData<List<Event>> = updateAndGetEventsForGuids {
 		database

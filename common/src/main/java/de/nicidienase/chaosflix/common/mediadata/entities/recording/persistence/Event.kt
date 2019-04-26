@@ -89,8 +89,8 @@ data class Event(
 	constructor(event: EventDto, conferenceId: Long = 0) : this(
 			conferenceId = conferenceId,
 			guid = event.guid,
-			title = event.title,
-			subtitle = event.subtitle,
+			title = event.title.trim(),
+			subtitle = event.subtitle?.trim(),
 			slug = event.slug,
 			link = event.link,
 			description = event.description,

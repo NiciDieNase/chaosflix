@@ -9,10 +9,10 @@ data class EventDto(@SerializedName("conference_id")
                     var conferenceId: Long = 0,
                     var guid: String = "",
                     var title: String = "",
-                    var subtitle: String? = "",
+                    var subtitle: String?,
                     var slug: String = "",
                     var link: String? = "",
-                    var description: String? = "",
+                    var description: String?,
                     @SerializedName("original_language")
                     var originalLanguage: String = "",
                     var persons: Array<String>?,
