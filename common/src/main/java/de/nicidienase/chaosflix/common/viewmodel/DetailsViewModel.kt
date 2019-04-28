@@ -17,14 +17,17 @@ import de.nicidienase.chaosflix.common.util.ThreadHandler
 import java.io.File
 
 class DetailsViewModel(
-		val database: ChaosflixDatabase,
-		val offlineItemManager: OfflineItemManager,
-		val preferencesManager: PreferencesManager,
-		val downloader: Downloader
+		private val database: ChaosflixDatabase,
+		private val offlineItemManager: OfflineItemManager,
+		private val preferencesManager: PreferencesManager,
+		private val downloader: Downloader
 ) : ViewModel() {
 
 	val state: SingleLiveEvent<LiveEvent<State,Bundle,String>>
 			= SingleLiveEvent()
+
+	val autoselectRecording: Boolean
+		get() = preferencesManager.getAutoselectRecording()
 
 	private val handler = ThreadHandler()
 
@@ -81,6 +84,12 @@ class DetailsViewModel(
 		return data
 	}
 
+	fun relatedEventSelected(event: Event){
+		val bundle = Bundle()
+		bundle.putParcelable(EVENT,event)
+		state.postValue(LiveEvent(State.DisplayEvent, data = bundle))
+	}
+
 	fun playEvent(event: Event) {
 		handler.runOnBackgroundThread {
 
@@ -94,36 +103,66 @@ class DetailsViewModel(
 				}
 				val bundle = Bundle()
 				bundle.putString(KEY_LOCAL_PATH, offlineEvent.localPath)
-				bundle.putParcelable(KEY_PLAY_RECORDING, recording)
-				state.postValue(LiveEvent(State.PlayOfflineItem, data = bundle))
+				bundle.putParcelable(RECORDING, recording)
+				bundle.putParcelable(EVENT, event)
+				if(preferencesManager.externalPlayer){
+					state.postValue(LiveEvent(State.PlayExternal,bundle))
+				} else {
+					state.postValue(LiveEvent(State.PlayOfflineItem, data = bundle))
+				}
 			} else {
 				// select quality then playEvent
 				val items = database.recordingDao().findRecordingByEventSync(event.id).toTypedArray()
 				val bundle = Bundle()
+				bundle.putParcelable(EVENT,event)
 				bundle.putParcelableArray(KEY_SELECT_RECORDINGS, items)
 				state.postValue(LiveEvent(State.SelectRecording, data = bundle ))
 			}
 		}
 	}
 
-	fun playRecording(recording: Recording){
+	fun playRecording(event: Event, recording: Recording){
 		val bundle = Bundle()
-		bundle.putParcelable(KEY_PLAY_RECORDING, recording)
-		state.postValue(LiveEvent(State.PlayOnlineItem, data = bundle))
+		bundle.putParcelable(RECORDING, recording)
+		bundle.putParcelable(EVENT,event)
+		if(preferencesManager.externalPlayer){
+			state.postValue(LiveEvent(State.PlayExternal, bundle))
+		} else {
+			state.postValue(LiveEvent(State.PlayOnlineItem, bundle))
+		}
 	}
 
-	fun getAutoselectRecording() = preferencesManager.getAutoselectRecording()
+	fun downloadRecordingForEvent(event: Event)
+			= postStateWithEventAndRecordings(State.DownloadRecording, event)
 
+	fun playInExternalPlayer(event: Event) = postStateWithEventAndRecordings(State.PlayExternal, event)
+
+	private fun postStateWithEventAndRecordings(s: State, e: Event){
+		handler.runOnBackgroundThread {
+			val items = database.recordingDao().findRecordingByEventSync(e.id).toTypedArray()
+			val bundle = Bundle()
+			bundle.putParcelable(EVENT, e)
+			bundle.putParcelableArray(KEY_SELECT_RECORDINGS, items)
+			state.postValue(LiveEvent(s, bundle))
+		}
+	}
 
 	enum class State{
-		PlayOfflineItem, PlayOnlineItem, SelectRecording, Error
+		PlayOfflineItem,
+		PlayOnlineItem,
+		SelectRecording,
+		DownloadRecording,
+		DisplayEvent,
+		PlayExternal,
+		Error
 	}
 
 	companion object {
 		val TAG = DetailsViewModel::class.simpleName
-		val KEY_LOCAL_PATH = "local_path"
-		val KEY_SELECT_RECORDINGS = "select_recordings"
-		val KEY_PLAY_RECORDING = "play_recording"
+		const val KEY_LOCAL_PATH = "local_path"
+		const val KEY_SELECT_RECORDINGS = "select_recordings"
+		const val RECORDING = "recording"
+		const val EVENT = "event"
 	}
 }
 

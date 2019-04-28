@@ -7,6 +7,10 @@ class PreferencesManager(val sharedPref: SharedPreferences) {
 	private val keyMetered = "allow_metered_networks"
 	private val keyAutoselectStream = "auto_select_stream"
 	private val keyAutoselectRecording = "auto_select_recording"
+	private val keyAlwaysUseExternalPlayer = "auto_external_player"
+
+	val externalPlayer: Boolean
+		get() = sharedPref.getBoolean(keyAlwaysUseExternalPlayer, false)
 
 	fun getMetered() = sharedPref.getBoolean(keyMetered, false)
 

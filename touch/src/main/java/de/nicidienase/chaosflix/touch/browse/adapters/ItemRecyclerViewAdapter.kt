@@ -24,11 +24,11 @@ abstract class ItemRecyclerViewAdapter<T,VH : RecyclerView.ViewHolder?>()
 		return _filter
 	}
 
-	private var _items: MutableList<T> = ArrayList<T>()
+	private var _items: List<T> = listOf()
 
-	private var filteredItems: MutableList<T> = _items
+	private var filteredItems: List<T> = _items
 
-	var items: MutableList<T>
+	var items: List<T>
 		get() = filteredItems
 		set(value) {
 			_items = value
@@ -39,16 +39,16 @@ abstract class ItemRecyclerViewAdapter<T,VH : RecyclerView.ViewHolder?>()
 			notifyDataSetChanged()
 		}
 
-	fun addItem(item: T) {
-		if (items.contains(item)) {
-			val index = items.indexOf(item)
-			items[index] = item
-			notifyItemChanged(index)
-		} else {
-			items.add(item)
-			notifyItemInserted(items.size - 1)
-		}
-	}
+//	fun addItem(item: T) {
+//		if (items.contains(item)) {
+//			val index = items.indexOf(item)
+//			items[index] = item
+//			notifyItemChanged(index)
+//		} else {
+//			items.add(item)
+//			notifyItemInserted(items.size - 1)
+//		}
+//	}
 
 	override fun getItemCount(): Int {
 		return filteredItems.size
@@ -58,7 +58,7 @@ abstract class ItemRecyclerViewAdapter<T,VH : RecyclerView.ViewHolder?>()
 		override fun performFiltering(filterText: CharSequence?): FilterResults {
 			val filterResults = FilterResults()
 			filterText?.let { text: CharSequence ->
-				if (text.length > 0) {
+				if (text.isNotEmpty()) {
 					val list = _items.filter { getFilteredProperties(it).any { it.contains(text, true) } }
 					filterResults.values = list
 					filterResults.count = list.size

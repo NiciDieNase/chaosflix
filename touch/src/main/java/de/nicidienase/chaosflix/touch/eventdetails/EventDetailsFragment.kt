@@ -35,6 +35,7 @@ import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventDetailsBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 
 class EventDetailsFragment : Fragment() {
 
@@ -44,13 +45,12 @@ class EventDetailsFragment : Fragment() {
 	private lateinit var event: Event
 	private var watchlistItem: WatchlistItem? = null
 	private var eventSelectedListener: OnEventSelectedListener? = null
-	private var selectDialog: AlertDialog? = null
 
 	private var layout: View? = null
 
 	private lateinit var viewModel: DetailsViewModel
 
-	private lateinit var relatedEventsAdapter: RelatedEventsRecyclerViewAdapter
+	private lateinit var relatedEventsAdapter: EventRecyclerViewAdapter
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -87,15 +87,19 @@ class EventDetailsFragment : Fragment() {
 			(activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 		}
 
-		eventSelectedListener?.let { listener ->
-			binding.relatedItemsList.apply {
-				relatedEventsAdapter = RelatedEventsRecyclerViewAdapter(listener)
-				adapter = relatedEventsAdapter
-				val orientation = LinearLayoutManager.VERTICAL
-				layoutManager = LinearLayoutManager(context, orientation, false)
-				val itemDecoration = DividerItemDecoration(binding.relatedItemsList.context, orientation)
-				addItemDecoration(itemDecoration)
+		binding.relatedItemsList.apply {
+//			relatedEventsAdapter = RelatedEventsRecyclerViewAdapter(listener)
+			relatedEventsAdapter = EventRecyclerViewAdapter(){
+//				viewModel.playEvent(it)
+				viewModel.relatedEventSelected(it)
 			}
+			adapter = relatedEventsAdapter
+			val orientation = LinearLayoutManager.VERTICAL
+			layoutManager = LinearLayoutManager(context, orientation, false)
+			val itemDecoration = DividerItemDecoration(binding.relatedItemsList.context, orientation)
+			addItemDecoration(itemDecoration)
+		}
+		eventSelectedListener?.let { listener ->
 		}
 
 		binding.appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
@@ -122,40 +126,10 @@ class EventDetailsFragment : Fragment() {
 							.load(event.thumbUrl)
 							.apply(RequestOptions().fitCenter())
 							.into(binding.thumbImage)
-
 				})
 		viewModel.getRelatedEvents(event).observe(this, Observer {
 			if(it != null){
-				relatedEventsAdapter.events = it
-			}
-		})
-
-		viewModel.state.observe(this, Observer { liveEvent ->
-			if(liveEvent == null){
-				return@Observer
-			}
-			when(liveEvent.state){
-				DetailsViewModel.State.PlayOfflineItem -> {
-					val localFile = liveEvent.data?.getString(DetailsViewModel.KEY_LOCAL_PATH)
-					val recording = liveEvent.data?.getParcelable<Recording>(DetailsViewModel.KEY_PLAY_RECORDING)
-					if(recording != null){
-						listener?.playItem(event, recording, localFile)
-					}
-				}
-				DetailsViewModel.State.PlayOnlineItem -> {
-					liveEvent.data?.getParcelable<Recording>(DetailsViewModel.KEY_PLAY_RECORDING)?.let {
-						listener?.playItem(event,it)
-					}
-
-				}
-				DetailsViewModel.State.SelectRecording -> {
-					val selectItems: Array<Recording> =
-							liveEvent.data?.getParcelableArray(DetailsViewModel.KEY_SELECT_RECORDINGS) as Array<Recording>
-					selectRecording(selectItems.asList()) {
-						viewModel.playRecording(it)
-					}
-				}
-				DetailsViewModel.State.Error -> liveEvent.error?.let { showSnackbar(it) }
+				relatedEventsAdapter.items = it
 			}
 		})
 	}
@@ -168,45 +142,11 @@ class EventDetailsFragment : Fragment() {
 				})
 	}
 
-	private fun showSnackbar(message: String, duration: Int = Snackbar.LENGTH_LONG ){
-		view?.let {
-			Snackbar.make(it, message, duration)
-		}
-	}
-
 	private fun play() {
 		if(listener == null){
 			return
 		}
 		viewModel.playEvent(event)
-	}
-
-	private fun selectRecording(recordings: List<Recording>, action: (recording: Recording) -> Unit) {
-		val stream = ChaosflixUtil.getOptimalRecording(recordings)
-		if (stream != null && viewModel.getAutoselectRecording()) {
-			action.invoke(stream)
-		} else {
-			val items: List<String> = recordings.map { getStringForRecording(it) }
-			selectRecordingFromList(items, DialogInterface.OnClickListener { dialogInterface, i ->
-				action.invoke(recordings[i])
-			})
-		}
-	}
-
-	private fun getStringForRecording(recording: Recording): String {
-		return "${if (recording.isHighQuality) "HD" else "SD"}  ${recording.folder}  [${recording.language}]"
-	}
-
-	private fun selectRecordingFromList(items: List<String>, resultHandler: DialogInterface.OnClickListener) {
-		this.context?.let { context ->
-			if (selectDialog != null) {
-				selectDialog?.dismiss()
-			}
-			val builder = AlertDialog.Builder(context)
-			builder.setItems(items.toTypedArray(), resultHandler)
-			selectDialog = builder.create()
-			selectDialog?.show()
-		}
 	}
 
 	override fun onAttach(context: Context?) {
@@ -272,11 +212,7 @@ class EventDetailsFragment : Fragment() {
 				return true
 			}
 			R.id.action_download -> {
-				viewModel.getRecordingForEvent(event).observe(this, Observer { recordings ->
-					if (recordings != null) {
-						selectRecording(recordings, { recording -> downloadRecording(recording) })
-					}
-				})
+				viewModel.downloadRecordingForEvent(event)
 				return true
 			}
 			R.id.action_delete_offline_item -> {
@@ -296,14 +232,7 @@ class EventDetailsFragment : Fragment() {
 				return true
 			}
 			R.id.action_external_player -> {
-				viewModel.getRecordingForEvent(event).observe(this, Observer { recordings ->
-					if (recordings != null) {
-						selectRecording(recordings) { recording ->
-							val shareIntent = Intent(Intent.ACTION_VIEW, Uri.parse(recording.recordingUrl))
-							startActivity(shareIntent)
-						}
-					}
-				})
+				viewModel.playInExternalPlayer(event)
 				return true
 			}
 			else -> return super.onOptionsItemSelected(item)

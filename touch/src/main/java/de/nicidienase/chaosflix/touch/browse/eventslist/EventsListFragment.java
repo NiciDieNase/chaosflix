@@ -30,6 +30,7 @@ import de.nicidienase.chaosflix.touch.OnEventSelectedListener;
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment;
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter;
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventsListBinding;
+import kotlin.Unit;
 
 public class EventsListFragment extends BrowseFragment implements SearchView.OnQueryTextListener {
 
@@ -99,7 +100,10 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		}
 		binding.list.setLayoutManager(layoutManager);
 
-		eventAdapter = new EventRecyclerViewAdapter(listener);
+		eventAdapter = new EventRecyclerViewAdapter(event -> {
+			listener.onEventSelected(event);
+			return Unit.INSTANCE;
+		});
 		eventAdapter.setHasStableIds(true);
 		binding.list.setAdapter(eventAdapter);
 		DividerItemDecoration itemDecoration = new DividerItemDecoration(binding.list.getContext(), layoutManager.getOrientation());

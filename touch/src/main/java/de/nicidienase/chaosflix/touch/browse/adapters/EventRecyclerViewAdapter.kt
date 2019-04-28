@@ -7,24 +7,26 @@ import android.view.ViewGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.databinding.ItemEventCardviewBinding
+import de.nicidienase.chaosflix.touch.databinding.RelatedEventCardviewLayoutBinding
 import java.util.*
 
-open class EventRecyclerViewAdapter(val listener: OnEventSelectedListener) :
+open class EventRecyclerViewAdapter(val listener: (Event)->Unit) :
 		ItemRecyclerViewAdapter<Event, EventRecyclerViewAdapter.ViewHolder>() {
+
 	override fun getComparator(): Comparator<in Event>? {
 		return Comparator { o1, o2 -> o1.title.compareTo(o2.title) }
 	}
 
 	override fun getItemId(position: Int): Long {
-		return items.get(position).id
+		return items[position].id
 	}
 
 	override fun getFilteredProperties(item: Event): List<String> {
-		return listOf(item.title,
+		return listOfNotNull(item.title,
 				item.subtitle,
 				item.description,
 				item.getSpeakerString()
-		).filterNotNull()
+		)
 	}
 
 	override fun onCreateViewHolder(p0: ViewGroup, pItemConferenceCardviewBinding1: Int): ViewHolder {
@@ -36,7 +38,7 @@ open class EventRecyclerViewAdapter(val listener: OnEventSelectedListener) :
 		val event = items[position]
 		holder.binding.event = event
 		holder.binding.root.setOnClickListener {
-			listener.onEventSelected(event)
+			listener(event)
 		}
 
 		ViewCompat.setTransitionName(holder.binding.titleText, "title_${event.guid}")

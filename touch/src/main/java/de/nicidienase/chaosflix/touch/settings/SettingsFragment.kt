@@ -9,9 +9,9 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
 import android.support.v7.preference.PreferenceFragmentCompat
 import de.nicidienase.chaosflix.R
+import de.nicidienase.chaosflix.common.checkPermission
 import de.nicidienase.chaosflix.common.viewmodel.PreferencesViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import net.rdrei.android.dirchooser.DirectoryChooserActivity
@@ -149,16 +149,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 				}
 			}
 		})
-	}
-
-	private fun checkPermission(permission: String, requestCode: Int, action: ()->Unit){
-		if (ContextCompat.checkSelfPermission(requireContext(), permission)
-				!= PackageManager.PERMISSION_GRANTED) {
-			requestPermissions(arrayOf(permission),
-					requestCode)
-		} else {
-			action()
-		}
 	}
 
 	companion object {

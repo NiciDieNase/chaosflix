@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
 		xmlns:tools="http://schemas.android.com/tools"
 		xmlns:bind="http://schemas.android.com/apk/res-auto">
 
 	<data>
+		<import type="android.view.View"/>
 		<variable
 			name="event"
 			type="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event"/>
 	</data>
 
-	<FrameLayout
+	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">
 
@@ -18,89 +20,93 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
-			android:elevation="2dp"
 			android:foreground="?android:attr/selectableItemBackground">
 
 			<android.support.constraint.ConstraintLayout
-				android:id="@+id/linearLayout4"
+				android:id="@+id/related_item_layout"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:orientation="vertical">
-
+				android:layout_height="wrap_content">
 
 				<ImageView
 					android:id="@+id/imageView"
 					imageUrl="@{event.thumbUrl}"
 					android:layout_width="0dp"
-					android:layout_height="wrap_content"
+					android:layout_height="100dp"
 					android:adjustViewBounds="true"
-					android:scaleType="center"
-					bind:layout_constraintEnd_toEndOf="parent"
-					bind:layout_constraintStart_toStartOf="parent"
-					bind:layout_constraintTop_toTopOf="parent"
-					tools:src="@drawable/cast_album_art_placeholder"/>
-
-				<TextView
-					android:id="@+id/duration"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginEnd="8dp"
-					android:layout_marginBottom="8dp"
-					android:background="@color/transparent_black_70"
-					android:padding="2dp"
-					android:textColor="@color/white"
-					bind:layout_constraintBottom_toBottomOf="@+id/imageView"
-					bind:layout_constraintEnd_toEndOf="@+id/imageView"
-					bind:time="@{event.length}"
-					tools:text="1:23:45"/>
-
+					android:contentDescription="@string/titleimage"
+					android:scaleType="centerCrop"
+					android:src="@drawable/unknown"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintDimensionRatio="1.777"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintHorizontal_bias="0.0"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="parent"
+					app:layout_constraintVertical_bias="0.1"/>
 
 				<TextView
 					android:id="@+id/title_text"
-					style="@style/TextAppearance.AppCompat.Medium"
-					android:layout_width="wrap_content"
+					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:layout_marginStart="8dp"
 					android:layout_marginTop="8dp"
 					android:layout_marginEnd="8dp"
 					android:text="@{event.title}"
-					android:textAppearance="@style/TextAppearance.AppCompat.Title"
-					bind:layout_constraintEnd_toEndOf="parent"
-					bind:layout_constraintHorizontal_bias="0.0"
-					bind:layout_constraintStart_toStartOf="parent"
-					bind:layout_constraintTop_toBottomOf="@+id/imageView"
-					tools:text="Title"/>
+					android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toEndOf="@+id/imageView"
+					app:layout_constraintTop_toTopOf="parent"
+					tools:text="This is a very long title text that propably won't fit in one line, maybe even need three."/>
 
 				<TextView
 					android:id="@+id/subtitle_text"
-					android:layout_width="wrap_content"
+					android:layout_width="0dp"
 					android:layout_height="wrap_content"
+					android:layout_marginStart="8dp"
 					android:layout_marginTop="8dp"
 					android:layout_marginEnd="8dp"
 					android:layout_marginBottom="8dp"
 					android:text="@{event.subtitle}"
 					android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-					bind:layout_constraintBottom_toBottomOf="parent"
-					bind:layout_constraintEnd_toStartOf="@+id/tag_text"
-					bind:layout_constraintHorizontal_bias="0.0"
-					bind:layout_constraintStart_toStartOf="@+id/title_text"
-					bind:layout_constraintTop_toBottomOf="@+id/title_text"
-					tools:text="Subtitle"/>
+					android:visibility="@{event.subtitle.length() == 0 ? View.GONE : View.VISIBLE}"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintEnd_toStartOf="@+id/tag_text"
+					app:layout_constraintStart_toEndOf="@+id/imageView"
+					app:layout_constraintTop_toBottomOf="@+id/title_text"
+					app:layout_constraintVertical_bias="0.0"
+					tools:text="subtitle"/>
 
 				<TextView
 					android:id="@+id/tag_text"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginTop="8dp"
 					android:layout_marginEnd="8dp"
+					android:layout_marginBottom="8dp"
 					android:gravity="bottom|end"
-					android:text=""
-					bind:layout_constraintBottom_toBottomOf="parent"
-					bind:layout_constraintEnd_toEndOf="parent"
-					tools:text="Tag"/>
+					android:visibility="gone"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintTop_toBottomOf="@+id/subtitle_text"
+					tools:text="TAGS"/>
 
+				<TextView
+					android:id="@+id/duration"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="4dp"
+					android:layout_marginBottom="4dp"
+					android:background="@color/transparent_black_70"
+					android:padding="2dp"
+					android:textColor="@color/white"
+					app:layout_constraintBottom_toBottomOf="@+id/imageView"
+					app:layout_constraintEnd_toEndOf="@+id/imageView"
+					bind:time="@{event.length}"
+					tools:text="1:23:45"/>
 
 			</android.support.constraint.ConstraintLayout>
 		</android.support.v7.widget.CardView>
 
-	</FrameLayout>
+	</LinearLayout>
+
 </layout>
