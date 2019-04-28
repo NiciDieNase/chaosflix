@@ -14,6 +14,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -87,9 +88,14 @@ class EventDetailsFragment : Fragment() {
 		}
 
 		eventSelectedListener?.let { listener ->
-			relatedEventsAdapter = RelatedEventsRecyclerViewAdapter(listener)
-			binding.relatedItemsList.adapter = relatedEventsAdapter
-			binding.relatedItemsList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+			binding.relatedItemsList.apply {
+				relatedEventsAdapter = RelatedEventsRecyclerViewAdapter(listener)
+				adapter = relatedEventsAdapter
+				val orientation = LinearLayoutManager.VERTICAL
+				layoutManager = LinearLayoutManager(context, orientation, false)
+				val itemDecoration = DividerItemDecoration(binding.relatedItemsList.context, orientation)
+				addItemDecoration(itemDecoration)
+			}
 		}
 
 		binding.appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->

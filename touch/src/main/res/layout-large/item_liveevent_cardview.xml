@@ -26,7 +26,7 @@
             card_view:cardCornerRadius="4dp">
 
             <android.support.constraint.ConstraintLayout
-                android:id="@+id/linearLayout2"
+                android:id="@+id/related_item_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp">

@@ -8,8 +8,10 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -100,6 +102,8 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		eventAdapter = new EventRecyclerViewAdapter(listener);
 		eventAdapter.setHasStableIds(true);
 		binding.list.setAdapter(eventAdapter);
+		DividerItemDecoration itemDecoration = new DividerItemDecoration(binding.list.getContext(), layoutManager.getOrientation());
+		binding.list.addItemDecoration(itemDecoration);
 
 		Observer<List<Event>> listObserver = persistentEvents -> {
 			setLoadingOverlayVisibility(false);
