@@ -9,7 +9,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.preference.PreferenceFragmentCompat
 import de.nicidienase.chaosflix.R
@@ -62,17 +61,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		val importFavorites = this.findPreference("import_favorites")
 
 		downloadFolderPref?.setOnPreferenceClickListener {
-			val chooserIntent = Intent(context, DirectoryChooserActivity::class.java)
-
-			val config = DirectoryChooserConfig.builder()
-					.newDirectoryName("Download folder")
-					.allowReadOnlyDirectory(false)
-					.allowNewDirectoryNameModification(true)
-					.build()
-
-			chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_CONFIG, config)
-			startActivityForResult(chooserIntent, REQUEST_DIRECTORY)
-
+			checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, PERMISSION_REQUEST_CHOOSE_DOWNLOAD_FOLDER) {
+				chooseDownloadFolder()
+			}
 			return@setOnPreferenceClickListener true
 		}
 
@@ -82,42 +73,54 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		}
 
 		exportFavorites?.setOnPreferenceClickListener {
-			if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-					!= PackageManager.PERMISSION_GRANTED) {
-				requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-						PERMISSION_REQUEST_WRITE_STORAGE)
-			} else {
+			checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,PERMISSION_REQUEST_EXPORT_FAVORITES) {
 				viewModel.exportFavorites()
 			}
 			return@setOnPreferenceClickListener true
 		}
 
 		importFavorites?.setOnPreferenceClickListener {
-			if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-					!= PackageManager.PERMISSION_GRANTED) {
-				requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-						PERMISSION_REQUEST_READ_STORAGE)
-			} else {
+			checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, PERMISSION_REQUEST_IMPORT_FAVORITES){
 				importFavorites()
 			}
 			return@setOnPreferenceClickListener true
 		}
 	}
 
+	private fun chooseDownloadFolder(){
+		val chooserIntent = Intent(context, DirectoryChooserActivity::class.java)
+
+		val config = DirectoryChooserConfig.builder()
+				.newDirectoryName("Download folder")
+				.allowReadOnlyDirectory(false)
+				.allowNewDirectoryNameModification(true)
+				.build()
+
+		chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_CONFIG, config)
+		startActivityForResult(chooserIntent, REQUEST_DIRECTORY)
+	}
+
 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
 		when(requestCode){
-			PERMISSION_REQUEST_READ_STORAGE -> {
+			PERMISSION_REQUEST_IMPORT_FAVORITES -> {
 				if((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)){
 					importFavorites()
 				} else {
 					Snackbar.make(listView, "Cannot import without Storage Permission.", Snackbar.LENGTH_SHORT).show()
 				}
 			}
-			PERMISSION_REQUEST_WRITE_STORAGE -> {
+			PERMISSION_REQUEST_EXPORT_FAVORITES -> {
 				if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
 					viewModel.exportFavorites()
 				} else {
 					Snackbar.make(listView, "Cannot export without Storage Permission.", Snackbar.LENGTH_SHORT).show()
+				}
+			}
+			PERMISSION_REQUEST_CHOOSE_DOWNLOAD_FOLDER -> {
+				if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+					chooseDownloadFolder()
+				} else {
+					Snackbar.make(listView, "Cannot access folders without Storage Permission.", Snackbar.LENGTH_SHORT).show()
 				}
 			}
 			else ->  super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -148,10 +151,21 @@ class SettingsFragment : PreferenceFragmentCompat() {
 		})
 	}
 
+	private fun checkPermission(permission: String, requestCode: Int, action: ()->Unit){
+		if (ContextCompat.checkSelfPermission(requireContext(), permission)
+				!= PackageManager.PERMISSION_GRANTED) {
+			requestPermissions(arrayOf(permission),
+					requestCode)
+		} else {
+			action()
+		}
+	}
+
 	companion object {
 
-		const val PERMISSION_REQUEST_WRITE_STORAGE = 23
-		const val PERMISSION_REQUEST_READ_STORAGE = 24
+		const val PERMISSION_REQUEST_EXPORT_FAVORITES = 23
+		const val PERMISSION_REQUEST_IMPORT_FAVORITES = 24
+		const val PERMISSION_REQUEST_CHOOSE_DOWNLOAD_FOLDER = 25
 
 		fun getInstance(): SettingsFragment {
 			val fragment = SettingsFragment()
