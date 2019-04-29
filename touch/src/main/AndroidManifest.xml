@@ -17,7 +17,9 @@
         android:label="${label}"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:label,android:theme">
+        tools:replace="android:label,android:theme"
+        android:fullBackupContent="true"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".SplashActivity"
             android:label="${label}"
@@ -39,7 +41,7 @@
 
         <activity
             android:name=".eventdetails.EventDetailsActivity"
-            android:parentActivityName="de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity"/>
+            android:parentActivityName=".browse.eventslist.EventsListActivity"/>
 
         <activity
             android:name=".about.AboutActivity"
