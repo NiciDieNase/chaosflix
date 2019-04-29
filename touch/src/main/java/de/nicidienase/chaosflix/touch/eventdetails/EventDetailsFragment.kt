@@ -81,16 +81,14 @@ class EventDetailsFragment : Fragment() {
 		super.onViewCreated(view, savedInstanceState)
 		val binding = FragmentEventDetailsBinding.bind(view)
 		binding.event = event
-		binding.playFab.setOnClickListener { _ -> play() }
+		binding.playFab.setOnClickListener { play() }
 		if (listener != null) {
 			(activity as AppCompatActivity).setSupportActionBar(binding.animToolbar)
 			(activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 		}
 
 		binding.relatedItemsList.apply {
-//			relatedEventsAdapter = RelatedEventsRecyclerViewAdapter(listener)
-			relatedEventsAdapter = EventRecyclerViewAdapter(){
-//				viewModel.playEvent(it)
+			relatedEventsAdapter = EventRecyclerViewAdapter {
 				viewModel.relatedEventSelected(it)
 			}
 			adapter = relatedEventsAdapter

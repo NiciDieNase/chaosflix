@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
@@ -14,10 +15,18 @@ import de.nicidienase.chaosflix.touch.databinding.ItemOfflineEventBinding
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 
-class OfflineEventAdapter(var items: List<Pair<OfflineEvent, Event>>, val viewModel: BrowseViewModel, val listener: OnEventSelectedListener) :
+class OfflineEventAdapter(private val offlineItemManager: OfflineItemManager,
+                          private val eventDeleteListener: (OfflineEvent) -> Unit,
+                          private val eventSelectedListener: (Event)->Unit) :
 		RecyclerView.Adapter<OfflineEventAdapter.ViewHolder>() {
 
-	override fun onBindViewHolder(holder: OfflineEventAdapter.ViewHolder, position: Int) {
+	var items: List<Pair<OfflineEvent, Event>> = emptyList()
+		set(value) {
+			field = value
+			notifyDataSetChanged()
+		}
+
+	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 		val item = items[position]
 
 		holder.binding.event = item.second
@@ -27,12 +36,12 @@ class OfflineEventAdapter(var items: List<Pair<OfflineEvent, Event>>, val viewMo
 				.into(holder.thumbnail)
 
 		with(holder.binding){
-			downloadStatus = viewModel.offlineItemManager.downloadStatus[item.first.downloadReference]
+			downloadStatus = offlineItemManager.downloadStatus[item.first.downloadReference]
 			buttonDelete.setOnClickListener {
-				viewModel.deleteOfflineItem(item.first)
+				eventDeleteListener(item.first)
 			}
 			content?.setOnClickListener { _ ->
-				listener.onEventSelected(item.second)
+				eventSelectedListener(item.second)
 
 			}
 		}

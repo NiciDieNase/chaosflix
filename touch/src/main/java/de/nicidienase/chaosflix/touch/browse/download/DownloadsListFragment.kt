@@ -1,7 +1,6 @@
 package de.nicidienase.chaosflix.touch.browse.download
 
 import android.arch.lifecycle.Observer
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.widget.GridLayoutManager
@@ -9,54 +8,47 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment
 import de.nicidienase.chaosflix.touch.databinding.FragmentDownloadsBinding
+import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
 
 class DownloadsListFragment : BrowseFragment() {
 
-	private lateinit var listener: InteractionListener
-	private lateinit var binding: FragmentDownloadsBinding
+//	private lateinit var binding: FragmentDownloadsBinding
 
 	private val handler = Handler()
 
-	private val UPDATE_DELAY = 700L
-	private var columnCount = 1;
+	private var columnCount = 1
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		columnCount = arguments?.getInt(ARG_COLUMN_COUNT) ?: 1
-	}
-
-	override fun onAttach(context: Context?) {
-		super.onAttach(context)
-		if (context is InteractionListener) {
-			listener = context
-		} else {
-			throw RuntimeException(context.toString() + " must implement LivestreamListFragment.InteractionListener")
-		}
+		columnCount = arguments?.getInt(ARG_COLUMN_COUNT) ?: columnCount
 	}
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		binding = FragmentDownloadsBinding.inflate(inflater, container, false)
-		setupToolbar(binding.incToolbar?.toolbar!!, R.string.downloads)
-		overlay = binding.incOverlay?.loadingOverlay
-		val offlineEventAdapter = OfflineEventAdapter(emptyList(), viewModel, listener)
-		binding.list.adapter = offlineEventAdapter
-		if (columnCount <= 1) {
-			binding.list.layoutManager = LinearLayoutManager(context)
-		} else {
-			binding.list.layoutManager = GridLayoutManager(context, columnCount - 1)
-		}
-		viewModel.getOfflineEvents().observe(this, Observer { events ->
-			if (events != null) {
-				offlineEventAdapter.items = events
-				offlineEventAdapter.notifyDataSetChanged()
-				setLoadingOverlayVisibility(false)
+		with(FragmentDownloadsBinding.inflate(inflater, container, false)){
+			setupToolbar(incToolbar.toolbar, R.string.downloads)
+			overlay = incOverlay.loadingOverlay
+			val offlineEventAdapter = OfflineEventAdapter(viewModel.offlineItemManager, viewModel::deleteOfflineItem) {
+				EventDetailsActivity.launch(requireContext(), it)
 			}
-		})
-		return binding.root
+			list.adapter = offlineEventAdapter
+			if (columnCount <= 1) {
+				list.layoutManager = LinearLayoutManager(context)
+			} else {
+				list.layoutManager = GridLayoutManager(context, columnCount - 1)
+			}
+			viewModel.getOfflineEvents().observe(this@DownloadsListFragment, Observer { events ->
+				if (events != null) {
+					offlineEventAdapter.items = events
+				} else {
+					offlineEventAdapter.items = emptyList()
+				}
+				setLoadingOverlayVisibility(false)
+			})
+			return root
+		}
 	}
 
 	private var updateRunnable: Runnable? = null
@@ -92,8 +84,5 @@ class DownloadsListFragment : BrowseFragment() {
 			fragment.arguments = args
 			return fragment
 		}
-	}
-
-	interface InteractionListener : OnEventSelectedListener {
 	}
 }

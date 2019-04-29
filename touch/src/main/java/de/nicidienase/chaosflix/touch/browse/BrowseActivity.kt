@@ -44,7 +44,6 @@ import de.nicidienase.chaosflix.touch.settings.SettingsActivity
 class BrowseActivity : AppCompatActivity(),
 		ConferencesTabBrowseFragment.OnInteractionListener,
 		LivestreamListFragment.InteractionListener,
-		DownloadsListFragment.InteractionListener,
 		OnEventSelectedListener {
 
 	private var drawerOpen: Boolean = false
