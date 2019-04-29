@@ -143,9 +143,6 @@ class EventDetailsFragment : Fragment() {
 	}
 
 	private fun play() {
-		if(listener == null){
-			return
-		}
 		viewModel.playEvent(event)
 	}
 
@@ -191,7 +188,7 @@ class EventDetailsFragment : Fragment() {
 	}
 
 	override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-		when (item!!.itemId) {
+		when (item?.itemId) {
 			android.R.id.home -> {
 				activity?.finish()
 				return true
@@ -208,7 +205,7 @@ class EventDetailsFragment : Fragment() {
 			R.id.action_unbookmark -> {
 				viewModel.removeBookmark(event.guid)
 				watchlistItem = null
-				listener!!.invalidateOptionsMenu()
+				listener?.invalidateOptionsMenu()
 				return true
 			}
 			R.id.action_download -> {
@@ -227,7 +224,7 @@ class EventDetailsFragment : Fragment() {
 				val shareIntent = Intent(Intent.ACTION_SEND, Uri.parse(event.frontendLink))
 				shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.watch_this))
 				shareIntent.putExtra(Intent.EXTRA_TEXT, event.frontendLink)
-				shareIntent.setType("text/plain")
+				shareIntent.type = "text/plain"
 				startActivity(shareIntent)
 				return true
 			}
@@ -239,39 +236,9 @@ class EventDetailsFragment : Fragment() {
 		}
 	}
 
-	private var recordingToDownload: Recording? = null
-
-	private fun downloadRecording(recording: Recording) {
-		recordingToDownload = recording
-		viewModel.download(event, recording).observe(this, Observer {
-			when(it?.state){
-				OfflineItemManager.State.Downloading -> {
-					layout?.let {
-						Snackbar.make(it, "Download started", Snackbar.LENGTH_LONG).show()
-					}
-				}
-				OfflineItemManager.State.PermissionRequired -> {
-					this.requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-							WRITE_PERMISSION_REQUEST)
-				}
-			}
-		})
-	}
-
-	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-		if(requestCode == WRITE_PERMISSION_REQUEST){
-			if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-				recordingToDownload?.let { viewModel.download(event, it) }
-			}
-		} else {
-			super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-		}
-	}
-
 	interface OnEventDetailsFragmentInteractionListener {
 		fun onToolbarStateChange()
 		fun invalidateOptionsMenu()
-		fun playItem(event: Event, recording: Recording, localFile: String? = null)
 	}
 
 	companion object {

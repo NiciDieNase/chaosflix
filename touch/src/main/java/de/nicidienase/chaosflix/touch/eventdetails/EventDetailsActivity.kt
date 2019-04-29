@@ -1,17 +1,21 @@
 package de.nicidienase.chaosflix.touch.eventdetails
 
+import android.Manifest
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import de.nicidienase.chaosflix.common.ChaosflixUtil
+import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
@@ -30,6 +34,7 @@ class EventDetailsActivity : AppCompatActivity(),
 	private lateinit var castService: CastService
 
 	private var selectDialog: AlertDialog? = null
+	private var pendingDownload: Bundle? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -43,9 +48,9 @@ class EventDetailsActivity : AppCompatActivity(),
 			if(liveEvent == null){
 				return@Observer
 			}
-			val localFile = liveEvent.data?.getString(DetailsViewModel.KEY_LOCAL_PATH)
-			val recording = liveEvent.data?.getParcelable<Recording>(DetailsViewModel.RECORDING)
 			val event = liveEvent.data?.getParcelable<Event>(DetailsViewModel.EVENT)
+			val recording = liveEvent.data?.getParcelable<Recording>(DetailsViewModel.RECORDING)
+			val localFile = liveEvent.data?.getString(DetailsViewModel.KEY_LOCAL_PATH)
 			val selectItems: Array<Recording>? = liveEvent.data?.getParcelableArray(DetailsViewModel.KEY_SELECT_RECORDINGS) as Array<Recording>?
 			when(liveEvent.state){
 				DetailsViewModel.State.DisplayEvent -> {
@@ -73,7 +78,20 @@ class EventDetailsActivity : AppCompatActivity(),
 				DetailsViewModel.State.DownloadRecording -> {
 					if (event != null && selectItems != null) {
 						selectRecording(event,selectItems.asList()) { e,r ->
-							viewModel.download(e,r)
+							viewModel.download(e,r).observe(this, Observer {
+								when(it?.state){
+									OfflineItemManager.State.Downloading -> {
+										Snackbar.make(fragment_container, "Download started", Snackbar.LENGTH_LONG).show()
+									}
+									OfflineItemManager.State.PermissionRequired -> {
+										pendingDownload = liveEvent.data
+										if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+											this.requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+													WRITE_PERMISSION_REQUEST)
+										}
+									}
+								}
+							})
 						}
 					}
 				}
@@ -97,6 +115,23 @@ class EventDetailsActivity : AppCompatActivity(),
 		val event = intent.getParcelableExtra<Event>(EXTRA_EVENT)
 
 		showFragmentForEvent(event)
+	}
+
+	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+		if(requestCode == WRITE_PERMISSION_REQUEST){
+			if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+				pendingDownload?.let {
+					val recording = it.getParcelable<Recording>(DetailsViewModel.RECORDING)
+					val event = it.getParcelable<Event>(DetailsViewModel.EVENT)
+					if(event != null && recording != null){
+						viewModel.download(event, recording)
+					}
+				}
+				pendingDownload = null
+			}
+		} else {
+			super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+		}
 	}
 
 
@@ -154,7 +189,7 @@ class EventDetailsActivity : AppCompatActivity(),
 		invalidateOptionsMenu()
 	}
 
-	override fun playItem(event: Event, recording: Recording, localFile: String?) {
+	private fun playItem(event: Event, recording: Recording, localFile: String? = null) {
 		if (castService.connected) {
 			castService.loadMediaAndPlay(recording, event)
 		} else {
@@ -176,9 +211,11 @@ class EventDetailsActivity : AppCompatActivity(),
 
 	companion object {
 
-		private val EXTRA_EVENT = "extra_event"
-		private val EXTRA_URI = "extra_uri"
+		private const val EXTRA_EVENT = "extra_event"
+		private const val EXTRA_URI = "extra_uri"
+		private const val WRITE_PERMISSION_REQUEST = 23
 		private val TAG = EventDetailsActivity::class.java.simpleName
+
 
 		fun launch(context: Context, event: Event) {
 			val intent = Intent(context, EventDetailsActivity::class.java)
