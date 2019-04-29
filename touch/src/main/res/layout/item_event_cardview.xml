@@ -27,7 +27,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content">
 
-				<ImageView
+				<android.support.v7.widget.AppCompatImageView
 					android:id="@+id/imageView"
 					imageUrl="@{event.thumbUrl}"
 					android:layout_width="0dp"
@@ -35,16 +35,17 @@
 					android:adjustViewBounds="true"
 					android:contentDescription="@string/titleimage"
 					android:scaleType="centerCrop"
-					android:src="@drawable/unknown"
 					app:layout_constraintBottom_toBottomOf="parent"
 					app:layout_constraintDimensionRatio="1.777"
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintHorizontal_bias="0.0"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toTopOf="parent"
-					app:layout_constraintVertical_bias="0.1"/>
+					app:layout_constraintVertical_bias="0.1"
+					app:srcCompat="@drawable/unknown"
+					tools:srcCompat="@drawable/unknown"/>
 
-				<TextView
+				<android.support.v7.widget.AppCompatTextView
 					android:id="@+id/title_text"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
@@ -58,7 +59,7 @@
 					app:layout_constraintTop_toTopOf="parent"
 					tools:text="This is a very long title text that propably won't fit in one line, maybe even need three."/>
 
-				<TextView
+				<android.support.v7.widget.AppCompatTextView
 					android:id="@+id/subtitle_text"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
@@ -76,7 +77,7 @@
 					app:layout_constraintVertical_bias="0.0"
 					tools:text="subtitle"/>
 
-				<TextView
+				<android.support.v7.widget.AppCompatTextView
 					android:id="@+id/tag_text"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
@@ -90,7 +91,7 @@
 					app:layout_constraintTop_toBottomOf="@+id/subtitle_text"
 					tools:text="TAGS"/>
 
-				<TextView
+				<android.support.v7.widget.AppCompatTextView
 					android:id="@+id/duration"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
