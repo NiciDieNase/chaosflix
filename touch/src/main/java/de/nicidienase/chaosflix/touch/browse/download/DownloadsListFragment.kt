@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,13 +40,16 @@ class DownloadsListFragment : BrowseFragment() {
 			} else {
 				list.layoutManager = GridLayoutManager(context, columnCount - 1)
 			}
-			viewModel.getOfflineEvents().observe(this@DownloadsListFragment, Observer { events ->
-				if (events != null) {
-					offlineEventAdapter.items = events
-				} else {
-					offlineEventAdapter.items = emptyList()
-				}
-				setLoadingOverlayVisibility(false)
+//			viewModel.getOfflineEvents().observe(this@DownloadsListFragment, Observer { events ->
+//				if (events != null) {
+//					offlineEventAdapter.items = viewModel.mapOfflineEvents(events)
+//				} else {
+//					offlineEventAdapter.items = emptyList()
+//				}
+//				setLoadingOverlayVisibility(false)
+//			})
+			viewModel.getOfflineDisplayEvents().observe(this@DownloadsListFragment, Observer {
+				Log.d(TAG,"size: ${it?.size}")
 			})
 			return root
 		}
@@ -75,6 +79,7 @@ class DownloadsListFragment : BrowseFragment() {
 	}
 
 	companion object {
+		private val TAG = DownloadsListFragment::class.java.simpleName
 		private const val ARG_COLUMN_COUNT = "column_count"
 		private const val UPDATE_DELAY = 700L
 

@@ -42,7 +42,6 @@ class OfflineEventAdapter(private val offlineItemManager: OfflineItemManager,
 			}
 			content?.setOnClickListener { _ ->
 				eventSelectedListener(item.second)
-
 			}
 		}
 	}

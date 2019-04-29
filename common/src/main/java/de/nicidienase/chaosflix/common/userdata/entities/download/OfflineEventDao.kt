@@ -31,4 +31,7 @@ interface OfflineEventDao{
 
     @Query("DELETE FROM offline_event WHERE id=:id")
     fun deleteById(id: Long)
+
+    @Query("SELECT o.event_guid,o.recording_id,o.download_reference,o.local_path,e.title,e.subtitle,e.length,e.thumbUrl FROM offline_event o JOIN event e WHERE o.event_guid = e.guid")
+    fun getOfflineEventsDisplay(): LiveData<List<OfflineEventView>>
 }

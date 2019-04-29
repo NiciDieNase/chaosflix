@@ -112,28 +112,27 @@ class BrowseViewModel(
 		return result
 	}
 
-	fun getOfflineEvents(): LiveData<List<Pair<OfflineEvent,Event>>> {
-		val result = MutableLiveData<List<Pair<OfflineEvent, Event>>>()
-		handler.runOnBackgroundThread {
-			val offlineEventMap = database.offlineEventDao().getAllSync()
-					.map { it.eventGuid to it }.toMap()
-			val persistentEventMap = database.eventDao().findEventsByGUIDsSync(offlineEventMap.keys.toList())
-					.map { it.guid to it }.toMap()
+	fun getOfflineEvents() = database.offlineEventDao().getAll()
 
-			val resultList = ArrayList<Pair<OfflineEvent, Event>>()
-			for (key in offlineEventMap.keys){
-				val offlineEvent = offlineEventMap[key]
-				var event: Event? = persistentEventMap[key]
-				if(event == null){
-					event = downloader.updateSingleEvent(key)
-				}
-				if(event != null && offlineEvent != null){
-					resultList.add(Pair(offlineEvent, event))
-				}
+	fun getOfflineDisplayEvents() = database.offlineEventDao().getOfflineEventsDisplay()
+
+	fun mapOfflineEvents(offlineEvents: List<OfflineEvent>): List<Pair<OfflineEvent,Event>> {
+		val offlineEventMap = offlineEvents.map { it.eventGuid to it }.toMap()
+		val persistentEventMap = database.eventDao().findEventsByGUIDsSync(offlineEventMap.keys.toList())
+				.map { it.guid to it }.toMap()
+
+		val resultList = ArrayList<Pair<OfflineEvent, Event>>()
+		for (key in offlineEventMap.keys){
+			val offlineEvent = offlineEventMap[key]
+			var event: Event? = persistentEventMap[key]
+			if(event == null){
+				event = downloader.updateSingleEvent(key)
 			}
-			result.postValue(resultList)
+			if(event != null && offlineEvent != null){
+				resultList.add(Pair(offlineEvent, event))
+			}
 		}
-		return result
+		return resultList
 	}
 
 	fun getEventById(eventId: Long) = database.eventDao().findEventById(eventId)
