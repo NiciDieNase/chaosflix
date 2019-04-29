@@ -75,7 +75,8 @@ class DownloadsListFragment : BrowseFragment() {
 	}
 
 	companion object {
-		private val ARG_COLUMN_COUNT = "column_count"
+		private const val ARG_COLUMN_COUNT = "column_count"
+		private const val UPDATE_DELAY = 700L
 
 		fun getInstance(columnCount: Int = 1): DownloadsListFragment {
 			val fragment = DownloadsListFragment()

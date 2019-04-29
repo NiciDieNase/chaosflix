@@ -27,12 +27,12 @@ import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import java.io.File
 
 class OfflineItemManager(context: Context,
-                         val offlineEventDao: OfflineEventDao,
-                         val preferencesManager: PreferencesManager) {
+                         private val offlineEventDao: OfflineEventDao,
+                         private val preferencesManager: PreferencesManager) {
 
 	val downloadStatus: MutableMap<Long, DownloadStatus> = HashMap()
 
-	val downloadManager: DownloadManager = context.applicationContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+	private val downloadManager: DownloadManager = context.applicationContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
 	private val handler = ThreadHandler()
 
@@ -47,13 +47,13 @@ class OfflineItemManager(context: Context,
 	}
 
 	fun updateDownloadStatus(offlineEvents: List<OfflineEvent>) {
-		if (offlineEvents.size > 0) {
+		if (offlineEvents.isNotEmpty()) {
 			val downloadRef = offlineEvents.map { it.downloadReference }.toTypedArray().toLongArray()
 			updateDownloads(downloadRef)
 		}
 	}
 
-	fun updateDownloads(downloadRefs: LongArray) {
+	private fun updateDownloads(downloadRefs: LongArray) {
 		val cursor = downloadManager.query(DownloadManager.Query().setFilterById(*downloadRefs))
 
 		if (cursor.moveToFirst()) {
@@ -171,9 +171,9 @@ class OfflineItemManager(context: Context,
 
 	class DownloadCancelHandler(val context: Context,
 	                            val id: Long,
-	                            val offlineEventDao: OfflineEventDao,
-	                            val preferencesManager: PreferencesManager) : BroadcastReceiver() {
-		private val TAG = DownloadCancelHandler::class.simpleName
+	                            private val offlineEventDao: OfflineEventDao,
+	                            private val preferencesManager: PreferencesManager) : BroadcastReceiver() {
+		private val TAG = DownloadCancelHandler::class.java.simpleName
 
 		val handler = ThreadHandler()
 
@@ -207,7 +207,7 @@ class OfflineItemManager(context: Context,
 	}
 
 	companion object {
-		val DOWNLOAD_DIR = "/chaosflix/"
+		const val DOWNLOAD_DIR = "/chaosflix/"
 	}
 
 	enum class State {

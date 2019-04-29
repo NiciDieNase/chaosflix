@@ -42,7 +42,7 @@ class LivestreamListFragment : BrowseFragment() {
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		binding = FragmentLivestreamsBinding.inflate(inflater, container, false)
-		setupToolbar(binding.incToolbar?.toolbar!!, R.string.livestreams)
+		setupToolbar(binding.incToolbar.toolbar, R.string.livestreams)
 		if (columnCount <= 1) {
 			binding.list.layoutManager = LinearLayoutManager(context)
 		} else {

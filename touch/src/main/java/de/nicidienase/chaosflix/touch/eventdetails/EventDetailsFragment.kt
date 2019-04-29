@@ -97,8 +97,6 @@ class EventDetailsFragment : Fragment() {
 			val itemDecoration = DividerItemDecoration(binding.relatedItemsList.context, orientation)
 			addItemDecoration(itemDecoration)
 		}
-		eventSelectedListener?.let { listener ->
-		}
 
 		binding.appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
 			val v = Math.abs(verticalOffset).toDouble() / appBarLayout.totalScrollRange
@@ -241,8 +239,7 @@ class EventDetailsFragment : Fragment() {
 
 	companion object {
 		private val TAG = EventDetailsFragment::class.java.simpleName
-		private val EVENT_PARAM = "event_param"
-		private const val WRITE_PERMISSION_REQUEST = 24
+		private const val EVENT_PARAM = "event_param"
 
 		fun newInstance(event: Event): EventDetailsFragment {
 			val fragment = EventDetailsFragment()

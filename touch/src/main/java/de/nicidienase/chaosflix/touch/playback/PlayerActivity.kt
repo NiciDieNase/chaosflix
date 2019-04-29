@@ -22,13 +22,14 @@ class PlayerActivity : AppCompatActivity() {
 
 		casty = CastService(this,false)
 
-		if (savedInstanceState == null && intent.extras != null) {
+		val extras = intent.extras
+		if (savedInstanceState == null && extras != null) {
 			val contentType = intent.getStringExtra(CONTENT_TYPE)
 			var playbackItem = PlaybackItem("Empty", "Empty", "", "")
-			if (contentType.equals(CONTENT_RECORDING)) {
-				val event = intent.extras.getParcelable<Event>(EVENT_KEY)
-				val recording = intent.extras.getParcelable<Recording>(RECORDING_KEY)
-				val recordingUri = intent.extras.getString(OFFLINE_URI)
+			if (contentType == CONTENT_RECORDING) {
+				val event = extras.getParcelable<Event>(EVENT_KEY)
+				val recording = extras.getParcelable<Recording>(RECORDING_KEY)
+				val recordingUri = extras.getString(OFFLINE_URI)
 				playbackItem = PlaybackItem(
 						event?.title ?: "",
 						event?.subtitle ?: "",
@@ -36,9 +37,9 @@ class PlayerActivity : AppCompatActivity() {
 						recordingUri ?: recording?.recordingUrl ?: "")
 			} else if (contentType.equals(CONTENT_STREAM)) {
 				// TODO implement Player for Stream
-				val conference = intent.extras.getString(CONFERENCE,"")
-				val room = intent.extras.getString(ROOM,"")
-				val stream = intent.extras.getString(STREAM, "")
+				val conference = extras.getString(CONFERENCE,"")
+				val room = extras.getString(ROOM,"")
+				val stream = extras.getString(STREAM, "")
 				playbackItem = PlaybackItem(conference,room,"", stream)
 			}
 

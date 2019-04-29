@@ -25,8 +25,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
 	override fun onAttach(context: Context?) {
 		super.onAttach(context)
-		context?.let { context ->
-			viewModel = ViewModelProviders.of(this, ViewModelFactory(context)).get(PreferencesViewModel::class.java)
+		context?.let { c ->
+			viewModel = ViewModelProviders.of(this, ViewModelFactory(c)).get(PreferencesViewModel::class.java)
 		}
 	}
 

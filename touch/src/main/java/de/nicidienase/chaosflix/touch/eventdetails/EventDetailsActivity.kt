@@ -90,6 +90,7 @@ class EventDetailsActivity : AppCompatActivity(),
 													WRITE_PERMISSION_REQUEST)
 										}
 									}
+									OfflineItemManager.State.Done -> {}
 								}
 							})
 						}
@@ -145,7 +146,7 @@ class EventDetailsActivity : AppCompatActivity(),
 			action.invoke(event,optimalRecording)
 		} else {
 			val items: List<String> = recordings.map { getStringForRecording(it) }
-			selectRecordingFromList(items, DialogInterface.OnClickListener { dialogInterface, i ->
+			selectRecordingFromList(items, DialogInterface.OnClickListener { _, i ->
 				action.invoke(event, recordings[i])
 			})
 		}
