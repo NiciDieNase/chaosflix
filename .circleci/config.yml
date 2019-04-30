@@ -9,7 +9,7 @@ jobs:
       MODULE: touch
       FLAVOR1: Prod
       FLAVOR2: NoFree
-      BUILD_TYPE: Debug
+      BUILD_TYPE: Release
     branches:
       only:
         - circleCI
