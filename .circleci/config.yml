@@ -6,10 +6,17 @@ jobs:
       - image: circleci/android:api-28
     environment:
       JVM_OPTS: -Xmx3200m
+      MODULE: touch
+      FLAVOR1: Prod
+      FLAVOR2: NoFree
+      BUILD_TYPE: Debug
+      BUILD_TYPE_LOWER: "$(tr '[:upper:]' '[:lower:]' <<< ${BUILD_TYPE:0:1}${BUILD_TYPE:1})"
+      FLAVOR1_LOWER: "$(tr '[:upper:]' '[:lower:]' <<< ${FLAVOR1:0:1}${FLAVOR1:1})"
+      FLAVOR2_LOWER: "$(tr '[:upper:]' '[:lower:]' <<< ${FLAVOR2:0:1}${FLAVOR2:1})"
     steps:
       - checkout
       - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "touch/build.gradle" }}-{{ checksum  "common/build.gradle" }}
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "$MODULE/build.gradle" }}-{{ checksum  "common/build.gradle" }}
 #      - run:
 #         name: Chmod permissions #if permission for Gradlew Dependencies fail, use this.
 #         command: sudo chmod +x ./gradlew
@@ -18,16 +25,11 @@ jobs:
           command: ./gradlew androidDependencies
       - run:
           name: Build
-          command: ./gradlew touch:assembleProdNoFreeDebug
+          command: ./gradlew $MODULE:assemble$FLAVOR1_LOWER$FLAVOR2$BUILD_TYPE
       - save_cache:
           paths:
             - ~/.gradle
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "touch/build.gradle" }}-{{ checksum  "common/build.gradle" }}
-#      - run:
-#          name: Run Tests
-#          command: ./gradlew lint test
-#      - store_artifacts: # for display in Artifacts: https://circleci.com/docs/2.0/artifacts/ 
-#          path: app/build/reports
-#          destination: reports
-#      - store_test_results: # for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
-#          path: app/build/test-results
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "$MODULE/build.gradle" }}-{{ checksum  "common/build.gradle" }}
+      - store_artifacts:
+          path: ./$MODULE/build/outputs/apk/$FLAVOR1_LOWER$FLAVOR2/$BUILD_TYPE/*.apk
+          destination: apk
