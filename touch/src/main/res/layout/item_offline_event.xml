@@ -7,12 +7,12 @@
         <import type="android.view.View"/>
 
         <variable
-            name="downloadStatus"
-            type="de.nicidienase.chaosflix.common.OfflineItemManager.DownloadStatus"/>
+            name="item"
+            type="de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventView"/>
 
         <variable
-            name="event"
-            type="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event"/>
+            name="downloadStatus"
+            type="de.nicidienase.chaosflix.common.OfflineItemManager.DownloadStatus"/>
     </data>
 
     <LinearLayout
@@ -62,7 +62,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_weight="1"
-                            android:text="@{event.title}"
+                            android:text="@{item.title}"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
                             tools:text="Title"/>
 
@@ -71,7 +71,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@{event.subtitle}"
+                            android:text="@{item.subtitle}"
                             android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                             tools:text="Subtitle"/>
 

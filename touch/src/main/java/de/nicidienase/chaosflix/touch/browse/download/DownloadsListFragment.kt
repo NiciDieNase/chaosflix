@@ -32,7 +32,7 @@ class DownloadsListFragment : BrowseFragment() {
 			setupToolbar(incToolbar.toolbar, R.string.downloads)
 			overlay = incOverlay.loadingOverlay
 			val offlineEventAdapter = OfflineEventAdapter(viewModel.offlineItemManager, viewModel::deleteOfflineItem) {
-				EventDetailsActivity.launch(requireContext(), it)
+				viewModel.showDetailsForEvent(it)
 			}
 			list.adapter = offlineEventAdapter
 			if (columnCount <= 1) {
@@ -40,16 +40,10 @@ class DownloadsListFragment : BrowseFragment() {
 			} else {
 				list.layoutManager = GridLayoutManager(context, columnCount - 1)
 			}
-//			viewModel.getOfflineEvents().observe(this@DownloadsListFragment, Observer { events ->
-//				if (events != null) {
-//					offlineEventAdapter.items = viewModel.mapOfflineEvents(events)
-//				} else {
-//					offlineEventAdapter.items = emptyList()
-//				}
-//				setLoadingOverlayVisibility(false)
-//			})
 			viewModel.getOfflineDisplayEvents().observe(this@DownloadsListFragment, Observer {
-				Log.d(TAG,"size: ${it?.size}")
+				if (it != null){
+					offlineEventAdapter.items = it
+				}
 			})
 			return root
 		}

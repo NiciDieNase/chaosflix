@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.touch.browse
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.DialogInterface
@@ -86,6 +87,23 @@ class BrowseActivity : AppCompatActivity(),
 			showConferencesFragment()
 		}
 		viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(BrowseViewModel::class.java)
+
+		viewModel.state.observe(this, Observer { event ->
+			if(event == null){
+				return@Observer
+			}
+			val errorMessage = event.error
+			if(errorMessage != null){
+				Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
+			}
+			when(event.state){
+				BrowseViewModel.State.ShowEventDetails -> {
+					event.data?.let {
+						EventDetailsActivity.launch(this, it)
+					}
+				}
+			}
+		})
 	}
 
 	fun setupDrawerToggle(toolbar: Toolbar?) {

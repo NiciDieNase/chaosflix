@@ -147,6 +147,12 @@ class OfflineItemManager(context: Context,
 		}
 	}
 
+	fun deleteOfflineItem(guid: String){
+		offlineEventDao.getByEventGuidSync(guid)?.let {
+			deleteOfflineItem(it)
+		}
+	}
+
 	fun deleteOfflineItem(item: OfflineEvent) {
 		downloadManager.remove(item.downloadReference)
 		val file = File(item.localPath)

@@ -214,6 +214,7 @@ class EventDetailsActivity : AppCompatActivity(),
 
 		private const val EXTRA_EVENT = "extra_event"
 		private const val EXTRA_URI = "extra_uri"
+		private const val EXTRA_GUID = "extra_guid"
 		private const val WRITE_PERMISSION_REQUEST = 23
 		private val TAG = EventDetailsActivity::class.java.simpleName
 

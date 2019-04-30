@@ -9,18 +9,15 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.touch.R
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
-import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
+import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventView
 import de.nicidienase.chaosflix.touch.databinding.ItemOfflineEventBinding
-import de.nicidienase.chaosflix.touch.OnEventSelectedListener
-import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 
 class OfflineEventAdapter(private val offlineItemManager: OfflineItemManager,
-                          private val eventDeleteListener: (OfflineEvent) -> Unit,
-                          private val eventSelectedListener: (Event)->Unit) :
+                          private val eventDeleteListener: (String) -> Unit,
+                          private val eventSelectedListener: (String)->Unit) :
 		RecyclerView.Adapter<OfflineEventAdapter.ViewHolder>() {
 
-	var items: List<Pair<OfflineEvent, Event>> = emptyList()
+	var items: List<OfflineEventView> = emptyList()
 		set(value) {
 			field = value
 			notifyDataSetChanged()
@@ -29,19 +26,19 @@ class OfflineEventAdapter(private val offlineItemManager: OfflineItemManager,
 	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 		val item = items[position]
 
-		holder.binding.event = item.second
+		holder.binding.item = item
 		Glide.with(holder.thumbnail)
-				.load(item.second.thumbUrl)
+				.load(item.thumbUrl)
 				.apply(RequestOptions().fitCenter())
 				.into(holder.thumbnail)
 
 		with(holder.binding){
-			downloadStatus = offlineItemManager.downloadStatus[item.first.downloadReference]
+			downloadStatus = offlineItemManager.downloadStatus[item.downloadReference]
 			buttonDelete.setOnClickListener {
-				eventDeleteListener(item.first)
+				eventDeleteListener(item.eventGuid)
 			}
 			content?.setOnClickListener { _ ->
-				eventSelectedListener(item.second)
+				eventSelectedListener(item.eventGuid)
 			}
 		}
 	}

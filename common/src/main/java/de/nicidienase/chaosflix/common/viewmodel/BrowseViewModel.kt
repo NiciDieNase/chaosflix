@@ -3,9 +3,11 @@ package de.nicidienase.chaosflix.common.viewmodel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.PreferencesManager
+import de.nicidienase.chaosflix.common.ResourcesFacade
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
@@ -16,6 +18,7 @@ import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.util.LiveDataMerger
 import de.nicidienase.chaosflix.common.util.LiveEvent
+import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import de.nicidienase.chaosflix.common.util.ThreadHandler
 import retrofit2.Response
 import java.io.IOException
@@ -25,8 +28,15 @@ class BrowseViewModel(
 		val database: ChaosflixDatabase,
 		recordingApi: RecordingService,
 		val streamingApi: StreamingService,
-		val preferencesManager: PreferencesManager
+		val preferencesManager: PreferencesManager,
+		private val resources: ResourcesFacade
 ) : ViewModel() {
+
+	val state: SingleLiveEvent<LiveEvent<State, Event, String>> = SingleLiveEvent()
+
+	enum class State {
+		ShowEventDetails
+	}
 
 	val downloader = Downloader(recordingApi, database)
 	private val handler = ThreadHandler()
@@ -151,6 +161,22 @@ class BrowseViewModel(
 		}
 	}
 
+	fun showDetailsForEvent(guid: String) {
+		handler.runOnBackgroundThread {
+			val event = database.eventDao().findEventByGuidSync(guid)
+			if(event != null){
+				state.postValue(LiveEvent(State.ShowEventDetails,event))
+			} else {
+				state.postValue(LiveEvent(State.ShowEventDetails,error = resources.getString(R.string.error_event_not_found)))
+			}
+		}
+	}
+
+	fun deleteOfflineItem(guid: String) {
+		handler.runOnBackgroundThread {
+			offlineItemManager.deleteOfflineItem(guid)
+		}
+	}
 	fun getAutoselectStream() = preferencesManager.getAutoselectStream()
 }
 
