@@ -9,7 +9,6 @@ jobs:
       FLAVOR1: Prod
       FLAVOR2: NoFree
       BUILD_TYPE: Release
-      SIGN_CONFIG: "-PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD"
     branches:
       only:
         - circleCI
@@ -25,6 +24,7 @@ jobs:
             echo "export FLAVOR2_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${FLAVOR2:0:1}${FLAVOR2:1})\"" >> $BASH_ENV
             echo "$ENCODED_KEYSTORE" | base64 --decode >> ${HOME}/code/keystore.jks
             echo 'export KEYSTORE=${HOME}/code/keystore.jks' >> $BASH_ENV
+            echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\""
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
