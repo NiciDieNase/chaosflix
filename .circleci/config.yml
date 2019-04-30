@@ -6,7 +6,6 @@ jobs:
       - image: circleci/android:api-28
     environment:
       JVM_OPTS: -XX\:MaxHeapSize\=2048m -Xmx1536m
-      MODULE: touch
       FLAVOR1: Prod
       FLAVOR2: NoFree
       BUILD_TYPE: Release
