@@ -24,16 +24,16 @@ jobs:
             echo "export FLAVOR2_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${FLAVOR2:0:1}${FLAVOR2:1})\"" >> $BASH_ENV
             echo "$ENCODED_KEYSTORE" | base64 --decode >> ${HOME}/code/keystore.jks
             echo 'export KEYSTORE=${HOME}/code/keystore.jks' >> $BASH_ENV
-            echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\""
+#            echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\""
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
       - run:
           name: Build Touch
-          command: ./gradlew $SIGN_CONFIG touch:assemble$FLAVOR1_LOWER$FLAVOR2$BUILD_TYPE
+          command: ./gradlew -PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD touch:assemble$FLAVOR1_LOWER$FLAVOR2$BUILD_TYPE
       - run:
           name: Build Leanback
-          command: ./gradlew $SIGN_CONFIG Leanback:assemble$FLAVOR1_LOWER$BUILD_TYPE
+          command: ./gradlew -PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD Leanback:assemble$FLAVOR1_LOWER$BUILD_TYPE
       - save_cache:
           paths:
             - ~/.gradle
