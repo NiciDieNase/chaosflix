@@ -23,9 +23,6 @@ jobs:
             echo "export FLAVOR2_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${FLAVOR2:0:1}${FLAVOR2:1})\"" >> $BASH_ENV
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum "touch/build.gradle" }}-{{ checksum "leanback/build.gradle" }}-{{ checksum "common/build.gradle" }}
-#      - run:
-#         name: Chmod permissions #if permission for Gradlew Dependencies fail, use this.
-#         command: sudo chmod +x ./gradlew
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
@@ -39,16 +36,9 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "touch/build.gradle" }}-{{ checksum "leanback/build.gradle" }}-{{ checksum  "common/build.gradle" }}
-      - run:
-          name: find apks
-          command: find . -name "*.apk"
       - store_artifacts:
-          #path: touch/build/outputs/apk/prodNoFree/debug/touch-prod-noFree-debug.apk
           path: touch/build/outputs/apk
-          #path: touch/build/outputs/apk/$FLAVOR1_LOWER$FLAVOR2/$BUILD_TYPE/touch-$FLAVOR1_LOWER-$FLAVOR2_LOWER-$BUILD_TYPE_LOWER.apk
-          #path: touch/build/outputs/apk/prodNoFree/debug/*.apk
           destination: touch
       - store_artifacts:
-          #path: leanback/build/outputs/apk/$FLAVOR1_LOWER/$BUILD_TYPE/leanback-$FLAVOR1_LOWER-$BUILD_TYPE_LOWER.apk
           path: leanback/build/outputs/apk
           destination: leanback
