@@ -19,7 +19,7 @@ jobs:
             echo "export FLAVOR1_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${FLAVOR1:0:1}${FLAVOR1:1})\"" >> $BASH_ENV
             echo "export FLAVOR2_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${FLAVOR2:0:1}${FLAVOR2:1})\"" >> $BASH_ENV
       - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "$MODULE/build.gradle" }}-{{ checksum  "common/build.gradle" }}
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "./$MODULE/build.gradle" }}-{{ checksum  "common/build.gradle" }}
 #      - run:
 #         name: Chmod permissions #if permission for Gradlew Dependencies fail, use this.
 #         command: sudo chmod +x ./gradlew
@@ -32,7 +32,8 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "$MODULE/build.gradle" }}-{{ checksum  "common/build.gradle" }}
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "./$MODULE/build.gradle" }}-{{ checksum  "common/build.gradle" }}
+      - run: ls -la ./$MODULE/build/outputs/apk/$FLAVOR1_LOWER$FLAVOR2/$BUILD_TYPE/*.apk
       - store_artifacts:
           path: ./$MODULE/build/outputs/apk/$FLAVOR1_LOWER$FLAVOR2/$BUILD_TYPE/*.apk
           destination: apk
