@@ -30,17 +30,19 @@ jobs:
           name: Download Dependencies
           command: ./gradlew androidDependencies
       - run:
-          name: Build
-          command: ./gradlew $MODULE:assemble$FLAVOR1_LOWER$FLAVOR2$BUILD_TYPE
+          name: Build Touch
+          command: ./gradlew touch:assemble$FLAVOR1_LOWER$FLAVOR2$BUILD_TYPE
+      - run:
+          name: Build Leanback
+          command: ./gradlew Leanback:assemble$FLAVOR1_LOWER$BUILD_TYPE
       - save_cache:
           paths:
             - ~/.gradle
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  ".touch/build.gradle" }}-{{ checksum  "common/build.gradle" }}
-      - run: ls -la ./$MODULE/build/outputs/apk/$FLAVOR1_LOWER$FLAVOR2/$BUILD_TYPE/*.apk
-      - store_artifacts:
-          path: touch/build/outputs/apk/prodNoFree/debug/touch-prod-noFree-debug.apk
-          destination: apk1
-      - store_artifacts:
-#          path: ./$MODULE/build/outputs/apk/$FLAVOR1_LOWER$FLAVOR2/$BUILD_TYPE/*.apk
-          path: touch/build/outputs/apk/prodNoFree/debug/*.apk
-          destination: apk
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "touch/build.gradle" }}-{{ checksum  "common/build.gradle" }}
+      - run:
+          name: find apks
+          command: find . -name "*.apk"
+#      - store_artifacts:
+#          path: touch/build/outputs/apk/$FLAVOR1_LOWER$FLAVOR2/$BUILD_TYPE/*.apk
+#          path: touch/build/outputs/apk/prodNoFree/debug/*.apk
+#          destination: apk
