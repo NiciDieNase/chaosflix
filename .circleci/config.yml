@@ -15,9 +15,9 @@ jobs:
       - run:
           name: Setup env
           command: |
-            export BUILD_TYPE_LOWER="$(tr '[:upper:]' '[:lower:]' <<< ${BUILD_TYPE:0:1}${BUILD_TYPE:1})"
-            export FLAVOR1_LOWER="$(tr '[:upper:]' '[:lower:]' <<< ${FLAVOR1:0:1}${FLAVOR1:1})"
-            export FLAVOR2_LOWER="$(tr '[:upper:]' '[:lower:]' <<< ${FLAVOR2:0:1}${FLAVOR2:1})"
+            echo "export BUILD_TYPE_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${BUILD_TYPE:0:1}${BUILD_TYPE:1})\"" >> $BASH_ENV
+            echo "export FLAVOR1_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${FLAVOR1:0:1}${FLAVOR1:1})\"" >> $BASH_ENV
+            echo "export FLAVOR2_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${FLAVOR2:0:1}${FLAVOR2:1})\"" >> $BASH_ENV
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "$MODULE/build.gradle" }}-{{ checksum  "common/build.gradle" }}
 #      - run:
