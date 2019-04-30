@@ -41,9 +41,11 @@ jobs:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "touch/build.gradle" }}-{{ checksum "leanback/build.gradle" }}-{{ checksum  "common/build.gradle" }}
       - store_artifacts:
           path: touch/build/outputs/apk/prodNoFree/debug/*.apk
-          path: leanback/build/outputs/apk/prod/debug/*.apk
           #path: touch/build/outputs/apk/prodNoFree/debug/touch-prod-noFree-debug.apk
-          #path: leanback/build/outputs/apk/prod/debug/leanback-prod-debug.apk
           #path: touch/build/outputs/apk/$FLAVOR1_LOWER$FLAVOR2/$BUILD_TYPE/*.apk
           #path: touch/build/outputs/apk/prodNoFree/debug/*.apk
-          destination: apk
+          destination: touch
+      - store_artifacts:
+          path: leanback/build/outputs/apk/prod/debug/*.apk
+          #path: leanback/build/outputs/apk/prod/debug/leanback-prod-debug.apk
+          destination: leanback
