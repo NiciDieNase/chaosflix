@@ -18,7 +18,7 @@ jobs:
           command: ./gradlew androidDependencies
       - run:
           name: Build
-    command: ./gradlew touch:assembleProdNoFreeDebug 
+          command: ./gradlew touch:assembleProdNoFreeDebug
       - save_cache:
           paths:
             - ~/.gradle
