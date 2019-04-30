@@ -10,6 +10,9 @@ jobs:
       FLAVOR1: Prod
       FLAVOR2: NoFree
       BUILD_TYPE: Debug
+    branches:
+      only:
+        - circleCI
     steps:
       - checkout
       - run:
