@@ -44,9 +44,11 @@ jobs:
           command: find . -name "*.apk"
       - store_artifacts:
           #path: touch/build/outputs/apk/prodNoFree/debug/touch-prod-noFree-debug.apk
-          path: touch/build/outputs/apk/$FLAVOR1_LOWER$FLAVOR2/$BUILD_TYPE/touch-$FLAVOR1_LOWER-$FLAVOR2_LOWER-$BUILD_TYPE_LOWER.apk
+          path: touch/build/outputs/apk
+          #path: touch/build/outputs/apk/$FLAVOR1_LOWER$FLAVOR2/$BUILD_TYPE/touch-$FLAVOR1_LOWER-$FLAVOR2_LOWER-$BUILD_TYPE_LOWER.apk
           #path: touch/build/outputs/apk/prodNoFree/debug/*.apk
           destination: touch
       - store_artifacts:
-          path: leanback/build/outputs/apk/$FLAVOR1_LOWER/$BUILD_TYPE/leanback-$FLAVOR1_LOWER-$BUILD_TYPE_LOWER.apk
+          #path: leanback/build/outputs/apk/$FLAVOR1_LOWER/$BUILD_TYPE/leanback-$FLAVOR1_LOWER-$BUILD_TYPE_LOWER.apk
+          path: leanback/build/outputs/apk
           destination: leanback
