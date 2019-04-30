@@ -23,8 +23,8 @@ jobs:
             echo "export BUILD_TYPE_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${BUILD_TYPE:0:1}${BUILD_TYPE:1})\"" >> $BASH_ENV
             echo "export FLAVOR1_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${FLAVOR1:0:1}${FLAVOR1:1})\"" >> $BASH_ENV
             echo "export FLAVOR2_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${FLAVOR2:0:1}${FLAVOR2:1})\"" >> $BASH_ENV
-            echo $ENCODED_KEYSTORE | base64 --decode >> ${HOME}/repo/keystore.jks
-            echo 'export KEYSTORE=${HOME}/repo/keystore.jks' >> $BASH_ENV
+            echo $ENCODED_KEYSTORE | base64 --decode >> ${HOME}/code/keystore.jks
+            echo 'export KEYSTORE=${HOME}/code/keystore.jks' >> $BASH_ENV
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
