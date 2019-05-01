@@ -27,7 +27,7 @@ jobs:
             echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD -PAPPCENTER_ID=$APPCENTER_ID\""
       - run:
           name: Download Dependencies
-          command: ./gradlew androidDependencies
+          command: ./gradlew -PAPPCENTER_ID=$APPCENTER_ID androidDependencies
       - run:
           name: Build Touch
           command: |
@@ -36,6 +36,7 @@ jobs:
               -PchaosflixStorePassword=$KEYSTORE_PASSWORD\
               -PchaosflixKeyName=$KEY_NAME\
               -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
+              -PAPPCENTER_ID=$APPCENTER_ID \
               touch:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
       - run:
           name: Build Leanback
