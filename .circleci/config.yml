@@ -49,11 +49,20 @@ jobs:
               leanback:assemble$FLAVOR1_LOWER$BUILD_TYPE
 #              leanback:build
       - store_artifacts:
-          path: touch/build/outputs/apk
+          path: common/build/outputs
+          destination: common-reports
+      - store_artifacts:
+          path: touch/build/outputs
           destination: touch
       - store_artifacts:
-          path: leanback/build/outputs/apk
+          path: touch/build/outputs
+          destination: touch-reports
+      - store_artifacts:
+          path: leanback/build/outputs
           destination: leanback
+      - store_artifacts:
+          path: leanback/build/reports
+          destination: leanback-reports
       - run:
           name: Test
           command: |
@@ -65,11 +74,11 @@ jobs:
               leanback:test \
               leanback:lint
       - store_test_results:
-          path: common/build/reports
+          path: common/build/test-results
       - store_test_results:
-          path: touch/build/reports
+          path: touch/build/test-results
       - store_test_results:
-          path: leanback/build/reports
+          path: leanback/build/test-results
       - save_cache:
           paths:
             - ~/.gradle
