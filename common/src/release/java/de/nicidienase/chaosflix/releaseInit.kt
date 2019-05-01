@@ -1,3 +1,3 @@
 package de.nicidienase.chaosflix
 
-fun buildTypeInit(application: ChaosflixApplication){}
+fun buildTypeInit(application: ChaosflixApplication) {}
