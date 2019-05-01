@@ -31,10 +31,22 @@ jobs:
           command: ./gradlew androidDependencies
       - run:
           name: Build Touch
-          command: ./gradlew $SIGN_CONFIG touch:assemble$FLAVOR1_LOWER$FLAVOR2$BUILD_TYPE
+          command: |
+            ./gradlew \
+              -PchaosflixKeystore=$KEYSTORE\
+              -PchaosflixStorePassword=$KEYSTORE_PASSWORD\
+              -PchaosflixKeyName=$KEY_NAME\
+              -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
+              touch:assemble$FLAVOR1_LOWER$FLAVOR2$BUILD_TYPE
       - run:
           name: Build Leanback
-          command: ./gradlew $SIGN_CONFIG Leanback:assemble$FLAVOR1_LOWER$BUILD_TYPE
+          command: |
+            ./gradlew \
+              -PchaosflixKeystore=$KEYSTORE\
+              -PchaosflixStorePassword=$KEYSTORE_PASSWORD\
+              -PchaosflixKeyName=$KEY_NAME\
+              -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
+              Leanback:assemble$FLAVOR1_LOWER$BUILD_TYPE
       - save_cache:
           paths:
             - ~/.gradle
