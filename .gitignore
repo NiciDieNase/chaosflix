@@ -21,7 +21,6 @@
 bin/
 gen/
 out/
-**/release/*
 
 # Gradle files
 .gradle/
@@ -60,3 +59,7 @@ freeline.py
 freeline/
 freeline_project_description.json
 .gradletasknamecache
+
+common/release
+touch/release
+leanback/release
