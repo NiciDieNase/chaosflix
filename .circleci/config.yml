@@ -11,7 +11,8 @@ jobs:
       BUILD_TYPE: Release
     branches:
       only:
-        - circleCI
+        - master
+        - develop
     steps:
       - checkout
       - restore_cache:
