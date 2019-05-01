@@ -9,7 +9,6 @@ jobs:
       FLAVOR1: Prod
       FLAVOR2: NoFree
       BUILD_TYPE: Release
-#      SIGN_CONFIG: "-PchaosflixKeystore=${!KEYSTORE} -PchaosflixStorePassword=${!KEYSTORE_PASSWORD} -PchaosflixKeyName=${!KEY_NAME} -PchaosflixKeyPassword=${!KEYSTORE_PASSWORD}"
     branches:
       only:
         - circleCI
@@ -37,6 +36,7 @@ jobs:
               -PchaosflixStorePassword=$KEYSTORE_PASSWORD\
               -PchaosflixKeyName=$KEY_NAME\
               -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
+#              touch:build
               touch:assemble$FLAVOR1_LOWER$FLAVOR2$BUILD_TYPE
       - run:
           name: Build Leanback
@@ -46,6 +46,7 @@ jobs:
               -PchaosflixStorePassword=$KEYSTORE_PASSWORD\
               -PchaosflixKeyName=$KEY_NAME\
               -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
+#              leanback:build
               leanback:assemble$FLAVOR1_LOWER$BUILD_TYPE
       - store_artifacts:
           path: touch/build/outputs/apk
@@ -54,14 +55,12 @@ jobs:
           path: leanback/build/outputs/apk
           destination: leanback
       - run:
-          name: Test Common
-          command: ./gradlew :common:$FLAVOR1$BUILD_TYPEUnitTest
-      - run:
-          name: Test Touch
-          command: ./gradlew :touch:$FLAVOR1$FLAVOR2$BUILD_TYPEUnitTest
-      - run:
-          name: Test leanback
-          command: ./gradlew :leanback:test$FLAVOR1$BUILD_TYPEUnitTest
+          name: Test
+          command: |
+            ./gradlew \
+              common:$FLAVOR1$BUILD_TYPEUnitTest \
+              touch:$FLAVOR1$FLAVOR2$BUILD_TYPEUnitTest \
+              leanback:test$FLAVOR1$BUILD_TYPEUnitTest
       - store_test_results:
           path: common/build/reports
       - store_test_results:

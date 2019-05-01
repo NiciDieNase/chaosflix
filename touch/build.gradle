@@ -16,7 +16,6 @@ android {
         // odd for touch, even for leanback
         versionCode rootProject.ext.touchVersionCode
         versionName rootProject.ext.touchVersionName
-//        multiDexEnabled true
     }
     signingConfigs {
         //noinspection GroovyMissingReturnStatement, GroovyAssignabilityCheck
