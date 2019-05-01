@@ -58,9 +58,12 @@ jobs:
           name: Test
           command: |
             ./gradlew \
-              common:test$FLAVOR1$BUILD_TYPEUnitTest \
-              touch:test$FLAVOR1$FLAVOR2$BUILD_TYPEUnitTest \
-              leanback:test$FLAVOR1$BUILD_TYPEUnitTest
+              common:test \
+              common:lint \
+              touch:test \
+              touch:lint \
+              leanback:test \
+              leanback:lint
       - store_test_results:
           path: common/build/reports
       - store_test_results:
