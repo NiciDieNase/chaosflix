@@ -50,7 +50,9 @@ android {
             }
         }
     }
+
     flavorDimensions "streaming"
+
     productFlavors {
         prod {}
         mock {}
@@ -69,19 +71,24 @@ android {
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/notice.txt'
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     defaultConfig {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     lintOptions {
         abortOnError false
     }
+
     dataBinding {
         enabled = true
     }
+
     buildToolsVersion rootProject.ext.buildToolsVersion
 }
 

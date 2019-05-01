@@ -6,8 +6,10 @@ apply plugin: 'kotlin-android-extensions'
 String appName = "Chaosflix"
 
 android {
+
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
+
     defaultConfig {
         applicationId "de.nicidienase.chaosflix"
         minSdkVersion rootProject.ext.minSDK
@@ -17,6 +19,7 @@ android {
         versionCode rootProject.ext.touchVersionCode
         versionName rootProject.ext.touchVersionName
     }
+
     signingConfigs {
         //noinspection GroovyMissingReturnStatement, GroovyAssignabilityCheck
         release {
@@ -31,6 +34,7 @@ android {
             }
         }
     }
+
     buildTypes {
         debug {
             applicationIdSuffix ".dev"
@@ -49,7 +53,9 @@ android {
             }
         }
     }
+
     flavorDimensions "streaming", "libs"
+
     productFlavors {
         prod {
             dimension "streaming"
@@ -77,19 +83,24 @@ android {
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/notice.txt'
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     defaultConfig {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     lintOptions {
         abortOnError false
     }
+
     dataBinding {
         enabled = true
     }
+
     testOptions {
         unitTests {
             includeAndroidResources = true
