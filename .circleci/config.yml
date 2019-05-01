@@ -67,6 +67,7 @@ jobs:
           name: Test
           command: |
             ./gradlew \
+              --continue \
               common:test$FLAVOR1$BUILD_TYPEUnitTest \
               common:lint$FLAVOR1$BUILD_TYPE \
               touch:test$FLAVOR1$FLAVOR2$BUILD_TYPEUnitTest \
