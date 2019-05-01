@@ -30,6 +30,21 @@ jobs:
           name: Download Dependencies
           command: ./gradlew androidDependencies
       - run:
+          name: Test Common
+          command: ./gradlew :common:$FLAVOR1$BUILD_TYPEUnitTest
+      - store_test_results:
+          path: common/build/reports
+      - run:
+          name: Test Touch
+          command: ./gradlew :touch:$FLAVOR1$FLAVOR2$BUILD_TYPEUnitTest
+      - store_test_results:
+          path: touch/build/reports
+      - run:
+          name: Test leanback
+          command: ./gradlew :leanback:test$FLAVOR1$BUILD_TYPEUnitTest
+      - store_test_results:
+          path: leanback/build/reports
+      - run:
           name: Build Touch
           command: |
             ./gradlew \
