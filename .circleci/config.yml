@@ -67,15 +67,20 @@ jobs:
           name: Test
           command: |
             ./gradlew \
-              common:test \
-              common:lint \
-              touch:test \
-              touch:lint \
-              leanback:test \
-              leanback:lint
+              common:test$FLAVOR1$BUILD_TYPEUnitTest \
+              common:lint$FLAVOR1$BUILD_TYPE \
+              touch:test$FLAVOR1$FLAVOR2$BUILD_TYPEUnitTest \
+              touch:lint$FLAVOR1$FLAVOR2$BUILD_TYPE \
+              leanback:test$FLAVOR1$BUILD_TYPEUnitTest \
+              leanback:lint$FLAVOR1$BUILD_TYPE
       - run:
           name: ktlint
-          command: ./gradlew ktlintCheck
+          command:
+            ./gradlew \
+              --continue \
+              common:ktlint$FLAVOR1$BUILD_TYPEcheck \
+              touch:ktlint$FLAVOR1$FLAVOR2$BUILD_TYPEcheck \
+              leanback:ktlint$FLAVOR1$BUILD_TYPEcheck
       - store_artifacts:
           path: common/build/reports/ktlint/
           destination: ktlint-reports
@@ -88,4 +93,4 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "touch/build.gradle" }}-{{ checksum "leanback/build.gradle" }}-{{ checksum  "common/build.gradle" }}
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "touch/build.gradle" }}-{{ checksum "leanback/build.gradle" }}-{{ checksum "common/build.gradle" }}
