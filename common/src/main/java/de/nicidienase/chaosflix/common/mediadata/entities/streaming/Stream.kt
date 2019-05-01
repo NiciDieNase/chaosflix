@@ -4,19 +4,16 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.support.annotation.Keep
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import okhttp3.internal.connection.StreamAllocation
-
-import kotlin.collections.HashMap
 
 @Keep
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Stream(
-        var slug: String,
-        var display: String,
-        var type: String,
-        var isTranslated: Boolean = false,
-        var videoSize: IntArray?,
-        var urls: MutableMap<String, StreamUrl>
+    var slug: String,
+    var display: String,
+    var type: String,
+    var isTranslated: Boolean = false,
+    var videoSize: IntArray?,
+    var urls: MutableMap<String, StreamUrl>
 
 ) : Parcelable {
 
@@ -44,7 +41,7 @@ data class Stream(
         val urlKeys = urls.keys.toTypedArray()
         dest.writeStringArray(urlKeys)
         val urls = urlKeys.map { urls[it] }.toTypedArray()
-        dest.writeTypedArray(urls,0)
+        dest.writeTypedArray(urls, 0)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -89,20 +86,20 @@ data class Stream(
             return arrayOfNulls(size)
         }
 
-         fun readMap(input: Parcel): MutableMap<String, StreamUrl> {
-             val result = HashMap<String, StreamUrl>()
-             val size = input.readInt()
-             val keys = input.createStringArray() ?: emptyArray()
-             val urls = input.createTypedArray(StreamUrl.CREATOR) ?: emptyArray()
-             for(i in 0 until size){
-                 val key = keys[i]
-                 val value = urls[i]
-                 if(key != null && value != null){
-                     result.put(key, value)
-                 }
-             }
-             return result
-         }
+        fun readMap(input: Parcel): MutableMap<String, StreamUrl> {
+            val result = HashMap<String, StreamUrl>()
+            val size = input.readInt()
+            val keys = input.createStringArray() ?: emptyArray()
+            val urls = input.createTypedArray(StreamUrl.CREATOR) ?: emptyArray()
+            for (i in 0 until size) {
+                val key = keys[i]
+                val value = urls[i]
+                if (key != null && value != null) {
+                    result.put(key, value)
+                }
+            }
+            return result
+        }
 
         private val MAP_KEY = "map-key"
 

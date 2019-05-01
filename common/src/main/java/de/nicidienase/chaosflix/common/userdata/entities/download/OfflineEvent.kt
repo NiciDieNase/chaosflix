@@ -13,11 +13,12 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 @Entity(tableName = "offline_event",
         indices = arrayOf(Index(value = ["event_guid"], unique = true)))
 data class OfflineEvent(
-        @PrimaryKey(autoGenerate = true) var id: Long = 0,
-        @ColumnInfo(name = "event_guid") var eventGuid: String,
-        @ColumnInfo(name = "recording_id") var recordingId: Long,
-        @ColumnInfo(name = "download_reference") var downloadReference: Long,
-        @ColumnInfo(name = "local_path") var localPath: String) : Parcelable {
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
+    @ColumnInfo(name = "event_guid") var eventGuid: String,
+    @ColumnInfo(name = "recording_id") var recordingId: Long,
+    @ColumnInfo(name = "download_reference") var downloadReference: Long,
+    @ColumnInfo(name = "local_path") var localPath: String
+) : Parcelable {
 
     @Ignore var event: Event? = null
     @Ignore var recording: Recording? = null
@@ -55,5 +56,4 @@ data class OfflineEvent(
             return arrayOfNulls(size)
         }
     }
-
 }

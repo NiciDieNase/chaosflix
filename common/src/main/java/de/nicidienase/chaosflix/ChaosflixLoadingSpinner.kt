@@ -14,11 +14,11 @@ class ChaosflixLoadingSpinner(context: Context, attributeSet: AttributeSet) : Im
         val clockwise = typedArray.getBoolean(R.styleable.ChaosflixLoadingSpinner_clockwise, true)
 
         val anim = if (clockwise) {
-	        RotateAnimation(0.0f, 360.0f,
-			        Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+            RotateAnimation(0.0f, 360.0f,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
         } else {
-	        RotateAnimation(360.0f, 0.0f,
-			        Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+            RotateAnimation(360.0f, 0.0f,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
         }
         anim.interpolator = LinearInterpolator()
         anim.duration = duration.toLong()

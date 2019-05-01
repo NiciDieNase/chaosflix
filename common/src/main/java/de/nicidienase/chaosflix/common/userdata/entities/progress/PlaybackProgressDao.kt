@@ -14,7 +14,6 @@ interface PlaybackProgressDao {
     @Query("SELECT * from playback_progress")
     fun getAllSync(): List<PlaybackProgress>
 
-
     @Query("SELECT * from playback_progress WHERE event_guid = :guid LIMIT 1")
     fun getProgressForEvent(guid: String): LiveData<PlaybackProgress?>
 

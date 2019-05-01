@@ -7,10 +7,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @Keep
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class StreamUrl(var display: String = "",
+data class StreamUrl(
+    var display: String = "",
     var tech: String = "",
-    var url: String = "") : Parcelable {
-
+    var url: String = ""
+) : Parcelable {
 
     private constructor(`in`: Parcel) : this(
         display = `in`.readString() ?: "",
@@ -69,7 +70,7 @@ data class StreamUrl(var display: String = "",
 
         val dummyObject: StreamUrl
             get() {
-                return StreamUrl("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8", "","HLS")
+                return StreamUrl("https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8", "", "HLS")
             }
     }
 }

@@ -9,18 +9,18 @@ import com.mikepenz.aboutlibraries.LibsBuilder
 import com.mikepenz.aboutlibraries.ui.LibsSupportFragment
 import de.nicidienase.chaosflix.touch.R
 
-class LibsFragment: DialogFragment(){
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		val layout = inflater.inflate(R.layout.fragment_libs,container, false)
-		childFragmentManager.beginTransaction()
-				.replace(R.id.layout_container,getLibsFragment())
-				.commit()
-		return layout
-	}
+class LibsFragment : DialogFragment() {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val layout = inflater.inflate(R.layout.fragment_libs, container, false)
+        childFragmentManager.beginTransaction()
+                .replace(R.id.layout_container, getLibsFragment())
+                .commit()
+        return layout
+    }
 
-	private fun getLibsFragment(): LibsSupportFragment {
-		return LibsBuilder()
-				.withFields(R.string::class.java.fields)
-				.supportFragment()
-	}
+    private fun getLibsFragment(): LibsSupportFragment {
+        return LibsBuilder()
+                .withFields(R.string::class.java.fields)
+                .supportFragment()
+    }
 }

@@ -3,7 +3,7 @@ package de.nicidienase.chaosflix.touch.playback
 import android.os.Parcel
 import android.os.Parcelable
 
-data class PlaybackItem (val title: String, val subtitle: String, val eventGuid: String, val uri: String) : Parcelable {
+data class PlaybackItem(val title: String, val subtitle: String, val eventGuid: String, val uri: String) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString() ?: "",
             parcel.readString() ?: "",
@@ -31,5 +31,4 @@ data class PlaybackItem (val title: String, val subtitle: String, val eventGuid:
             return arrayOfNulls(size)
         }
     }
-
 }

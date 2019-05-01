@@ -5,17 +5,17 @@ import android.arch.lifecycle.ViewModel
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
 import de.nicidienase.chaosflix.common.util.ThreadHandler
-import java.util.*
+import java.util.Date
 
 class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
 
     val handler = ThreadHandler()
 
-    fun getPlaybackProgress(guid: String): LiveData<PlaybackProgress?>
-            = database.playbackProgressDao().getProgressForEvent(guid)
+    fun getPlaybackProgress(guid: String): LiveData<PlaybackProgress?> =
+            database.playbackProgressDao().getProgressForEvent(guid)
 
     fun setPlaybackProgress(eventGuid: String, progress: Long) {
-        if(progress < 5_000){
+        if (progress < 5_000) {
             return
         }
         handler.runOnBackgroundThread {

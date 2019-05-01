@@ -43,268 +43,268 @@ import de.nicidienase.chaosflix.touch.playback.PlayerActivity
 import de.nicidienase.chaosflix.touch.settings.SettingsActivity
 
 class BrowseActivity : AppCompatActivity(),
-		ConferencesTabBrowseFragment.OnInteractionListener,
-		LivestreamListFragment.InteractionListener,
-		OnEventSelectedListener {
+        ConferencesTabBrowseFragment.OnInteractionListener,
+        LivestreamListFragment.InteractionListener,
+        OnEventSelectedListener {
 
-	private var drawerOpen: Boolean = false
+    private var drawerOpen: Boolean = false
 
-	private val TAG = BrowseActivity::class.simpleName
+    private val TAG = BrowseActivity::class.simpleName
 
-	private lateinit var drawerToggle: ActionBarDrawerToggle
-	private lateinit var binding: ActivityBrowseBinding
+    private lateinit var drawerToggle: ActionBarDrawerToggle
+    private lateinit var binding: ActivityBrowseBinding
 
-	private lateinit var viewModel: BrowseViewModel
+    private lateinit var viewModel: BrowseViewModel
 
-	protected val numColumns: Int
-		get() = resources.getInteger(R.integer.num_columns)
+    protected val numColumns: Int
+        get() = resources.getInteger(R.integer.num_columns)
 
-	private lateinit var castService: CastService
+    private lateinit var castService: CastService
 
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		binding = DataBindingUtil.setContentView(this, R.layout.activity_browse)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_browse)
 
-		castService = CastService(this)
+        castService = CastService(this)
 
-		val navigationView = findViewById<NavigationView>(R.id.navigation_view)
-		navigationView.setNavigationItemSelectedListener { item ->
-			when (item.itemId) {
-				R.id.nav_recordings -> showConferencesFragment()
-				R.id.nav_bookmarks -> showBookmarksFragment()
-				R.id.nav_inprogress -> showInProgressFragment()
-				R.id.nav_about -> showAboutPage()
-				R.id.nav_streams -> showStreamsFragment()
-				R.id.nav_downloads -> showDownloadsFragment()
-				R.id.nav_preferences -> showSettingsPage()
-				else -> Snackbar.make(binding.drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
-			}
-			binding.drawerLayout.closeDrawers()
-			true
-		}
+        val navigationView = findViewById<NavigationView>(R.id.navigation_view)
+        navigationView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_recordings -> showConferencesFragment()
+                R.id.nav_bookmarks -> showBookmarksFragment()
+                R.id.nav_inprogress -> showInProgressFragment()
+                R.id.nav_about -> showAboutPage()
+                R.id.nav_streams -> showStreamsFragment()
+                R.id.nav_downloads -> showDownloadsFragment()
+                R.id.nav_preferences -> showSettingsPage()
+                else -> Snackbar.make(binding.drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
+            }
+            binding.drawerLayout.closeDrawers()
+            true
+        }
 
-		if (savedInstanceState == null) {
-			showConferencesFragment()
-		}
-		viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(BrowseViewModel::class.java)
+        if (savedInstanceState == null) {
+            showConferencesFragment()
+        }
+        viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(BrowseViewModel::class.java)
 
-		viewModel.state.observe(this, Observer { event ->
-			if(event == null){
-				return@Observer
-			}
-			val errorMessage = event.error
-			if(errorMessage != null){
-				Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
-			}
-			when(event.state){
-				BrowseViewModel.State.ShowEventDetails -> {
-					event.data?.let {
-						EventDetailsActivity.launch(this, it)
-					}
-				}
-			}
-		})
-	}
+        viewModel.state.observe(this, Observer { event ->
+            if (event == null) {
+                return@Observer
+            }
+            val errorMessage = event.error
+            if (errorMessage != null) {
+                Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
+            }
+            when (event.state) {
+                BrowseViewModel.State.ShowEventDetails -> {
+                    event.data?.let {
+                        EventDetailsActivity.launch(this, it)
+                    }
+                }
+            }
+        })
+    }
 
-	fun setupDrawerToggle(toolbar: Toolbar?) {
-		if (toolbar != null) {
-			drawerToggle = object : ActionBarDrawerToggle(this, binding.drawerLayout,
-					toolbar, R.string.drawer_open, R.string.drawer_close) {
-				override fun onDrawerOpened(drawerView: View) {
-					super.onDrawerOpened(drawerView)
-					drawerOpen = true
-				}
+    fun setupDrawerToggle(toolbar: Toolbar?) {
+        if (toolbar != null) {
+            drawerToggle = object : ActionBarDrawerToggle(this, binding.drawerLayout,
+                    toolbar, R.string.drawer_open, R.string.drawer_close) {
+                override fun onDrawerOpened(drawerView: View) {
+                    super.onDrawerOpened(drawerView)
+                    drawerOpen = true
+                }
 
-				override fun onDrawerClosed(drawerView: View) {
-					super.onDrawerClosed(drawerView)
-					drawerOpen = false
-				}
-			}
-		} else {
-			drawerToggle = object : ActionBarDrawerToggle(this, binding.drawerLayout,
-					R.string.drawer_open, R.string.drawer_close) {
-				override fun onDrawerOpened(drawerView: View) {
-					super.onDrawerOpened(drawerView)
-					drawerOpen = true
-				}
+                override fun onDrawerClosed(drawerView: View) {
+                    super.onDrawerClosed(drawerView)
+                    drawerOpen = false
+                }
+            }
+        } else {
+            drawerToggle = object : ActionBarDrawerToggle(this, binding.drawerLayout,
+                    R.string.drawer_open, R.string.drawer_close) {
+                override fun onDrawerOpened(drawerView: View) {
+                    super.onDrawerOpened(drawerView)
+                    drawerOpen = true
+                }
 
-				override fun onDrawerClosed(drawerView: View) {
-					super.onDrawerClosed(drawerView)
-					drawerOpen = false
-				}
-			}
-		}
-		binding.drawerLayout.addDrawerListener(drawerToggle)
-		drawerToggle.syncState()
-	}
+                override fun onDrawerClosed(drawerView: View) {
+                    super.onDrawerClosed(drawerView)
+                    drawerOpen = false
+                }
+            }
+        }
+        binding.drawerLayout.addDrawerListener(drawerToggle)
+        drawerToggle.syncState()
+    }
 
-	override fun onPostCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-		super.onPostCreate(savedInstanceState, persistentState)
-		drawerToggle.syncState()
-	}
+    override fun onPostCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onPostCreate(savedInstanceState, persistentState)
+        drawerToggle.syncState()
+    }
 
-	override fun onConfigurationChanged(newConfig: Configuration) {
-		super.onConfigurationChanged(newConfig)
-		drawerToggle.onConfigurationChanged(newConfig)
-	}
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        drawerToggle.onConfigurationChanged(newConfig)
+    }
 
-	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-		super.onCreateOptionsMenu(menu)
-		menu?.let {
-			castService.addMediaRouteMenuItem(it)
-		}
-		return true
-	}
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menu?.let {
+            castService.addMediaRouteMenuItem(it)
+        }
+        return true
+    }
 
-	override fun onOptionsItemSelected(item: MenuItem): Boolean {
-		if (drawerToggle.onOptionsItemSelected(item)) {
-			return true
-		}
-		return super.onOptionsItemSelected(item)
-	}
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
-	override fun onConferenceSelected(conference: Conference) {
-		EventsListActivity.start(this, conference)
-	}
+    override fun onConferenceSelected(conference: Conference) {
+        EventsListActivity.start(this, conference)
+    }
 
-	override fun onStreamSelected(streamingItem: StreamingItem) {
-		val entries = HashMap<String, StreamUrl>()
+    override fun onStreamSelected(streamingItem: StreamingItem) {
+        val entries = HashMap<String, StreamUrl>()
 
-		if (castService.connected) {
-			val hdStreams = streamingItem.room.streams//.filter { it.slug.startsWith("hd-") }
-			Log.i(TAG, "found ${hdStreams.size} suitable streams, starting selection")
-			if (hdStreams.size > 1) {
-				val dialog = AlertDialog.Builder(this)
-						.setTitle(getString(R.string.select_stream))
-						.setItems(hdStreams.map { it.display }.toTypedArray()) { _, i ->
-							val stream = hdStreams[i]
-							val keys = stream.urls.keys.toTypedArray()
-							val dialog = AlertDialog.Builder(this)
-									.setTitle(this.getString(R.string.select_stream))
-									.setItems(keys) { _: DialogInterface?, which: Int ->
-										val streamUrl = stream.urls[keys[which]]
-										if (streamUrl != null) {
-											castService.castStream(streamingItem, streamUrl, keys[which])
-										} else {
-											Snackbar.make(binding.root, "could not play stream", Snackbar.LENGTH_SHORT).show()
-										}
-									}
-									.create()
-							dialog.show()
-						}
-						.create()
-				dialog.show()
-			} else {
-				Log.i(TAG, "Found no HD-Stream")
-			}
-		} else {
-			val dashStreams = streamingItem.room.streams.filter { it.slug == "dash-native" }
-			if (dashStreams.size > 0
-					&& viewModel.getAutoselectStream()) {
-				playStream(streamingItem.conference.conference,
-						streamingItem.room.display,
-						dashStreams.first().urls["dash"]
-				)
-			} else {
-				streamingItem.room.streams.flatMap { stream ->
-					stream.urls.map { entry ->
-						entries.put(stream.slug + " " + entry.key, entry.value)
-					}
-				}
+        if (castService.connected) {
+            val hdStreams = streamingItem.room.streams // .filter { it.slug.startsWith("hd-") }
+            Log.i(TAG, "found ${hdStreams.size} suitable streams, starting selection")
+            if (hdStreams.size > 1) {
+                val dialog = AlertDialog.Builder(this)
+                        .setTitle(getString(R.string.select_stream))
+                        .setItems(hdStreams.map { it.display }.toTypedArray()) { _, i ->
+                            val stream = hdStreams[i]
+                            val keys = stream.urls.keys.toTypedArray()
+                            val dialog = AlertDialog.Builder(this)
+                                    .setTitle(this.getString(R.string.select_stream))
+                                    .setItems(keys) { _: DialogInterface?, which: Int ->
+                                        val streamUrl = stream.urls[keys[which]]
+                                        if (streamUrl != null) {
+                                            castService.castStream(streamingItem, streamUrl, keys[which])
+                                        } else {
+                                            Snackbar.make(binding.root, "could not play stream", Snackbar.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                    .create()
+                            dialog.show()
+                        }
+                        .create()
+                dialog.show()
+            } else {
+                Log.i(TAG, "Found no HD-Stream")
+            }
+        } else {
+            val dashStreams = streamingItem.room.streams.filter { it.slug == "dash-native" }
+            if (dashStreams.size > 0 &&
+                    viewModel.getAutoselectStream()) {
+                playStream(streamingItem.conference.conference,
+                        streamingItem.room.display,
+                        dashStreams.first().urls["dash"]
+                )
+            } else {
+                streamingItem.room.streams.flatMap { stream ->
+                    stream.urls.map { entry ->
+                        entries.put(stream.slug + " " + entry.key, entry.value)
+                    }
+                }
 
-				val builder = AlertDialog.Builder(this)
-				val strings = entries.keys.sorted().toTypedArray()
-				builder.setTitle(getString(R.string.select_stream))
-						.setItems(strings) { _, i ->
-							Toast.makeText(this, strings[i], Toast.LENGTH_LONG).show()
-							playStream(
-									streamingItem.conference.conference,
-									streamingItem.room.display,
-									entries[strings[i]])
-						}
-				builder.create().show()
-			}
-		}
-	}
+                val builder = AlertDialog.Builder(this)
+                val strings = entries.keys.sorted().toTypedArray()
+                builder.setTitle(getString(R.string.select_stream))
+                        .setItems(strings) { _, i ->
+                            Toast.makeText(this, strings[i], Toast.LENGTH_LONG).show()
+                            playStream(
+                                    streamingItem.conference.conference,
+                                    streamingItem.room.display,
+                                    entries[strings[i]])
+                        }
+                builder.create().show()
+            }
+        }
+    }
 
-	private fun playStream(conference: String, room: String, streamUrl: StreamUrl?) {
-		if (streamUrl != null) {
-			PlayerActivity.launch(this, conference, room, streamUrl)
-		}
-	}
+    private fun playStream(conference: String, room: String, streamUrl: StreamUrl?) {
+        if (streamUrl != null) {
+            PlayerActivity.launch(this, conference, room, streamUrl)
+        }
+    }
 
-	private fun showConferencesFragment() {
-		showFragment(ConferencesTabBrowseFragment.newInstance(numColumns), "conferences")
-	}
+    private fun showConferencesFragment() {
+        showFragment(ConferencesTabBrowseFragment.newInstance(numColumns), "conferences")
+    }
 
-	private fun showBookmarksFragment() {
-		val bookmarksFragment = EventsListFragment.newInstance(EventsListFragment.TYPE_BOOKMARKS, null, numColumns)
-		showFragment(bookmarksFragment, "bookmarks")
-	}
+    private fun showBookmarksFragment() {
+        val bookmarksFragment = EventsListFragment.newInstance(EventsListFragment.TYPE_BOOKMARKS, null, numColumns)
+        showFragment(bookmarksFragment, "bookmarks")
+    }
 
-	private fun showInProgressFragment() {
-		val progressEventsFragment = EventsListFragment.newInstance(EventsListFragment.TYPE_IN_PROGRESS, null, numColumns)
-		showFragment(progressEventsFragment, "in_progress")
-	}
+    private fun showInProgressFragment() {
+        val progressEventsFragment = EventsListFragment.newInstance(EventsListFragment.TYPE_IN_PROGRESS, null, numColumns)
+        showFragment(progressEventsFragment, "in_progress")
+    }
 
-	private fun showStreamsFragment() {
-		val fragment = LivestreamListFragment.newInstance(numColumns)
-		showFragment(fragment, "streams")
-	}
+    private fun showStreamsFragment() {
+        val fragment = LivestreamListFragment.newInstance(numColumns)
+        showFragment(fragment, "streams")
+    }
 
-	private fun showDownloadsFragment() {
-		val fragment = DownloadsListFragment.getInstance(numColumns)
-		showFragment(fragment, "downloads")
-	}
+    private fun showDownloadsFragment() {
+        val fragment = DownloadsListFragment.getInstance(numColumns)
+        showFragment(fragment, "downloads")
+    }
 
-	private fun showSettingsPage() {
-		val intent = Intent(this, SettingsActivity::class.java)
-		startActivity(intent)
-	}
+    private fun showSettingsPage() {
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
+    }
 
-	private fun showAboutPage() {
-		val intent = Intent(this, AboutActivity::class.java)
-		startActivity(intent)
-	}
+    private fun showAboutPage() {
+        val intent = Intent(this, AboutActivity::class.java)
+        startActivity(intent)
+    }
 
-	override fun onBackPressed() {
-		if (drawerOpen) {
-			binding.drawerLayout.closeDrawers()
-		} else {
-			super.onBackPressed()
-		}
-	}
+    override fun onBackPressed() {
+        if (drawerOpen) {
+            binding.drawerLayout.closeDrawers()
+        } else {
+            super.onBackPressed()
+        }
+    }
 
-	protected fun showFragment(fragment: Fragment, tag: String) {
-		val fm = supportFragmentManager
-		val oldFragment = fm.findFragmentById(R.id.fragment_container)
+    protected fun showFragment(fragment: Fragment, tag: String) {
+        val fm = supportFragmentManager
+        val oldFragment = fm.findFragmentById(R.id.fragment_container)
 
-		val transitionInflater = TransitionInflater.from(this)
-		if (oldFragment != null) {
-			if (oldFragment.tag.equals(tag)) {
-				return
-			}
-			oldFragment.exitTransition = transitionInflater.inflateTransition(android.R.transition.fade)
-		}
-		fragment.enterTransition = transitionInflater.inflateTransition(android.R.transition.fade)
+        val transitionInflater = TransitionInflater.from(this)
+        if (oldFragment != null) {
+            if (oldFragment.tag.equals(tag)) {
+                return
+            }
+            oldFragment.exitTransition = transitionInflater.inflateTransition(android.R.transition.fade)
+        }
+        fragment.enterTransition = transitionInflater.inflateTransition(android.R.transition.fade)
 
 //        val slideTransition = Slide(Gravity.RIGHT)
 //        fragment.enterTransition = slideTransition
 
-		val ft = fm.beginTransaction()
-		ft.replace(R.id.fragment_container, fragment, tag)
-		ft.setReorderingAllowed(true)
-		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-		ft.commit()
-	}
+        val ft = fm.beginTransaction()
+        ft.replace(R.id.fragment_container, fragment, tag)
+        ft.setReorderingAllowed(true)
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+        ft.commit()
+    }
 
-	override fun onEventSelected(event: Event) {
-		EventDetailsActivity.launch(this, event)
-	}
+    override fun onEventSelected(event: Event) {
+        EventDetailsActivity.launch(this, event)
+    }
 
-	companion object {
-		fun launch(context: Context) {
-			context.startActivity(Intent(context, BrowseActivity::class.java))
-		}
-	}
+    companion object {
+        fun launch(context: Context) {
+            context.startActivity(Intent(context, BrowseActivity::class.java))
+        }
+    }
 }

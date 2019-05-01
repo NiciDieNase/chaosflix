@@ -1,7 +1,6 @@
 package de.nicidienase.chaosflix.common
 
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
-import java.util.*
 import kotlin.collections.ArrayList
 
 object ChaosflixUtil {
@@ -43,7 +42,7 @@ object ChaosflixUtil {
         }
     }
 
-    val orderedConferencesList: List<String> = Arrays.asList(
+    val orderedConferencesList: List<String> = listOf(
             "congress",
             "gpn",
             "mrmcd",

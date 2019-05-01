@@ -1,6 +1,9 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence
 
-import android.arch.persistence.room.*
+import android.arch.persistence.room.ColumnInfo
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Index
+import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
 
@@ -8,8 +11,8 @@ import android.os.Parcelable
         tableName = "conference_group",
         indices = [Index(value = ["name"], unique = true)])
 data class ConferenceGroup(
-        var name: String = ""
-): Comparable<ConferenceGroup>, Parcelable {
+    var name: String = ""
+) : Comparable<ConferenceGroup>, Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
@@ -42,5 +45,4 @@ data class ConferenceGroup(
             return arrayOfNulls(size)
         }
     }
-
 }

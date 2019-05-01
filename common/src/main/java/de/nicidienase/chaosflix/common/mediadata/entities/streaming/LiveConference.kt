@@ -14,9 +14,10 @@ class LiveConference(
     var keywords: String,
     var startsAt: String,
     var endsAt: String,
-    var groups: MutableList<Group>){
+    var groups: MutableList<Group>
+) {
 
-    constructor(conference: String, description: String) : this(conference,description,"","","","","",ArrayList())
+    constructor(conference: String, description: String) : this(conference, description, "", "", "", "", "", ArrayList())
 
     companion object {
 

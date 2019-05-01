@@ -1,24 +1,24 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording
 
 import android.support.annotation.Keep
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.SerializedName
 import de.nicidienase.chaosflix.common.util.ConferenceUtil
 
 @Keep
 data class ConferenceDto(
-        @SerializedName("acronym")            var acronym: String = "",
-        @SerializedName("aspect_ratio")       var aspectRatio: String = "",
-        @SerializedName("updated_at")         var updatedAt: String = "",
-        @SerializedName("title")              var title: String = "",
-        @SerializedName("schedule_url")       var scheduleUrl: String?,
-        @SerializedName("slug")               var slug: String = "",
-        @SerializedName("event_last_released_at") var lastReleaseAt: String? = "",
-        @SerializedName("webgen_location")    var webgenLocation: String = "",
-        @SerializedName("logo_url")           var logoUrl: String = "",
-        @SerializedName("images_url")         var imagesUrl: String = "",
-        @SerializedName("recordings_url")     var recordingsUrl: String = "",
-        @SerializedName("url")                var url: String = "",
-        @SerializedName("events")             var events: List<EventDto>?
+    @SerializedName("acronym") var acronym: String = "",
+    @SerializedName("aspect_ratio") var aspectRatio: String = "",
+    @SerializedName("updated_at") var updatedAt: String = "",
+    @SerializedName("title") var title: String = "",
+    @SerializedName("schedule_url") var scheduleUrl: String?,
+    @SerializedName("slug") var slug: String = "",
+    @SerializedName("event_last_released_at") var lastReleaseAt: String? = "",
+    @SerializedName("webgen_location") var webgenLocation: String = "",
+    @SerializedName("logo_url") var logoUrl: String = "",
+    @SerializedName("images_url") var imagesUrl: String = "",
+    @SerializedName("recordings_url") var recordingsUrl: String = "",
+    @SerializedName("url") var url: String = "",
+    @SerializedName("events") var events: List<EventDto>?
 
 ) : Comparable<ConferenceDto> {
 
@@ -34,7 +34,7 @@ data class ConferenceDto(
         tagsUsefull = sensibleTags.size > 0
     }
 
-    private fun getEventsMap(events: List<EventDto>?): Map<String,List<EventDto>>{
+    private fun getEventsMap(events: List<EventDto>?): Map<String, List<EventDto>> {
         val map = HashMap<String, MutableList<EventDto>>()
         val untagged = ArrayList<EventDto>()
         if (events != null) {
@@ -50,7 +50,6 @@ data class ConferenceDto(
                             map.put(tag, list)
                         }
                         list.add(event)
-
                     }
                 } else {
                     untagged.add(event)
@@ -63,12 +62,11 @@ data class ConferenceDto(
         return map
     }
 
-
     private fun getIdFromUrl(url: String = this.url): Long {
         val strings = url.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         try {
             return ((strings[strings.size - 1]).toLong())
-        } catch (e: NumberFormatException){
+        } catch (e: NumberFormatException) {
             return 0
         }
     }

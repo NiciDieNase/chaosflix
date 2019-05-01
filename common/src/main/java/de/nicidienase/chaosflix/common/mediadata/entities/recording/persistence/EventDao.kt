@@ -1,10 +1,11 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence
 
 import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.*
+import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Query
 
 @Dao
-abstract class EventDao: BaseDao<Event>() {
+abstract class EventDao : BaseDao<Event>() {
 
     @Query("SELECT * FROM event")
     abstract fun getAllEvents(): LiveData<List<Event>>
@@ -37,10 +38,10 @@ abstract class EventDao: BaseDao<Event>() {
     abstract fun findPromotedEvents(): LiveData<List<Event>>
 
     @Query("SELECT * FROM event WHERE conferenceId = :id ORDER BY title ASC")
-    abstract fun findEventsByConference(id: Long):LiveData<List<Event>>
+    abstract fun findEventsByConference(id: Long): LiveData<List<Event>>
 
     @Query("SELECT * FROM event WHERE conferenceId = :id ORDER BY title ASC")
-    abstract fun findEventsByConferenceSync(id: Long):List<Event>
+    abstract fun findEventsByConferenceSync(id: Long): List<Event>
 
     @Query("SELECT * FROM event INNER JOIN watchlist_item WHERE event.guid = watchlist_item.event_guid")
     abstract fun findBookmarkedEvents(): LiveData<List<Event>>
@@ -49,7 +50,7 @@ abstract class EventDao: BaseDao<Event>() {
     abstract fun findInProgressEvents(): LiveData<List<Event>>
 
     @Query("SELECT * FROM event WHERE frontendLink = :url ")
-    abstract fun findEventsByFrontendurl(url: String):LiveData<Event?>
+    abstract fun findEventsByFrontendurl(url: String): LiveData<Event?>
 
     @Query("DElETE FROM event")
     abstract fun delete()

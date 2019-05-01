@@ -11,39 +11,39 @@ import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 
 open class BrowseFragment : Fragment() {
 
-	lateinit var viewModel: BrowseViewModel
-	var overlay: View? = null
+    lateinit var viewModel: BrowseViewModel
+    var overlay: View? = null
 
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		viewModel = ViewModelProviders.of(activity!!, ViewModelFactory(requireContext())).get(BrowseViewModel::class.java)
-	}
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProviders.of(activity!!, ViewModelFactory(requireContext())).get(BrowseViewModel::class.java)
+    }
 
-	@JvmOverloads
-	protected fun setupToolbar(toolbar: Toolbar, title: Int, isRoot: Boolean = true) {
-		setupToolbar(toolbar, resources.getString(title), isRoot)
-	}
+    @JvmOverloads
+    protected fun setupToolbar(toolbar: Toolbar, title: Int, isRoot: Boolean = true) {
+        setupToolbar(toolbar, resources.getString(title), isRoot)
+    }
 
-	@JvmOverloads
-	protected fun setupToolbar(toolbar: Toolbar, title: String, isRoot: Boolean = true) {
-		val activity = activity as AppCompatActivity
-		if (activity is BrowseActivity) {
-			activity.setupDrawerToggle(toolbar)
-		}
-		activity.setSupportActionBar(toolbar)
-		activity.supportActionBar?.setTitle(title)
-		if (isRoot) {
-			activity.supportActionBar?.setDisplayShowHomeEnabled(true)
-		} else {
-			activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-		}
-	}
+    @JvmOverloads
+    protected fun setupToolbar(toolbar: Toolbar, title: String, isRoot: Boolean = true) {
+        val activity = activity as AppCompatActivity
+        if (activity is BrowseActivity) {
+            activity.setupDrawerToggle(toolbar)
+        }
+        activity.setSupportActionBar(toolbar)
+        activity.supportActionBar?.setTitle(title)
+        if (isRoot) {
+            activity.supportActionBar?.setDisplayShowHomeEnabled(true)
+        } else {
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        }
+    }
 
-	protected fun setLoadingOverlayVisibility(visible: Boolean) {
-		if (visible) {
-			overlay?.setVisibility(View.VISIBLE)
-		} else {
-			overlay?.setVisibility(View.INVISIBLE)
-		}
-	}
+    protected fun setLoadingOverlayVisibility(visible: Boolean) {
+        if (visible) {
+            overlay?.setVisibility(View.VISIBLE)
+        } else {
+            overlay?.setVisibility(View.INVISIBLE)
+        }
+    }
 }

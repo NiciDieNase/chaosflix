@@ -32,5 +32,4 @@ interface RecordingService {
 
     @GET("public/recordings/{id}")
     fun getRecording(@Path("id") id: Long): Call<RecordingDto>
-
 }

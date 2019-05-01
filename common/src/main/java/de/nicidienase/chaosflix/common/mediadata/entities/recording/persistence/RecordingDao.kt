@@ -5,7 +5,7 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 
 @Dao
-abstract class RecordingDao: BaseDao<Recording>() {
+abstract class RecordingDao : BaseDao<Recording>() {
 
     @Query("SELECT * FROM recording")
     abstract fun getAllRecordings(): LiveData<List<Recording>>

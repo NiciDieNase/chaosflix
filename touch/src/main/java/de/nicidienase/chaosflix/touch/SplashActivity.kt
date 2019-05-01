@@ -7,10 +7,10 @@ import de.nicidienase.chaosflix.touch.browse.BrowseActivity
 
 class SplashActivity : AppCompatActivity() {
 
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-		startActivity(Intent(this, BrowseActivity::class.java))
-		finish()
-	}
+        startActivity(Intent(this, BrowseActivity::class.java))
+        finish()
+    }
 }

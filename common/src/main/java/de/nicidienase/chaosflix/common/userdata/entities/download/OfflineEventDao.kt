@@ -6,7 +6,7 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 
 @Dao
-interface OfflineEventDao{
+interface OfflineEventDao {
 
     @Insert
     fun insert(vararg items: OfflineEvent)
