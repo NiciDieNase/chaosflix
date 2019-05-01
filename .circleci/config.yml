@@ -36,8 +36,8 @@ jobs:
               -PchaosflixStorePassword=$KEYSTORE_PASSWORD\
               -PchaosflixKeyName=$KEY_NAME\
               -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
-#              touch:build
               touch:assemble$FLAVOR1_LOWER$FLAVOR2$BUILD_TYPE
+#              touch:build
       - run:
           name: Build Leanback
           command: |
@@ -46,8 +46,8 @@ jobs:
               -PchaosflixStorePassword=$KEYSTORE_PASSWORD\
               -PchaosflixKeyName=$KEY_NAME\
               -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
-#              leanback:build
               leanback:assemble$FLAVOR1_LOWER$BUILD_TYPE
+#              leanback:build
       - store_artifacts:
           path: touch/build/outputs/apk
           destination: touch
