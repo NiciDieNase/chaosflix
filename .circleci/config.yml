@@ -46,6 +46,7 @@ jobs:
               -PchaosflixStorePassword=$KEYSTORE_PASSWORD\
               -PchaosflixKeyName=$KEY_NAME\
               -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
+              -PAPPCENTER_ID=$APPCENTER_ID \
               leanback:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
       - run:
           name: Test
