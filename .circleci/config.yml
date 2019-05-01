@@ -6,8 +6,8 @@ jobs:
       - image: circleci/android:api-28
     environment:
       JVM_OPTS: -XX\:MaxHeapSize\=2048m -Xmx1536m
-      FLAVOR1: Prod
-      FLAVOR2: NoFree
+      STAGE: Prod
+      LIBS: NoFree
       BUILD_TYPE: Release
     branches:
       only:
@@ -20,8 +20,8 @@ jobs:
           name: Setup env
           command: |
             echo "export BUILD_TYPE_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${BUILD_TYPE:0:1}${BUILD_TYPE:1})\"" >> $BASH_ENV
-            echo "export FLAVOR1_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${FLAVOR1:0:1}${FLAVOR1:1})\"" >> $BASH_ENV
-            echo "export FLAVOR2_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${FLAVOR2:0:1}${FLAVOR2:1})\"" >> $BASH_ENV
+            echo "export STAGE_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${STAGE:0:1}${STAGE:1})\"" >> $BASH_ENV
+            echo "export LIBS_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${LIBS:0:1}${LIBS:1})\"" >> $BASH_ENV
             echo "$ENCODED_KEYSTORE" | base64 --decode >> ${HOME}/code/keystore.jks
             echo 'export KEYSTORE=${HOME}/code/keystore.jks' >> $BASH_ENV
             echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\""
@@ -36,8 +36,7 @@ jobs:
               -PchaosflixStorePassword=$KEYSTORE_PASSWORD\
               -PchaosflixKeyName=$KEY_NAME\
               -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
-              touch:assemble$FLAVOR1_LOWER$FLAVOR2$BUILD_TYPE
-#              touch:build
+              touch:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
       - run:
           name: Build Leanback
           command: |
@@ -46,26 +45,25 @@ jobs:
               -PchaosflixStorePassword=$KEYSTORE_PASSWORD\
               -PchaosflixKeyName=$KEY_NAME\
               -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
-              leanback:assemble$FLAVOR1_LOWER$BUILD_TYPE
-#              leanback:build
+              leanback:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
       - run:
           name: Test
           command: |
             ./gradlew \
               --continue \
-              common:test$FLAVOR1${BUILD_TYPE}UnitTest \
-              common:lint$FLAVOR1$BUILD_TYPE \
-              touch:test$FLAVOR1$FLAVOR2${BUILD_TYPE}UnitTest \
-              touch:lint$FLAVOR1$FLAVOR2$BUILD_TYPE \
-              leanback:test$FLAVOR1${BUILD_TYPE}UnitTest \
-              leanback:lint$FLAVOR1$BUILD_TYPE
+              common:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest \
+              common:lint${STAGE}${LIBS}${BUILD_TYPE} \
+              touch:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest \
+              touch:lint${STAGE}${LIBS}${BUILD_TYPE} \
+              leanback:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest \
+              leanback:lint${STAGE}${LIBS}${BUILD_TYPE}
       - run:
           name: ktlint
           command: |
             ./gradlew --continue \
-              common:ktlint$FLAVOR1${BUILD_TYPE}Check \
-              touch:ktlint$FLAVOR1$FLAVOR2${BUILD_TYPE}Check \
-              leanback:ktlint$FLAVOR1${BUILD_TYPE}Check
+              common:ktlint${STAGE}${LIBS}${BUILD_TYPE}Check \
+              touch:ktlint${STAGE}${LIBS}${BUILD_TYPE}Check \
+              leanback:ktlint${STAGE}${LIBS}${BUILD_TYPE}Check
       - store_artifacts:
           path: common/build/outputs
           destination: common-reports

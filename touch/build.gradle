@@ -54,14 +54,19 @@ android {
         }
     }
 
-    flavorDimensions "streaming", "libs"
+    flavorDimensions "stage", "libs"
 
     productFlavors {
         prod {
-            dimension "streaming"
+            dimension "stage"
+        }
+        dev {
+            dimension "stage"
+            applicationIdSuffix ".dev"
         }
         mock {
-            dimension "streaming"
+            dimension "stage"
+            applicationIdSuffix ".mock"
         }
         free {
             dimension "libs"

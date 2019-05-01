@@ -35,7 +35,6 @@ android {
     }
     buildTypes {
         debug {
-            applicationIdSuffix ".dev"
             manifestPlaceholders = [label: appName + "-dev"]
             minifyEnabled false
             useProguard false
@@ -51,11 +50,26 @@ android {
         }
     }
 
-    flavorDimensions "streaming"
+    flavorDimensions "stage", "libs"
 
     productFlavors {
-        prod {}
-        mock {}
+        prod {
+            dimension "stage"
+        }
+        dev {
+            dimension "stage"
+            applicationIdSuffix ".dev"
+        }
+        mock {
+            dimension "stage"
+            applicationIdSuffix ".mock"
+        }
+        free {
+            dimension "libs"
+        }
+        noFree{
+            dimension "libs"
+        }
     }
 
     variantFilter { variant ->
