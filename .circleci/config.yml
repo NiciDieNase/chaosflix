@@ -30,21 +30,6 @@ jobs:
           name: Download Dependencies
           command: ./gradlew androidDependencies
       - run:
-          name: Test Common
-          command: ./gradlew :common:$FLAVOR1$BUILD_TYPEUnitTest
-      - store_test_results:
-          path: common/build/reports
-      - run:
-          name: Test Touch
-          command: ./gradlew :touch:$FLAVOR1$FLAVOR2$BUILD_TYPEUnitTest
-      - store_test_results:
-          path: touch/build/reports
-      - run:
-          name: Test leanback
-          command: ./gradlew :leanback:test$FLAVOR1$BUILD_TYPEUnitTest
-      - store_test_results:
-          path: leanback/build/reports
-      - run:
           name: Build Touch
           command: |
             ./gradlew \
@@ -62,13 +47,28 @@ jobs:
               -PchaosflixKeyName=$KEY_NAME\
               -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
               Leanback:assemble$FLAVOR1_LOWER$BUILD_TYPE
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "touch/build.gradle" }}-{{ checksum "leanback/build.gradle" }}-{{ checksum  "common/build.gradle" }}
       - store_artifacts:
           path: touch/build/outputs/apk
           destination: touch
       - store_artifacts:
           path: leanback/build/outputs/apk
           destination: leanback
+      - run:
+          name: Test Common
+          command: ./gradlew :common:$FLAVOR1$BUILD_TYPEUnitTest
+      - run:
+          name: Test Touch
+          command: ./gradlew :touch:$FLAVOR1$FLAVOR2$BUILD_TYPEUnitTest
+      - run:
+          name: Test leanback
+          command: ./gradlew :leanback:test$FLAVOR1$BUILD_TYPEUnitTest
+      - store_test_results:
+          path: common/build/reports
+      - store_test_results:
+          path: touch/build/reports
+      - store_test_results:
+          path: leanback/build/reports
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "touch/build.gradle" }}-{{ checksum "leanback/build.gradle" }}-{{ checksum  "common/build.gradle" }}
