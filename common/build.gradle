@@ -68,7 +68,7 @@ android {
         }
         noFree{
             dimension "libs"
-            buildConfigField "String", "APPCENTER_ID", APPCENTER_ID
+            buildConfigField "String", "APPCENTER_ID", appcenterId
         }
     }
 

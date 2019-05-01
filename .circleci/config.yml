@@ -24,35 +24,28 @@ jobs:
             echo "export LIBS_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${LIBS:0:1}${LIBS:1})\"" >> $BASH_ENV
             echo "$ENCODED_KEYSTORE" | base64 --decode >> ${HOME}/code/keystore.jks
             echo 'export KEYSTORE=${HOME}/code/keystore.jks' >> $BASH_ENV
-            echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD -PAPPCENTER_ID=$APPCENTER_ID\""
+            echo "\n" >> gradle.properties
+            echo "chaosflixKeystore=$KEYSTORE"  >> gradle.properties
+            echo "chaosflixStorePassword=$KEYSTORE_PASSWORD"  >> gradle.properties
+            echo "chaosflixKeyName=$KEY_NAME"  >> gradle.properties
+            echo "chaosflixKeyPassword=$KEYSTORE_PASSWORD"  >> gradle.properties
+            echo "appcenterId=$APPCENTER_ID"  >> gradle.properties
+#            echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD -PAPPCENTER_ID=$APPCENTER_ID\""
       - run:
           name: Download Dependencies
-          command: ./gradlew -PAPPCENTER_ID=$APPCENTER_ID androidDependencies
+          command: ./gradlew androidDependencies
       - run:
           name: Build Touch
           command: |
-            ./gradlew \
-              -PchaosflixKeystore=$KEYSTORE\
-              -PchaosflixStorePassword=$KEYSTORE_PASSWORD\
-              -PchaosflixKeyName=$KEY_NAME\
-              -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
-              -PAPPCENTER_ID=$APPCENTER_ID \
-              touch:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
+            ./gradlew touch:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
       - run:
           name: Build Leanback
           command: |
-            ./gradlew \
-              -PchaosflixKeystore=$KEYSTORE\
-              -PchaosflixStorePassword=$KEYSTORE_PASSWORD\
-              -PchaosflixKeyName=$KEY_NAME\
-              -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
-              -PAPPCENTER_ID=$APPCENTER_ID \
-              leanback:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
+            ./gradlew leanback:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
       - run:
           name: Test
           command: |
-            ./gradlew \
-              --continue \
+            ./gradlew --continue \
               common:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest \
               common:lint${STAGE}${LIBS}${BUILD_TYPE} \
               touch:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest \
