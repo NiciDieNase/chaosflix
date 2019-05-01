@@ -1,8 +1,6 @@
 package de.nicidienase.chaosflix
 
 import android.app.Application
-import com.facebook.stetho.Stetho
-import com.squareup.leakcanary.LeakCanary
 import libsInit
 import stageInit
 
