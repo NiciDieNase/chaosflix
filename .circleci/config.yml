@@ -9,7 +9,7 @@ jobs:
       FLAVOR1: Prod
       FLAVOR2: NoFree
       BUILD_TYPE: Release
-      SIGN_CONFIG: "-PchaosflixKeystore=\$KEYSTORE -PchaosflixStorePassword=\$KEYSTORE_PASSWORD -PchaosflixKeyName=\$KEY_NAME -PchaosflixKeyPassword=\$KEYSTORE_PASSWORD"
+      SIGN_CONFIG: "-PchaosflixKeystore=\${!KEYSTORE} -PchaosflixStorePassword=\${!KEYSTORE_PASSWORD} -PchaosflixKeyName=\${!KEY_NAME} -PchaosflixKeyPassword=\${!KEYSTORE_PASSWORD}"
     branches:
       only:
         - circleCI
