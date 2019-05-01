@@ -1,7 +1,5 @@
 package de.nicidienase.chaosflix.common.util
 
-import java.util.*
-
 object ConferenceUtil {
     @JvmStatic
     fun getStringForTag(tag: String): String {
@@ -29,7 +27,7 @@ object ConferenceUtil {
     }
 
     @JvmStatic
-    val orderedConferencesList: List<String> = Arrays.asList(
+    val orderedConferencesList: List<String> = listOf(
             "congress",
             "gpn",
             "mrmcd",

@@ -28,7 +28,9 @@ import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
 import de.nicidienase.chaosflix.leanback.R
 import java.net.URI
 import java.net.URISyntaxException
-import java.util.*
+import java.util.LinkedList
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.collections.HashMap
 
 class EventsRowsBrowseFragment : BrowseSupportFragment(), EventsActivity.EventsFragment {

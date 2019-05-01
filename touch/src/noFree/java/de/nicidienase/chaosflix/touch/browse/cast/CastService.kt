@@ -11,27 +11,23 @@ import pl.droidsonroids.casty.MediaData
 
 class CastService(activity: Activity, withMiniController: Boolean = true) {
 
-    private val casty: Casty
+    private val casty: Casty = if (withMiniController) {
+        Casty.create(activity).withMiniController()
+    } else {
+        Casty.create(activity)
+    }
     val connected: Boolean
         get() = casty.isConnected
-
-    init {
-        casty = if (withMiniController) {
-            Casty.create(activity).withMiniController()
-        } else {
-            Casty.create(activity)
-        }
-    }
 
     fun castStream(streamingItem: StreamingItem, streamUrl: StreamUrl, contentKey: String) {
         val contentType = getContentTypeForKey(contentKey)
         val mediaData = MediaData.Builder(streamUrl.url)
-                .setStreamType(MediaData.STREAM_TYPE_BUFFERED)
-                .setContentType(contentType)
-                .setTitle(streamingItem.conference.conference)
-                .setSubtitle(streamingItem.room.display)
-                .addPhotoUrl(streamingItem.room.thumb)
-                .build()
+            .setStreamType(MediaData.STREAM_TYPE_BUFFERED)
+            .setContentType(contentType)
+            .setTitle(streamingItem.conference.conference)
+            .setSubtitle(streamingItem.room.display)
+            .addPhotoUrl(streamingItem.room.thumb)
+            .build()
         casty.player.loadMediaAndPlay(mediaData)
     }
 
@@ -57,11 +53,11 @@ class CastService(activity: Activity, withMiniController: Boolean = true) {
 
     fun buildCastMediaData(recording: Recording, event: Event): MediaData {
         return MediaData.Builder(recording.recordingUrl)
-                .setStreamType(MediaData.STREAM_TYPE_BUFFERED)
-                .setContentType(recording.mimeType)
-                .setTitle(event.title)
-                .setSubtitle(event.subtitle)
-                .addPhotoUrl(event.thumbUrl)
-                .build()
+            .setStreamType(MediaData.STREAM_TYPE_BUFFERED)
+            .setContentType(recording.mimeType)
+            .setTitle(event.title)
+            .setSubtitle(event.subtitle)
+            .addPhotoUrl(event.thumbUrl)
+            .build()
     }
 }

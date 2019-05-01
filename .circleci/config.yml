@@ -64,9 +64,9 @@ jobs:
           command:
             ./gradlew \
               --continue \
-              common:ktlint$FLAVOR1${BUILD_TYPE}check \
-              touch:ktlint$FLAVOR1$FLAVOR2${BUILD_TYPE}check \
-              leanback:ktlint$FLAVOR1${BUILD_TYPE}check
+              common:ktlint$FLAVOR1${BUILD_TYPE}Check \
+              touch:ktlint$FLAVOR1$FLAVOR2${BUILD_TYPE}Check \
+              leanback:ktlint$FLAVOR1${BUILD_TYPE}Check
       - store_artifacts:
           path: common/build/outputs
           destination: common-reports

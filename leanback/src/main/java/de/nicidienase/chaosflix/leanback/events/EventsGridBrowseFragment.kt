@@ -5,7 +5,13 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v17.leanback.app.BackgroundManager
 import android.support.v17.leanback.app.VerticalGridSupportFragment
-import android.support.v17.leanback.widget.*
+import android.support.v17.leanback.widget.ArrayObjectAdapter
+import android.support.v17.leanback.widget.FocusHighlight
+import android.support.v17.leanback.widget.OnItemViewSelectedListener
+import android.support.v17.leanback.widget.Presenter
+import android.support.v17.leanback.widget.Row
+import android.support.v17.leanback.widget.RowPresenter
+import android.support.v17.leanback.widget.VerticalGridPresenter
 import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.util.Log
@@ -27,7 +33,8 @@ class EventsGridBrowseFragment : VerticalGridSupportFragment(), EventsActivity.E
     private val NUM_COLUMNS = 4
 
     private val handler = Handler()
-    private val rowsAdapter: ArrayObjectAdapter = ArrayObjectAdapter(CardPresenter(R.style.EventGridCardStyle))
+    private val rowsAdapter: ArrayObjectAdapter =
+        ArrayObjectAdapter(CardPresenter(R.style.EventGridCardStyle))
     private lateinit var defaultBackground: Drawable
     private var metrics: DisplayMetrics? = null
     private var backgroundTimer: Timer? = null
@@ -84,13 +91,16 @@ class EventsGridBrowseFragment : VerticalGridSupportFragment(), EventsActivity.E
         options.centerCrop()
 
         Glide.with(this)
-                .load(url)
-                .apply(options)
-                .into(object : SimpleTarget<Drawable>() {
-                    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                        consumer.invoke(resource)
-                    }
-                })
+            .load(url)
+            .apply(options)
+            .into(object : SimpleTarget<Drawable>() {
+                override fun onResourceReady(
+                    resource: Drawable,
+                    transition: Transition<in Drawable>?
+                ) {
+                    consumer.invoke(resource)
+                }
+            })
     }
 
     protected fun updateBackground(uri: String) {
