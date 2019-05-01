@@ -73,6 +73,12 @@ jobs:
               touch:lint \
               leanback:test \
               leanback:lint
+      - run:
+          name: ktlint
+          command: ./gradlew ktlintCheck
+      - store_artifacts:
+          path: common/build/reports/ktlint/
+          destination: ktlint-reports
       - store_test_results:
           path: common/build/test-results
       - store_test_results:
