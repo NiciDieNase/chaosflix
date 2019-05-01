@@ -61,7 +61,7 @@ jobs:
               leanback:lint$FLAVOR1$BUILD_TYPE
       - run:
           name: ktlint
-          command:
+          command: |
             ./gradlew --continue \
               common:ktlint$FLAVOR1${BUILD_TYPE}Check \
               touch:ktlint$FLAVOR1$FLAVOR2${BUILD_TYPE}Check \
