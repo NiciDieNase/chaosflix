@@ -79,9 +79,9 @@ jobs:
           command:
             ./gradlew \
               --continue \
-              common:ktlint$FLAVOR1$BUILD_TYPEcheck \
-              touch:ktlint$FLAVOR1$FLAVOR2$BUILD_TYPEcheck \
-              leanback:ktlint$FLAVOR1$BUILD_TYPEcheck
+              common:ktlint$FLAVOR1${BUILD_TYPE}check \
+              touch:ktlint$FLAVOR1$FLAVOR2${BUILD_TYPE}check \
+              leanback:ktlint$FLAVOR1${BUILD_TYPE}check
       - store_artifacts:
           path: common/build/reports/ktlint/
           destination: ktlint-reports
