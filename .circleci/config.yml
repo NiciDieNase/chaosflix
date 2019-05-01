@@ -30,6 +30,7 @@ jobs:
             echo "chaosflixKeyName=$KEY_NAME"  >> gradle.properties
             echo "chaosflixKeyPassword=$KEYSTORE_PASSWORD"  >> gradle.properties
             echo "appcenterId=$APPCENTER_ID"  >> gradle.properties
+            echo "appcenterDevId=$APPCENTER_DEV_ID"  >> gradle.properties
 #            echo 'export KEYSTORE=${HOME}/code/keystore.jks' >> $BASH_ENV
 #            echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD -PAPPCENTER_ID=$APPCENTER_ID\""
       - run:
