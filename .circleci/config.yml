@@ -24,7 +24,7 @@ jobs:
             echo "export LIBS_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${LIBS:0:1}${LIBS:1})\"" >> $BASH_ENV
             echo "$ENCODED_KEYSTORE" | base64 --decode >> ${HOME}/code/keystore.jks
             echo 'export KEYSTORE=${HOME}/code/keystore.jks' >> $BASH_ENV
-            echo "\n" >> gradle.properties
+            echo > gradle.properties
             echo "chaosflixKeystore=$KEYSTORE"  >> gradle.properties
             echo "chaosflixStorePassword=$KEYSTORE_PASSWORD"  >> gradle.properties
             echo "chaosflixKeyName=$KEY_NAME"  >> gradle.properties
@@ -87,3 +87,7 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum "touch/build.gradle" }}-{{ checksum "leanback/build.gradle" }}-{{ checksum "common/build.gradle" }}
+      - run:
+          name: cleanup
+          command: rm -rf ~/code
+          when: always
