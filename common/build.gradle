@@ -68,6 +68,7 @@ android {
         }
         noFree{
             dimension "libs"
+            buildConfigField "String", "APPCENTER_ID", APPCENTER_ID
         }
     }
 
@@ -109,6 +110,10 @@ dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     api 'commons-io:commons-io:2.4'
+
+    def appCenterSdkVersion = '1.11.4'
+    noFreeImplementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
+    noFreeImplementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
 
     debugImplementation 'com.facebook.stetho:stetho:1.4.2'
     debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.4.2'

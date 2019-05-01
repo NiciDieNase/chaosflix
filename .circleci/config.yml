@@ -24,7 +24,7 @@ jobs:
             echo "export LIBS_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${LIBS:0:1}${LIBS:1})\"" >> $BASH_ENV
             echo "$ENCODED_KEYSTORE" | base64 --decode >> ${HOME}/code/keystore.jks
             echo 'export KEYSTORE=${HOME}/code/keystore.jks' >> $BASH_ENV
-            echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\""
+            echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD -PAPPCENTER_ID=$APPCENTER_ID\""
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
