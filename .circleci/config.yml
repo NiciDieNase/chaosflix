@@ -68,11 +68,11 @@ jobs:
           command: |
             ./gradlew \
               --continue \
-              common:test$FLAVOR1$BUILD_TYPEUnitTest \
+              common:test$FLAVOR1${BUILD_TYPE}UnitTest \
               common:lint$FLAVOR1$BUILD_TYPE \
-              touch:test$FLAVOR1$FLAVOR2$BUILD_TYPEUnitTest \
+              touch:test$FLAVOR1$FLAVOR2${BUILD_TYPE}UnitTest \
               touch:lint$FLAVOR1$FLAVOR2$BUILD_TYPE \
-              leanback:test$FLAVOR1$BUILD_TYPEUnitTest \
+              leanback:test$FLAVOR1${BUILD_TYPE}UnitTest \
               leanback:lint$FLAVOR1$BUILD_TYPE
       - run:
           name: ktlint
