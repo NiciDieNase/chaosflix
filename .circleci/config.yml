@@ -46,7 +46,7 @@ jobs:
               -PchaosflixStorePassword=$KEYSTORE_PASSWORD\
               -PchaosflixKeyName=$KEY_NAME\
               -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
-              Leanback:assemble$FLAVOR1_LOWER$BUILD_TYPE
+              leanback:assemble$FLAVOR1_LOWER$BUILD_TYPE
       - store_artifacts:
           path: touch/build/outputs/apk
           destination: touch
