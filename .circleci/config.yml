@@ -20,8 +20,11 @@ jobs:
       - run:
           name: Setup env
           command: |
-            if [ $CIRCLE_BRANCH = "master" ]; then STAGE="Prod" else STAGE="Dev"; fi
-            echo "export STAGE=$STAGE" >> $BASH_ENV
+            if [ $CIRCLE_BRANCH = "master" ]; then
+              echo "export STAGE=Prod" >> $BASH_ENV
+            else
+              echo "export STAGE=Dev >> $BASH_ENV
+            fi
             echo "export BUILD_TYPE_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${BUILD_TYPE:0:1}${BUILD_TYPE:1})\"" >> $BASH_ENV
             echo "export STAGE_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${STAGE:0:1}${STAGE:1})\"" >> $BASH_ENV
             echo "export LIBS_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${LIBS:0:1}${LIBS:1})\"" >> $BASH_ENV
