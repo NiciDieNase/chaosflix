@@ -21,9 +21,9 @@ KEYSTORE=${HOME}/code/keystore.jks
 #echo "appcenterDevId=\"$APPCENTER_DEV_ID\""  >> $GRADLEFILE
 #echo 'export KEYSTORE=${HOME}/code/keystore.jks'
 
-echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE \
-		-PchaosflixStorePassword=$KEYSTORE_PASSWORD\
-		-PchaosflixKeyName=$KEY_NAME\
-		-PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
-		-PappcenterId=$APPCENTER_ID\
-		-PappcenterDevId=$APPCENTER_DEV_ID\""
+echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE\
+ -PchaosflixStorePassword=$KEYSTORE_PASSWORD\
+ -PchaosflixKeyName=$KEY_NAME\
+ -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
+ -PappcenterId=$APPCENTER_ID\
+ -PappcenterDevId=$APPCENTER_DEV_ID\""

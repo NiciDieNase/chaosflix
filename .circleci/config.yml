@@ -20,25 +20,6 @@ jobs:
       - run:
           name: Setup env
           command: .circleci/setup_env.sh >> $BASH_ENV
-#            if [ $CIRCLE_BRANCH = "master" ]; then
-#              echo "export STAGE=Prod" >> $BASH_ENV
-#            else
-#              echo "export STAGE=Dev" >> $BASH_ENV
-#            fi
-#            echo "export BUILD_TYPE_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${BUILD_TYPE:0:1}${BUILD_TYPE:1})\"" >> $BASH_ENV
-#            echo "export STAGE_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${STAGE:0:1}${STAGE:1})\"" >> $BASH_ENV
-#            echo "export LIBS_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${LIBS:0:1}${LIBS:1})\"" >> $BASH_ENV
-#            echo "$ENCODED_KEYSTORE" | base64 --decode >> ${HOME}/code/keystore.jks
-#            KEYSTORE=${HOME}/code/keystore.jks
-#            echo >> gradle.properties
-#            echo "chaosflixKeystore=$KEYSTORE"  >> gradle.properties
-#            echo "chaosflixStorePassword=$KEYSTORE_PASSWORD"  >> gradle.properties
-#            echo "chaosflixKeyName=$KEY_NAME"  >> gradle.properties
-#            echo "chaosflixKeyPassword=$KEYSTORE_PASSWORD"  >> gradle.properties
-#            echo "appcenterId=$APPCENTER_ID"  >> gradle.properties
-#            echo "appcenterDevId=$APPCENTER_DEV_ID"  >> gradle.properties
-#            echo 'export KEYSTORE=${HOME}/code/keystore.jks' >> $BASH_ENV
-#            echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD -PAPPCENTER_ID=$APPCENTER_ID\""
       - run:
           name: Download Dependencies
           command: ./gradlew $SIGN_CONFIG androidDependencies
