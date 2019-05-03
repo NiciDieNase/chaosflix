@@ -51,12 +51,12 @@ android {
     productFlavors {
         prod {
             dimension "stage"
-            buildConfigField "String", "APPCENTER_ID", appcenterId
+            buildConfigField "String", "APPCENTER_ID", "$appcenterId"
         }
 
         dev {
             dimension "stage"
-            buildConfigField "String", "APPCENTER_ID", appcenterDevId
+            buildConfigField "String", "APPCENTER_ID", "$appcenterDevId"
         }
 
         mock {

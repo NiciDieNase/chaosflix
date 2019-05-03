@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 if [ "$CIRCLE_BRANCH" = "master" ] ; then
   STAGE=Prod
 else
@@ -11,13 +11,19 @@ echo "export LIBS_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${LIBS:0:1}${LIBS:1})
 
 echo "$ENCODED_KEYSTORE" | base64 --decode >> ${HOME}/code/keystore.jks
 KEYSTORE=${HOME}/code/keystore.jks
-echo >> gradle.properties
-echo "chaosflixKeystore=$KEYSTORE"  >> gradle.properties
-echo "chaosflixStorePassword=$KEYSTORE_PASSWORD"  >> gradle.properties
-echo "chaosflixKeyName=$KEY_NAME"  >> gradle.properties
-echo "chaosflixKeyPassword=$KEYSTORE_PASSWORD"  >> gradle.properties
-echo "appcenterId=$APPCENTER_ID"  >> gradle.properties
-echo "appcenterDevId=$APPCENTER_DEV_ID"  >> gradle.properties
+#mkdir ~/.gradle
+#GRADLEFILE=~/.gradle/gradle.properties
+#echo "chaosflixKeystore=$KEYSTORE"  >> $GRADLEFILE
+#echo "chaosflixStorePassword=$KEYSTORE_PASSWORD"  >> $GRADLEFILE
+#echo "chaosflixKeyName=$KEY_NAME"  >> $GRADLEFILE
+#echo "chaosflixKeyPassword=$KEYSTORE_PASSWORD"  >> $GRADLEFILE
+#echo "appcenterId=\"$APPCENTER_ID\""  >> $GRADLEFILE
+#echo "appcenterDevId=\"$APPCENTER_DEV_ID\""  >> $GRADLEFILE
+#echo 'export KEYSTORE=${HOME}/code/keystore.jks'
 
-echo 'export KEYSTORE=${HOME}/code/keystore.jks'
-echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD -PAPPCENTER_ID=$APPCENTER_ID\""
+echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE \
+		-PchaosflixStorePassword=$KEYSTORE_PASSWORD\
+		-PchaosflixKeyName=$KEY_NAME\
+		-PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
+		-PappcenterId=$APPCENTER_ID\
+		-PappcenterDevId=$APPCENTER_DEV_ID\""

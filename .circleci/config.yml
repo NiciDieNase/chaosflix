@@ -41,19 +41,19 @@ jobs:
 #            echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE -PchaosflixStorePassword=$KEYSTORE_PASSWORD -PchaosflixKeyName=$KEY_NAME -PchaosflixKeyPassword=$KEYSTORE_PASSWORD -PAPPCENTER_ID=$APPCENTER_ID\""
       - run:
           name: Download Dependencies
-          command: ./gradlew androidDependencies
+          command: ./gradlew $SIGN_CONFIG androidDependencies
       - run:
           name: Build Touch
           command: |
-            ./gradlew touch:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
+            ./gradlew $SIGN_CONFIG touch:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
       - run:
           name: Build Leanback
           command: |
-            ./gradlew leanback:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
+            ./gradlew $SIGN_CONFIG leanback:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
       - run:
           name: Test
           command: |
-            ./gradlew --continue \
+            ./gradlew $SIGN_CONFIG --continue \
               common:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest \
               common:lint${STAGE}${LIBS}${BUILD_TYPE} \
               touch:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest \
@@ -63,7 +63,7 @@ jobs:
       - run:
           name: ktlint
           command: |
-            ./gradlew --continue \
+            ./gradlew $SIGN_CONFIG --continue \
               common:ktlint${STAGE}${LIBS}${BUILD_TYPE}Check \
               touch:ktlint${STAGE}${LIBS}${BUILD_TYPE}Check \
               leanback:ktlint${STAGE}${LIBS}${BUILD_TYPE}Check
@@ -95,7 +95,3 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum "touch/build.gradle" }}-{{ checksum "leanback/build.gradle" }}-{{ checksum "common/build.gradle" }}
-      - run:
-          name: cleanup
-          command: rm -rf ~/code
-          when: always
