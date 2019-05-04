@@ -79,7 +79,7 @@ jobs:
             .circleci/appCenterUpload.sh \
               $APPCENTER_OWNER \
               $APPCENTER_TOKEN \
-              "touch/build/outputs/apk/${STAGE}${LIBS}/${BUILD_TYPE_LOWER}/touch-${STAGE}-${LIBS_LOWER}-${BUILD_TYPE_LOWER}.apk" \
+              "touch/build/outputs/apk/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/touch-${STAGE_LOWER}-${LIBS_LOWER}-${BUILD_TYPE_LOWER}.apk" \
               "release notes go here" \
               $APPCENTER_GROUP
       - save_cache:
