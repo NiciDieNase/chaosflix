@@ -25,6 +25,13 @@ jobs:
           name: Download Dependencies
           command: ./gradlew $SIGN_CONFIG androidDependencies
       - run:
+          name: ktlint
+          command: |
+            ./gradlew $SIGN_CONFIG --continue \
+              common:ktlint${STAGE}${LIBS}${BUILD_TYPE}Check \
+              touch:ktlint${STAGE}${LIBS}${BUILD_TYPE}Check \
+              leanback:ktlint${STAGE}${LIBS}${BUILD_TYPE}Check
+      - run:
           name: Build Touch
           command: |
             ./gradlew $SIGN_CONFIG touch:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
@@ -42,13 +49,6 @@ jobs:
               touch:lint${STAGE}${LIBS}${BUILD_TYPE} \
               leanback:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest \
               leanback:lint${STAGE}${LIBS}${BUILD_TYPE}
-      - run:
-          name: ktlint
-          command: |
-            ./gradlew $SIGN_CONFIG --continue \
-              common:ktlint${STAGE}${LIBS}${BUILD_TYPE}Check \
-              touch:ktlint${STAGE}${LIBS}${BUILD_TYPE}Check \
-              leanback:ktlint${STAGE}${LIBS}${BUILD_TYPE}Check
       - store_artifacts:
           path: common/build/outputs
           destination: common-reports
