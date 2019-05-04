@@ -73,9 +73,11 @@ android {
             dimension "libs"
         }
     }
-
     variantFilter { variant ->
-        if (variant.buildType.name == "mockRelease") {
+        def names = variant.flavors*.name
+        if (name.contains("prod") && name.contains("Debug")
+                || (( name.contains("dev") || name.contains("mock"))
+                    && !name.contains("NoFree")  )){
             setIgnore(true)
         }
     }
