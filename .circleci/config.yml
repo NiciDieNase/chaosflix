@@ -80,7 +80,7 @@ jobs:
               $APPCENTER_OWNER \
               $APPCENTER_TOKEN \
               "touch/build/outputs/apk/${STAGE}${LIBS}/${BUILD_TYPE_LOWER}/touch-${STAGE}-${LIBS_LOWER}-${BUILD_TYPE_LOWER}.apk" \
-              "release notes go here"
+              "release notes go here" \
               $APPCENTER_GROUP
       - save_cache:
           paths:
