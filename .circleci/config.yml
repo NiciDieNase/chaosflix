@@ -6,9 +6,10 @@ jobs:
       - image: circleci/android:api-28
     environment:
       JVM_OPTS: -XX\:MaxHeapSize\=2048m -Xmx1536m
-#      STAGE: Dev
       LIBS: NoFree
       BUILD_TYPE: Release
+      APPCENTER_OWNER: nicidienase
+      APPCENTER_GROUP: "Collaborators"
     branches:
       only:
         - master
@@ -72,6 +73,15 @@ jobs:
           path: touch/build/test-results
       - store_test_results:
           path: leanback/build/test-results
+      - run:
+          name: Appcenter Upload
+          command: |
+            .circleci/appCenterUpload.sh \
+              $APPCENTER_OWNER \
+              $APPCENTER_TOKEN \
+              "touch/build/outputs/apk/${STAGE}${LIBS}/${BUILD_TYPE_LOWER}/touch-${STAGE}-${LIBS_LOWER}-${BUILD_TYPE_LOWER}.apk" \
+              "release notes go here"
+              $APPCENTER_GROUP
       - save_cache:
           paths:
             - ~/.gradle
