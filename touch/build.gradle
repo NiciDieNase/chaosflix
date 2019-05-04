@@ -63,10 +63,12 @@ android {
         dev {
             dimension "stage"
             applicationIdSuffix ".dev"
+            manifestPlaceholders = [label: appName + "-Dev"]
         }
         mock {
             dimension "stage"
             applicationIdSuffix ".mock"
+            manifestPlaceholders = [label: appName + "-Mock"]
         }
         free {
             dimension "libs"
