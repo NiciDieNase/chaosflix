@@ -35,11 +35,11 @@ jobs:
       - run:
           name: Build Touch
           command: |
-            ./gradlew $SIGN_CONFIG touch:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
+            ./gradlew $SIGN_CONFIG -PversionName=$(.circleci/getVersionCode.sh -t) touch:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
       - run:
           name: Build Leanback
           command: |
-            ./gradlew $SIGN_CONFIG leanback:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
+            ./gradlew $SIGN_CONFIG -PversionName=$(.circleci/getVersionCode.sh -l) leanback:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
       - run:
           name: Test
           command: |

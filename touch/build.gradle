@@ -18,6 +18,15 @@ android {
         // odd for touch, even for leanback
         versionCode rootProject.ext.touchVersionCode
         versionName rootProject.ext.touchVersionName
+
+        if(project.hasProperty("versionCode")){
+            versionCode = versionCode
+            println "Setting VersionCode from property: $versionCode"
+        }
+        if(project.hasProperty("versionName")){
+            versionName = versionName
+            println "Setting VersionName from property: $versionName"
+        }
     }
 
     signingConfigs {

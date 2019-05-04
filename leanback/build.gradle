@@ -18,6 +18,14 @@ android {
         versionCode rootProject.ext.leanbackVersionCode
         versionName rootProject.ext.leanbackVersionName
 //        multiDexEnabled true
+        if(project.hasProperty("versionCode")){
+            versionCode = versionCode
+            println "Setting VersionCode from property: $versionCode"
+        }
+        if(project.hasProperty("versionName")){
+            versionName = versionName
+            println "Setting VersionName from property: $versionName"
+        }
     }
     signingConfigs {
         //noinspection GroovyMissingReturnStatement, GroovyAssignabilityCheck
