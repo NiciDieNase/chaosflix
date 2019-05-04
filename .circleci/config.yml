@@ -10,6 +10,7 @@ jobs:
       BUILD_TYPE: Release
       APPCENTER_OWNER: nicidienase
       APPCENTER_GROUP: "Collaborators"
+      RELEASENOTES_FILE: "release_notes.txt"
     branches:
       only:
         - master
@@ -76,11 +77,12 @@ jobs:
       - run:
           name: Appcenter Upload
           command: |
+            git log --format="%h %s" master..HEAD > $RELEASENOTES_FILE
             .circleci/appCenterUpload.sh \
               $APPCENTER_OWNER \
               $APPCENTER_TOKEN \
               "touch/build/outputs/apk/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/touch-${STAGE_LOWER}-${LIBS_LOWER}-${BUILD_TYPE_LOWER}.apk" \
-              "release notes go here" \
+              $RELEASENOTES_FILE \
               $APPCENTER_GROUP
       - save_cache:
           paths:

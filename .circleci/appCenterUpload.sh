@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 # based on https://gist.github.com/shane-harper/cd3b3c8cf79d70e8ce2d2484bde28d9d
 owner_name=$1
 token=$2
 build_path=$3
-release_notes=$4
+release_notes_file=$4
 destination_name=$5
 
 if [ "$CIRCLE_BRANCH" = "master" ] ; then
@@ -30,8 +30,16 @@ release_json=$(curl -X PATCH --header 'Content-Type: application/json' --header 
 release_id=$(echo ${release_json} | \
     python3 -c "import sys, json; print(json.load(sys.stdin)['release_id'])")
 
+release_notes=""
+while read -r line; do
+	release_notes="${release_notes}* ${line}\n"
+done < "${release_notes_file}"
+release_notes="$(tr '"' "'" <<< $release_notes)"
+release_notes=${release_notes::5000}
+
 # Step 4: Distribute the uploaded release to a distribution group"
 release_url="https://api.appcenter.ms/v0.1/apps/${owner_name}/${app_name}/releases/${release_id}"
 data="{ \"destination_name\": \"${destination_name}\", \"release_notes\": \"${release_notes}\" }"
+echo ${data}
 response_json=$(curl -X PATCH --header 'Content-Type: application/json' --header 'Accept: application/json' --header "X-API-Token: ${token}" -d "${data}" ${release_url})
 echo ${response_json}
