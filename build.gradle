@@ -30,10 +30,8 @@ allprojects {
 
 
 ext{
-    touchVersionCode = 37
-    touchVersionName = "0.5.0"
-    leanbackVersionCode = 20
-    leanbackVersionName = "0.5.0"
+    touchVersionCode = 1
+    leanbackVersionCode = 1
 
     minSDK = 22
     targetSDK = 28

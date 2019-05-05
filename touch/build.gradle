@@ -4,6 +4,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 String appName = "Chaosflix"
+String versionString = new File("versionfile").text.trim()
 
 android {
 
@@ -17,15 +18,15 @@ android {
         manifestPlaceholders = [label: appName]
         // odd for touch, even for leanback
         versionCode rootProject.ext.touchVersionCode
-        versionName rootProject.ext.touchVersionName
+        versionName versionString
 
         if(project.hasProperty("versionCode")){
-            versionCode = versionCode
+            versionCode = project.property("versionCode") as int
             println "Setting VersionCode from property: $versionCode"
         }
         if(project.hasProperty("versionName")){
-            versionName = versionName
-            println "Setting VersionName from property: $versionName"
+            versionName = project.property("versionName") as String
+            println "Setting versionName from property: $versionName"
         }
     }
 

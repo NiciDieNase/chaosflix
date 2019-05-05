@@ -23,12 +23,15 @@ jobs:
           name: Setup env
           command: |
             .circleci/setup_env.sh >> $BASH_ENV
-            echo "VERSION_NAME=${VERSION_NAME}"
-            echo "STAGE=${STAGE}"
-            echo "VERSION_NAME=${VERSION_NAME}"
-            echo "BUILD_TYPE_LOWER=${BUILD_TYPE_LOWER}"
-            echo "STAGE_LOWER=${STAGE_LOWER}"
-            echo "LIBS_LOWER=${LIBS_LOWER}"
+            echo "VERSION_CODE_TOUCH=$(.circleci/getVersionCode.sh -t)" >> $BASH_ENV
+            echo "VERSION_CODE_LEANBACK=$(.circleci/getVersionCode.sh -l)" >> $BASH_ENV
+#            . $BASH_ENV
+#            echo "STAGE=${STAGE}"
+#            echo "VERSION_NAME=${VERSION_NAME}"
+#            echo "VersionCode: $(.circleci/getVersionCode.sh -t)"
+#            echo "BUILD_TYPE_LOWER=${BUILD_TYPE_LOWER}"
+#            echo "STAGE_LOWER=${STAGE_LOWER}"
+#            echo "LIBS_LOWER=${LIBS_LOWER}"
       - run:
           name: Download Dependencies
           command: ./gradlew $SIGN_CONFIG androidDependencies
@@ -43,14 +46,14 @@ jobs:
           name: Build Touch
           command: |
             ./gradlew $SIGN_CONFIG \
-              -PversionCode=$(.circleci/getVersionCode.sh -t) \
+              -PversionCode=$VERSION_CODE_TOUCH \
               -PversionName=${VERSION_NAME} \
               touch:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
       - run:
           name: Build Leanback
           command: |
             ./gradlew $SIGN_CONFIG \
-              -PversionCode=$(.circleci/getVersionCode.sh -l) \
+              -PversionCode=$VERSION_CODE_LEANBACK \
               -PversionName=${VERSION_NAME} \
             leanback:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
       - run:
@@ -97,9 +100,9 @@ jobs:
               "touch/build/outputs/apk/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/touch-${STAGE_LOWER}-${LIBS_LOWER}-${BUILD_TYPE_LOWER}.apk" \
               $RELEASENOTES_FILE \
               $APPCENTER_GROUP \
-              "touch/build/outputs/mapping/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/mapping.txt"\
-              $(.circleci/getVersionCode.sh -t) \
-              $VERSION_NAME
+              "touch/build/outputs/mapping/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/mapping.txt" \
+              "$VERSION_CODE_TOUCH" \
+              "$VERSION_NAME"
       - save_cache:
           paths:
             - ~/.gradle
