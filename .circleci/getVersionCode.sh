@@ -1,5 +1,6 @@
 #!/bin/sh
 COUNT=$(git rev-list --count HEAD | tr -d '\n\r')
+COUNT=$(expr $COUNT - 800)
 if [ $(expr $COUNT % 2) -ne 0 ]; then
 	COUNT=$(expr $COUNT - 1)
 fi
