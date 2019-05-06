@@ -43,7 +43,6 @@ class AboutActivity : AppCompatActivity() {
                 .addPlayStore("de.nicidienase.chaosflix", getString(R.string.about_playstore))
                 .create()
 
-
         binding.container.addView(aboutView)
     }
 }
