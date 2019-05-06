@@ -47,8 +47,8 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix ".dev"
-            manifestPlaceholders = [label: appName + "-dev"]
+            applicationIdSuffix ".debug"
+            manifestPlaceholders = [label: appName + "-debug"]
             minifyEnabled false
             useProguard false
         }

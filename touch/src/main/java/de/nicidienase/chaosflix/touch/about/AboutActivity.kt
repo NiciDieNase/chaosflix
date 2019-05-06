@@ -1,15 +1,12 @@
 package de.nicidienase.chaosflix.touch.about
 
-import android.app.Dialog
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.databinding.ActivityAboutBinding
-import kotlinx.android.synthetic.main.fragment_event_details.speaker_text
 import mehdi.sakout.aboutpage.AboutPage
 import mehdi.sakout.aboutpage.Element
 
@@ -38,7 +35,7 @@ class AboutActivity : AppCompatActivity() {
                     .setTitle("Privacy Policy")
                     .setMessage(R.string.privacy_policy)
                     .create().show()
-        }
+            }
 
         }
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/background"
+        android:drawable="@drawable/icon_background"/>
+
+    <item
+        android:id="@+id/icon"
+        android:drawable="@drawable/icon_foreground"/>
+</layer-list>

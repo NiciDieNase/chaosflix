@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<item android:drawable="@color/white"/>
+	<item android:drawable="@color/primary_dark"/>
 
 	<item
 		android:gravity="center"
 		android:width="144dp"
 		android:height="144dp"
-		android:drawable="@drawable/icon_notext"/>
+		android:drawable="@drawable/icon_primary_background"/>
 
 </layer-list>
