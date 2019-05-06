@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.google.gson.Gson
+import de.nicidienase.chaosflix.common.AnalyticsWrapper
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
@@ -30,6 +31,10 @@ class PreferencesViewModel(
             downloader.deleteNonUserData()
         }
     }
+
+    fun startAnalytics() = AnalyticsWrapper.startAnalytics()
+
+    fun stopAnalytics() = AnalyticsWrapper.stopAnalytics()
 
     fun exportFavorites() {
         threadHandler.runOnBackgroundThread {
