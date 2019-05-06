@@ -1,35 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="allow_metered_networks"
-        android:summary="@string/pref_mobile_downloads"
-        android:title="@string/setting_metered_networks"/>
+    <PreferenceCategory>
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="auto_select_stream"
-        android:summary="@string/pref_autoselect_stream"
-        android:title="@string/setting_choose_stream"/>
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="allow_metered_networks"
+            android:summary="@string/pref_mobile_downloads"
+            android:title="@string/setting_metered_networks"/>
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="auto_select_recording"
-        android:summary="@string/pref_autoselect_recording"
-        android:title="@string/settings_choose_recording"/>
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="auto_select_stream"
+            android:summary="@string/pref_autoselect_stream"
+            android:title="@string/setting_choose_stream"/>
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="auto_external_player"
-        android:title="@string/pref_external_player"
-        android:summary=""/>
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="auto_select_recording"
+            android:summary="@string/pref_autoselect_recording"
+            android:title="@string/settings_choose_recording"/>
 
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="auto_external_player"
+            android:title="@string/pref_external_player"
+            android:summary=""/>
 
-    <Preference
-        android:id="@+id/download_folder"
-        android:key="download_folder"
-        android:title="@string/download_folder"/>
+        <Preference
+            android:id="@+id/download_folder"
+            android:key="download_folder"
+            android:title="@string/download_folder"/>
+
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:title="Debug">
@@ -46,6 +49,16 @@
             android:id="@+id/import_favorites"
             android:key="import_favorites"
             android:title="@string/import_favorites"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Privacy">
+
+        <SwitchPreference
+            android:title="Disable Statistics and Crash Reports"
+            android:key="disable_analytics"
+            android:defaultValue="false"/>
 
     </PreferenceCategory>
 
