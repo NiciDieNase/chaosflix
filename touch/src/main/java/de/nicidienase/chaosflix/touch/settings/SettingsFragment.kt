@@ -11,7 +11,6 @@ import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v7.preference.PreferenceFragmentCompat
 import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.common.AnalyticsWrapper
 import de.nicidienase.chaosflix.common.checkPermission
 import de.nicidienase.chaosflix.common.viewmodel.PreferencesViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
@@ -88,19 +87,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         disableAnalytics.setOnPreferenceChangeListener { preference, state ->
-            when(state){
+            when (state) {
                 true -> {
                     viewModel.stopAnalytics()
-                    Snackbar.make(this.view!!,"Analytics disabled", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(this.view!!, "Analytics disabled", Snackbar.LENGTH_SHORT).show()
                     true
                 }
                 false -> {
                     viewModel.startAnalytics()
-                    Snackbar.make(this.view!!,"Analytics started", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(this.view!!, "Analytics started", Snackbar.LENGTH_SHORT).show()
                     true
                 }
                 else -> true
-            }}
+            } }
     }
 
     private fun chooseDownloadFolder() {

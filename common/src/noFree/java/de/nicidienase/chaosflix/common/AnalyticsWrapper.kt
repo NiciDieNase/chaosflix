@@ -9,7 +9,7 @@ import com.microsoft.appcenter.distribute.Distribute
 import de.nicidienase.chaosflix.BuildConfig
 
 object AnalyticsWrapper {
-    fun init(application: Application){
+    fun init(application: Application) {
         val modules: List<Class<out AppCenterService>>
         if (BuildConfig.BUILD_TYPE == "devNoFreeRelease") {
             modules = listOf(Analytics::class.java, Crashes::class.java, Distribute::class.java)
@@ -24,7 +24,7 @@ object AnalyticsWrapper {
 //        Crashes.setEnabled(true)
     }
 
-    fun stopAnalytics(){
+    fun stopAnalytics() {
         Analytics.setEnabled(false)
 //        Crashes.setEnabled(false)
     }

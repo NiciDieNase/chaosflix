@@ -8,7 +8,7 @@ fun libsInit(application: ChaosflixApplication) {
     val preferencesManager =
         PreferencesManager(PreferenceManager.getDefaultSharedPreferences(application.applicationContext))
 
-    if(!preferencesManager.analyticsDisabled){
+    if (!preferencesManager.analyticsDisabled) {
         AnalyticsWrapper.init(application)
     }
 }

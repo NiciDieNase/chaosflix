@@ -36,9 +36,7 @@ class AboutActivity : AppCompatActivity() {
                     .setMessage(R.string.privacy_policy)
                     .create().show()
             }
-
         }
-
 
         val pInfo = packageManager.getPackageInfo(packageName, 0)
         val version = pInfo.versionName
