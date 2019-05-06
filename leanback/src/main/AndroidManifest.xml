@@ -22,9 +22,7 @@
         <activity
             android:name=".conferences.ConferencesActivity"
             android:banner="@drawable/banner"
-            android:icon="@drawable/icon_notext"
             android:label="${label}"
-            android:logo="@drawable/icon_notext"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

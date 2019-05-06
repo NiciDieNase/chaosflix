@@ -112,7 +112,7 @@ public class CardPresenter extends Presenter {
 		} else if(item instanceof String) {
 			cardView.setTitleText((String) item);
 			Glide.with(viewHolder.view.getContext())
-					.load(R.drawable.icon_notext)
+					.load(R.drawable.icon_primary_background)
 					.into(cardView.getMainImageView());
 		}
 

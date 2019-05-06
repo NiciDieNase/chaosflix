@@ -10,5 +10,5 @@
 		android:layout_width="100dp"
 		android:layout_height="100dp"
 		android:layout_gravity="center"
-		app:srcCompat="@drawable/icon_notext"/>
+		app:srcCompat="@drawable/icon_primary_background"/>
 </FrameLayout>

@@ -28,7 +28,7 @@ class AboutActivity : AppCompatActivity() {
         val pInfo = getPackageManager().getPackageInfo(getPackageName(), 0)
         val version = pInfo.versionName
         val aboutView = AboutPage(this)
-                .setImage(R.drawable.icon_notext)
+                .setImage(R.drawable.icon_primary_background)
                 .setDescription(resources.getString(R.string.description))
                 .addItem(Element().setTitle("Version $version"))
                 .addWebsite(getString(R.string.about_licence_url),
@@ -42,6 +42,7 @@ class AboutActivity : AppCompatActivity() {
                 .addTwitter("nicidienase", getString(R.string.about_twitter))
                 .addPlayStore("de.nicidienase.chaosflix", getString(R.string.about_playstore))
                 .create()
+
 
         binding.container.addView(aboutView)
     }
