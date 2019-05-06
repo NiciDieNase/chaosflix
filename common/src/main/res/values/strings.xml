@@ -49,4 +49,5 @@
     <string name="export_favorites">Export Favorites</string>
     <string name="import_favorites">Import Favorites</string>
     <string name="error_event_not_found">Event not found</string>
+    <string name="privacy_policy">Chaosflix does not collect or transmit any personalized data.</string>
 </resources>
