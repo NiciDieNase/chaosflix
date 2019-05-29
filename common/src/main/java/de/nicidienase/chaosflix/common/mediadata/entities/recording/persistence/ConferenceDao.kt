@@ -7,6 +7,9 @@ import android.arch.persistence.room.Query
 @Dao
 abstract class ConferenceDao : BaseDao<Conference>() {
 
+    @Query("SELECT count(id) FROM conference")
+    abstract fun getConferenceCount(): LiveData<Int>
+
     @Query("SELECT * FROM conference")
     abstract fun getAllConferences(): LiveData<List<Conference>>
 

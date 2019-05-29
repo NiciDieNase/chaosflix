@@ -36,7 +36,13 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
         } else if (modelClass.isAssignableFrom(DetailsViewModel::class.java)) {
             return DetailsViewModel(database, offlineItemManager, preferencesManager, downloader) as T
         } else if (modelClass.isAssignableFrom(PreferencesViewModel::class.java)) {
-            return PreferencesViewModel(downloader, database.watchlistItemDao(), externalFilesDir) as T
+            return PreferencesViewModel(
+                downloader,
+                database.watchlistItemDao(),
+                externalFilesDir
+            ) as T
+        } else if (modelClass.isAssignableFrom(SplashViewModel::class.java)) {
+            return SplashViewModel(downloader,database.conferenceDao()) as T
         } else {
             throw UnsupportedOperationException("The requested ViewModel is currently unsupported. " +
                     "Please make sure to implement are correct creation of it. " +

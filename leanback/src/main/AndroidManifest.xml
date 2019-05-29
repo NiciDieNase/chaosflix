@@ -19,21 +19,19 @@
         android:supportsRtl="true"
         android:name="de.nicidienase.chaosflix.ChaosflixApplication"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".conferences.ConferencesActivity"
+        <activity android:name=".SplashActivity"
             android:banner="@drawable/banner"
             android:label="${label}"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
             </intent-filter>
         </activity>
-
-        <activity android:name=".events.EventsActivity"
-                  android:exported="true"/>
-        <activity android:name=".detail.DetailsActivity"
-                  android:exported="true"/>
+        <activity android:name=".conferences.ConferencesActivity"/>
+        <activity android:name=".events.EventsActivity"/>
+        <activity android:name=".detail.DetailsActivity"/>
     </application>
 
 </manifest>
