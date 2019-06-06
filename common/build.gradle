@@ -106,6 +106,8 @@ dependencies {
 
     api 'com.google.android.exoplayer:exoplayer:2.9.6'
 
+    api 'com.github.bumptech.glide:glide:4.6.1'
+
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0'
 
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
