@@ -120,6 +120,8 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
         detailsBackgroundController.enableParallax()
         playerGlue = buildPlayerGlue()
+        playerGlue.title = event?.title ?: room?.display
+        playerGlue.subtitle = event?.subtitle ?: ""
         detailsBackgroundController.setupVideoPlayback(playerGlue)
 
         when (eventType) {
@@ -153,6 +155,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
                     actionAdapter.notifyItemRangeChanged(actionAdapter.indexOf(watchlistAction), 1)
                 }
             })
+            ChaosflixSeekDataProvider.setSeekProvider(playerGlue,requireContext(),event.length,event.thumbUrl)
         }
         detailsOverview.actionsAdapter = actionAdapter
 
