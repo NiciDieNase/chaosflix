@@ -2,7 +2,7 @@ package de.nicidienase.chaosflix.common.mediadata.sync
 
 import android.content.Intent
 import android.support.v4.app.JobIntentService
-import de.nicidienase.chaosflix.common.DatabaseFactory
+import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
@@ -11,8 +11,8 @@ class DownloadJobService : JobIntentService() {
 
     override fun onHandleWork(intent: Intent) {
         val downloader = Downloader(
-                ApiFactory(resources).recordingApi,
-                DatabaseFactory.getInstance(applicationContext))
+                ApiFactory.getInstance(resources).recordingApi,
+            ChaosflixDatabase.getInstance(applicationContext))
         val entityType: String? = intent.getStringExtra(ENTITY_KEY)
 
         if (entityType != null) {

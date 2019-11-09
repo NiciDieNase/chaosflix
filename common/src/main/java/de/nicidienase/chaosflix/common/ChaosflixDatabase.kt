@@ -2,9 +2,11 @@ package de.nicidienase.chaosflix.common
 
 import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.Database
+import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 import android.arch.persistence.room.migration.Migration
+import android.content.Context
 import de.nicidienase.chaosflix.common.mediadata.entities.Converters
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceDao
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
@@ -24,15 +26,15 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 
 @Database(entities = arrayOf(
-        Conference::class,
-        Event::class,
-        Recording::class,
-        RelatedEvent::class,
-        ConferenceGroup::class,
+    Conference::class,
+    Event::class,
+    Recording::class,
+    RelatedEvent::class,
+    ConferenceGroup::class,
 
-        PlaybackProgress::class,
-        WatchlistItem::class,
-        OfflineEvent::class
+    PlaybackProgress::class,
+    WatchlistItem::class,
+    OfflineEvent::class
 ), version = 6, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class ChaosflixDatabase : RoomDatabase() {
@@ -47,7 +49,16 @@ abstract class ChaosflixDatabase : RoomDatabase() {
     abstract fun watchlistItemDao(): WatchlistItemDao
     abstract fun offlineEventDao(): OfflineEventDao
 
-    companion object {
+    companion object : SingletonHolder<ChaosflixDatabase, Context>({
+        Room.databaseBuilder(
+            it.applicationContext,
+            ChaosflixDatabase::class.java, "mediaccc.de")
+            .addMigrations(
+                ChaosflixDatabase.migration_5_6)
+            .fallbackToDestructiveMigrationFrom(1, 2, 3, 4)
+            .build()
+    }) {
+
         val migration_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE `offline_event` (" +
