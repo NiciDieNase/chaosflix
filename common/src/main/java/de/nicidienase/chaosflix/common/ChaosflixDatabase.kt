@@ -26,15 +26,15 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 
 @Database(entities = arrayOf(
-        Conference::class,
-        Event::class,
-        Recording::class,
-        RelatedEvent::class,
-        ConferenceGroup::class,
+    Conference::class,
+    Event::class,
+    Recording::class,
+    RelatedEvent::class,
+    ConferenceGroup::class,
 
-        PlaybackProgress::class,
-        WatchlistItem::class,
-        OfflineEvent::class
+    PlaybackProgress::class,
+    WatchlistItem::class,
+    OfflineEvent::class
 ), version = 6, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class ChaosflixDatabase : RoomDatabase() {
@@ -50,13 +50,13 @@ abstract class ChaosflixDatabase : RoomDatabase() {
     abstract fun offlineEventDao(): OfflineEventDao
 
     companion object : SingletonHolder<ChaosflixDatabase, Context>({
-         Room.databaseBuilder(
-                it.applicationContext,
-                ChaosflixDatabase::class.java, "mediaccc.de")
-                .addMigrations(
-                        ChaosflixDatabase.migration_5_6)
-                .fallbackToDestructiveMigrationFrom(1, 2, 3, 4)
-                .build()
+        Room.databaseBuilder(
+            it.applicationContext,
+            ChaosflixDatabase::class.java, "mediaccc.de")
+            .addMigrations(
+                ChaosflixDatabase.migration_5_6)
+            .fallbackToDestructiveMigrationFrom(1, 2, 3, 4)
+            .build()
     }) {
 
         val migration_2_3 = object : Migration(2, 3) {

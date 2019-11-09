@@ -19,29 +19,29 @@ class ApiFactory private constructor(val res: Resources) {
 
     val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                 .addInterceptor(useragentInterceptor)
-                .build()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .addInterceptor(useragentInterceptor)
+            .build()
     }
 
     val recordingApi: RecordingService by lazy {
         Retrofit.Builder()
-                .baseUrl(res.getString(R.string.recording_url))
-                .client(client)
-                .addConverterFactory(gsonConverterFactory)
-                .build()
-                .create(RecordingService::class.java)
-    }
-
-    val streamingApi: StreamingService by lazy { Retrofit.Builder()
-            .baseUrl(BuildConfig.STREAMING_API_BASE_URL)
+            .baseUrl(res.getString(R.string.recording_url))
             .client(client)
             .addConverterFactory(gsonConverterFactory)
             .build()
-            .create(StreamingService::class.java) }
+            .create(RecordingService::class.java)
+    }
 
-    private val useragentInterceptor: Interceptor = Interceptor {chain ->
+    val streamingApi: StreamingService by lazy { Retrofit.Builder()
+        .baseUrl(BuildConfig.STREAMING_API_BASE_URL)
+        .client(client)
+        .addConverterFactory(gsonConverterFactory)
+        .build()
+        .create(StreamingService::class.java) }
+
+    private val useragentInterceptor: Interceptor = Interceptor { chain ->
         val requestWithUseragent = chain.request().newBuilder()
             .header("UserAgent", chaosflixUserAgent)
             .build()
@@ -56,5 +56,5 @@ class ApiFactory private constructor(val res: Resources) {
         return "chaosflix/$versionName $osVersion ($device)"
     }
 
-    companion object: SingletonHolder<ApiFactory, Resources>(::ApiFactory)
+    companion object : SingletonHolder<ApiFactory, Resources>(::ApiFactory)
 }
