@@ -59,8 +59,6 @@ class Downloader(
         return updateState
     }
 
-    private val TAG: String? = Downloader::class.simpleName
-
     fun updateEventsForConference(conference: Conference): LiveData<LiveEvent<DownloaderState, List<Event>, String>> {
         val updateState = SingleLiveEvent<LiveEvent<DownloaderState, List<Event>, String>>()
         updateState.postValue(LiveEvent(DownloaderState.RUNNING))
@@ -218,5 +216,9 @@ class Downloader(
         val persistentRecordings = recordings.map { Recording(it, event.id) }
         database.recordingDao().updateOrInsert(*persistentRecordings.toTypedArray())
         return persistentRecordings
+    }
+
+    companion object {
+        private val TAG: String = Downloader::class.java.simpleName
     }
 }

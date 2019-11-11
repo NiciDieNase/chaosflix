@@ -29,20 +29,24 @@ class BrowseErrorFragment : ErrorSupportFragment() {
     }
 
     fun setErrorContent(message: String, fragmentManager: FragmentManager? = activity?.supportFragmentManager) {
-        if (!isDetached) {
-            spinnerFragment?.let {
-                fragmentManager?.beginTransaction()?.remove(it)?.commit()
-            }
-            imageDrawable = resources.getDrawable(R.drawable.lb_ic_sad_cloud, null)
-            setMessage(message)
-            setDefaultBackground(TRANSLUCENT)
-            buttonText = resources.getString(R.string.dismiss_error)
+        try {
+            if (!isDetached) {
+                spinnerFragment?.let {
+                    fragmentManager?.beginTransaction()?.remove(it)?.commit()
+                }
+                imageDrawable = resources.getDrawable(R.drawable.lb_ic_sad_cloud, null)
+                setMessage(message)
+                setDefaultBackground(TRANSLUCENT)
+                buttonText = resources.getString(R.string.dismiss_error)
 
-            if (fragmentManager != null) {
-                setButtonClickListener { _ -> dismiss(fragmentManager) }
-            } else {
-                setButtonClickListener { _ -> dismiss() }
+                if (fragmentManager != null) {
+                    setButtonClickListener { _ -> dismiss(fragmentManager) }
+                } else {
+                    setButtonClickListener { _ -> dismiss() }
+                }
             }
+        } catch (ex: IllegalStateException) {
+            Log.e(TAG, "could not show error fragment")
         }
     }
 

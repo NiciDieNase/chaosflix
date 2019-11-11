@@ -8,7 +8,7 @@ import android.support.v17.leanback.widget.PlaybackControlsRow
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter
 import java.util.concurrent.TimeUnit
 
-class ChaosMediaPlayerGlue(context: Context, playerAdapter: LeanbackPlayerAdapter):
+class ChaosMediaPlayerGlue(context: Context, playerAdapter: LeanbackPlayerAdapter) :
         PlaybackTransportControlGlue<LeanbackPlayerAdapter>(context, playerAdapter) {
 
     private val mThumbsUpAction = PlaybackControlsRow.ThumbsUpAction(context)
@@ -61,7 +61,6 @@ class ChaosMediaPlayerGlue(context: Context, playerAdapter: LeanbackPlayerAdapte
             }
         }
     }
-
 
     companion object {
         private val THIRTY_SECONDS = TimeUnit.SECONDS.toMillis(30)

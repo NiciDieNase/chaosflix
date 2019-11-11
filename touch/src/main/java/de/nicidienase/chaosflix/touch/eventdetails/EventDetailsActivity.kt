@@ -140,7 +140,7 @@ class EventDetailsActivity : AppCompatActivity(),
     }
 
     private fun selectRecording(event: Event, recordings: List<Recording>, action: (Event, Recording) -> Unit) {
-        val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings)
+        val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
         if (optimalRecording != null && viewModel.autoselectRecording) {
             action.invoke(event, optimalRecording)
         } else {
