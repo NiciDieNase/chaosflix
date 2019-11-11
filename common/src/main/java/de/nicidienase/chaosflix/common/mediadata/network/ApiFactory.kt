@@ -43,7 +43,7 @@ class ApiFactory private constructor(val res: Resources) {
 
     private val useragentInterceptor: Interceptor = Interceptor { chain ->
         val requestWithUseragent = chain.request().newBuilder()
-            .header("UserAgent", chaosflixUserAgent)
+            .header("User-Agent", chaosflixUserAgent)
             .build()
         return@Interceptor chain.proceed(requestWithUseragent)
     }
