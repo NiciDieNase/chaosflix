@@ -46,9 +46,9 @@ android {
             useProguard false
         }
         release {
-            useProguard false
-            minifyEnabled false
-            shrinkResources false
+            useProguard true
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'),'proguard-rules.pro'
             if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore).exists() && file(chaosflixKeystore).isFile()) {
                 signingConfig signingConfigs.release
