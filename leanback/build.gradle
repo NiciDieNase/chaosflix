@@ -46,9 +46,9 @@ android {
             useProguard false
         }
         release {
-            useProguard false
-            minifyEnabled false
-            shrinkResources false
+            useProguard true
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'),'proguard-rules.pro'
             if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore).exists() && file(chaosflixKeystore).isFile()) {
                 signingConfig signingConfigs.release
@@ -130,7 +130,6 @@ dependencies {
     implementation "com.android.support:preference-leanback-v17:${rootProject.ext.supportLibraryVersion}"
     implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
     implementation 'com.google.android.exoplayer:extension-leanback:2.9.6'
-    implementation 'com.github.bumptech.glide:glide:4.6.1'
     androidTestImplementation('com.android.support.test:rules:0.5') {
         exclude module: 'support-annotations'
     }

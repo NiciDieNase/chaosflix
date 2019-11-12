@@ -4,16 +4,42 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import kotlin.collections.ArrayList
 
 object ChaosflixUtil {
-    fun getOptimalRecording(recordings: List<Recording>): Recording? {
+    fun getOptimalRecording(recordings: List<Recording>, originalLanguage: String = ""): Recording? {
+        val result = getOrderedRecordings(recordings, originalLanguage)
+        return when {
+            result.size > 0 -> result[0]
+            else -> null
+        }
+    }
+
+    fun getRecordingForThumbs(recordings: List<Recording>): Recording? {
+        val lqRecordings = recordings.filter { !it.isHighQuality && it.width > 0 }.sortedBy { it.size }
+        return when {
+        lqRecordings.size > 0 -> lqRecordings[0]
+            else -> null
+        }
+    }
+
+    private fun getOrderedRecordings(
+        recordings: List<Recording>,
+        originalLanguage: String
+    ): ArrayList<Recording> {
         val result = ArrayList<Recording>()
 
-        result.addAll(recordings.filter { it.isHighQuality && it.mimeType == "video/mp4" }.sortedBy { it.language.length })
-        result.addAll(recordings.filter { !it.isHighQuality && it.mimeType == "video/mp4" }.sortedBy { it.language.length })
+        var hqRecordings = recordings
+            .filter { it.isHighQuality && it.mimeType == "video/mp4" }
+            .sortedBy { it.language.length }
+        var lqRecordings = recordings
+            .filter { !it.isHighQuality && it.mimeType == "video/mp4" }
+            .sortedBy { it.language.length }
 
-        when {
-            result.size > 0 -> return result[0]
-            else -> return null
+        if (originalLanguage.isNotBlank()) {
+            hqRecordings = hqRecordings.filter { it.language == originalLanguage }
+            lqRecordings = lqRecordings.filter { it.language == originalLanguage }
         }
+        result.addAll(hqRecordings)
+        result.addAll(lqRecordings)
+        return result
     }
 
     fun getStringForTag(tag: String): String {

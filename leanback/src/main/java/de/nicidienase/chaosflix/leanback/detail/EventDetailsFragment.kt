@@ -53,12 +53,14 @@ import com.google.android.exoplayer2.util.Util
 import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
+import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.common.viewmodel.PlayerViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.CardPresenter
 import de.nicidienase.chaosflix.leanback.DiffCallbacks
 import de.nicidienase.chaosflix.leanback.EventDetailsDescriptionPresenter
+import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
 import de.nicidienase.chaosflix.leanback.R
 import de.nicidienase.chaosflix.leanback.conferences.ConferencesActivity
 
@@ -96,9 +98,11 @@ class EventDetailsFragment : DetailsSupportFragment() {
         room = activity?.intent?.getParcelableExtra(DetailsActivity.ROOM)
 
         val eventType =
-                if (event != null) DetailsActivity.TYPE_RECORDING
-                else if (room != null) DetailsActivity.TYPE_STREAM
-                else -1
+            when {
+                event != null -> DetailsActivity.TYPE_RECORDING
+                room != null -> DetailsActivity.TYPE_STREAM
+                else -> -1
+            }
 
         title = event?.title
 
@@ -120,7 +124,11 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
         detailsBackgroundController.enableParallax()
         playerGlue = buildPlayerGlue()
+        playerGlue.title = event?.title ?: room?.display
+        playerGlue.subtitle = event?.subtitle ?: ""
         detailsBackgroundController.setupVideoPlayback(playerGlue)
+
+        onItemViewClickedListener = ItemViewClickedListener(this)
 
         when (eventType) {
             DetailsActivity.TYPE_RECORDING -> event?.let { onCreateRecording(it, rowsAdapter) }
@@ -162,9 +170,19 @@ class EventDetailsFragment : DetailsSupportFragment() {
         initializeBackgroundWithImage(event.posterUrl)
 
         detailsViewModel.getRecordingForEvent(event).observe(this, Observer { recordings ->
-            if (recordings != null) {
-                val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings)
-                optimalRecording?.recordingUrl?.let { preparePlayer(it, event.guid) }
+            if (recordings != null && !recordings.isEmpty()) {
+                val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
+                optimalRecording?.recordingUrl?.let {
+                    preparePlayer(it, event.guid)
+                } ?: Log.d(TAG, "no optimal recording found")
+                ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl?.let {
+                    ChaosflixSeekDataProvider.setSeekProvider(
+                        playerGlue,
+                        requireContext(),
+                        event.length,
+                        it
+                    )
+                } ?: Log.d(TAG, "no recording for thumbs found")
             }
         })
 
@@ -222,7 +240,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
         }
     }
 
-    fun setThumb(thumbUrl: String, detailsOverview: DetailsOverviewRow) {
+    private fun setThumb(thumbUrl: String, detailsOverview: DetailsOverviewRow) {
         Glide.with(requireContext())
                 .asBitmap()
                 .load(thumbUrl)
@@ -240,7 +258,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
     private fun initializeBackgroundWithImage(url: String) {
         detailsBackgroundController.enableParallax()
         val options = RequestOptions()
-        options.fallback(R.drawable.default_background)
+            .fallback(R.drawable.default_background)
         Glide.with(requireContext())
                 .asBitmap()
                 .load(url)
@@ -273,7 +291,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
     }
 
     private fun buildMediaSource(uri: Uri, overrideExtension: String): MediaSource {
-        val mediaDataSourceFactory = buildDataSourceFactory(true)
+        val mediaDataSourceFactory = buildDataSourceFactory()
         val type = if (TextUtils.isEmpty(overrideExtension)) {
             Util.inferContentType(uri)
         } else
@@ -281,9 +299,9 @@ class EventDetailsFragment : DetailsSupportFragment() {
         when (type) {
             C.TYPE_DASH -> return DashMediaSource.Factory(
                     DefaultDashChunkSource.Factory(mediaDataSourceFactory),
-                    buildDataSourceFactory(true))
+                    buildDataSourceFactory())
                     .createMediaSource(uri)
-            C.TYPE_HLS -> return HlsMediaSource.Factory(buildDataSourceFactory(true))
+            C.TYPE_HLS -> return HlsMediaSource.Factory(buildDataSourceFactory())
                     .createMediaSource(uri)
             C.TYPE_SS, C.TYPE_OTHER -> return ExtractorMediaSource.Factory(mediaDataSourceFactory)
                     .createMediaSource(uri)
@@ -293,7 +311,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
         }
     }
 
-    private fun buildDataSourceFactory(useBandwidthMeter: Boolean): DataSource.Factory {
+    private fun buildDataSourceFactory(useBandwidthMeter: Boolean = true): DataSource.Factory {
         return buildDataSourceFactory(if (useBandwidthMeter) BANDWIDTH_METER else null)
     }
 
@@ -304,7 +322,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
     private fun buildHttpDataSourceFactory(bandwidthMeter: DefaultBandwidthMeter?): HttpDataSource.Factory {
         return DefaultHttpDataSourceFactory(
-                Util.getUserAgent(requireContext(), getResources().getString(R.string.app_name)),
+                ApiFactory.buildUserAgent(),
                 bandwidthMeter,
                 DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
                 DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,

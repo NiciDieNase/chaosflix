@@ -59,13 +59,6 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
         title = resources.getString(R.string.app_name)
         badgeDrawable = resources.getDrawable(R.drawable.chaosflix_icon, null)
 
-        // 		setHeaderPresenterSelector(new PresenterSelector() {
-        // 			@Override
-        // 			public Presenter getPresenter(Object item) {
-        // 				return new HeaderItemPresenter();
-        // 			}
-        // 		});
-
         viewModel = ViewModelProviders.of(this, ViewModelFactory(requireContext())).get(BrowseViewModel::class.java)
 
         // Recomendation Rows and Adapter

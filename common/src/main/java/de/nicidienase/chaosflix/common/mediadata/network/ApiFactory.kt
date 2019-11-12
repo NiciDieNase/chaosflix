@@ -19,8 +19,8 @@ class ApiFactory private constructor(val res: Resources) {
 
     val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
             .addInterceptor(useragentInterceptor)
             .build()
     }
@@ -48,13 +48,13 @@ class ApiFactory private constructor(val res: Resources) {
         return@Interceptor chain.proceed(requestWithUseragent)
     }
 
-    private fun buildUserAgent(): String {
-        val versionName = BuildConfig.VERSION_NAME
-        val device = "${Build.BRAND} ${Build.MODEL}"
-        val osVersion = "Android/${Build.VERSION.RELEASE}"
+    companion object : SingletonHolder<ApiFactory, Resources>(::ApiFactory) {
 
-        return "chaosflix/$versionName $osVersion ($device)"
+        fun buildUserAgent(): String {
+            val versionName = BuildConfig.VERSION_NAME
+            val device = "${Build.BRAND} ${Build.MODEL}"
+            val osVersion = "Android/${Build.VERSION.RELEASE}"
+            return "chaosflix/$versionName $osVersion ($device)"
+        }
     }
-
-    companion object : SingletonHolder<ApiFactory, Resources>(::ApiFactory)
 }

@@ -25,17 +25,20 @@ import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgre
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 
-@Database(entities = arrayOf(
-    Conference::class,
-    Event::class,
-    Recording::class,
-    RelatedEvent::class,
-    ConferenceGroup::class,
+@Database(
+    entities = [
+        Conference::class,
+        Event::class,
+        Recording::class,
+        RelatedEvent::class,
+        ConferenceGroup::class,
 
-    PlaybackProgress::class,
-    WatchlistItem::class,
-    OfflineEvent::class
-), version = 6, exportSchema = true)
+        PlaybackProgress::class,
+        WatchlistItem::class,
+        OfflineEvent::class
+    ],
+    version = 6,
+    exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class ChaosflixDatabase : RoomDatabase() {
 

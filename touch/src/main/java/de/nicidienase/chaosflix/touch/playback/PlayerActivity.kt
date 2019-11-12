@@ -82,16 +82,16 @@ class PlayerActivity : AppCompatActivity() {
         fun launch(context: Context, event: Event, uri: String) {
             val i = Intent(context, PlayerActivity::class.java)
             i.putExtra(CONTENT_TYPE, CONTENT_RECORDING)
-            i.putExtra(PlayerActivity.EVENT_KEY, event)
-            i.putExtra(PlayerActivity.OFFLINE_URI, uri)
+            i.putExtra(EVENT_KEY, event)
+            i.putExtra(OFFLINE_URI, uri)
             context.startActivity(i)
         }
 
         fun launch(context: Context, event: Event, recording: Recording) {
             val i = Intent(context, PlayerActivity::class.java)
             i.putExtra(CONTENT_TYPE, CONTENT_RECORDING)
-            i.putExtra(PlayerActivity.EVENT_KEY, event)
-            i.putExtra(PlayerActivity.RECORDING_KEY, recording)
+            i.putExtra(EVENT_KEY, event)
+            i.putExtra(RECORDING_KEY, recording)
             context.startActivity(i)
         }
 
