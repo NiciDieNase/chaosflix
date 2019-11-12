@@ -28,18 +28,13 @@ class ChaosflixSeekDataProvider(
 
     private val scope = CoroutineScope(Dispatchers.IO + Job())
 
-    private var canceled = false
+    private var canceled = true
     private var generateThumbsJob: Job? = null
 
     private val mediaMetadataRetriever = MediaMetadataRetriever()
 
     private val thumbnails: MutableMap<Long, Bitmap> = mutableMapOf()
     private val dummyThumbnails: MutableMap<Long, Bitmap> = mutableMapOf()
-
-    init {
-        mediaMetadataRetriever.setDataSource(url, mapOf("User-Agent" to ApiFactory.buildUserAgent()))
-        generateThumbs()
-    }
 
     private val positions: LongArray by lazy {
         val list = mutableListOf<Long>()
