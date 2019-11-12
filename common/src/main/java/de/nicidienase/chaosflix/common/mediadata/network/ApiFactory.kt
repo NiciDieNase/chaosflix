@@ -21,7 +21,7 @@ class ApiFactory private constructor(val res: Resources) {
         OkHttpClient.Builder()
                 .connectTimeout(60, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
-                 .addInterceptor(useragentInterceptor)
+                .addInterceptor(useragentInterceptor)
                 .build()
     }
 
@@ -41,7 +41,7 @@ class ApiFactory private constructor(val res: Resources) {
             .build()
             .create(StreamingService::class.java) }
 
-    private val useragentInterceptor: Interceptor = Interceptor {chain ->
+    private val useragentInterceptor: Interceptor = Interceptor { chain ->
         val requestWithUseragent = chain.request().newBuilder()
             .header("User-Agent", chaosflixUserAgent)
             .build()
@@ -56,5 +56,5 @@ class ApiFactory private constructor(val res: Resources) {
         return "chaosflix/$versionName $osVersion ($device)"
     }
 
-    companion object: SingletonHolder<ApiFactory, Resources>(::ApiFactory)
+    companion object : SingletonHolder<ApiFactory, Resources>(::ApiFactory)
 }
