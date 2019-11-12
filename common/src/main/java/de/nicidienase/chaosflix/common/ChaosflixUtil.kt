@@ -42,6 +42,10 @@ object ChaosflixUtil {
         return result
     }
 
+    fun getStringForRecording(recording: Recording): String {
+        return "${if (recording.isHighQuality) "HD" else "SD"}  ${recording.folder}  [${recording.language}]"
+    }
+
     fun getStringForTag(tag: String): String {
         when (tag) {
             "broadcast/chaosradio" -> return "Chaosradio"

@@ -144,15 +144,11 @@ class EventDetailsActivity : AppCompatActivity(),
         if (optimalRecording != null && viewModel.autoselectRecording) {
             action.invoke(event, optimalRecording)
         } else {
-            val items: List<String> = recordings.map { getStringForRecording(it) }
+            val items: List<String> = recordings.map { ChaosflixUtil.getStringForRecording(it) }
             selectRecordingFromList(items, DialogInterface.OnClickListener { _, i ->
                 action.invoke(event, recordings[i])
             })
         }
-    }
-
-    private fun getStringForRecording(recording: Recording): String {
-        return "${if (recording.isHighQuality) "HD" else "SD"}  ${recording.folder}  [${recording.language}]"
     }
 
     private fun selectRecordingFromList(items: List<String>, resultHandler: DialogInterface.OnClickListener) {
