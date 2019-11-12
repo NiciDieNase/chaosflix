@@ -152,7 +152,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
         actionAdapter.add(watchlistAction)
         actionAdapter.add(Action(ACTION_SELECT, "Select Recording"))
 
-
         event.guid.let {
             loadPlaybackProgress(it)
             detailsViewModel.getBookmarkForEvent(it).observe(this, Observer { watchlistItem ->
@@ -176,7 +175,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
         detailsViewModel.getRecordingForEvent(event).observe(this, Observer { recordings ->
             if (recordings != null && !recordings.isEmpty()) {
-                onNewRecordings(event,recordings)
+                onNewRecordings(event, recordings)
             } else {
                 Log.d(TAG, "no recording for thumbs found")
             }
@@ -192,8 +191,8 @@ class EventDetailsFragment : DetailsSupportFragment() {
         })
     }
 
-    private fun onNewRecordings(event: Event,recordings: List<Recording>) {
-        if(currentRecordings.isNullOrEmpty()){
+    private fun onNewRecordings(event: Event, recordings: List<Recording>) {
+        if (currentRecordings.isNullOrEmpty()) {
             preparePlayer(recordings, event)
             prepareSeekProvider(recordings, event)
         }
@@ -382,15 +381,15 @@ class EventDetailsFragment : DetailsSupportFragment() {
     private inner class DetailActionClickedListener : OnActionClickedListener {
         override fun onActionClicked(action: Action) {
             Log.d(TAG, "OnActionClicked")
-            when(action.id) {
+            when (action.id) {
                 ACTION_ADD_WATCHLIST -> {
                     event?.guid?.let { detailsViewModel.createBookmark(it) }
                     val preferences = requireActivity().getSharedPreferences(getString(R.string.watchlist_preferences_key), Context.MODE_PRIVATE)
                     if (preferences.getBoolean(getString(R.string.watchlist_dialog_needed), true)) { // new item
                         showWatchlistInfoDialog(preferences)
-                    }}
-                ACTION_REMOVE_WATCHLIST -> {event?.guid?.let { detailsViewModel.removeBookmark(it) }}
-                ACTION_PLAY -> {play(action)}
+                    } }
+                ACTION_REMOVE_WATCHLIST -> { event?.guid?.let { detailsViewModel.removeBookmark(it) } }
+                ACTION_PLAY -> { play(action) }
                 ACTION_SELECT -> {
                     currentRecordings?.let {
                         AlertDialog.Builder(activity)
@@ -399,7 +398,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
                                 it.map { ChaosflixUtil.getStringForRecording(it) }.toTypedArray()
                             ) { _, i ->
                                 val selectedRecording = it[i]
-                                event?.let{event ->
+                                event?.let { event ->
                                     Toast.makeText(
                                         requireContext(),
                                         "TODO: play ${ChaosflixUtil.getStringForRecording(selectedRecording)}",
@@ -409,8 +408,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
                             }
                             .create()
                             .show()
-
-
                     }
                 }
             }
