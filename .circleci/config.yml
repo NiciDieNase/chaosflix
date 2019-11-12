@@ -15,7 +15,7 @@ jobs:
       only:
         - master
         - develop
-	- /feature\/.*/
+        - /feature\/.*/
     steps:
       - checkout
       - restore_cache:
