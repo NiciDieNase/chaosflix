@@ -60,6 +60,7 @@ import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.CardPresenter
 import de.nicidienase.chaosflix.leanback.DiffCallbacks
 import de.nicidienase.chaosflix.leanback.EventDetailsDescriptionPresenter
+import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
 import de.nicidienase.chaosflix.leanback.R
 import de.nicidienase.chaosflix.leanback.conferences.ConferencesActivity
 
@@ -126,6 +127,8 @@ class EventDetailsFragment : DetailsSupportFragment() {
         playerGlue.title = event?.title ?: room?.display
         playerGlue.subtitle = event?.subtitle ?: ""
         detailsBackgroundController.setupVideoPlayback(playerGlue)
+
+        onItemViewClickedListener = ItemViewClickedListener(this)
 
         when (eventType) {
             DetailsActivity.TYPE_RECORDING -> event?.let { onCreateRecording(it, rowsAdapter) }
@@ -237,7 +240,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
         }
     }
 
-    fun setThumb(thumbUrl: String, detailsOverview: DetailsOverviewRow) {
+    private fun setThumb(thumbUrl: String, detailsOverview: DetailsOverviewRow) {
         Glide.with(requireContext())
                 .asBitmap()
                 .load(thumbUrl)
