@@ -19,6 +19,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 
 class ChaosflixSeekDataProvider(
     val context: Context,
@@ -71,11 +72,13 @@ class ChaosflixSeekDataProvider(
                     dummyThumbnails[positions[i]] = dummyThumbnail
                 }
             }
+            yield()
             Log.d(TAG, "Added Dummy-Thumbs")
             for (i in positions.indices) {
                 if (!thumbnails.containsKey(positions[i])) {
                     val bitmap = createBitmapForIndex(i)
                     thumbnails[positions[i]] = bitmap
+                    yield()
                 }
             }
         }
