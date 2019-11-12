@@ -11,7 +11,6 @@
     <string name="play">Play</string>
     <string name="stop">Stop</string>
 
-
     <string name="video_error_media_load_timeout">Media loading timed out</string>
     <string name="video_error_server_inaccessible">Media server was not reachable</string>
     <string name="video_error_unknown_error">Failed to load video</string>
@@ -50,4 +49,7 @@
     <string name="import_favorites">Import Favorites</string>
     <string name="error_event_not_found">Event not found</string>
     <string name="privacy_policy">Chaosflix does not collect or transmit any personalized data.</string>
+    <string name="recomended">Recommended</string>
+    <string name="continue_watching">Continue Watching</string>
+    <string name="please_select_recording">Please select a recording</string>
 </resources>
