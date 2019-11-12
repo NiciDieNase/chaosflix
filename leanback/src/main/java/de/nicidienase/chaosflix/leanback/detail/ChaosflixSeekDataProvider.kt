@@ -72,25 +72,21 @@ class ChaosflixSeekDataProvider(
                     dummyThumbnails[positions[i]] = dummyThumbnail
                 }
             }
-            yield()
             Log.d(TAG, "Added Dummy-Thumbs")
-            for (i in positions.indices) {
-                if (!thumbnails.containsKey(positions[i])) {
-                    val bitmap = createBitmapForIndex(i)
-                    thumbnails[positions[i]] = bitmap
-                    yield()
+            yield()
+            if (PRELOAD_THUMBS) {
+                for (i in positions.indices) {
+                    if (!thumbnails.containsKey(positions[i])) {
+                        val bitmap = createBitmapForIndex(i)
+                        thumbnails[positions[i]] = bitmap
+                        yield()
+                    }
                 }
             }
         }
     }
 
-    override fun getThumbnail(index: Int, callback: ResultCallback?) =
-            getThumbFromVideo(index, callback)
-
-    private fun getThumbFromVideo(
-        index: Int,
-        callback: ResultCallback?
-    ) {
+    override fun getThumbnail(index: Int, callback: ResultCallback?) {
         when {
             thumbnails.contains(positions[index]) -> {
                 Log.d(TAG, "Thumbnail match ($index/${positions.size})")
@@ -192,6 +188,7 @@ class ChaosflixSeekDataProvider(
 
         private const val THUMB_WIDTH = 480
         private const val THUMB_HEIGHT = 270
+        private const val PRELOAD_THUMBS = false
 
         fun setSeekProvider(
             glue: ChaosMediaPlayerGlue,
