@@ -34,12 +34,12 @@ class ApiFactory private constructor(val res: Resources) {
             .create(RecordingService::class.java)
     }
 
-    val streamingApi: StreamingService by lazy { Retrofit.Builder()
+    val streamingApi: StreamingApi by lazy { Retrofit.Builder()
         .baseUrl(BuildConfig.STREAMING_API_BASE_URL)
         .client(client)
         .addConverterFactory(gsonConverterFactory)
         .build()
-        .create(StreamingService::class.java) }
+        .create(StreamingApi::class.java) }
 
     private val useragentInterceptor: Interceptor = Interceptor { chain ->
         val requestWithUseragent = chain.request().newBuilder()

@@ -86,7 +86,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
-        disableAnalytics.setOnPreferenceChangeListener { preference, state ->
+        disableAnalytics.setOnPreferenceChangeListener { _, state ->
             when (state) {
                 true -> {
                     viewModel.stopAnalytics()

@@ -13,7 +13,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
-import de.nicidienase.chaosflix.common.mediadata.network.StreamingService
+import de.nicidienase.chaosflix.common.mediadata.network.StreamingApi
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.util.LiveDataMerger
@@ -27,7 +27,7 @@ class BrowseViewModel(
     val offlineItemManager: OfflineItemManager,
     val database: ChaosflixDatabase,
     recordingApi: RecordingService,
-    val streamingApi: StreamingService,
+    val streamingApi: StreamingApi,
     val preferencesManager: PreferencesManager,
     private val resources: ResourcesFacade
 ) : ViewModel() {

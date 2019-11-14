@@ -5,7 +5,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConferen
 import retrofit2.Call
 import retrofit2.http.GET
 
-interface StreamingService {
+interface StreamingApi {
 
     @GET(BuildConfig.STREAMING_API_OFFERS_PATH)
     fun getStreamingConferences(): Call<List<LiveConference>>
