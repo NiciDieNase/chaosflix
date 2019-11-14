@@ -11,12 +11,13 @@ import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.database.sqlite.SQLiteConstraintException
-import androidx.databinding.ObservableField
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Environment
 import android.preference.PreferenceManager
 import androidx.core.content.ContextCompat
 import android.util.Log
+import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
@@ -69,26 +70,18 @@ class OfflineItemManager(
                 val bytesTotalIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)
                 val bytesTotal = cursor.getInt(bytesTotalIndex)
 
-                val statusText: String =
+                val statusIconRes: Int =
                         when (status) {
-                            DownloadManager.STATUS_RUNNING -> "Running"
-                            DownloadManager.STATUS_FAILED -> "Failed"
-                            DownloadManager.STATUS_PAUSED -> "Paused"
-                            DownloadManager.STATUS_SUCCESSFUL -> "Successful"
-                            DownloadManager.STATUS_PENDING -> "Pending"
-                            else -> "UNKNOWN"
+                            DownloadManager.STATUS_RUNNING -> R.drawable.ic_download
+                            DownloadManager.STATUS_FAILED -> R.drawable.ic_error
+                            DownloadManager.STATUS_PAUSED -> R.drawable.ic_paused
+                            DownloadManager.STATUS_SUCCESSFUL -> R.drawable.ic_done
+                            DownloadManager.STATUS_PENDING -> R.drawable.ic_download
+                            else -> R.drawable.ic_error
                         }
-                if (downloadStatus.containsKey(id)) {
-                    val item = downloadStatus[id]
-                    item?.statusText?.set(statusText)
-                    item?.currentBytes?.set(bytesSoFar)
-                    item?.totalBytes?.set(bytesTotal)
-                    item?.status = status
-                } else {
-                    downloadStatus.put(
-                            id,
-                            DownloadStatus(statusText, bytesSoFar, bytesTotal, status))
-                }
+                val statusIcon = applicationContext.resources.getDrawable(statusIconRes, null)
+
+                downloadStatus[id] = DownloadStatus(status, statusIcon, bytesSoFar, bytesTotal)
             } while (cursor.moveToNext())
         }
     }
@@ -163,21 +156,11 @@ class OfflineItemManager(
     }
 
     inner class DownloadStatus(
-        statusText: String = "",
-        currentBytes: Int = 0,
-        totalBytes: Int = 0,
-        var status: Int = DownloadManager.STATUS_FAILED
-    ) {
-        val statusText: ObservableField<String> = ObservableField()
-        val currentBytes: ObservableField<Int> = ObservableField()
-        val totalBytes: ObservableField<Int> = ObservableField()
-
-        init {
-            this.statusText.set(statusText)
-            this.currentBytes.set(currentBytes)
-            this.totalBytes.set(totalBytes)
-        }
-    }
+        val status: Int = DownloadManager.STATUS_PENDING,
+        val statusIcon: Drawable = applicationContext.resources.getDrawable(R.drawable.ic_download, null),
+        val currentBytes: Int = 0,
+        val totalBytes: Int = 0
+    )
 
     class DownloadCancelHandler(
         val context: Context,

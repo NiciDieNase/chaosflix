@@ -19,7 +19,6 @@
 				app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 		</FrameLayout>
-		<!--</android.support.design.widget.CoordinatorLayout>-->
 
 		<com.google.android.material.navigation.NavigationView
 			android:id="@+id/navigation_view"
