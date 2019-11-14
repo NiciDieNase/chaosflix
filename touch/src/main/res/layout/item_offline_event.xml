@@ -15,7 +15,7 @@
             type="de.nicidienase.chaosflix.common.OfflineItemManager.DownloadStatus"/>
     </data>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -29,87 +29,101 @@
             android:foreground="?android:attr/selectableItemBackground"
             android:padding="8dp">
 
-            <LinearLayout
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="8dp"
-                android:orientation="vertical">
+                android:layout_margin="8dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
 
-                    <ImageView
-                        android:id="@+id/imageView"
-                        android:layout_width="@dimen/thumbnail_width"
-                        android:layout_height="@dimen/thumbnail_height"
-                        android:scaleType="fitCenter"/>
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="@dimen/thumbnail_width"
+                    android:layout_height="@dimen/thumbnail_height"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintEnd_toStartOf="@+id/title_text"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                    <LinearLayout
-                        android:id="@+id/content"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:gravity="right"
-                        android:orientation="vertical">
+                <TextView
+                    android:id="@+id/title_text"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="@{item.title}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    app:layout_constraintEnd_toStartOf="@+id/button_delete"
+                    app:layout_constraintStart_toEndOf="@+id/imageView"
+                    app:layout_constraintTop_toTopOf="@+id/imageView"
+                    tools:text="Titles can be longer to, but we won't fit more than two lines" />
 
-                        <TextView
-                            android:id="@+id/title_text"
-                            style="@style/TextAppearance.AppCompat.Medium"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_weight="1"
-                            android:text="@{item.title}"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            tools:text="Title"/>
+                <TextView
+                    android:id="@+id/subtitle_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@{item.subtitle}"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                    app:layout_constraintBottom_toTopOf="@+id/download_progress_bar"
+                    app:layout_constraintEnd_toEndOf="@+id/title_text"
+                    app:layout_constraintStart_toStartOf="@+id/title_text"
+                    app:layout_constraintTop_toBottomOf="@+id/title_text"
+                    app:layout_constraintVertical_bias="0.0"
+                    android:maxLines="3"
+                    android:ellipsize="end"
+                    tools:text="Subtitles could be very long and span multiple lines, the rest of the layout should addapt accordingly" />
 
-                        <TextView
-                            android:id="@+id/subtitle_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@{item.subtitle}"
-                            android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-                            tools:text="Subtitle"/>
 
-                        <TextView
-                            android:id="@+id/tag_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="bottom|end"
-                            android:paddingEnd="8dp"
-                            android:text="@{downloadStatus.statusText}"
-                            tools:text="Tag"/>
+                <TextView
+                    android:id="@+id/tag_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="bottom|end"
+                    android:paddingEnd="8dp"
+                    android:text="@{downloadStatus.statusText}"
+                    app:layout_constraintBottom_toTopOf="@+id/download_progress_bar"
+                    app:layout_constraintEnd_toEndOf="@+id/button_delete"
+                    app:layout_constraintStart_toStartOf="@+id/button_delete"
+                    app:layout_constraintTop_toBottomOf="@+id/button_delete"
+                    tools:text="Tag" />
 
-                    </LinearLayout>
-
-                    <ImageButton
-                        android:id="@+id/button_delete"
-                        android:layout_width="@dimen/del_button_size"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/button_rect_normal"
-                        android:contentDescription="@string/delete_item"
-                        app:srcCompat="@drawable/ic_delete_dark"/>
-                </LinearLayout>
+                <ImageButton
+                    android:id="@+id/button_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/button_rect_normal"
+                    android:contentDescription="@string/delete_item"
+                    android:padding="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_delete_dark" />
 
                 <ProgressBar
                     android:id="@+id/download_progress_bar"
                     style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_gravity="bottom"
-                    android:layout_marginTop="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:max="@{safeUnbox(downloadStatus.totalBytes)}"
-                    android:progress="@{safeUnbox(downloadStatus.currentBytes)}"/>
+                    android:progress="@{safeUnbox(downloadStatus.currentBytes)}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-            </LinearLayout>
+            </android.support.constraint.ConstraintLayout>
 
         </android.support.v7.widget.CardView>
 
-    </LinearLayout>
+    </FrameLayout>
 </layout>
