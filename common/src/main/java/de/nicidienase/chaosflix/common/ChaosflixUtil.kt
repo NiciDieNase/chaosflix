@@ -28,9 +28,8 @@ object ChaosflixUtil {
         }
     }
 
-
-    private fun getRecordingForGroup(group: List<Recording>?, language: String): Recording{
-        if(group.isNullOrEmpty()){
+    private fun getRecordingForGroup(group: List<Recording>?, language: String): Recording {
+        if (group.isNullOrEmpty()) {
             error("Got empty or null list, this should not happen!")
         }
         return when {
@@ -45,7 +44,6 @@ object ChaosflixUtil {
                 }
             }
         }
-
     }
 
     private fun getOrderedRecordings(
