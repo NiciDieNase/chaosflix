@@ -43,14 +43,14 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
     var errorFragment: BrowseErrorFragment? = null
     private lateinit var viewModel: BrowseViewModel
 
-    val conferencePresenter = CardPresenter(R.style.ConferenceCardStyle)
-    val eventPresenter = CardPresenter(R.style.EventCardStyle)
+    private val conferencePresenter = CardPresenter(R.style.ConferenceCardStyle)
+    private val eventPresenter = CardPresenter(R.style.EventCardStyle)
 
     private val conferencesGroupRows = HashMap<String, ListRow>()
 
     private enum class Section {
         Streaming,
-        Recomendations,
+        Recommendations,
         Conferences
     }
 
@@ -157,7 +157,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 
     private fun updateSectionRecomendations() =
             updateSection(
-                    Section.Recomendations,
+                    Section.Recommendations,
                     { listOf(
                         promotedRow,
                         watchlistRow // ,
@@ -172,7 +172,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 
     private fun updateConferencesSection(rows: List<Row>) {
         if (! rows.map { rowsAdapter.indexOf(it) }.contains(-1)) {
-            Log.i(TAG, "skipping conf-section update, all rows allready contained")
+            Log.i(TAG, "skipping conf-section update, all rows already contained")
             return
         }
         clearSection(Section.Conferences)
@@ -184,7 +184,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
     private fun updateSection(section: Section, rowProvider: () -> List<Row>, before: Row) {
         val rows = rowProvider.invoke()
         if (!rows.map { rowsAdapter.indexOf(it) }.contains(-1)) {
-            Log.i(TAG, "skipping adding section, all rows allready contained")
+            Log.i(TAG, "skipping adding section, all rows already contained")
             return
         }
         if (rows.isNotEmpty()) {
@@ -210,7 +210,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
                 rowsAdapter.add(0, streamingSection)
                 rowsAdapter.notifyArrayItemRangeChanged(0, 2)
             }
-            Section.Recomendations -> {
+            Section.Recommendations -> {
                 val index = rowsAdapter.indexOf(conferencesSection)
                 rowsAdapter.add(index, recomendationsDivider)
                 rowsAdapter.add(index, recomendationsSections)
@@ -238,7 +238,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
             Section.Streaming -> {
                 Pair(rowsAdapter.indexOf(streamingSection), rowsAdapter.indexOf(streamsDivider))
             }
-            Section.Recomendations -> {
+            Section.Recommendations -> {
                 Pair(rowsAdapter.indexOf(recomendationsSections), rowsAdapter.indexOf(recomendationsDivider))
             }
             Section.Conferences -> {
@@ -250,7 +250,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
     private fun sectionVisible(section: Section): Boolean {
         val index = when (section) {
             Section.Streaming -> rowsAdapter.indexOf(streamingSection)
-            Section.Recomendations -> rowsAdapter.indexOf(recomendationsSections)
+            Section.Recommendations -> rowsAdapter.indexOf(recomendationsSections)
             Section.Conferences -> rowsAdapter.indexOf(conferencesSection)
         }
         return index != -1

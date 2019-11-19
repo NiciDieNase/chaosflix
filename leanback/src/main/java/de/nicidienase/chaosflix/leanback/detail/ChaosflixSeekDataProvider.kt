@@ -102,10 +102,10 @@ class ChaosflixSeekDataProvider(
                 }
             }
             else -> scope.launch {
-                val thumb = createDummyThumbnail(index)
-                dummyThumbnails[positions[index]] = thumb
+                val dummyThumb = createDummyThumbnail(index)
+                dummyThumbnails[positions[index]] = dummyThumb
                 withContext(Dispatchers.Main) {
-                    callback?.onThumbnailLoaded(thumb, index)
+                    callback?.onThumbnailLoaded(dummyThumb, index)
                 }
                 scope.launch {
                     val thumb = createBitmapForIndex(index)
