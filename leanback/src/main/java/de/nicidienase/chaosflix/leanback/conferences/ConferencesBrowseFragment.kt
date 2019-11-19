@@ -158,7 +158,11 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
     private fun updateSectionRecomendations() =
             updateSection(
                     Section.Recomendations,
-                    { listOf(promotedRow, watchlistRow, inProgressRow).filter { it.adapter.size() > 0 } },
+                    { listOf(
+                        promotedRow,
+                        watchlistRow // ,
+//                        inProgressRow
+                    ).filter { it.adapter.size() > 0 } },
                     recomendationsDivider)
 
     private fun updateStreams(streamRows: List<Row>) = updateSection(
