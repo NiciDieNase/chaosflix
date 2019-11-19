@@ -32,7 +32,7 @@ class ChaosflixSeekDataProvider(
     private var canceled = true
     private var generateThumbsJob: Job? = null
 
-    private val mediaMetadataRetriever = MediaMetadataRetriever()
+    private var mediaMetadataRetriever = MediaMetadataRetriever()
 
     private val thumbnails: MutableMap<Long, Bitmap> = mutableMapOf()
     private val dummyThumbnails: MutableMap<Long, Bitmap> = mutableMapOf()
@@ -58,6 +58,7 @@ class ChaosflixSeekDataProvider(
 
     override fun getSeekPositions(): LongArray {
         if (canceled) {
+            mediaMetadataRetriever = MediaMetadataRetriever()
             mediaMetadataRetriever.setDataSource(url, mapOf("User-Agent" to ApiFactory.buildUserAgent()))
             generateThumbs()
         }
