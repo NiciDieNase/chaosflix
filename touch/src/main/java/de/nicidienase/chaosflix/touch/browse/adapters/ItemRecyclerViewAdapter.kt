@@ -1,12 +1,12 @@
 package de.nicidienase.chaosflix.touch.browse.adapters
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.widget.Filter
 import android.widget.Filterable
 import java.util.Collections
 
-abstract class ItemRecyclerViewAdapter<T, VH : RecyclerView.ViewHolder?>() :
-    RecyclerView.Adapter<VH>(), Filterable {
+abstract class ItemRecyclerViewAdapter<T, VH : androidx.recyclerview.widget.RecyclerView.ViewHolder?>() :
+    androidx.recyclerview.widget.RecyclerView.Adapter<VH>(), Filterable {
 
     abstract fun getComparator(): Comparator<in T>?
 

@@ -1,14 +1,14 @@
 package de.nicidienase.chaosflix.leanback;
 
 import android.os.Bundle;
-import android.support.v17.leanback.widget.ImageCardView;
-import android.support.v17.leanback.widget.OnItemViewClickedListener;
-import android.support.v17.leanback.widget.Presenter;
-import android.support.v17.leanback.widget.Row;
-import android.support.v17.leanback.widget.RowPresenter;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import androidx.leanback.widget.ImageCardView;
+import androidx.leanback.widget.OnItemViewClickedListener;
+import androidx.leanback.widget.Presenter;
+import androidx.leanback.widget.Row;
+import androidx.leanback.widget.RowPresenter;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import android.util.Log;
 
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference;

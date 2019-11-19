@@ -1,15 +1,15 @@
 package de.nicidienase.chaosflix.touch.browse
 
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import android.view.View
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 
-open class BrowseFragment : Fragment() {
+open class BrowseFragment : androidx.fragment.app.Fragment() {
 
     lateinit var viewModel: BrowseViewModel
     var overlay: View? = null

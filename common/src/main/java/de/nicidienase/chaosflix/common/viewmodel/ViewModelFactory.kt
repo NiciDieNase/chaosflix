@@ -1,7 +1,7 @@
 package de.nicidienase.chaosflix.common.viewmodel
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import android.content.Context
 import android.os.Environment
 import android.preference.PreferenceManager

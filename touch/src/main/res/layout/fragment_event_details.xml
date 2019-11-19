@@ -12,12 +12,12 @@
 			type="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event"/>
 	</data>
 
-	<android.support.design.widget.CoordinatorLayout
+	<androidx.coordinatorlayout.widget.CoordinatorLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:fitsSystemWindows="true">
 
-		<android.support.design.widget.AppBarLayout
+		<com.google.android.material.appbar.AppBarLayout
 			android:id="@+id/appbar"
 			android:layout_width="match_parent"
 			android:layout_height="@dimen/appbar_header_height"
@@ -55,7 +55,7 @@
 					android:layout_gravity="bottom"
 					android:background="@drawable/scrim"/>
 
-				<android.support.v7.widget.Toolbar
+				<androidx.appcompat.widget.Toolbar
 					android:id="@+id/anim_toolbar"
 					android:layout_width="match_parent"
 					android:layout_height="?attr/actionBarSize"
@@ -68,9 +68,9 @@
 
 			</net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout>
 
-		</android.support.design.widget.AppBarLayout>
+		</com.google.android.material.appbar.AppBarLayout>
 
-		<android.support.v4.widget.NestedScrollView
+		<androidx.core.widget.NestedScrollView
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -125,7 +125,7 @@
 					android:text="@string/related_events"
 					android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"/>
 
-				<android.support.v7.widget.RecyclerView
+				<androidx.recyclerview.widget.RecyclerView
 					android:id="@+id/related_items_list"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
@@ -133,9 +133,9 @@
 					tools:listitem="@layout/related_event_cardview_layout"/>
 
 			</LinearLayout>
-		</android.support.v4.widget.NestedScrollView>
+		</androidx.core.widget.NestedScrollView>
 
-		<android.support.design.widget.FloatingActionButton
+		<com.google.android.material.floatingactionbutton.FloatingActionButton
 			android:id="@+id/play_fab"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -149,6 +149,6 @@
 			app:layout_anchorGravity="bottom|right|end"
 			android:focusable="true"/>
 
-	</android.support.design.widget.CoordinatorLayout>
+	</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>

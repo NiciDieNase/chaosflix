@@ -1,10 +1,10 @@
 package de.nicidienase.chaosflix.touch.browse.download
 
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import android.os.Bundle
 import android.os.Handler
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,9 +34,10 @@ class DownloadsListFragment : BrowseFragment() {
             }
             list.adapter = offlineEventAdapter
             if (columnCount <= 1) {
-                list.layoutManager = LinearLayoutManager(context)
+                list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
             } else {
-                list.layoutManager = GridLayoutManager(context, columnCount - 1)
+                list.layoutManager =
+                    androidx.recyclerview.widget.GridLayoutManager(context, columnCount - 1)
             }
             viewModel.getOfflineDisplayEvents().observe(this@DownloadsListFragment, Observer {
                 if (it != null) {

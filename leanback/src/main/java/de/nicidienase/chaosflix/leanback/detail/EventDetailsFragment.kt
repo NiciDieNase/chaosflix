@@ -1,8 +1,8 @@
 package de.nicidienase.chaosflix.leanback.detail
 
 import android.app.AlertDialog
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -12,19 +12,19 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.support.v17.leanback.app.DetailsSupportFragment
-import android.support.v17.leanback.app.DetailsSupportFragmentBackgroundController
-import android.support.v17.leanback.widget.Action
-import android.support.v17.leanback.widget.ArrayObjectAdapter
-import android.support.v17.leanback.widget.ClassPresenterSelector
-import android.support.v17.leanback.widget.DetailsOverviewRow
-import android.support.v17.leanback.widget.FullWidthDetailsOverviewRowPresenter
-import android.support.v17.leanback.widget.FullWidthDetailsOverviewSharedElementHelper
-import android.support.v17.leanback.widget.HeaderItem
-import android.support.v17.leanback.widget.ListRow
-import android.support.v17.leanback.widget.ListRowPresenter
-import android.support.v17.leanback.widget.OnActionClickedListener
-import android.support.v4.content.ContextCompat
+import androidx.leanback.app.DetailsSupportFragment
+import androidx.leanback.app.DetailsSupportFragmentBackgroundController
+import androidx.leanback.widget.Action
+import androidx.leanback.widget.ArrayObjectAdapter
+import androidx.leanback.widget.ClassPresenterSelector
+import androidx.leanback.widget.DetailsOverviewRow
+import androidx.leanback.widget.FullWidthDetailsOverviewRowPresenter
+import androidx.leanback.widget.FullWidthDetailsOverviewSharedElementHelper
+import androidx.leanback.widget.HeaderItem
+import androidx.leanback.widget.ListRow
+import androidx.leanback.widget.ListRowPresenter
+import androidx.leanback.widget.OnActionClickedListener
+import androidx.core.content.ContextCompat
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -52,6 +52,7 @@ import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.Util
 import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
@@ -63,14 +64,21 @@ import de.nicidienase.chaosflix.leanback.EventDetailsDescriptionPresenter
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
 import de.nicidienase.chaosflix.leanback.R
 import de.nicidienase.chaosflix.leanback.conferences.ConferencesActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class EventDetailsFragment : DetailsSupportFragment() {
+
+    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     private lateinit var detailsViewModel: DetailsViewModel
     private lateinit var playerViewModel: PlayerViewModel
 
     private var event: Event? = null
     private var room: Room? = null
+
+    private var currentRecordings: List<Recording>? = null
 
     private lateinit var rowsAdapter: ArrayObjectAdapter
 
@@ -80,9 +88,9 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
     private val playerDelegate = lazy {
         ExoPlayerFactory.newSimpleInstance(
-                activity,
-                DefaultTrackSelector(
-                        AdaptiveTrackSelection.Factory()))
+            activity,
+            DefaultTrackSelector(
+                AdaptiveTrackSelection.Factory()))
     }
     private val player: SimpleExoPlayer by playerDelegate
     private lateinit var playerAdapter: LeanbackPlayerAdapter
@@ -108,11 +116,11 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
         val selector = ClassPresenterSelector()
         val detailsPresenter = FullWidthDetailsOverviewRowPresenter(
-                EventDetailsDescriptionPresenter(requireContext()))
+            EventDetailsDescriptionPresenter(requireContext()))
 
         val helper = FullWidthDetailsOverviewSharedElementHelper()
         helper.setSharedElementEnterTransition(activity,
-                DetailsActivity.SHARED_ELEMENT_NAME)
+            DetailsActivity.SHARED_ELEMENT_NAME)
         detailsPresenter.setListener(helper)
         prepareEntranceTransition()
 
@@ -143,9 +151,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
         val detailsOverview = DetailsOverviewRow(event)
         val actionAdapter = ArrayObjectAdapter()
-        val playAction = Action(ACTION_PLAY, "Play")
-        actionAdapter.add(playAction)
-
+        actionAdapter.add(Action(ACTION_PLAY, "Play"))
         val watchlistAction = Action(ACTION_ADD_WATCHLIST, getString(R.string.add_to_watchlist))
         actionAdapter.add(watchlistAction)
         event.guid.let {
@@ -171,18 +177,9 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
         detailsViewModel.getRecordingForEvent(event).observe(this, Observer { recordings ->
             if (recordings != null && !recordings.isEmpty()) {
-                val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
-                optimalRecording?.recordingUrl?.let {
-                    preparePlayer(it, event.guid)
-                } ?: Log.d(TAG, "no optimal recording found")
-                ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl?.let {
-                    ChaosflixSeekDataProvider.setSeekProvider(
-                        playerGlue,
-                        requireContext(),
-                        event.length,
-                        it
-                    )
-                } ?: Log.d(TAG, "no recording for thumbs found")
+                onNewRecordings(event, recordings)
+            } else {
+                Log.d(TAG, "no recording for thumbs found")
             }
         })
 
@@ -194,6 +191,36 @@ class EventDetailsFragment : DetailsSupportFragment() {
             }
             relatedEventsAdapter?.setItems(events, DiffCallbacks.eventDiffCallback)
         })
+    }
+
+    private fun onNewRecordings(event: Event, recordings: List<Recording>) {
+        if (currentRecordings.isNullOrEmpty()) {
+            preparePlayer(recordings, event)
+            prepareSeekProvider(recordings, event)
+        }
+        currentRecordings = recordings
+    }
+
+    private fun prepareSeekProvider(
+        recordings: List<Recording>,
+        event: Event
+    ) {
+        ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl?.let {
+            ChaosflixSeekDataProvider.setSeekProvider(
+                playerGlue,
+                requireContext(),
+                event.length,
+                it
+            )
+        }
+    }
+
+    private fun preparePlayer(
+        recordings: List<Recording>,
+        event: Event
+    ) {
+        val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
+        preparePlayer(optimalRecording.recordingUrl)
     }
 
     fun play(action: Action?) {
@@ -242,17 +269,17 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
     private fun setThumb(thumbUrl: String, detailsOverview: DetailsOverviewRow) {
         Glide.with(requireContext())
-                .asBitmap()
-                .load(thumbUrl)
-                .into(object : SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH, DETAIL_THUMB_HEIGHT) {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        detailsOverview.setImageBitmap(requireContext(), resource)
-                    }
+            .asBitmap()
+            .load(thumbUrl)
+            .into(object : SimpleTarget<Bitmap>(DETAIL_THUMB_WIDTH, DETAIL_THUMB_HEIGHT) {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    detailsOverview.setImageBitmap(requireContext(), resource)
+                }
 
-                    override fun onLoadFailed(errorDrawable: Drawable?) {
-                        detailsOverview.setImageDrawable(ContextCompat.getDrawable(requireContext(), DEFAULT_DRAWABLE))
-                    }
-                })
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    detailsOverview.setImageDrawable(ContextCompat.getDrawable(requireContext(), DEFAULT_DRAWABLE))
+                }
+            })
     }
 
     private fun initializeBackgroundWithImage(url: String) {
@@ -260,24 +287,22 @@ class EventDetailsFragment : DetailsSupportFragment() {
         val options = RequestOptions()
             .fallback(R.drawable.default_background)
         Glide.with(requireContext())
-                .asBitmap()
-                .load(url)
-                .apply(options)
-                .into(object : SimpleTarget<Bitmap>() {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        detailsBackgroundController.coverBitmap = resource
-                    }
-                })
+            .asBitmap()
+            .load(url)
+            .apply(options)
+            .into(object : SimpleTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    detailsBackgroundController.coverBitmap = resource
+                }
+            })
     }
 
     private fun loadPlaybackProgress(eventGuid: String? = null) {
         if (eventGuid != null) {
-            playerViewModel.getPlaybackProgress(eventGuid)
-                    .observe(this@EventDetailsFragment, Observer { progress ->
-                        progress?.let {
-                            playerAdapter.seekTo(it.progress)
-                        }
-                    })
+            uiScope.launch {
+                val playbackProgress = playerViewModel.getPlaybackProgress(eventGuid)
+                playbackProgress?.progress?.let { playerAdapter.seekTo(it) }
+            }
         }
     }
 
@@ -298,13 +323,13 @@ class EventDetailsFragment : DetailsSupportFragment() {
             Util.inferContentType(".$overrideExtension")
         when (type) {
             C.TYPE_DASH -> return DashMediaSource.Factory(
-                    DefaultDashChunkSource.Factory(mediaDataSourceFactory),
-                    buildDataSourceFactory())
-                    .createMediaSource(uri)
+                DefaultDashChunkSource.Factory(mediaDataSourceFactory),
+                buildDataSourceFactory())
+                .createMediaSource(uri)
             C.TYPE_HLS -> return HlsMediaSource.Factory(buildDataSourceFactory())
-                    .createMediaSource(uri)
+                .createMediaSource(uri)
             C.TYPE_SS, C.TYPE_OTHER -> return ExtractorMediaSource.Factory(mediaDataSourceFactory)
-                    .createMediaSource(uri)
+                .createMediaSource(uri)
             else -> {
                 throw IllegalStateException("Unsupported type: $type")
             }
@@ -317,16 +342,16 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
     private fun buildDataSourceFactory(bandwidthMeter: DefaultBandwidthMeter?): DataSource.Factory {
         return DefaultDataSourceFactory(requireContext(), bandwidthMeter,
-                buildHttpDataSourceFactory(bandwidthMeter))
+            buildHttpDataSourceFactory(bandwidthMeter))
     }
 
     private fun buildHttpDataSourceFactory(bandwidthMeter: DefaultBandwidthMeter?): HttpDataSource.Factory {
         return DefaultHttpDataSourceFactory(
-                ApiFactory.buildUserAgent(),
-                bandwidthMeter,
-                DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
-                DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
-                true /* allowCrossProtocolRedirects */)
+            ApiFactory.buildUserAgent(),
+            bandwidthMeter,
+            DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+            DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
+            true /* allowCrossProtocolRedirects */)
     }
 
     companion object {
@@ -342,26 +367,25 @@ class EventDetailsFragment : DetailsSupportFragment() {
         val DEFAULT_DRAWABLE = R.drawable.default_background
 
         @JvmStatic
-        private val ACTION_PLAY: Long = 0
+        private val ACTION_PLAY: Long = 0L
         @JvmStatic
-        private val ACTION_ADD_WATCHLIST: Long = 1
+        private val ACTION_ADD_WATCHLIST = 1L
         @JvmStatic
-        private val ACTION_REMOVE_WATCHLIST: Long = 2
+        private val ACTION_REMOVE_WATCHLIST = 2L
     }
 
     private inner class DetailActionClickedListener : OnActionClickedListener {
         override fun onActionClicked(action: Action) {
             Log.d(TAG, "OnActionClicked")
-            if (action.id == ACTION_ADD_WATCHLIST) {
-                event?.guid?.let { detailsViewModel.createBookmark(it) }
-                val preferences = requireActivity().getSharedPreferences(getString(R.string.watchlist_preferences_key), Context.MODE_PRIVATE)
-                if (preferences.getBoolean(getString(R.string.watchlist_dialog_needed), true)) { // new item
-                    showWatchlistInfoDialog(preferences)
-                }
-            } else if (action.id == ACTION_REMOVE_WATCHLIST) {
-                event?.guid?.let { detailsViewModel.removeBookmark(it) }
-            } else if (action.id == ACTION_PLAY) {
-                play(action)
+            when (action.id) {
+                ACTION_ADD_WATCHLIST -> {
+                    event?.guid?.let { detailsViewModel.createBookmark(it) }
+                    val preferences = requireActivity().getSharedPreferences(getString(R.string.watchlist_preferences_key), Context.MODE_PRIVATE)
+                    if (preferences.getBoolean(getString(R.string.watchlist_dialog_needed), true)) { // new item
+                        showWatchlistInfoDialog(preferences)
+                    } }
+                ACTION_REMOVE_WATCHLIST -> { event?.guid?.let { detailsViewModel.removeBookmark(it) } }
+                ACTION_PLAY -> { play(action) }
             }
         }
 
@@ -372,7 +396,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
                 val i = Intent(activity, ConferencesActivity::class.java)
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(i)
-                // 						getActivity().finish();
             }
             builder.setPositiveButton("OK") { _, _ -> }
             val edit = preferences.edit()

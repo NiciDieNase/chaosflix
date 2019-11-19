@@ -1,6 +1,6 @@
 package de.nicidienase.chaosflix.touch.browse.streaming
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,7 +9,7 @@ import com.bumptech.glide.request.RequestOptions
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.touch.databinding.ItemLiveeventCardviewBinding
 
-class LivestreamAdapter(val listener: LivestreamListFragment.InteractionListener, liveConferences: List<LiveConference> = emptyList()) : RecyclerView.Adapter<LivestreamAdapter.ViewHolder>() {
+class LivestreamAdapter(val listener: LivestreamListFragment.InteractionListener, liveConferences: List<LiveConference> = emptyList()) : androidx.recyclerview.widget.RecyclerView.Adapter<LivestreamAdapter.ViewHolder>() {
 
     lateinit var items: MutableList<StreamingItem>
 
@@ -58,5 +58,5 @@ class LivestreamAdapter(val listener: LivestreamListFragment.InteractionListener
         holder.binding.root.setOnClickListener { listener.onStreamSelected(item) }
     }
 
-    inner class ViewHolder(val binding: ItemLiveeventCardviewBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val binding: ItemLiveeventCardviewBinding) : androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root)
 }

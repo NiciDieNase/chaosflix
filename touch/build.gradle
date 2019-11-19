@@ -109,7 +109,7 @@ android {
     }
 
     defaultConfig {
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     lintOptions {
@@ -139,14 +139,14 @@ dependencies {
         transitive = true
     }
     implementation 'com.github.medyo:android-about-page:1.2.2'
-    implementation "com.android.support:support-v4:${rootProject.ext.supportLibraryVersion}"
-    implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
-    implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
-    implementation "com.android.support.constraint:constraint-layout:${rootProject.ext.constraintLayoutVersion}"
-    implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
-    implementation "com.android.support:preference-v14:${rootProject.ext.supportLibraryVersion}"
-    implementation "com.android.support:mediarouter-v7:${rootProject.ext.supportLibraryVersion}"
-    noFreeImplementation 'com.google.android.gms:play-services-cast-framework:16.2.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
+    implementation 'androidx.mediarouter:mediarouter:1.1.0'
+    noFreeImplementation 'com.google.android.gms:play-services-cast-framework:17.1.0'
     noFreeImplementation('pl.droidsonroids:casty:1.0.8') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
     }
@@ -159,15 +159,15 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.11.0'
     testImplementation 'org.robolectric:robolectric:4.1'
-    androidTestImplementation('com.android.support.test:rules:0.5') {
+    androidTestImplementation('androidx.test:rules:1.1.1') {
         exclude module: 'support-annotations'
     }
-    androidTestImplementation('com.android.support.test:runner:0.5') {
+    androidTestImplementation('androidx.test.ext:junit:1.1.1') {
         exclude module: 'support-annotations'
     }
-    androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.3'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
     androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 }

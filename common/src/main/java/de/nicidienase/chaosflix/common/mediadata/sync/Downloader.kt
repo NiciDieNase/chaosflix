@@ -1,6 +1,6 @@
 package de.nicidienase.chaosflix.common.mediadata.sync
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferenceDto
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper

@@ -1,7 +1,7 @@
 package de.nicidienase.chaosflix.touch.browse.download
 
-import android.databinding.DataBindingUtil
-import android.support.v7.widget.RecyclerView
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +17,7 @@ class OfflineEventAdapter(
     private val eventDeleteListener: (String) -> Unit,
     private val eventSelectedListener: (String) -> Unit
 ) :
-        RecyclerView.Adapter<OfflineEventAdapter.ViewHolder>() {
+        androidx.recyclerview.widget.RecyclerView.Adapter<OfflineEventAdapter.ViewHolder>() {
 
     var items: List<OfflineEventView> = emptyList()
         set(value) {
@@ -55,7 +55,7 @@ class OfflineEventAdapter(
         return ViewHolder(binding, binding.root)
     }
 
-    inner class ViewHolder(val binding: ItemOfflineEventBinding, val view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(val binding: ItemOfflineEventBinding, val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
         val thumbnail = binding.imageView
     }
 }

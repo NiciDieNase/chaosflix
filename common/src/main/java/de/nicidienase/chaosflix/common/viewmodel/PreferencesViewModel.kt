@@ -1,7 +1,7 @@
 package de.nicidienase.chaosflix.common.viewmodel
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import android.util.Log
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.common.AnalyticsWrapper

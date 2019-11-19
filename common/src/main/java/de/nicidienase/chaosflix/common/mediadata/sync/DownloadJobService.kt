@@ -1,7 +1,7 @@
 package de.nicidienase.chaosflix.common.mediadata.sync
 
 import android.content.Intent
-import android.support.v4.app.JobIntentService
+import androidx.core.app.JobIntentService
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event

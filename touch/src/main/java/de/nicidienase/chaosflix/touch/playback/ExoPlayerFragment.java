@@ -1,19 +1,18 @@
 package de.nicidienase.chaosflix.touch.playback;
 
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -145,7 +144,8 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 		}
 		if (exoPlayer != null) {
 			exoPlayer.setPlayWhenReady(playbackState);
-			viewModel.getPlaybackProgress(item.getEventGuid()).observe(this, playbackProgress -> {
+
+			viewModel.getPlaybackProgressLiveData(item.getEventGuid()).observe(this, playbackProgress -> {
 				if (playbackProgress != null) {
 					exoPlayer.seekTo(playbackProgress.getProgress());
 				}

@@ -2,8 +2,8 @@ package de.nicidienase.chaosflix.common
 
 import android.Manifest
 import android.app.DownloadManager
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -11,11 +11,11 @@ import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.database.sqlite.SQLiteConstraintException
-import android.databinding.ObservableField
+import androidx.databinding.ObservableField
 import android.net.Uri
 import android.os.Environment
 import android.preference.PreferenceManager
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.util.Log
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording

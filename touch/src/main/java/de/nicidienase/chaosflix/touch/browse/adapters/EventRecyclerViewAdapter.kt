@@ -1,7 +1,7 @@
 package de.nicidienase.chaosflix.touch.browse.adapters
 
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.RecyclerView
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
@@ -43,5 +43,5 @@ open class EventRecyclerViewAdapter(val listener: (Event) -> Unit) :
         ViewCompat.setTransitionName(holder.binding.imageView, "thumb_${event.guid}")
     }
 
-    inner class ViewHolder(val binding: ItemEventCardviewBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val binding: ItemEventCardviewBinding) : androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root)
 }

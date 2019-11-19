@@ -1,6 +1,6 @@
 package de.nicidienase.chaosflix.leanback
 
-import android.support.v17.leanback.widget.DiffCallback
+import androidx.leanback.widget.DiffCallback
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 

@@ -1,11 +1,11 @@
 package de.nicidienase.chaosflix.touch.browse.streaming
 
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -44,9 +44,10 @@ class LivestreamListFragment : BrowseFragment() {
         binding = FragmentLivestreamsBinding.inflate(inflater, container, false)
         setupToolbar(binding.incToolbar.toolbar, R.string.livestreams)
         if (columnCount <= 1) {
-            binding.list.layoutManager = LinearLayoutManager(context)
+            binding.list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         } else {
-            binding.list.layoutManager = GridLayoutManager(context, columnCount)
+            binding.list.layoutManager =
+                androidx.recyclerview.widget.GridLayoutManager(context, columnCount)
         }
         binding.list.adapter = adapter
         binding.swipeRefreshLayout.setOnRefreshListener {

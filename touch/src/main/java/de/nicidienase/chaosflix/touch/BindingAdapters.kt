@@ -1,6 +1,6 @@
 package de.nicidienase.chaosflix.touch
 
-import android.databinding.BindingAdapter
+import androidx.databinding.BindingAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide

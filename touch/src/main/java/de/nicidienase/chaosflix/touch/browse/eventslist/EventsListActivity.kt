@@ -3,7 +3,7 @@ package de.nicidienase.chaosflix.touch.browse.eventslist
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference

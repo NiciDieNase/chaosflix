@@ -1,6 +1,6 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.streaming
 
-import android.support.annotation.Keep
+import androidx.annotation.Keep
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @Keep

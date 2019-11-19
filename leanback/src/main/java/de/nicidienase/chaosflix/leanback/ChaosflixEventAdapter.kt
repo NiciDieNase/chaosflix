@@ -1,7 +1,7 @@
 package de.nicidienase.chaosflix.leanback
 
-import android.support.v17.leanback.widget.ArrayObjectAdapter
-import android.support.v17.leanback.widget.Presenter
+import androidx.leanback.widget.ArrayObjectAdapter
+import androidx.leanback.widget.Presenter
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 
 class ChaosflixEventAdapter(presenter: Presenter) : ArrayObjectAdapter(presenter) {

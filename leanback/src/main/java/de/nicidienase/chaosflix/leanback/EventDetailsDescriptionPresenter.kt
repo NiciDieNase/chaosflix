@@ -1,7 +1,7 @@
 package de.nicidienase.chaosflix.leanback
 
 import android.content.Context
-import android.support.v17.leanback.widget.Presenter
+import androidx.leanback.widget.Presenter
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater

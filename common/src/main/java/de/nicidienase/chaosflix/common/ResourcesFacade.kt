@@ -2,7 +2,7 @@ package de.nicidienase.chaosflix.common
 
 import android.content.Context
 import android.content.res.Resources
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 
 class ResourcesFacade(context: Context) {
     private val resources: Resources = context.applicationContext.resources

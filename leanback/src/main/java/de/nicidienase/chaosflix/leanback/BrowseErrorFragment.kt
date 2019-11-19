@@ -1,9 +1,9 @@
 package de.nicidienase.chaosflix.leanback
 
 import android.os.Bundle
-import android.support.v17.leanback.app.ErrorSupportFragment
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
+import androidx.leanback.app.ErrorSupportFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -28,7 +28,7 @@ class BrowseErrorFragment : ErrorSupportFragment() {
         setErrorContent(resources.getString(resourceId))
     }
 
-    fun setErrorContent(message: String, fragmentManager: FragmentManager? = activity?.supportFragmentManager) {
+    fun setErrorContent(message: String, fragmentManager: androidx.fragment.app.FragmentManager? = activity?.supportFragmentManager) {
         try {
             if (!isDetached) {
                 spinnerFragment?.let {
@@ -57,7 +57,7 @@ class BrowseErrorFragment : ErrorSupportFragment() {
         } ?: Log.e(TAG, "Could not remove spinnerFragment")
     }
 
-    fun dismiss(fragmentManager: FragmentManager? = activity?.supportFragmentManager) {
+    fun dismiss(fragmentManager: androidx.fragment.app.FragmentManager? = activity?.supportFragmentManager) {
         if (fragmentManager != null) {
             with(fragmentManager.beginTransaction()) {
                 spinnerFragment?.let {
@@ -72,7 +72,7 @@ class BrowseErrorFragment : ErrorSupportFragment() {
         }
     }
 
-    class SpinnerFragment : Fragment() {
+    class SpinnerFragment : androidx.fragment.app.Fragment() {
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
             return inflater.inflate(R.layout.loading_fragment, container, false)
         }
@@ -84,7 +84,7 @@ class BrowseErrorFragment : ErrorSupportFragment() {
         val FRAGMENT = "fragmentId"
         val TAG = BrowseErrorFragment::class.java.simpleName
 
-        fun showErrorFragment(manager: FragmentManager, fragmentId: Int, addToBackstack: Boolean = false): BrowseErrorFragment {
+        fun showErrorFragment(manager: androidx.fragment.app.FragmentManager, fragmentId: Int, addToBackstack: Boolean = false): BrowseErrorFragment {
             val errorFragment = BrowseErrorFragment()
             val args = Bundle()
             args.putInt(BrowseErrorFragment.FRAGMENT, fragmentId)

@@ -1,17 +1,17 @@
 package de.nicidienase.chaosflix.touch.eventdetails
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.snackbar.Snackbar
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -30,7 +30,7 @@ import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 
-class EventDetailsFragment : Fragment() {
+class EventDetailsFragment : androidx.fragment.app.Fragment() {
 
     private var listener: OnEventDetailsFragmentInteractionListener? = null
 
@@ -88,9 +88,13 @@ class EventDetailsFragment : Fragment() {
                 viewModel.relatedEventSelected(it)
             }
             adapter = relatedEventsAdapter
-            val orientation = LinearLayoutManager.VERTICAL
-            layoutManager = LinearLayoutManager(context, orientation, false)
-            val itemDecoration = DividerItemDecoration(binding.relatedItemsList.context, orientation)
+            val orientation = androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
+            layoutManager =
+                androidx.recyclerview.widget.LinearLayoutManager(context, orientation, false)
+            val itemDecoration = androidx.recyclerview.widget.DividerItemDecoration(
+                binding.relatedItemsList.context,
+                orientation
+            )
             addItemDecoration(itemDecoration)
         }
 

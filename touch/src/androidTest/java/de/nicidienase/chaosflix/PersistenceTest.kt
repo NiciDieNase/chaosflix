@@ -1,6 +1,6 @@
 package de.nicidienase.chaosflix
 
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgress
 
 import org.junit.Test

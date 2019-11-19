@@ -1,22 +1,22 @@
 package de.nicidienase.chaosflix.touch.browse
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import android.transition.TransitionInflater
 import android.util.Log
 import android.view.Menu
@@ -275,7 +275,7 @@ class BrowseActivity : AppCompatActivity(),
         }
     }
 
-    protected fun showFragment(fragment: Fragment, tag: String) {
+    protected fun showFragment(fragment: androidx.fragment.app.Fragment, tag: String) {
         val fm = supportFragmentManager
         val oldFragment = fm.findFragmentById(R.id.fragment_container)
 
@@ -294,7 +294,7 @@ class BrowseActivity : AppCompatActivity(),
         val ft = fm.beginTransaction()
         ft.replace(R.id.fragment_container, fragment, tag)
         ft.setReorderingAllowed(true)
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+        ft.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
         ft.commit()
     }
 

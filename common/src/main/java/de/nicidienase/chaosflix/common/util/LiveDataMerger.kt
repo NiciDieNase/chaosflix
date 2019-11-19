@@ -1,7 +1,7 @@
 package de.nicidienase.chaosflix.common.util
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 
 class LiveDataMerger<T, U, R> {
     fun merge(liveData1: LiveData<T>, liveData2: LiveData<U>, mergeFunction: (T?, U?) -> R): LiveData<R> {

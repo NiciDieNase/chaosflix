@@ -7,8 +7,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.media.MediaMetadataRetriever
 import android.os.Build
-import android.support.v17.leanback.media.PlaybackGlue
-import android.support.v17.leanback.widget.PlaybackSeekDataProvider
+import androidx.leanback.media.PlaybackGlue
+import androidx.leanback.widget.PlaybackSeekDataProvider
 import android.util.Log
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import kotlinx.coroutines.CoroutineScope

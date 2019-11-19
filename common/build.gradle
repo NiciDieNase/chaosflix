@@ -20,7 +20,7 @@ android {
             }
         }
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "STREAMING_API_BASE_URL", "\"https://streaming.media.ccc.de\""
         buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/streams/v2.json\""
@@ -100,14 +100,18 @@ dependencies {
     api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M2'
     api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0-M2'
 
-    api "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
+    api 'androidx.appcompat:appcompat:1.1.0'
 
-    api "android.arch.lifecycle:extensions:${rootProject.ext.archCompVersion}"
-    kapt "android.arch.lifecycle:compiler:${rootProject.ext.archCompVersion}"
-    api "android.arch.lifecycle:common-java8:${rootProject.ext.archCompVersion}"
 
-    api "android.arch.persistence.room:runtime:${rootProject.ext.archCompVersion}"
-    kapt "android.arch.persistence.room:compiler:${rootProject.ext.archCompVersion}"
+    def archCompVersion = "1.1.1"
+    api "androidx.lifecycle:lifecycle-extensions:2.1.0"
+    kapt 'androidx.lifecycle:lifecycle-compiler:2.1.0'
+    api 'androidx.lifecycle:lifecycle-common-java8:2.1.0'
+
+    def roomVersion = "2.2.1"
+    api "androidx.room:room-runtime:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    api "androidx.room:room-ktx:$roomVersion"
 
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
@@ -134,7 +138,7 @@ dependencies {
     testImplementation "org.mockito:mockito-core:2.11.0"
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:4.1'
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
