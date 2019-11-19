@@ -4,20 +4,48 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import kotlin.collections.ArrayList
 
 object ChaosflixUtil {
-    fun getOptimalRecording(recordings: List<Recording>, originalLanguage: String = ""): Recording? {
-        val result = getOrderedRecordings(recordings, originalLanguage)
+    fun getOptimalRecording(recordings: List<Recording>, originalLanguage: String): Recording {
+        val groupedRecordings =
+            recordings.groupBy { "${if (it.isHighQuality) "HD" else "SD"}-${it.mimeType}" }
         return when {
-            result.size > 0 -> result[0]
-            else -> null
+            groupedRecordings.keys.contains(HD_MP4) ->
+                getRecordingForGroup(groupedRecordings[HD_MP4], originalLanguage)
+            groupedRecordings.keys.contains(HD_WEBM) ->
+                getRecordingForGroup(groupedRecordings[HD_WEBM], originalLanguage)
+            groupedRecordings.keys.contains(SD_MP4) ->
+                getRecordingForGroup(groupedRecordings[SD_MP4], originalLanguage)
+            groupedRecordings.keys.contains(SD_WEBM) ->
+                getRecordingForGroup(groupedRecordings[SD_WEBM], originalLanguage)
+            else -> recordings.first()
         }
     }
 
     fun getRecordingForThumbs(recordings: List<Recording>): Recording? {
         val lqRecordings = recordings.filter { !it.isHighQuality && it.width > 0 }.sortedBy { it.size }
         return when {
-        lqRecordings.size > 0 -> lqRecordings[0]
+            lqRecordings.isNotEmpty() -> lqRecordings[0]
             else -> null
         }
+    }
+
+
+    private fun getRecordingForGroup(group: List<Recording>?, language: String): Recording{
+        if(group.isNullOrEmpty()){
+            error("Got empty or null list, this should not happen!")
+        }
+        return when {
+            group.size == 1 -> group.first()
+            else -> {
+                val languageFiltered = group.filter { it.language == language }
+                val relaxedLanguageFiltered = group.filter { it.language.contains(language) }
+                when {
+                    languageFiltered.isNotEmpty() -> languageFiltered.first()
+                    relaxedLanguageFiltered.isNotEmpty() -> relaxedLanguageFiltered.first()
+                    else -> group.first()
+                }
+            }
+        }
+
     }
 
     private fun getOrderedRecordings(
@@ -26,19 +54,19 @@ object ChaosflixUtil {
     ): ArrayList<Recording> {
         val result = ArrayList<Recording>()
 
-        var hqRecordings = recordings
+        var hqMp4Recordings = recordings
             .filter { it.isHighQuality && it.mimeType == "video/mp4" }
             .sortedBy { it.language.length }
-        var lqRecordings = recordings
+        var lqMp4Recordings = recordings
             .filter { !it.isHighQuality && it.mimeType == "video/mp4" }
             .sortedBy { it.language.length }
 
         if (originalLanguage.isNotBlank()) {
-            hqRecordings = hqRecordings.filter { it.language == originalLanguage }
-            lqRecordings = lqRecordings.filter { it.language == originalLanguage }
+            hqMp4Recordings = hqMp4Recordings.filter { it.language == originalLanguage }
+            lqMp4Recordings = lqMp4Recordings.filter { it.language == originalLanguage }
         }
-        result.addAll(hqRecordings)
-        result.addAll(lqRecordings)
+        result.addAll(hqMp4Recordings)
+        result.addAll(lqMp4Recordings)
         return result
     }
 
@@ -81,4 +109,9 @@ object ChaosflixUtil {
             "datenspuren",
             "fiffkon",
             "cryptocon")
+
+    private const val HD_MP4 = "HD-video/mp4"
+    private const val HD_WEBM = "HD-video/webm"
+    private const val SD_MP4 = "SD-video/mp4"
+    private const val SD_WEBM = "SD-video/webm"
 }

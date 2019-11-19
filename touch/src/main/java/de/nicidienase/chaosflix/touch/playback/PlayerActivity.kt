@@ -67,15 +67,15 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     companion object {
-        val CONTENT_TYPE = "content"
-        val CONTENT_RECORDING = "content_recording"
-        val CONTENT_STREAM = "content_stream"
+        const val CONTENT_TYPE = "content"
+        const val CONTENT_RECORDING = "content_recording"
+        const val CONTENT_STREAM = "content_stream"
 
-        val EVENT_KEY = "event"
-        val RECORDING_KEY = "recording"
-        val CONFERENCE = "live_conferences"
-        val ROOM = "room"
-        val STREAM = "stream"
+        const val EVENT_KEY = "event"
+        const val RECORDING_KEY = "recording"
+        const val CONFERENCE = "live_conferences"
+        const val ROOM = "room"
+        const val STREAM = "stream"
 
         val OFFLINE_URI = "recording_uri"
 
