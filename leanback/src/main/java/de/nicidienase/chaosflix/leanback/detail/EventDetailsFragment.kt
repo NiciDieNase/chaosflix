@@ -213,7 +213,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
         }
     }
 
-
     private fun preparePlayer(
         recordings: List<Recording>,
         event: Event
@@ -221,7 +220,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
         val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
         preparePlayer(optimalRecording.recordingUrl)
     }
-
 
     fun play(action: Action?) {
         detailsBackgroundController.switchToVideo()
