@@ -38,12 +38,10 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-            useProguard false
         }
 
         release {
             minifyEnabled true
-            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'),'proguard-rules.pro'
         }
     }
@@ -53,17 +51,30 @@ android {
     productFlavors {
         prod {
             dimension "stage"
-            buildConfigField "String", "APPCENTER_ID", "$appcenterId"
+            if (project.hasProperty('appcenterId')){
+                buildConfigField "String", "APPCENTER_ID", "$appcenterId"
+            } else {
+                buildConfigField "String", "APPCENTER_ID", "\"\""
+            }
         }
 
         dev {
             dimension "stage"
-            buildConfigField "String", "APPCENTER_ID", "$appcenterDevId"
+
+            if (project.hasProperty('appcenterDevId')){
+                buildConfigField "String", "APPCENTER_ID", "$appcenterDevId"
+            } else {
+                buildConfigField "String", "APPCENTER_ID", "\"\""
+            }
         }
 
         mock {
             dimension "stage"
-            buildConfigField "String", "APPCENTER_ID", "$appcenterDevId"
+            if (project.hasProperty('appcenterDevId')){
+                buildConfigField "String", "APPCENTER_ID", "$appcenterDevId"
+            } else {
+                buildConfigField "String", "APPCENTER_ID", "\"\""
+            }
             buildConfigField "String", "STREAMING_API_BASE_URL", "\"https://gist.githubusercontent.com\""
             buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/NiciDieNase/1ca017f180242f0ee683a1f592efc4ed/raw/0104592b57f4b29863fd0684a510462af276f30e/example_streams_v2.json\""
         }
@@ -133,7 +144,7 @@ dependencies {
     debugImplementation 'com.facebook.stetho:stetho:1.5.0'
     debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.4.2'
     debugImplementation 'com.facebook.stetho:stetho-okhttp:1.4.2'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0'
 
     testImplementation "org.mockito:mockito-core:2.11.0"
     testImplementation 'junit:junit:4.12'

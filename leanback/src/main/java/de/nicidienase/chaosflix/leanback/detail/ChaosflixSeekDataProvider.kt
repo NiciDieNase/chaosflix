@@ -15,7 +15,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,7 +31,7 @@ class ChaosflixSeekDataProvider(
     private var canceled = true
     private var generateThumbsJob: Job? = null
 
-    private val mediaMetadataRetriever = MediaMetadataRetriever()
+    private var mediaMetadataRetriever = MediaMetadataRetriever()
 
     private val thumbnails: MutableMap<Long, Bitmap> = mutableMapOf()
     private val dummyThumbnails: MutableMap<Long, Bitmap> = mutableMapOf()
@@ -58,6 +57,8 @@ class ChaosflixSeekDataProvider(
 
     override fun getSeekPositions(): LongArray {
         if (canceled) {
+            Log.d(TAG, "Retriever was canceled before, reinitializing")
+            mediaMetadataRetriever = MediaMetadataRetriever()
             mediaMetadataRetriever.setDataSource(url, mapOf("User-Agent" to ApiFactory.buildUserAgent()))
             generateThumbs()
         }
@@ -74,13 +75,11 @@ class ChaosflixSeekDataProvider(
             }
             Log.d(TAG, "Added Dummy-Thumbs")
             yield()
-            if (PRELOAD_THUMBS) {
-                for (i in positions.indices) {
-                    if (!thumbnails.containsKey(positions[i])) {
-                        val bitmap = createBitmapForIndex(i)
-                        thumbnails[positions[i]] = bitmap
-                        yield()
-                    }
+            for (i in positions.indices) {
+                if (!thumbnails.containsKey(positions[i])) {
+                    val bitmap = createBitmapForIndex(i)
+                    thumbnails[positions[i]] = bitmap
+                    yield()
                 }
             }
         }
@@ -103,10 +102,10 @@ class ChaosflixSeekDataProvider(
                 }
             }
             else -> scope.launch {
-                val thumb = createDummyThumbnail(index)
-                dummyThumbnails[positions[index]] = thumb
+                val dummyThumb = createDummyThumbnail(index)
+                dummyThumbnails[positions[index]] = dummyThumb
                 withContext(Dispatchers.Main) {
-                    callback?.onThumbnailLoaded(thumb, index)
+                    callback?.onThumbnailLoaded(dummyThumb, index)
                 }
                 scope.launch {
                     val thumb = createBitmapForIndex(index)
@@ -173,13 +172,13 @@ class ChaosflixSeekDataProvider(
     }
 
     override fun reset() {
-        Log.d(TAG, "SeekData reset")
+        Log.d(TAG, "SeekData reset Started")
         canceled = true
         GlobalScope.launch {
             generateThumbsJob?.cancelAndJoin()
             mediaMetadataRetriever.release()
-            scope.cancel()
         }
+        Log.d(TAG, "SeekData reset Done")
         super.reset()
     }
 
@@ -188,7 +187,6 @@ class ChaosflixSeekDataProvider(
 
         private const val THUMB_WIDTH = 480
         private const val THUMB_HEIGHT = 270
-        private const val PRELOAD_THUMBS = false
 
         fun setSeekProvider(
             glue: ChaosMediaPlayerGlue,

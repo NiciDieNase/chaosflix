@@ -43,10 +43,8 @@ android {
             applicationIdSuffix ".debug"
             manifestPlaceholders = [label: appName + "-debug"]
             minifyEnabled false
-            useProguard false
         }
         release {
-            useProguard true
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'),'proguard-rules.pro'

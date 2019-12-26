@@ -19,8 +19,8 @@ class ApiFactory private constructor(val res: Resources) {
 
     val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
-            .connectTimeout(5, TimeUnit.SECONDS)
-            .readTimeout(5, TimeUnit.SECONDS)
+            .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
             .addInterceptor(useragentInterceptor)
             .build()
     }
@@ -49,6 +49,8 @@ class ApiFactory private constructor(val res: Resources) {
     }
 
     companion object : SingletonHolder<ApiFactory, Resources>(::ApiFactory) {
+
+        private const val DEFAULT_TIMEOUT = 30L
 
         fun buildUserAgent(): String {
             val versionName = BuildConfig.VERSION_NAME
