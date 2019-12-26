@@ -8,7 +8,7 @@ import com.microsoft.appcenter.crashes.Crashes
 import com.microsoft.appcenter.distribute.Distribute
 import de.nicidienase.chaosflix.BuildConfig
 
-object AnalyticsWrapperImpl: AnalyticsWrapper {
+object AnalyticsWrapperImpl : AnalyticsWrapper {
     override fun init(application: Application) {
         val modules: List<Class<out AppCenterService>>
         if (BuildConfig.BUILD_TYPE == "devNoFreeRelease") {
