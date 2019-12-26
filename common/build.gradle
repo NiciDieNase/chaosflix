@@ -64,7 +64,7 @@ android {
             dimension "stage"
 
             if (project.hasProperty('appcenterDevId')){
-                buildConfigField "String", "APPCENTER_ID", "$appcenter_dev_id"
+                buildConfigField "String", "APPCENTER_ID", "$appcenterDevId"
             } else {
                 buildConfigField "String", "APPCENTER_ID", "\"\""
             }
@@ -73,7 +73,7 @@ android {
         mock {
             dimension "stage"
             if (project.hasProperty('appcenterDevId')){
-                buildConfigField "String", "APPCENTER_ID", "$appcenter_dev_id"
+                buildConfigField "String", "APPCENTER_ID", "$appcenterDevId"
             } else {
                 buildConfigField "String", "APPCENTER_ID", "\"\""
             }
