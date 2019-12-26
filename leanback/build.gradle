@@ -18,7 +18,6 @@ android {
         // odd for touch, even for leanback
         versionCode rootProject.ext.leanbackVersionCode
         versionName versionString
-//        multiDexEnabled true
         if(project.hasProperty("versionCode")){
             versionCode = project.property("versionCode") as int
             println "Setting VersionCode from property: $versionCode"
@@ -98,18 +97,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    defaultConfig {
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    lintOptions {
-        abortOnError false
-    }
-
-    dataBinding {
-        enabled = true
-    }
-
+    defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    lintOptions.abortOnError = false
+    dataBinding.enabled = true
     buildToolsVersion rootProject.ext.buildToolsVersion
 }
 
@@ -126,7 +116,6 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.leanback:leanback:1.0.0'
     implementation 'androidx.leanback:leanback-preference:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.google.android.exoplayer:extension-leanback:2.9.6'
     androidTestImplementation('androidx.test:rules:1.1.1') {
         exclude module: 'support-annotations'
