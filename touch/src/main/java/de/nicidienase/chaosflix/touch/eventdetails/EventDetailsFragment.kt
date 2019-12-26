@@ -142,7 +142,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
         viewModel.playEvent(event)
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnEventSelectedListener) {
             eventSelectedListener = context
@@ -150,7 +150,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
         if (context is OnEventDetailsFragmentInteractionListener) {
             listener = context
         } else {
-            throw RuntimeException(context!!.toString() + " must implement OnFragmentInteractionListener")
+            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
         }
     }
 
@@ -177,14 +177,14 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
         menu.findItem(R.id.action_play).isVisible = appBarExpanded
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         // 		if (appBarExpanded)
-        inflater?.inflate(R.menu.details_menu, menu)
+        inflater.inflate(R.menu.details_menu, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> {
                 activity?.finish()
                 return true

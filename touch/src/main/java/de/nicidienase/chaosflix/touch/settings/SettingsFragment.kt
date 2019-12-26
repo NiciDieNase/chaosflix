@@ -22,11 +22,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private lateinit var viewModel: PreferencesViewModel
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
-        context?.let { c ->
-            viewModel = ViewModelProviders.of(this, ViewModelFactory(c)).get(PreferencesViewModel::class.java)
-        }
+        viewModel = ViewModelProviders.of(this, ViewModelFactory(context)).get(PreferencesViewModel::class.java)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

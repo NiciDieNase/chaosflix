@@ -16,18 +16,6 @@
 				android:id="@+id/inc_toolbar"
 				layout="@layout/toolbar"/>
 
-			<!--<android.support.design.widget.TabLayout-->
-			<!--android:id="@+id/sliding_tabs"-->
-			<!--android:layout_width="match_parent"-->
-			<!--android:layout_height="wrap_content"-->
-			<!--android:background="@color/primary"-->
-			<!--android:visibility="invisible"-->
-			<!--app:layout_anchor="@id/toolbar"-->
-			<!--app:tabIndicatorColor="@color/white"-->
-			<!--app:tabMode="scrollable"-->
-			<!--app:tabSelectedTextColor="@color/white"-->
-			<!--app:tabTextColor="@color/inactive_tab_color"/>-->
-
 		</com.google.android.material.appbar.AppBarLayout>
 
 		<FrameLayout

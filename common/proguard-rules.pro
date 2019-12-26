@@ -21,7 +21,7 @@
 #-renamesourcefileattribute SourceFile
 -ignorewarnings
 
--keep @interface android.support.annotation.Keep
+-keep @interface androidx.support.annotation.Keep
 
 ## Start Retrofit-Rules
 # Retrofit does reflection on generic parameters. InnerClasses is required to use Signature and

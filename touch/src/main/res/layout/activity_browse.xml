@@ -7,31 +7,6 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
-		<!--<android.support.design.widget.CoordinatorLayout-->
-		<!--android:layout_width="match_parent"-->
-		<!--android:layout_height="match_parent"-->
-		<!--android:orientation="vertical">-->
-
-		<!--<android.support.design.widget.AppBarLayout-->
-		<!--android:id="@+id/app_bar_layout"-->
-		<!--android:layout_width="match_parent"-->
-		<!--android:layout_height="wrap_content">-->
-
-		<!--<include layout="@layout/toolbar"/>-->
-
-
-		<!--<android.support.design.widget.TabLayout-->
-		<!--android:id="@+id/sliding_tabs"-->
-		<!--android:layout_width="match_parent"-->
-		<!--android:layout_height="wrap_content"-->
-		<!--android:background="@color/primary"-->
-		<!--app:layout_anchor="@id/toolbar"-->
-		<!--app:tabIndicatorColor="@color/white"-->
-		<!--app:tabMode="scrollable"-->
-		<!--app:tabSelectedTextColor="@color/white"-->
-		<!--app:tabTextColor="@color/inactive_tab_color"/>-->
-
-		<!--</android.support.design.widget.AppBarLayout>-->
 		<FrameLayout
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
