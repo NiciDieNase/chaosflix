@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
 
         <variable
             name="item"
-            type="de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventView"/>
+            type="de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventView" />
 
         <variable
             name="downloadStatus"
-            type="de.nicidienase.chaosflix.common.OfflineItemManager.DownloadStatus"/>
+            type="de.nicidienase.chaosflix.common.OfflineItemManager.DownloadStatus" />
     </data>
 
     <FrameLayout
@@ -38,15 +39,15 @@
 
                 <ImageView
                     android:id="@+id/imageView"
-                    android:layout_width="@dimen/thumbnail_width"
-                    android:layout_height="@dimen/thumbnail_height"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
                     android:layout_marginEnd="8dp"
-                    android:scaleType="fitCenter"
+                    android:scaleType="centerCrop"
                     app:layout_constraintEnd_toStartOf="@+id/title_text"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/unknown"
+                    tools:srcCompat="@drawable/unknown" />
 
                 <TextView
                     android:id="@+id/title_text"
@@ -55,10 +56,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="3"
                     android:text="@{item.title}"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    android:maxLines="2"
-                    android:ellipsize="end"
                     app:layout_constraintEnd_toStartOf="@+id/button_delete"
                     app:layout_constraintStart_toEndOf="@+id/imageView"
                     app:layout_constraintTop_toTopOf="@+id/imageView"
@@ -69,42 +70,43 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
                     android:text="@{item.subtitle}"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
-                    app:layout_constraintBottom_toTopOf="@+id/download_progress_bar"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/title_text"
                     app:layout_constraintStart_toStartOf="@+id/title_text"
                     app:layout_constraintTop_toBottomOf="@+id/title_text"
                     app:layout_constraintVertical_bias="0.0"
-                    android:maxLines="3"
-                    android:ellipsize="end"
                     tools:text="Subtitles could be very long and span multiple lines, the rest of the layout should addapt accordingly" />
 
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/tag_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:gravity="bottom|end"
-                    android:paddingEnd="8dp"
-                    android:text="@{downloadStatus.statusText}"
-                    app:layout_constraintBottom_toTopOf="@+id/download_progress_bar"
-                    app:layout_constraintEnd_toEndOf="@+id/button_delete"
-                    app:layout_constraintStart_toStartOf="@+id/button_delete"
-                    app:layout_constraintTop_toBottomOf="@+id/button_delete"
-                    tools:text="Tag" />
+                    android:background="@color/transparent_white_70"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView"
+                    app:layout_constraintEnd_toEndOf="@+id/imageView"
+                    app:layout_constraintStart_toStartOf="@+id/imageView"
+                    app:layout_constraintTop_toTopOf="@+id/imageView"
+                    android:src="@{downloadStatus.statusIcon}"
+                    android:tint="@color/download_icon_tint"
+                    tools:srcCompat="@drawable/ic_download" />
 
                 <ImageButton
                     android:id="@+id/button_delete"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
                     android:background="@drawable/button_rect_normal"
                     android:contentDescription="@string/delete_item"
                     android:padding="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_delete_dark" />
@@ -116,10 +118,11 @@
                     android:layout_height="wrap_content"
                     android:max="@{safeUnbox(downloadStatus.totalBytes)}"
                     android:progress="@{safeUnbox(downloadStatus.currentBytes)}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/imageView"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView" />
+                    app:layout_constraintTop_toBottomOf="@+id/imageView"
+                    tools:max="10"
+                    tools:progress="5" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
