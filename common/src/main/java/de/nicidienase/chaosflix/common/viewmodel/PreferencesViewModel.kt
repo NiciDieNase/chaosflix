@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.common.AnalyticsWrapper
+import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
@@ -26,15 +27,17 @@ class PreferencesViewModel(
 
     private val threadHandler = ThreadHandler()
 
+    private val analyticsWrapper: AnalyticsWrapper = AnalyticsWrapperImpl
+
     fun cleanNonUserData() {
         threadHandler.runOnBackgroundThread {
             downloader.deleteNonUserData()
         }
     }
 
-    fun startAnalytics() = AnalyticsWrapper.startAnalytics()
+    fun startAnalytics() = analyticsWrapper.startAnalytics()
 
-    fun stopAnalytics() = AnalyticsWrapper.stopAnalytics()
+    fun stopAnalytics() = analyticsWrapper.stopAnalytics()
 
     fun exportFavorites() {
         threadHandler.runOnBackgroundThread {

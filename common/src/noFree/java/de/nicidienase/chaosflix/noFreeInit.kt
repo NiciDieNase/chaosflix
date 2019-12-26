@@ -1,6 +1,6 @@
 import android.preference.PreferenceManager
 import de.nicidienase.chaosflix.ChaosflixApplication
-import de.nicidienase.chaosflix.common.AnalyticsWrapper
+import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
 import de.nicidienase.chaosflix.common.PreferencesManager
 
 fun libsInit(application: ChaosflixApplication) {
@@ -9,6 +9,6 @@ fun libsInit(application: ChaosflixApplication) {
         PreferencesManager(PreferenceManager.getDefaultSharedPreferences(application.applicationContext))
 
     if (!preferencesManager.analyticsDisabled) {
-        AnalyticsWrapper.init(application)
+        AnalyticsWrapperImpl.init(application)
     }
 }
