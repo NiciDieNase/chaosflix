@@ -59,7 +59,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
         title = resources.getString(R.string.app_name)
         badgeDrawable = resources.getDrawable(R.drawable.chaosflix_icon, null)
 
-        viewModel = ViewModelProviders.of(this, ViewModelFactory(requireContext())).get(BrowseViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(requireContext())).get(BrowseViewModel::class.java)
 
         // Recomendation Rows and Adapter
         watchListAdapter = ChaosflixEventAdapter(eventPresenter)

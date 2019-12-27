@@ -86,7 +86,7 @@ class BrowseActivity : AppCompatActivity(),
         if (savedInstanceState == null) {
             showConferencesFragment()
         }
-        viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(BrowseViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(this)).get(BrowseViewModel::class.java)
 
         viewModel.state.observe(this, Observer { event ->
             if (event == null) {

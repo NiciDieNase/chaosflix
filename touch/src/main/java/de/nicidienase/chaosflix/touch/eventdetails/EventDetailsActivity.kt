@@ -42,7 +42,7 @@ class EventDetailsActivity : AppCompatActivity(),
 
         castService = CastService(this)
 
-        viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(DetailsViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(this)).get(DetailsViewModel::class.java)
 
         viewModel.state.observe(this, Observer { liveEvent ->
             if (liveEvent == null) {

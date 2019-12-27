@@ -98,7 +98,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val viewModelFactory = ViewModelFactory(requireContext())
+        val viewModelFactory = ViewModelFactory.getInstance(requireContext())
         detailsViewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java)
         playerViewModel = ViewModelProviders.of(this, viewModelFactory).get(PlayerViewModel::class.java)
 

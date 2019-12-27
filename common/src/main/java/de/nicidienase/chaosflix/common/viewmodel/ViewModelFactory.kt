@@ -3,16 +3,18 @@ package de.nicidienase.chaosflix.common.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import android.content.Context
+import android.content.res.Resources
 import android.os.Environment
 import android.preference.PreferenceManager
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.PreferencesManager
 import de.nicidienase.chaosflix.common.ResourcesFacade
+import de.nicidienase.chaosflix.common.SingletonHolder
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 
-class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
+class ViewModelFactory private constructor(context: Context) : ViewModelProvider.Factory {
 
     private val apiFactory = ApiFactory.getInstance(context.resources)
 
@@ -43,4 +45,6 @@ class ViewModelFactory(context: Context) : ViewModelProvider.Factory {
                     " Request: ${modelClass.canonicalName}")
         }
     }
-}
+    companion object : SingletonHolder<ViewModelFactory, Context>(::ViewModelFactory)
+
+    }

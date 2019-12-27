@@ -109,7 +109,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
 
         viewModel = ViewModelProviders.of(
                 requireActivity(),
-                ViewModelFactory(requireContext()))
+                ViewModelFactory.getInstance(requireContext()))
                 .get(DetailsViewModel::class.java)
 
         viewModel.setEvent(event)

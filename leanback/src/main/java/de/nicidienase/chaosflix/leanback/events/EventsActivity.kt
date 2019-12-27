@@ -30,7 +30,7 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
         super.onCreate(savedInstanceState)
         conference = intent.getParcelableExtra<Conference>(CONFERENCE)
         setContentView(R.layout.activity_events_browse)
-        viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(BrowseViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(this)).get(BrowseViewModel::class.java)
     }
 
     override fun onStart() {

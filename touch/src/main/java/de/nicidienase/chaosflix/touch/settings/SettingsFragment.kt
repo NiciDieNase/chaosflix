@@ -24,7 +24,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        viewModel = ViewModelProviders.of(this, ViewModelFactory(context)).get(PreferencesViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(context)).get(PreferencesViewModel::class.java)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

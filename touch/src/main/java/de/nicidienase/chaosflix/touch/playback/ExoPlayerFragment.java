@@ -87,7 +87,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 			playbackState = savedInstanceState.getBoolean(PLAYBACK_STATE, true);
 		}
 
-		viewModel = ViewModelProviders.of(this, new ViewModelFactory(requireContext())).get(PlayerViewModel.class);
+		viewModel = ViewModelProviders.of(this, ViewModelFactory.Companion.getInstance(requireContext())).get(PlayerViewModel.class);
 	}
 
 	@Override

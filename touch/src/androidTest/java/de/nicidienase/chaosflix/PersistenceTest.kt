@@ -1,12 +1,12 @@
 package de.nicidienase.chaosflix
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgress
-
+import androidx.test.platform.app.InstrumentationRegistry
+import de.nicidienase.chaosflix.common.ChaosflixDatabase
+import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
 import org.junit.Test
 import org.junit.runner.RunWith
-
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import java.util.Date
 
 /**
  * Created by felix on 31.10.17.
@@ -17,9 +17,12 @@ class PersistenceTest {
 
     @Test
     fun test1() {
-        val playbackProgressDao = ViewModelFactory.database.playbackProgressDao()
-        playbackProgressDao.saveProgress(PlaybackProgress(23, 1337))
-        playbackProgressDao.getProgressForEvent(23)
-                .observeForever { it -> assert(it?.eventId == 23L && it?.progress == 1337L) }
+        val context = InstrumentationRegistry.getInstrumentation().context
+        val dummyGuid = "asasdlfkjsd"
+        val playbackProgressDao = ChaosflixDatabase.getInstance(context).playbackProgressDao()
+        val watchDate = Date().time
+        playbackProgressDao.saveProgress(PlaybackProgress(23, dummyGuid, 1337, watchDate))
+        playbackProgressDao.getProgressForEvent(dummyGuid)
+                .observeForever { assert(it?.id == 23L && it.progress == 1337L) }
     }
 }

@@ -16,7 +16,7 @@ open class BrowseFragment : androidx.fragment.app.Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(activity!!, ViewModelFactory(requireContext())).get(BrowseViewModel::class.java)
+        viewModel = ViewModelProviders.of(activity!!, ViewModelFactory.getInstance(requireContext())).get(BrowseViewModel::class.java)
     }
 
     @JvmOverloads
