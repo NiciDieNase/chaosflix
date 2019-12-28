@@ -55,6 +55,12 @@ abstract class EventDao : BaseDao<Event>() {
     @Query("DElETE FROM event")
     abstract fun delete()
 
+    @Query("SELECT * FROM event WHERE link = :url LIMIT 1")
+    abstract suspend fun findEventByFahrplanUrl(url: String): Event?
+
+    @Query("SELECT * FROM event WHERE title LIKE :search LIMIT 1")
+    abstract suspend fun findEventByTitleSuspend(search: String): Event?
+
     override fun updateOrInsertInternal(item: Event) {
         if (item.id != 0L) {
             update(item)

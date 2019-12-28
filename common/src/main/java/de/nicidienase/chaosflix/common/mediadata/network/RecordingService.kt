@@ -21,6 +21,9 @@ interface RecordingService {
     @GET("public/conferences/{name}")
     fun getConferenceByName(@Path("name") name: String): Call<ConferenceDto>
 
+    @GET("public/conferences/{name}")
+    suspend fun getConferenceByNameSuspending(@Path("name") name: String): ConferenceDto?
+
     @GET("public/events/{id}")
     fun getEvent(@Path("id") id: Long): Call<EventDto>
 

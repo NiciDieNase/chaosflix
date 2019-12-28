@@ -2,7 +2,6 @@ package de.nicidienase.chaosflix.common.mediadata.sync
 
 import androidx.lifecycle.LiveData
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferenceDto
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventDto
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.RecordingDto
@@ -16,6 +15,10 @@ import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import de.nicidienase.chaosflix.common.util.ThreadHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
 
@@ -25,6 +28,9 @@ class Downloader(
 ) {
 
     private val threadHandler = ThreadHandler()
+
+    private val supervisorJob = SupervisorJob()
+    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO + supervisorJob)
 
     enum class DownloaderState {
         RUNNING, DONE
@@ -62,29 +68,29 @@ class Downloader(
     fun updateEventsForConference(conference: Conference): LiveData<LiveEvent<DownloaderState, List<Event>, String>> {
         val updateState = SingleLiveEvent<LiveEvent<DownloaderState, List<Event>, String>>()
         updateState.postValue(LiveEvent(DownloaderState.RUNNING))
-        threadHandler.runOnBackgroundThread {
-            val response: Response<ConferenceDto>?
+        coroutineScope.launch {
             try {
-                response = recordingApi.getConferenceByName(conference.acronym).execute()
+                val list =
+                    updateEventsForConferencesSuspending(conference)
+                updateState.postValue(LiveEvent(DownloaderState.DONE, data = list))
             } catch (e: IOException) {
                 updateState.postValue(LiveEvent(DownloaderState.DONE, error = e.message))
-                return@runOnBackgroundThread
-            }
-            if (!response.isSuccessful) {
-                updateState.postValue(LiveEvent(DownloaderState.DONE, error = response.message()))
-                return@runOnBackgroundThread
-            }
-            try {
-                val persistentEvents = response.body()?.events?.let { events ->
-                    return@let saveEvents(conference, events)
-                }
-                updateState.postValue(LiveEvent(DownloaderState.DONE, data = persistentEvents))
             } catch (e: Exception) {
                 updateState.postValue(LiveEvent(DownloaderState.DONE, error = "Error updating Events for ${conference.acronym}"))
                 e.printStackTrace()
             }
         }
         return updateState
+    }
+
+    internal suspend fun updateEventsForConferencesSuspending(conference: Conference): List<Event> {
+        val conferenceByName = recordingApi.getConferenceByNameSuspending(conference.acronym)
+        val events = conferenceByName?.events
+        return if (events != null) {
+            saveEvents(conference, events)
+        } else {
+            emptyList()
+        }
     }
 
     fun updateRecordingsForEvent(event: Event):

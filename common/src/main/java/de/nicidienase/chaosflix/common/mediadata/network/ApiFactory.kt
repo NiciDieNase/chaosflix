@@ -41,6 +41,15 @@ class ApiFactory private constructor(val res: Resources) {
         .build()
         .create(StreamingApi::class.java) }
 
+    val fahrplanMappingApi: FahrplanMappingService by lazy {
+        Retrofit.Builder()
+        .baseUrl("https://gist.githubusercontent.com")
+        .client(client)
+        .addConverterFactory(gsonConverterFactory)
+        .build()
+        .create(FahrplanMappingService::class.java)
+    }
+
     private val useragentInterceptor: Interceptor = Interceptor { chain ->
         val requestWithUseragent = chain.request().newBuilder()
             .header("User-Agent", chaosflixUserAgent)
