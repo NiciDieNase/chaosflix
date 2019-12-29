@@ -80,7 +80,7 @@ class Downloader(
                 }
                 updateState.postValue(LiveEvent(DownloaderState.DONE, data = persistentEvents))
             } catch (e: Exception) {
-                updateState.postValue(LiveEvent(DownloaderState.DONE, error = "Error updating Events for ${conference.acronym}"))
+                updateState.postValue(LiveEvent(DownloaderState.DONE, error = "Error updating Events for ${conference.acronym} (${e.cause})"))
                 e.printStackTrace()
             }
         }
