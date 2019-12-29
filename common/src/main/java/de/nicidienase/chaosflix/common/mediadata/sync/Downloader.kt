@@ -76,7 +76,7 @@ class Downloader(
             } catch (e: IOException) {
                 updateState.postValue(LiveEvent(DownloaderState.DONE, error = e.message))
             } catch (e: Exception) {
-                updateState.postValue(LiveEvent(DownloaderState.DONE, error = "Error updating Events for ${conference.acronym}"))
+                updateState.postValue(LiveEvent(DownloaderState.DONE, error = "Error updating Events for ${conference.acronym} (${e.cause})"))
                 e.printStackTrace()
             }
         }
@@ -194,9 +194,7 @@ class Downloader(
         val conferenceId = database.conferenceDao().findConferenceByAcronymSync(acronym)?.id
                 ?: updateConferencesAndGet(acronym)
 
-        if (conferenceId == -1L) {
-            throw IllegalStateException("Could not find Conference for event")
-        }
+        check(conferenceId != -1L) { "Could not find Conference for event" }
 
         val persistentEvent = Event(event, conferenceId)
         val id = database.eventDao().insert(persistentEvent)

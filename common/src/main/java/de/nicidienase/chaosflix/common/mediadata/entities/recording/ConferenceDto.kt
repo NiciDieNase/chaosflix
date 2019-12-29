@@ -8,12 +8,12 @@ import de.nicidienase.chaosflix.common.util.ConferenceUtil
 data class ConferenceDto(
     @SerializedName("acronym") var acronym: String = "",
     @SerializedName("aspect_ratio") var aspectRatio: String = "",
-    @SerializedName("updated_at") var updatedAt: String = "",
+    @SerializedName("updated_at") var updatedAt: String? = "",
     @SerializedName("title") var title: String = "",
     @SerializedName("schedule_url") var scheduleUrl: String?,
     @SerializedName("slug") var slug: String = "",
     @SerializedName("event_last_released_at") var lastReleaseAt: String? = "",
-    @SerializedName("webgen_location") var webgenLocation: String = "",
+    @SerializedName("webgen_location") var webgenLocation: String? = "",
     @SerializedName("logo_url") var logoUrl: String = "",
     @SerializedName("images_url") var imagesUrl: String = "",
     @SerializedName("recordings_url") var recordingsUrl: String = "",
@@ -25,13 +25,13 @@ data class ConferenceDto(
     val conferenceID: Long
         get() = getIdFromUrl()
 
-    val eventsByTags: Map<String, List<EventDto>> by lazy { getEventsMap(events) }
-    val sensibleTags: Set<String>
+    private val eventsByTags: Map<String, List<EventDto>> by lazy { getEventsMap(events) }
+    private val sensibleTags: Set<String>
     val tagsUsefull: Boolean
 
     init {
         sensibleTags = ConferenceUtil.getSensibleTags(eventsByTags.keys, acronym)
-        tagsUsefull = sensibleTags.size > 0
+        tagsUsefull = sensibleTags.isNotEmpty()
     }
 
     private fun getEventsMap(events: List<EventDto>?): Map<String, List<EventDto>> {
@@ -39,15 +39,15 @@ data class ConferenceDto(
         val untagged = ArrayList<EventDto>()
         if (events != null) {
             for (event in events) {
-                if (event.tags?.isNotEmpty() ?: false) {
+                if (event.tags?.isNotEmpty() == true) {
                     for (tag in event.tags!!) {
 
                         val list: MutableList<EventDto>
                         if (map.keys.contains(tag)) {
                             list = map[tag]!!
                         } else {
-                            list = ArrayList<EventDto>()
-                            map.put(tag, list)
+                            list = ArrayList()
+                            map[tag] = list
                         }
                         list.add(event)
                     }
@@ -56,7 +56,7 @@ data class ConferenceDto(
                 }
             }
             if (untagged.size > 0) {
-                map.put("untagged", untagged)
+                map["untagged"] = untagged
             }
         }
         return map

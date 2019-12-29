@@ -12,11 +12,11 @@ import android.text.Spanned
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventDto
 
 @Entity(tableName = "event",
-        foreignKeys = arrayOf(ForeignKey(
-                entity = Conference::class,
-                onDelete = ForeignKey.CASCADE,
-                parentColumns = (arrayOf("id")),
-                childColumns = arrayOf("conferenceId"))),
+        foreignKeys = [ForeignKey(
+            entity = Conference::class,
+            onDelete = ForeignKey.CASCADE,
+            parentColumns = (arrayOf("id")),
+            childColumns = arrayOf("conferenceId"))],
         indices = [
             Index("guid", unique = true),
             Index("frontendLink"),
@@ -82,8 +82,7 @@ data class Event(
             parcel.createStringArray(),
             parcel.createStringArray(),
             parcel.createTypedArrayList(RelatedEvent),
-            parcel.createTypedArrayList(Recording)) {
-    }
+            parcel.createTypedArrayList(Recording))
 
     @Ignore
     constructor(event: EventDto, conferenceId: Long = 0) : this(
@@ -94,12 +93,12 @@ data class Event(
             slug = event.slug,
             link = event.link,
             description = event.description,
-            originalLanguage = event.originalLanguage,
+            originalLanguage = event.originalLanguage ?: "",
             date = event.date,
-            releaseDate = event.releaseDate,
-            updatedAt = event.updatedAt,
+            releaseDate = event.releaseDate ?: "",
+            updatedAt = event.updatedAt ?: "",
             length = event.length,
-            thumbUrl = event.thumbUrl,
+            thumbUrl = event.thumbUrl ?: "",
             frontendLink = event.frontendLink,
             url = event.url,
             conferenceUrl = event.conferenceUrl,
