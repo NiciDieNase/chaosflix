@@ -15,17 +15,17 @@ data class EventDto(
     var link: String? = "",
     var description: String?,
     @SerializedName("original_language")
-    var originalLanguage: String = "",
+    var originalLanguage: String? = "",
     var persons: Array<String>?,
     var tags: Array<String>?,
     var date: String? = "",
     @SerializedName("release_date")
-    var releaseDate: String = "",
+    var releaseDate: String? = "",
     @SerializedName("updated_at")
-    var updatedAt: String = "",
+    var updatedAt: String? = "",
     var length: Long = 0,
     @SerializedName("thumb_url")
-    var thumbUrl: String = "",
+    var thumbUrl: String? = "",
     @SerializedName("poster_url")
     var posterUrl: String = "",
     @SerializedName("frontend_link")

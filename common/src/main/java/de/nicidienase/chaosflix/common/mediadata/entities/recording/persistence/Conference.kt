@@ -54,13 +54,13 @@ data class Conference(
             aspectRatio = con.aspectRatio,
             title = con.title,
             slug = con.slug,
-            webgenLocation = con.webgenLocation,
+            webgenLocation = con.webgenLocation ?: "",
             scheduleUrl = con.scheduleUrl,
             logoUrl = con.logoUrl,
             imagesUrl = con.imagesUrl,
             recordingsUrl = con.recordingsUrl,
             url = con.url,
-            updatedAt = con.updatedAt,
+            updatedAt = con.updatedAt ?: "",
             tagsUsefull = con.tagsUsefull,
             lastReleasedAt = con.lastReleaseAt ?: "")
 

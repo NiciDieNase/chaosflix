@@ -3,7 +3,6 @@ package de.nicidienase.chaosflix.common.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import android.content.Context
-import android.content.res.Resources
 import android.os.Environment
 import android.preference.PreferenceManager
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
@@ -46,5 +45,4 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
         }
     }
     companion object : SingletonHolder<ViewModelFactory, Context>(::ViewModelFactory)
-
     }
