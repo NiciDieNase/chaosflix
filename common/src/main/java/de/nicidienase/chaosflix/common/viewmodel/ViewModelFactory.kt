@@ -58,6 +58,7 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
             FavoritesImportViewModel::class.java -> FavoritesImportViewModel(
                 database.conferenceDao(),
                 database.eventDao(),
+                database.watchlistItemDao(),
                 downloader,
                 apiFactory.fahrplanMappingApi
             ) as T

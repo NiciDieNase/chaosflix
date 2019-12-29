@@ -61,6 +61,9 @@ abstract class EventDao : BaseDao<Event>() {
     @Query("SELECT * FROM event WHERE title LIKE :search LIMIT 1")
     abstract suspend fun findEventByTitleSuspend(search: String): Event?
 
+    @Query("SELECT * FROM event WHERE title LIKE :title LIMIT 1")
+    abstract fun findSingleEventByTitle(title: String): LiveData<Event?>
+
     override fun updateOrInsertInternal(item: Event) {
         if (item.id != 0L) {
             update(item)

@@ -1,8 +1,9 @@
-package de.nicidienase.chaosflix.touch
+package de.nicidienase.chaosflix.touch.favoritesimport
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import de.nicidienase.chaosflix.touch.R
 
 class FavoritesImportActivity : AppCompatActivity() {
 

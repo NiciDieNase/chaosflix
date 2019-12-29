@@ -7,7 +7,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
 @BindingAdapter("bind:imageUrl")
-fun loadImage(imageView: ImageView, url: String) {
+fun loadImage(imageView: ImageView, url: String?) {
+    if (url == null) return
     Glide.with(imageView.context)
             .load(url)
             .apply(RequestOptions().fitCenter())

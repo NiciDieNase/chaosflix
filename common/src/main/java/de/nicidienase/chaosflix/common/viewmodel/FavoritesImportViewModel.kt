@@ -4,12 +4,14 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import de.nicidienase.chaosflix.common.ImportItem
 import de.nicidienase.chaosflix.common.eventimport.FahrplanExport
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceDao
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.EventDao
 import de.nicidienase.chaosflix.common.mediadata.network.FahrplanMappingService
 import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
+import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
+import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
@@ -18,31 +20,43 @@ import kotlinx.coroutines.launch
 class FavoritesImportViewModel(
     private val conferenceDao: ConferenceDao,
     private val eventDao: EventDao,
+    private val watchlistItemDao: WatchlistItemDao,
     private val downloader: Downloader,
     private val mappingService: FahrplanMappingService
 ) : ViewModel() {
 
-    val state: SingleLiveEvent<LiveEvent<State, List<Event>, Exception>> = SingleLiveEvent()
-
-    fun handleUrls(urls: List<String>) {
-        viewModelScope.launch {
-            val events = urls.mapNotNull { eventDao.findEventByFahrplanUrl(it) }
-            state.postValue(LiveEvent(State.EVENTS_FOUND, events, null))
-        }
-    }
+    val state: SingleLiveEvent<LiveEvent<State, List<ImportItem>, Exception>> = SingleLiveEvent()
 
     fun handleLectures(string: String) {
         state.postValue(LiveEvent(State.WORKING))
         viewModelScope.launch(Dispatchers.IO) {
             val export = Gson().fromJson(string, FahrplanExport::class.java)
-            updateConferences(export.conference)
-            val events: List<Event>
+            val events: List<ImportItem>
             try {
-                events = export.lectures.mapNotNull { eventDao.findEventByTitleSuspend(it.title) }
+                updateConferences(export.conference)
+                events = export.lectures.mapNotNull { ImportItem(
+                    lecture = it,
+                    event = eventDao.findEventByTitleSuspend(it.title)) }
                 state.postValue(LiveEvent(State.EVENTS_FOUND, events, null))
             } catch (e: Exception) {
                 state.postValue(LiveEvent(State.ERROR, null, e))
             }
+        }
+    }
+
+    fun import(events: List<ImportItem>) {
+        state.postValue(LiveEvent(State.WORKING))
+        viewModelScope.launch(Dispatchers.IO) {
+            for (item in events) {
+                Log.d(TAG, "${item.lecture.title}: ${item.selected}")
+                val guid = item.event?.guid
+                if (item.selected &&
+                    guid != null &&
+                    watchlistItemDao.getItemForGuid(guid) == null) {
+                    watchlistItemDao.saveItem(WatchlistItem(eventGuid = guid))
+                }
+            }
+            state.postValue(LiveEvent(State.IMPORT_DONE))
         }
     }
 
@@ -67,6 +81,7 @@ class FavoritesImportViewModel(
     enum class State {
         WORKING,
         EVENTS_FOUND,
+        IMPORT_DONE,
         ERROR
     }
 

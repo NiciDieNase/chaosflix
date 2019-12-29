@@ -25,5 +25,5 @@
     <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="de.nicidienase.chaosflix.touch.FavoritesImportFragment"/>
+        android:name="de.nicidienase.chaosflix.touch.favoritesimport.FavoritesImportFragment"/>
 </LinearLayout>

@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.touch
+package de.nicidienase.chaosflix.touch.favoritesimport
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.nicidienase.chaosflix.common.viewmodel.FavoritesImportViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
-import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
+import de.nicidienase.chaosflix.touch.browse.adapters.ImportItemAdapter
 import de.nicidienase.chaosflix.touch.databinding.FragmentFavoritesImportBinding
 
 class FavoritesImportFragment : Fragment() {
@@ -25,20 +25,23 @@ class FavoritesImportFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentFavoritesImportBinding.inflate(inflater, container, false)
-
+        binding.setLifecycleOwner(this)
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(requireContext())).get(FavoritesImportViewModel::class.java)
 
         binding.importList.layoutManager = LinearLayoutManager(context)
-        val eventRecyclerViewAdapter = EventRecyclerViewAdapter {
+        val adapter = ImportItemAdapter()
+        binding.importList.adapter = adapter
+
+        binding.appCompatButton.setOnClickListener {
+            viewModel.import(adapter.currentList)
         }
-        binding.importList.adapter = eventRecyclerViewAdapter
 
         viewModel.state.observe(this, Observer {
             when (it.state) {
                 FavoritesImportViewModel.State.EVENTS_FOUND -> {
                     it.data?.let { events ->
-                        eventRecyclerViewAdapter.items = events
-                        eventRecyclerViewAdapter.notifyDataSetChanged()
+                        adapter.submitList(events)
+                        adapter.notifyDataSetChanged()
                     }
                     binding.incOverlay.loadingOverlay.visibility = View.GONE
                 }
@@ -48,32 +51,28 @@ class FavoritesImportFragment : Fragment() {
                 FavoritesImportViewModel.State.ERROR -> {
                     Log.e(TAG, "Error", it.error)
                 }
-            }
-        })
-
-        val intent = activity?.intent
-        when {
-            intent?.action == Intent.ACTION_SEND -> {
-                when (intent.type) {
-                    "text/plain" -> handleSendText(intent)
-                    "text/json" -> handleJson(intent)
+                FavoritesImportViewModel.State.IMPORT_DONE -> {
+                    // TODO navigate to favorites
+                    activity?.finish()
                 }
             }
-            else -> {
-            // Handle other intents, such as being started from the home screen
-            }
-        }
+        })
 
         return binding.root
     }
 
-    private fun handleSendText(intent: Intent) {
-        val extra = intent.getStringExtra(Intent.EXTRA_TEXT)
-        Log.d(TAG, extra)
-        if (extra != null) {
-            val urls = extra.split("\n").filter { it.startsWith("http") }
-            Log.d(TAG, "Urls: $urls")
-            viewModel.handleUrls(urls)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val intent = activity?.intent
+        when {
+            intent?.action == Intent.ACTION_SEND -> {
+                when (intent.type) {
+                    "text/json" -> handleJson(intent)
+                }
+            }
+            else -> {
+                // Handle other intents, such as being started from the home screen
+            }
         }
     }
 

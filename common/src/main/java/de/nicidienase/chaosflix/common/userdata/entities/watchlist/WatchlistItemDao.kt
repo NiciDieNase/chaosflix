@@ -26,4 +26,7 @@ interface WatchlistItemDao {
 
     @Query("DELETE from watchlist_item WHERE event_guid = :guid")
     fun deleteItem(guid: String)
+
+    @Query("SELECT * from watchlist_item WHERE event_guid = :guid LIMIT 1")
+    suspend fun getItemForGuid(guid: String): WatchlistItem?
 }
