@@ -10,15 +10,17 @@ import android.os.Parcelable
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.RecordingDto
 
 @Entity(tableName = "recording",
-        foreignKeys = arrayOf(ForeignKey(
-                entity = Event::class,
-                onDelete = ForeignKey.CASCADE,
-                parentColumns = (arrayOf("id")),
-                childColumns = arrayOf("eventId"))),
-        indices = arrayOf(
-                Index("eventId"),
-                Index("url", unique = true),
-                Index("backendId", unique = true)))
+        foreignKeys = [ForeignKey(
+            entity = Event::class,
+            onDelete = ForeignKey.CASCADE,
+            parentColumns = ([("id")]),
+            childColumns = ["eventId"])],
+        indices = [
+            Index("eventId"),
+            Index("url", unique = true),
+            Index("backendId", unique = true)
+        ]
+)
 data class Recording(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0,
@@ -60,8 +62,7 @@ data class Recording(
             parcel.readString() ?: "",
             parcel.readString() ?: "",
             parcel.readString() ?: "",
-            parcel.readLong()) {
-    }
+            parcel.readLong())
 
     @Ignore
     constructor(rec: RecordingDto, eventId: Long = 0) : this(

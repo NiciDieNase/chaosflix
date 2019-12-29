@@ -25,13 +25,13 @@ data class ConferenceDto(
     val conferenceID: Long
         get() = getIdFromUrl()
 
-    val eventsByTags: Map<String, List<EventDto>> by lazy { getEventsMap(events) }
-    val sensibleTags: Set<String>
+    private val eventsByTags: Map<String, List<EventDto>> by lazy { getEventsMap(events) }
+    private val sensibleTags: Set<String>
     val tagsUsefull: Boolean
 
     init {
         sensibleTags = ConferenceUtil.getSensibleTags(eventsByTags.keys, acronym)
-        tagsUsefull = sensibleTags.size > 0
+        tagsUsefull = sensibleTags.isNotEmpty()
     }
 
     private fun getEventsMap(events: List<EventDto>?): Map<String, List<EventDto>> {
@@ -39,15 +39,15 @@ data class ConferenceDto(
         val untagged = ArrayList<EventDto>()
         if (events != null) {
             for (event in events) {
-                if (event.tags?.isNotEmpty() ?: false) {
+                if (event.tags?.isNotEmpty() == true) {
                     for (tag in event.tags!!) {
 
                         val list: MutableList<EventDto>
                         if (map.keys.contains(tag)) {
                             list = map[tag]!!
                         } else {
-                            list = ArrayList<EventDto>()
-                            map.put(tag, list)
+                            list = ArrayList()
+                            map[tag] = list
                         }
                         list.add(event)
                     }
@@ -56,7 +56,7 @@ data class ConferenceDto(
                 }
             }
             if (untagged.size > 0) {
-                map.put("untagged", untagged)
+                map["untagged"] = untagged
             }
         }
         return map

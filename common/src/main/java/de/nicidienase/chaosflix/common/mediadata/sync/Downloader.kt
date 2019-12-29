@@ -188,9 +188,7 @@ class Downloader(
         val conferenceId = database.conferenceDao().findConferenceByAcronymSync(acronym)?.id
                 ?: updateConferencesAndGet(acronym)
 
-        if (conferenceId == -1L) {
-            throw IllegalStateException("Could not find Conference for event")
-        }
+        check(conferenceId != -1L) { "Could not find Conference for event" }
 
         val persistentEvent = Event(event, conferenceId)
         val id = database.eventDao().insert(persistentEvent)
