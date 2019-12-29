@@ -76,11 +76,11 @@ data class Recording(
             isHighQuality = rec.isHighQuality,
             width = rec.width,
             height = rec.height,
-            updatedAt = rec.updatedAt,
+            updatedAt = rec.updatedAt ?: "",
             recordingUrl = rec.recordingUrl,
             url = rec.url,
             eventUrl = rec.eventUrl,
-            conferenceUrl = rec.conferenceUrl,
+            conferenceUrl = rec.conferenceUrl ?: "",
             backendId = rec.recordingID)
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

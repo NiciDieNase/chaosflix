@@ -18,14 +18,14 @@ data class RecordingDto(
     var width: Int = 0,
     var height: Int = 0,
     @SerializedName("updated_at")
-    var updatedAt: String = "",
+    var updatedAt: String? = "",
     @SerializedName("recording_url")
     var recordingUrl: String = "",
     var url: String = "",
     @SerializedName("event_url")
     var eventUrl: String = "",
     @SerializedName("conference_url")
-    var conferenceUrl: String = ""
+    var conferenceUrl: String? = ""
 ) {
     val recordingID: Long
     get() {
