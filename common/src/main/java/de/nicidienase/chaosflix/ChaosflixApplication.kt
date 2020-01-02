@@ -2,7 +2,6 @@ package de.nicidienase.chaosflix
 
 import android.app.Application
 import libsInit
-import stageInit
 
 class ChaosflixApplication : Application() {
 

@@ -49,8 +49,11 @@ abstract class EventDao : BaseDao<Event>() {
     @Query("SELECT * FROM event INNER JOIN playback_progress WHERE event.guid = playback_progress.event_guid")
     abstract fun findInProgressEvents(): LiveData<List<Event>>
 
-    @Query("SELECT * FROM event WHERE frontendLink = :url ")
-    abstract fun findEventsByFrontendurl(url: String): LiveData<Event?>
+    @Query("SELECT * FROM event WHERE frontendLink LIKE :url ")
+    abstract fun findEventsByFrontendurl(url: String): LiveData<List<Event?>>
+
+    @Query("SELECT * FROM event WHERE frontendLink LIKE :url LIMIT 1")
+    abstract suspend fun findEventForFrontendUrl(url: String): Event?
 
     @Query("DElETE FROM event")
     abstract fun delete()

@@ -19,6 +19,9 @@ abstract class ConferenceDao : BaseDao<Conference>() {
     @Query("SELECT * FROM conference WHERE acronym = :acronym LIMIT 1")
     abstract fun findConferenceByAcronymSync(acronym: String): Conference?
 
+    @Query("SELECT * FROM conference WHERE acronym = :acronym LIMIT 1")
+    abstract suspend fun findConferenceByAcronymSuspend(acronym: String): Conference?
+
     @Query("SELECT * FROM conference WHERE conferenceGroupId = :id ORDER BY acronym DESC")
     abstract fun findConferenceByGroup(id: Long): LiveData<List<Conference>>
 

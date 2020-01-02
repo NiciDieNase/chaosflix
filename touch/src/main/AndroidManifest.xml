@@ -29,6 +29,15 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="https"
+                    android:host="media.ccc.de"
+                    android:pathPrefix="/v/"/>
+            </intent-filter>
         </activity>
         <activity android:name=".browse.BrowseActivity">
             <meta-data
