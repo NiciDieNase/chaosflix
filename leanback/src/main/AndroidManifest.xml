@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="de.nicidienase.chaosflix.leanback"
+<manifest xmlns:tools="http://schemas.android.com/tools"
+    package="de.nicidienase.chaosflix.leanback"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -18,7 +19,8 @@
         android:label="${label}"
         android:supportsRtl="true"
         android:name="de.nicidienase.chaosflix.ChaosflixApplication"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".conferences.ConferencesActivity"
             android:banner="@drawable/banner"

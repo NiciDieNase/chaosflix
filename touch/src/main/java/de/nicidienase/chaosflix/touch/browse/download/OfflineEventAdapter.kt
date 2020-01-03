@@ -17,7 +17,7 @@ class OfflineEventAdapter(
     private val eventDeleteListener: (String) -> Unit,
     private val eventSelectedListener: (String) -> Unit
 ) :
-        androidx.recyclerview.widget.RecyclerView.Adapter<OfflineEventAdapter.ViewHolder>() {
+        RecyclerView.Adapter<OfflineEventAdapter.ViewHolder>() {
 
     var items: List<OfflineEventView> = emptyList()
         set(value) {
@@ -55,7 +55,7 @@ class OfflineEventAdapter(
         return ViewHolder(binding, binding.root)
     }
 
-    inner class ViewHolder(val binding: ItemOfflineEventBinding, val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(val binding: ItemOfflineEventBinding, val view: View) : RecyclerView.ViewHolder(view) {
         val thumbnail = binding.imageView
     }
 }

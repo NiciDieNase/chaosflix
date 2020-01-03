@@ -23,7 +23,7 @@ abstract class RecordingDao : BaseDao<Recording>() {
     abstract fun findRecordingByEventSync(id: Long): List<Recording>
 
     @Query("SELECT * FROM recording WHERE backendId = :backendId")
-    abstract fun findRecordingByBackendIdSync(backendId: Long): Recording?
+    abstract fun findRecordingByBackendId(backendId: Long): Recording?
 
     @Query("DELETE FROM recording WHERE eventId = :eventId")
     abstract fun deleteRecordingsForEvent(eventId: Long)
@@ -31,11 +31,11 @@ abstract class RecordingDao : BaseDao<Recording>() {
     @Query("DElETE FROM recording")
     abstract fun delete()
 
-    override fun updateOrInsertInternal(item: Recording) {
+    override suspend fun updateOrInsertInternal(item: Recording) {
         if (item.id != 0L) {
             update(item)
         } else {
-            val existingRecording = findRecordingByBackendIdSync(item.backendId)
+            val existingRecording = findRecordingByBackendId(item.backendId)
             if (existingRecording != null) {
                 item.id = existingRecording.id
                 update(item)

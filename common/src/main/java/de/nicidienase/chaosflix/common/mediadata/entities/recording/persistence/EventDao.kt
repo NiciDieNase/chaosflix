@@ -58,7 +58,7 @@ abstract class EventDao : BaseDao<Event>() {
     @Query("DElETE FROM event")
     abstract fun delete()
 
-    override fun updateOrInsertInternal(item: Event) {
+    override suspend fun updateOrInsertInternal(item: Event) {
         if (item.id != 0L) {
             update(item)
         } else {

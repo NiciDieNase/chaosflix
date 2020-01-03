@@ -17,7 +17,7 @@ abstract class ConferenceDao : BaseDao<Conference>() {
     abstract fun findConferenceById(id: Long): LiveData<Conference>
 
     @Query("SELECT * FROM conference WHERE acronym = :acronym LIMIT 1")
-    abstract fun findConferenceByAcronymSync(acronym: String): Conference?
+    abstract suspend fun findConferenceByAcronym(acronym: String): Conference?
 
     @Query("SELECT * FROM conference WHERE acronym = :acronym LIMIT 1")
     abstract suspend fun findConferenceByAcronymSuspend(acronym: String): Conference?
@@ -28,11 +28,11 @@ abstract class ConferenceDao : BaseDao<Conference>() {
     @Query("DELETE FROM conference")
     abstract fun delete()
 
-    override fun updateOrInsertInternal(item: Conference) {
+    override suspend fun updateOrInsertInternal(item: Conference) {
         if (item.id != 0L) {
             update(item)
         } else {
-            val existingEvent = findConferenceByAcronymSync(item.acronym)
+            val existingEvent = findConferenceByAcronym(item.acronym)
             if (existingEvent != null) {
                 item.id = existingEvent.id
                 update(item)
