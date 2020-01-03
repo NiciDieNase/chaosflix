@@ -6,13 +6,16 @@ import com.google.gson.Gson
 import de.nicidienase.chaosflix.BuildConfig
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.SingletonHolder
+import de.nicidienase.chaosflix.common.SingletonHolder2
+import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 import java.util.concurrent.TimeUnit
 
-class ApiFactory private constructor(val res: Resources) {
+class ApiFactory private constructor(res: Resources, cache: File) {
 
     private val chaosflixUserAgent: String by lazy { buildUserAgent() }
     private val gsonConverterFactory: GsonConverterFactory by lazy { GsonConverterFactory.create(Gson()) }
@@ -21,6 +24,7 @@ class ApiFactory private constructor(val res: Resources) {
         OkHttpClient.Builder()
             .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+            .cache(Cache(cache, CACHE_SIZE))
             .addInterceptor(useragentInterceptor)
             .build()
     }
@@ -48,9 +52,10 @@ class ApiFactory private constructor(val res: Resources) {
         return@Interceptor chain.proceed(requestWithUseragent)
     }
 
-    companion object : SingletonHolder<ApiFactory, Resources>(::ApiFactory) {
+    companion object : SingletonHolder2<ApiFactory, Resources, File>(::ApiFactory) {
 
         private const val DEFAULT_TIMEOUT = 30L
+        private const val CACHE_SIZE = 1024L * 5 // 5MB
 
         fun buildUserAgent(): String {
             val versionName = BuildConfig.VERSION_NAME

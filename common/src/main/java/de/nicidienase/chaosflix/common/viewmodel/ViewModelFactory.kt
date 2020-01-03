@@ -15,7 +15,7 @@ import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 
 class ViewModelFactory private constructor(context: Context) : ViewModelProvider.Factory {
 
-    private val apiFactory = ApiFactory.getInstance(context.resources)
+    private val apiFactory = ApiFactory.getInstance(context.resources, context.cacheDir)
 
     private val database by lazy { ChaosflixDatabase.getInstance(context) }
     private val recordingApi = apiFactory.recordingApi
