@@ -15,7 +15,6 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
-import de.nicidienase.chaosflix.common.mediadata.sync.IDownloader
 import de.nicidienase.chaosflix.common.util.LiveDataMerger
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
@@ -56,13 +55,13 @@ class BrowseViewModel(
     fun getUpdateState() =
             mediaRepository.updateConferencesAndGroups()
 
-    fun updateEventsForConference(conference: Conference): LiveData<LiveEvent<IDownloader.State, List<Event>, String>> =
-        LiveDataMerger<List<Event>,LiveEvent<IDownloader.State, List<Event>, String>,LiveEvent<IDownloader.State, List<Event>, String>>()
+    fun updateEventsForConference(conference: Conference): LiveData<LiveEvent<MediaRepository.State, List<Event>, String>> =
+        LiveDataMerger<List<Event>,LiveEvent<MediaRepository.State, List<Event>, String>,LiveEvent<MediaRepository.State, List<Event>, String>>()
                 .merge(
                     getEventsforConference(conference),
                     mediaRepository.updateEventsForConference(conference)
-                ) { list: List<Event>?, liveEvent: LiveEvent<IDownloader.State, List<Event>, String>? ->
-                    return@merge LiveEvent(liveEvent?.state ?: IDownloader.State.DONE, list ?: liveEvent?.data, liveEvent?.error)
+                ) { list: List<Event>?, liveEvent: LiveEvent<MediaRepository.State, List<Event>, String>? ->
+                    return@merge LiveEvent(liveEvent?.state ?: MediaRepository.State.DONE, list ?: liveEvent?.data, liveEvent?.error)
                 }
 
     fun getBookmarkedEvents(): LiveData<List<Event>> = updateAndGetEventsForGuids {

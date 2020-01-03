@@ -1,17 +1,9 @@
 package de.nicidienase.chaosflix.touch.browse.eventslist;
 
 import android.app.SearchManager;
-import androidx.lifecycle.Observer;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,13 +12,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.List;
 
-import de.nicidienase.chaosflix.touch.R;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import de.nicidienase.chaosflix.common.mediadata.MediaRepository;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event;
-import de.nicidienase.chaosflix.common.mediadata.sync.Downloader;
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener;
+import de.nicidienase.chaosflix.touch.R;
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment;
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter;
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventsListBinding;
@@ -133,7 +133,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 					}
 				});
 				getViewModel().updateEventsForConference(conference).observe(this, state -> {
-					Downloader.State downloaderState = state.getState();
+					MediaRepository.State downloaderState = state.getState();
 					switch (downloaderState) {
 						case RUNNING:
 							setLoadingOverlayVisibility(true);

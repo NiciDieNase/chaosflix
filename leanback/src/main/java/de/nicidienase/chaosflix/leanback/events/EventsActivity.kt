@@ -6,9 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
-import de.nicidienase.chaosflix.common.mediadata.sync.IDownloader
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.BrowseErrorFragment
@@ -35,7 +35,7 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
         super.onStart()
         viewModel.updateEventsForConference(conference).observe(this, Observer { event ->
             when (event?.state) {
-                IDownloader.State.RUNNING -> {
+                MediaRepository.State.RUNNING -> {
                     Log.i(TAG, "Refresh running")
                     supportFragmentManager?.let {
                         if (errorFragment == null) {
@@ -43,7 +43,7 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
                         }
                     }
                 }
-                IDownloader.State.DONE -> {
+                MediaRepository.State.DONE -> {
                     Log.i(TAG, "Refresh done")
                     if (event.error != null) {
                         val errorMessage = event.error ?: "Error refreshing events"

@@ -1,12 +1,12 @@
 package de.nicidienase.chaosflix.common.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import android.util.Log
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.common.AnalyticsWrapper
 import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
-import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
+import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 import de.nicidienase.chaosflix.common.util.LiveEvent
@@ -16,14 +16,13 @@ import java.io.BufferedWriter
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
-import java.lang.Exception
 
 class PreferencesViewModel(
-    val downloader: Downloader,
-    val watchlistItemDao: WatchlistItemDao,
-    val exportDir: File
+    private val mediaRepository: MediaRepository,
+    private val watchlistItemDao: WatchlistItemDao,
+    private val exportDir: File
 ) : ViewModel() {
-    val gson = Gson()
+    private val gson = Gson()
 
     private val threadHandler = ThreadHandler()
 
@@ -31,7 +30,7 @@ class PreferencesViewModel(
 
     fun cleanNonUserData() {
         threadHandler.runOnBackgroundThread {
-            downloader.deleteNonUserData()
+            mediaRepository.deleteNonUserData()
         }
     }
 
@@ -92,7 +91,7 @@ class PreferencesViewModel(
     }
 
     companion object {
-        val TAG = PreferencesViewModel::class.java.simpleName
-        val FAVORITES_FILENAME = "chaosflix_favorites.json"
+        private val TAG = PreferencesViewModel::class.java.simpleName
+        private const val FAVORITES_FILENAME = "chaosflix_favorites.json"
     }
 }

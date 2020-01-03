@@ -60,10 +60,6 @@
 
         <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
 
-        <service
-            android:name="de.nicidienase.chaosflix.common.mediadata.sync.DownloadJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-
     </application>
 
 </manifest>
