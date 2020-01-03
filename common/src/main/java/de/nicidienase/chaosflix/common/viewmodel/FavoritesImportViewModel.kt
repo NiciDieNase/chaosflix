@@ -60,16 +60,16 @@ class FavoritesImportViewModel(
         }
     }
 
-    private suspend fun updateConferences(conference: String) {
+    private suspend fun updateConferences(conferenceName: String) {
         val fahrplanMappings = mappingService.getFahrplanMappings()
-        Log.d(TAG, "Updating conferences for $conference, mappings=$fahrplanMappings")
-        if (fahrplanMappings.containsKey(conference)) {
-            fahrplanMappings[conference]?.let { keys ->
-                for (conf in keys) {
-                    conferenceDao.findConferenceByAcronymSync(conf)?.let { conf ->
+        Log.d(TAG, "Updating conferences for $conferenceName, mappings=$fahrplanMappings")
+        if (fahrplanMappings.containsKey(conferenceName)) {
+            fahrplanMappings[conferenceName]?.let { keys ->
+                for (conferenceAcronym in keys) {
+                    conferenceDao.findConferenceByAcronymSync(conferenceAcronym)?.let { conference ->
                         val list =
-                            downloader.updateEventsForConferencesSuspending(conf)
-                        Log.d(TAG, "updated ${conf.acronym}, got ${list.size} events")
+                            downloader.updateEventsForConferencesSuspending(conference)
+                        Log.d(TAG, "updated ${conference.acronym}, got ${list.size} events")
                     }
                 }
             }
