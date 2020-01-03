@@ -57,7 +57,7 @@ class DetailsViewModel(
     }
 
     fun download(event: Event, recording: Recording) =
-            offlineItemManager.download(event, recording)
+            offlineItemManager.download(event, recording, viewModelScope)
 
     private fun fileExists(guid: String): Boolean {
         val offlineItem = database.offlineEventDao().getByEventGuidSync(guid)
