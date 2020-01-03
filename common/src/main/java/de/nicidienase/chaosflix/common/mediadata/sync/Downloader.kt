@@ -219,4 +219,5 @@ class Downloader(
     companion object {
         private val TAG: String = Downloader::class.java.simpleName
     }
+
 }
