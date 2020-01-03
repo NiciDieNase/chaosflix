@@ -144,7 +144,7 @@ class OfflineItemManager(
 
     fun deleteOfflineItem(guid: String) {
         val offlineEvent = offlineEventDao.getByEventGuidSync(guid)
-        if(offlineEvent != null){
+        if (offlineEvent != null) {
             deleteOfflineItem(offlineEvent)
         }
     }

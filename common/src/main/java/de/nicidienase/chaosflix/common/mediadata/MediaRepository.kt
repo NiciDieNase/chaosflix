@@ -41,11 +41,11 @@ class MediaRepository(
 
     fun updateConferencesAndGroups(): SingleLiveEvent<LiveEvent<State, List<Conference>, String>> {
         val updateState = SingleLiveEvent<LiveEvent<State, List<Conference>, String>>()
-            coroutineScope.launch (Dispatchers.IO){
+            coroutineScope.launch(Dispatchers.IO) {
                 updateState.postValue(LiveEvent(state = State.RUNNING))
                 try {
                     val conferencesWrapper = recordingApi.getConferencesWrapperSuspending()
-                    if(conferencesWrapper != null){
+                    if (conferencesWrapper != null) {
                         val saveConferences = saveConferences(conferencesWrapper)
                         updateState.postValue(LiveEvent(State.DONE, data = saveConferences))
                     } else {
@@ -76,7 +76,7 @@ class MediaRepository(
                 e.printStackTrace()
             }
         }
-        return updateState    }
+        return updateState }
 
     private suspend fun updateEventsForConferencesSuspending(conference: Conference): List<Event> {
         val conferenceByName = recordingApi.getConferenceByNameSuspending(conference.acronym)
@@ -94,7 +94,7 @@ class MediaRepository(
             try {
                 val eventDto = recordingApi.getEventByGUIDSuspending(event.guid)
                 val recordingDtos = eventDto?.recordings
-                if(recordingDtos != null){
+                if (recordingDtos != null) {
                     val recordings: List<Recording> = saveRecordings(event, recordingDtos)
                     updateState.postValue(LiveEvent(State.DONE, data = recordings))
                 } else {
@@ -111,7 +111,7 @@ class MediaRepository(
 
     suspend fun updateSingleEvent(guid: String): Event? {
         val event = recordingApi.getEventByGUIDSuspending(guid)
-        return if(event != null) {
+        return if (event != null) {
             saveEvent(event)
         } else {
             null
@@ -158,7 +158,6 @@ class MediaRepository(
         return group
     }
 
-
     fun saveEvents(persistentConference: Conference, events: List<EventDto>): List<Event> {
         val persistantEvents = events.map { Event(it, persistentConference.id) }
         eventDao.updateOrInsert(*persistantEvents.toTypedArray())
@@ -194,7 +193,6 @@ class MediaRepository(
         relatedEventDao.updateOrInsert(*list?.toTypedArray() ?: emptyArray())
         return list ?: emptyList()
     }
-
 
     fun saveRecordings(event: Event, recordings: List<RecordingDto>): List<Recording> {
         val persistentRecordings = recordings.map { Recording(it, event.id) }

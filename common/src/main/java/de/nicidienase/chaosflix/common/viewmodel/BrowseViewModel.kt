@@ -56,7 +56,7 @@ class BrowseViewModel(
             mediaRepository.updateConferencesAndGroups()
 
     fun updateEventsForConference(conference: Conference): LiveData<LiveEvent<MediaRepository.State, List<Event>, String>> =
-        LiveDataMerger<List<Event>,LiveEvent<MediaRepository.State, List<Event>, String>,LiveEvent<MediaRepository.State, List<Event>, String>>()
+        LiveDataMerger<List<Event>, LiveEvent<MediaRepository.State, List<Event>, String>, LiveEvent<MediaRepository.State, List<Event>, String>>()
                 .merge(
                     getEventsforConference(conference),
                     mediaRepository.updateEventsForConference(conference)
@@ -79,7 +79,7 @@ class BrowseViewModel(
 
     private fun updateAndGetEventsForGuids(guidProvider: () -> List<String>): LiveData<List<Event>> {
         val result = MutableLiveData<List<Event>>()
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             val guids = guidProvider.invoke()
             val events = guids.map { mediaRepository.updateSingleEvent(it) }.filterNotNull()
             result.postValue(events)
@@ -95,7 +95,7 @@ class BrowseViewModel(
         offlineItemManager.updateDownloadStatus(database.offlineEventDao().getAllSync())
     }
 
-    fun showDetailsForEvent(guid: String) = viewModelScope.launch(Dispatchers.IO)  {
+    fun showDetailsForEvent(guid: String) = viewModelScope.launch(Dispatchers.IO) {
         val event = database.eventDao().findEventByGuidSync(guid)
         if (event != null) {
             state.postValue(LiveEvent(State.ShowEventDetails, event))
@@ -105,7 +105,7 @@ class BrowseViewModel(
     }
 
     fun deleteOfflineItem(guid: String) {
-        viewModelScope.launch(Dispatchers.IO)  {
+        viewModelScope.launch(Dispatchers.IO) {
             offlineItemManager.deleteOfflineItem(guid)
         }
     }

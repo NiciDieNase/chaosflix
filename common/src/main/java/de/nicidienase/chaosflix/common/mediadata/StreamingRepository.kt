@@ -15,11 +15,9 @@ class StreamingRepository(
     val streamingConferences: LiveData<List<LiveConference>> = _streamingConferences
 
     fun update(scope: CoroutineScope): LiveData<List<LiveConference>> {
-        scope.launch (Dispatchers.IO) {
+        scope.launch(Dispatchers.IO) {
             _streamingConferences.postValue(streamingApi.getStreamingConferences())
-
         }
         return streamingConferences
     }
-
 }

@@ -5,7 +5,6 @@ import android.os.Build
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.BuildConfig
 import de.nicidienase.chaosflix.R
-import de.nicidienase.chaosflix.common.SingletonHolder
 import de.nicidienase.chaosflix.common.SingletonHolder2
 import okhttp3.Cache
 import okhttp3.Interceptor

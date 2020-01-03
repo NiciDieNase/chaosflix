@@ -52,7 +52,7 @@ abstract class ItemRecyclerViewAdapter<T, VH : RecyclerView.ViewHolder?>() :
 
         override fun publishResults(filterText: CharSequence?, filterResults: FilterResults?) {
             val results = filterResults?.values
-            if (results != null && results is List<*> ) {
+            if (results != null && results is List<*>) {
                 filteredItems = results as List<T>
             } else {
                 filteredItems = _items
