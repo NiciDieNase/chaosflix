@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.common.viewmodel
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.common.AnalyticsWrapper
 import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
@@ -10,7 +11,8 @@ import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 import de.nicidienase.chaosflix.common.util.LiveEvent
-import de.nicidienase.chaosflix.common.util.ThreadHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.File
@@ -24,12 +26,10 @@ class PreferencesViewModel(
 ) : ViewModel() {
     private val gson = Gson()
 
-    private val threadHandler = ThreadHandler()
-
     private val analyticsWrapper: AnalyticsWrapper = AnalyticsWrapperImpl
 
     fun cleanNonUserData() {
-        threadHandler.runOnBackgroundThread {
+        viewModelScope.launch(Dispatchers.IO) {
             mediaRepository.deleteNonUserData()
         }
     }
@@ -39,7 +39,7 @@ class PreferencesViewModel(
     fun stopAnalytics() = analyticsWrapper.stopAnalytics()
 
     fun exportFavorites() {
-        threadHandler.runOnBackgroundThread {
+        viewModelScope.launch(Dispatchers.IO) {
             val favorites = watchlistItemDao.getAllSync()
             val json = gson.toJson(favorites)
             Log.d(TAG, json)
@@ -66,7 +66,7 @@ class PreferencesViewModel(
     fun importFavorites(): MutableLiveData<LiveEvent<State, List<WatchlistItem>, Exception>> {
         val mutableLiveData = MutableLiveData<LiveEvent<State, List<WatchlistItem>, Exception>>()
         mutableLiveData.postValue(LiveEvent(State.Loading, null, null))
-        threadHandler.runOnBackgroundThread {
+        viewModelScope.launch(Dispatchers.IO) {
             val file = File("${exportDir.path}${File.separator}$FAVORITES_FILENAME")
             try {
                 if (file.exists()) {

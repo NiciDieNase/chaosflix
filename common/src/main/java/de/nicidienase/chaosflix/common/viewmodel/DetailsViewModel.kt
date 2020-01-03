@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.PreferencesManager
@@ -13,7 +14,8 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import de.nicidienase.chaosflix.common.util.ThreadHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 
 class DetailsViewModel(
@@ -29,8 +31,6 @@ class DetailsViewModel(
     val autoselectRecording: Boolean
         get() = preferencesManager.getAutoselectRecording()
 
-    private val handler = ThreadHandler()
-
     fun setEvent(event: Event): LiveData<Event?> {
         mediaRepository.updateRecordingsForEvent(event)
         return database.eventDao().findEventByGuid(event.guid)
@@ -45,13 +45,13 @@ class DetailsViewModel(
             database.watchlistItemDao().getItemForEvent(guid)
 
     fun createBookmark(guid: String) {
-        handler.runOnBackgroundThread {
+        viewModelScope.launch(Dispatchers.IO) {
             database.watchlistItemDao().saveItem(WatchlistItem(eventGuid = guid))
         }
     }
 
     fun removeBookmark(guid: String) {
-        handler.runOnBackgroundThread {
+        viewModelScope.launch(Dispatchers.IO) {
             database.watchlistItemDao().deleteItem(guid)
         }
     }
@@ -66,7 +66,7 @@ class DetailsViewModel(
 
     fun deleteOfflineItem(event: Event): LiveData<Boolean> {
         val result = MutableLiveData<Boolean>()
-        handler.runOnBackgroundThread {
+        viewModelScope.launch(Dispatchers.IO) {
             database.offlineEventDao().getByEventGuidSync(event.guid)?.let {
                 offlineItemManager.deleteOfflineItem(it)
             }
@@ -77,7 +77,7 @@ class DetailsViewModel(
 
     fun getRelatedEvents(event: Event): LiveData<List<Event>> {
         val data = MutableLiveData<List<Event>>()
-        handler.runOnBackgroundThread {
+        viewModelScope.launch(Dispatchers.IO) {
             val guids = database.relatedEventDao().getRelatedEventsForEventSync(event.id).map { it.relatedEventGuid }
             data.postValue(database.eventDao().findEventsByGUIDsSync(guids))
         }
@@ -91,24 +91,23 @@ class DetailsViewModel(
     }
 
     fun playEvent(event: Event) {
-        handler.runOnBackgroundThread {
-
+        viewModelScope.launch(Dispatchers.IO) {
             val offlineEvent = database.offlineEventDao().getByEventGuidSync(event.guid)
             if (offlineEvent != null) {
                 // Play offlineEvent
                 val recording = database.recordingDao().findRecordingByIdSync(offlineEvent.recordingId)
                 if (!fileExists(event.guid)) {
                     state.postValue(LiveEvent(State.Error, error = "File is gone"))
-                    return@runOnBackgroundThread
-                }
-                val bundle = Bundle()
-                bundle.putString(KEY_LOCAL_PATH, offlineEvent.localPath)
-                bundle.putParcelable(RECORDING, recording)
-                bundle.putParcelable(EVENT, event)
-                if (preferencesManager.externalPlayer) {
-                    state.postValue(LiveEvent(State.PlayExternal, bundle))
                 } else {
-                    state.postValue(LiveEvent(State.PlayOfflineItem, data = bundle))
+                    val bundle = Bundle()
+                    bundle.putString(KEY_LOCAL_PATH, offlineEvent.localPath)
+                    bundle.putParcelable(RECORDING, recording)
+                    bundle.putParcelable(EVENT, event)
+                    if (preferencesManager.externalPlayer) {
+                        state.postValue(LiveEvent(State.PlayExternal, bundle))
+                    } else {
+                        state.postValue(LiveEvent(State.PlayOfflineItem, data = bundle))
+                    }
                 }
             } else {
                 // select quality then playEvent
@@ -138,7 +137,7 @@ class DetailsViewModel(
     fun playInExternalPlayer(event: Event) = postStateWithEventAndRecordings(State.PlayExternal, event)
 
     private fun postStateWithEventAndRecordings(s: State, e: Event) {
-        handler.runOnBackgroundThread {
+        viewModelScope.launch(Dispatchers.IO) {
             val items = database.recordingDao().findRecordingByEventSync(e.id).toTypedArray()
             val bundle = Bundle()
             bundle.putParcelable(EVENT, e)

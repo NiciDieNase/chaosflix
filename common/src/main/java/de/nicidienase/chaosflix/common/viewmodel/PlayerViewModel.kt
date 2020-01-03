@@ -2,14 +2,14 @@ package de.nicidienase.chaosflix.common.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
-import de.nicidienase.chaosflix.common.util.ThreadHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Date
 
 class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
-
-    val handler = ThreadHandler()
 
     fun getPlaybackProgressLiveData(guid: String): LiveData<PlaybackProgress?> =
             database.playbackProgressDao().getProgressForEvent(guid)
@@ -20,7 +20,7 @@ class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
         if (progress < 5_000) {
             return
         }
-        handler.runOnBackgroundThread {
+        viewModelScope.launch(Dispatchers.IO) {
             database.playbackProgressDao().saveProgress(
                     PlaybackProgress(
                             progress = progress,
@@ -30,7 +30,7 @@ class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
     }
 
     fun deletePlaybackProgress(eventId: String) {
-        handler.runOnBackgroundThread {
+        viewModelScope.launch(Dispatchers.IO) {
             database.playbackProgressDao().deleteItem(eventId)
         }
     }
