@@ -8,5 +8,5 @@ import retrofit2.http.GET
 interface StreamingApi {
 
     @GET(BuildConfig.STREAMING_API_OFFERS_PATH)
-    fun getStreamingConferences(): Call<List<LiveConference>>
+    suspend fun getStreamingConferences(): List<LiveConference>
 }

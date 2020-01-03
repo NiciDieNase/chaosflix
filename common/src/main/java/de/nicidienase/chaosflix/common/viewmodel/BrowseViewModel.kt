@@ -3,32 +3,31 @@ package de.nicidienase.chaosflix.common.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.PreferencesManager
 import de.nicidienase.chaosflix.common.ResourcesFacade
+import de.nicidienase.chaosflix.common.mediadata.MediaRepository
+import de.nicidienase.chaosflix.common.mediadata.StreamingRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
-import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
-import de.nicidienase.chaosflix.common.mediadata.network.StreamingApi
-import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
-import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
+import de.nicidienase.chaosflix.common.mediadata.sync.IDownloader
 import de.nicidienase.chaosflix.common.util.LiveDataMerger
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import de.nicidienase.chaosflix.common.util.ThreadHandler
-import retrofit2.Response
-import java.io.IOException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class BrowseViewModel(
     val offlineItemManager: OfflineItemManager,
-    val database: ChaosflixDatabase,
-    recordingApi: RecordingService,
-    val streamingApi: StreamingApi,
-    val preferencesManager: PreferencesManager,
+    private val mediaRepository: MediaRepository,
+    private val database: ChaosflixDatabase,
+    private val streamingRepository: StreamingRepository,
+    private val preferencesManager: PreferencesManager,
     private val resources: ResourcesFacade
 ) : ViewModel() {
 
@@ -38,25 +37,15 @@ class BrowseViewModel(
         ShowEventDetails
     }
 
-    val downloader = Downloader(recordingApi, database)
-    private val handler = ThreadHandler()
-
     init {
-        handler.runOnBackgroundThread {
-            val downloadRefs =
-                    database
-                            .offlineEventDao()
-                            .getAllSync()
-                            .map { it.downloadReference }
+        viewModelScope.launch {
+            val downloadRefs: List<Long> = mediaRepository.getAllOfflineEvents()
             offlineItemManager.addDownloadRefs(downloadRefs)
         }
     }
 
     fun getConferenceGroups(): LiveData<List<ConferenceGroup>> =
             database.conferenceGroupDao().getAll()
-
-    fun getConference(conferenceId: Long) =
-            database.conferenceDao().findConferenceById(conferenceId)
 
     fun getConferencesByGroup(groupId: Long) =
             database.conferenceDao().findConferenceByGroup(groupId)
@@ -65,16 +54,15 @@ class BrowseViewModel(
             database.eventDao().findEventsByConference(conference.id)
 
     fun getUpdateState() =
-            downloader.updateConferencesAndGroups()
+            mediaRepository.updateConferencesAndGroups()
 
-    fun updateEventsForConference(conference: Conference): LiveData<LiveEvent<Downloader.DownloaderState, List<Event>, String>> =
-        LiveDataMerger<
-                List<Event>,
-                LiveEvent<Downloader.DownloaderState, List<Event>, String>,
-                LiveEvent<Downloader.DownloaderState, List<Event>, String>>()
-                .merge(getEventsforConference(conference),
-                        downloader.updateEventsForConference(conference)) { list: List<Event>?, liveEvent: LiveEvent<Downloader.DownloaderState, List<Event>, String>? ->
-                    return@merge LiveEvent(liveEvent?.state ?: Downloader.DownloaderState.DONE, list ?: liveEvent?.data, liveEvent?.error)
+    fun updateEventsForConference(conference: Conference): LiveData<LiveEvent<IDownloader.State, List<Event>, String>> =
+        LiveDataMerger<List<Event>,LiveEvent<IDownloader.State, List<Event>, String>,LiveEvent<IDownloader.State, List<Event>, String>>()
+                .merge(
+                    getEventsforConference(conference),
+                    mediaRepository.updateEventsForConference(conference)
+                ) { list: List<Event>?, liveEvent: LiveEvent<IDownloader.State, List<Event>, String>? ->
+                    return@merge LiveEvent(liveEvent?.state ?: IDownloader.State.DONE, list ?: liveEvent?.data, liveEvent?.error)
                 }
 
     fun getBookmarkedEvents(): LiveData<List<Event>> = updateAndGetEventsForGuids {
@@ -92,90 +80,39 @@ class BrowseViewModel(
 
     private fun updateAndGetEventsForGuids(guidProvider: () -> List<String>): LiveData<List<Event>> {
         val result = MutableLiveData<List<Event>>()
-        handler.runOnBackgroundThread {
+        viewModelScope.launch(Dispatchers.IO){
             val guids = guidProvider.invoke()
-            val events = guids.map { downloader.updateSingleEvent(it) }.filterNotNull()
+            val events = guids.map { mediaRepository.updateSingleEvent(it) }.filterNotNull()
             result.postValue(events)
         }
         return result
     }
 
-    private val TAG = BrowseViewModel::class.simpleName
-
-    fun getLivestreams(): LiveData<List<LiveConference>> {
-        // TODO use LiveEvent for Result
-        val result = MutableLiveData<List<LiveConference>>()
-        handler.runOnBackgroundThread {
-            val request: Response<List<LiveConference>>
-            try {
-                request = streamingApi.getStreamingConferences().execute()
-            } catch (e: IOException) {
-                result.postValue(emptyList())
-                return@runOnBackgroundThread
-            }
-            if (!request.isSuccessful) {
-                result.postValue(emptyList())
-                return@runOnBackgroundThread
-            }
-            result.postValue(request.body())
-        }
-        return result
-    }
-
-    fun getOfflineEvents() = database.offlineEventDao().getAll()
+    fun getLivestreams(): LiveData<List<LiveConference>> = streamingRepository.update(viewModelScope)
 
     fun getOfflineDisplayEvents() = database.offlineEventDao().getOfflineEventsDisplay()
 
-    fun mapOfflineEvents(offlineEvents: List<OfflineEvent>): List<Pair<OfflineEvent, Event>> {
-        val offlineEventMap = offlineEvents.map { it.eventGuid to it }.toMap()
-        val persistentEventMap = database.eventDao().findEventsByGUIDsSync(offlineEventMap.keys.toList())
-                .map { it.guid to it }.toMap()
-
-        val resultList = ArrayList<Pair<OfflineEvent, Event>>()
-        for (key in offlineEventMap.keys) {
-            val offlineEvent = offlineEventMap[key]
-            var event: Event? = persistentEventMap[key]
-            if (event == null) {
-                event = downloader.updateSingleEvent(key)
-            }
-            if (event != null && offlineEvent != null) {
-                resultList.add(Pair(offlineEvent, event))
-            }
-        }
-        return resultList
+    fun updateDownloadStatus() = viewModelScope.launch(Dispatchers.IO) {
+        offlineItemManager.updateDownloadStatus(database.offlineEventDao().getAllSync())
     }
 
-    fun getEventById(eventId: Long) = database.eventDao().findEventById(eventId)
-
-    fun getRecordingByid(recordingId: Long) = database.recordingDao().findRecordingById(recordingId)
-
-    fun updateDownloadStatus() {
-        handler.runOnBackgroundThread {
-            offlineItemManager.updateDownloadStatus(database.offlineEventDao().getAllSync())
-        }
-    }
-
-    fun deleteOfflineItem(item: OfflineEvent) {
-        handler.runOnBackgroundThread {
-            offlineItemManager.deleteOfflineItem(item)
-        }
-    }
-
-    fun showDetailsForEvent(guid: String) {
-        handler.runOnBackgroundThread {
-            val event = database.eventDao().findEventByGuidSync(guid)
-            if (event != null) {
-                state.postValue(LiveEvent(State.ShowEventDetails, event))
-            } else {
-                state.postValue(LiveEvent(State.ShowEventDetails, error = resources.getString(R.string.error_event_not_found)))
-            }
+    fun showDetailsForEvent(guid: String) = viewModelScope.launch(Dispatchers.IO)  {
+        val event = database.eventDao().findEventByGuidSync(guid)
+        if (event != null) {
+            state.postValue(LiveEvent(State.ShowEventDetails, event))
+        } else {
+            state.postValue(LiveEvent(State.ShowEventDetails, error = resources.getString(R.string.error_event_not_found)))
         }
     }
 
     fun deleteOfflineItem(guid: String) {
-        handler.runOnBackgroundThread {
+        viewModelScope.launch(Dispatchers.IO)  {
             offlineItemManager.deleteOfflineItem(guid)
         }
     }
     fun getAutoselectStream() = preferencesManager.getAutoselectStream()
+
+    companion object {
+        private val TAG = BrowseViewModel::class.simpleName
+    }
 }

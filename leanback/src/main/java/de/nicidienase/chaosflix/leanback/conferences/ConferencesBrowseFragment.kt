@@ -15,7 +15,7 @@ import android.util.Log
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
-import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
+import de.nicidienase.chaosflix.common.mediadata.sync.IDownloader
 import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
@@ -101,13 +101,13 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 
         viewModel.getUpdateState().observe(this, Observer { downloaderEvent ->
             when (downloaderEvent?.state) {
-                Downloader.DownloaderState.RUNNING -> {
+                IDownloader.State.RUNNING -> {
                     Log.i(TAG, "Refresh running")
                     fragmentManager?.let {
                         errorFragment = BrowseErrorFragment.showErrorFragment(it, R.id.browse_fragment)
                     }
                 }
-                Downloader.DownloaderState.DONE -> {
+                IDownloader.State.DONE -> {
                     if (downloaderEvent.error != null) {
                         val errorMessage = downloaderEvent.error ?: "Error refreshing events"
                         errorFragment?.setErrorContent(errorMessage, fragmentManager)

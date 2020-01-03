@@ -133,7 +133,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 					}
 				});
 				getViewModel().updateEventsForConference(conference).observe(this, state -> {
-					Downloader.DownloaderState downloaderState = state.getState();
+					Downloader.State downloaderState = state.getState();
 					switch (downloaderState) {
 						case RUNNING:
 							setLoadingOverlayVisibility(true);
