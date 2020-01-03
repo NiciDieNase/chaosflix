@@ -27,14 +27,14 @@ abstract class BaseDao<in T> {
     abstract fun delete(vararg items: T)
 
     @Transaction
-    open fun updateOrInsert(item: T) {
+    open suspend fun updateOrInsert(item: T) {
         updateOrInsertInternal(item)
     }
 
     @Transaction
-    open fun updateOrInsert(vararg events: T) {
+    open suspend fun updateOrInsert(vararg events: T) {
         events.map { updateOrInsertInternal(it) }
     }
 
-    protected abstract fun updateOrInsertInternal(item: T)
+    protected abstract suspend fun updateOrInsertInternal(item: T)
 }

@@ -29,6 +29,9 @@ interface OfflineEventDao {
     @Query("SELECT * FROM offline_event")
     fun getAllSync(): List<OfflineEvent>
 
+    @Query("SELECT download_reference FROM offline_event")
+    suspend fun getAllDownloadReferences(): List<Long>
+
     @Query("DELETE FROM offline_event WHERE id=:id")
     fun deleteById(id: Long)
 

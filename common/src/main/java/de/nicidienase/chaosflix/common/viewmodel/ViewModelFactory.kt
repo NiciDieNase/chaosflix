@@ -10,16 +10,16 @@ import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.PreferencesManager
 import de.nicidienase.chaosflix.common.ResourcesFacade
 import de.nicidienase.chaosflix.common.SingletonHolder
+import de.nicidienase.chaosflix.common.mediadata.MediaRepository
+import de.nicidienase.chaosflix.common.mediadata.StreamingRepository
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
-import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 
 class ViewModelFactory private constructor(context: Context) : ViewModelProvider.Factory {
 
-    private val apiFactory = ApiFactory.getInstance(context.resources)
+    private val apiFactory = ApiFactory.getInstance(context.resources, context.cacheDir)
 
     private val database by lazy { ChaosflixDatabase.getInstance(context) }
-    private val recordingApi = apiFactory.recordingApi
-    private val streamingApi = apiFactory.streamingApi
+    private val streamingRepository by lazy { StreamingRepository(apiFactory.streamingApi) }
     private val preferencesManager =
         PreferencesManager(PreferenceManager.getDefaultSharedPreferences(context.applicationContext))
     private val offlineItemManager =
@@ -28,40 +28,37 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
             database.offlineEventDao(),
             preferencesManager
         )
-    private val downloader by lazy { Downloader(recordingApi, database) }
     private val externalFilesDir = Environment.getExternalStorageDirectory()
     private val resourcesFacade by lazy { ResourcesFacade(context) }
+    private val mediaRepository by lazy { MediaRepository(apiFactory.recordingApi, database) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when (modelClass) {
             BrowseViewModel::class.java -> BrowseViewModel(
                 offlineItemManager,
+                mediaRepository,
                 database,
-                recordingApi,
-                streamingApi,
+                streamingRepository,
                 preferencesManager,
-                resourcesFacade
-            ) as T
+                resourcesFacade) as T
             PlayerViewModel::class.java -> PlayerViewModel(database) as T
             DetailsViewModel::class.java -> DetailsViewModel(
                 database,
                 offlineItemManager,
                 preferencesManager,
-                downloader
+                mediaRepository
             ) as T
             PreferencesViewModel::class.java -> PreferencesViewModel(
-                downloader,
+                mediaRepository,
                 database.watchlistItemDao(),
                 externalFilesDir
             ) as T
             FavoritesImportViewModel::class.java -> FavoritesImportViewModel(
-                database.conferenceDao(),
-                database.eventDao(),
                 database.watchlistItemDao(),
-                downloader,
-                apiFactory.fahrplanMappingApi
+                mediaRepository
             ) as T
+            SplashViewModel::class.java -> SplashViewModel(mediaRepository) as T
             else -> throw UnsupportedOperationException(
                 "The requested ViewModel is currently unsupported. " +
                         "Please make sure to implement are correct creation of it. " +

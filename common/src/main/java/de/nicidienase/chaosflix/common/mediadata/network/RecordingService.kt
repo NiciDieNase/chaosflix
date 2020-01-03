@@ -31,8 +31,17 @@ interface RecordingService {
     fun getEventByGUID(@Path("guid") guid: String): Call<EventDto>
 
     @GET("public/events/search")
-    fun searchEvents(@Query("q") query: String): Call<EventsResponse>
+    suspend fun searchEvents(@Query("q") query: String): EventsResponse
 
     @GET("public/recordings/{id}")
     fun getRecording(@Path("id") id: Long): Call<RecordingDto>
+
+    @GET("public/conferences")
+    suspend fun getConferencesWrapperSuspending(): ConferencesWrapper?
+
+    @GET("public/events/search")
+    suspend fun searchEventsSuspending(@Query("q") query: String): EventsResponse?
+
+    @GET("public/events/{guid}")
+    suspend fun getEventByGUIDSuspending(@Path("guid") guid: String): EventDto?
 }

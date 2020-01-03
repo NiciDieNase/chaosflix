@@ -5,12 +5,10 @@ import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import android.util.Log
+import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
-import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.BrowseErrorFragment
@@ -28,7 +26,7 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        conference = intent.getParcelableExtra<Conference>(CONFERENCE)
+        conference = intent.getParcelableExtra(CONFERENCE)
         setContentView(R.layout.activity_events_browse)
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(this)).get(BrowseViewModel::class.java)
     }
@@ -37,21 +35,19 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
         super.onStart()
         viewModel.updateEventsForConference(conference).observe(this, Observer { event ->
             when (event?.state) {
-                Downloader.DownloaderState.RUNNING -> {
+                MediaRepository.State.RUNNING -> {
                     Log.i(TAG, "Refresh running")
-                    supportFragmentManager?.let {
-                        if (errorFragment == null) {
-                            errorFragment = BrowseErrorFragment.showErrorFragment(it, R.id.browse_fragment)
-                        }
+                    if (errorFragment == null) {
+                        errorFragment = BrowseErrorFragment.showErrorFragment(supportFragmentManager, R.id.browse_fragment)
                     }
                 }
-                Downloader.DownloaderState.DONE -> {
+                MediaRepository.State.DONE -> {
                     Log.i(TAG, "Refresh done")
                     if (event.error != null) {
                         val errorMessage = event.error ?: "Error refreshing events"
                         errorFragment?.setErrorContent(errorMessage, supportFragmentManager)
                     } else {
-                        if (event.data?.isEmpty() ?: false) {
+                        if (event.data?.isEmpty() == true) {
                             errorFragment?.setErrorContent("No Events found for this conference", supportFragmentManager)
                         } else {
                             errorFragment?.dismiss(supportFragmentManager)
@@ -62,7 +58,7 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
         })
         viewModel.getEventsforConference(conference).observe(this, Observer { events ->
             events?.let {
-                if (it.size > 0) {
+                if (it.isNotEmpty()) {
                     val tagList = events.map { it.tags ?: emptyArray() }.toTypedArray().flatten()
                     val filteredTags = tagList.filterNot { it.matches("\\d+".toRegex()) }.filterNot { it == conference.acronym }.toSet()
                     updateFragment(filteredTags.size > 1)
@@ -101,7 +97,7 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
         val CONFERENCE = "conference"
         @JvmStatic
         val SHARED_ELEMENT_NAME = "shared_element"
-        val TAG = EventsActivity::class.java.simpleName
+        private val TAG = EventsActivity::class.java.simpleName
 
         @JvmStatic
         @JvmOverloads

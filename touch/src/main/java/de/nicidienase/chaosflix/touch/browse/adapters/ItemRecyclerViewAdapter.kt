@@ -33,17 +33,6 @@ abstract class ItemRecyclerViewAdapter<T, VH : RecyclerView.ViewHolder?> :
             notifyDataSetChanged()
         }
 
-// 	fun addItem(item: T) {
-// 		if (items.contains(item)) {
-// 			val index = items.indexOf(item)
-// 			items[index] = item
-// 			notifyItemChanged(index)
-// 		} else {
-// 			items.add(item)
-// 			notifyItemInserted(items.size - 1)
-// 		}
-// 	}
-
     override fun getItemCount(): Int {
         return filteredItems.size
     }
@@ -62,8 +51,9 @@ abstract class ItemRecyclerViewAdapter<T, VH : RecyclerView.ViewHolder?> :
         }
 
         override fun publishResults(filterText: CharSequence?, filterResults: FilterResults?) {
-            if (filterResults?.values != null) {
-                filteredItems = filterResults.values as MutableList<T>
+            val results = filterResults?.values
+            if (results != null && results is List<*>) {
+                filteredItems = results as List<T>
             } else {
                 filteredItems = _items
             }

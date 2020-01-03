@@ -10,14 +10,14 @@
       android:strokeLineJoin="miter"
       android:strokeLineCap="butt">
     <aapt:attr name="android:fillColor">
-      <gradient xmlns:android="http://schemas.android.com/apk/res/android"
-                android:startColor="#26000000"
-                android:endColor="#00000000"
-                android:startX="40"
-                android:startY="20"
-                android:endX="85"
-                android:endY="48"
-                android:type="linear"/>
+      <gradient
+          android:startColor="#26000000"
+          android:endColor="#00000000"
+          android:startX="40"
+          android:startY="20"
+          android:endX="85"
+          android:endY="48"
+          android:type="linear"/>
     </aapt:attr>
   </path>
   <path

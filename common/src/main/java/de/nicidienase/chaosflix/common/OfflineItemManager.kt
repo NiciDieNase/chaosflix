@@ -2,29 +2,30 @@ package de.nicidienase.chaosflix.common
 
 import android.Manifest
 import android.app.DownloadManager
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.database.sqlite.SQLiteConstraintException
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Environment
-import android.preference.PreferenceManager
-import androidx.core.content.ContextCompat
 import android.util.Log
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventDao
 import de.nicidienase.chaosflix.common.util.LiveEvent
-import de.nicidienase.chaosflix.common.util.ThreadHandler
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
 
 class OfflineItemManager(
@@ -35,11 +36,11 @@ class OfflineItemManager(
 
     val downloadStatus: MutableMap<Long, DownloadStatus> = HashMap()
 
-    private val downloadManager: DownloadManager = context.applicationContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-
-    private val handler = ThreadHandler()
-
     private val applicationContext: Context = context.applicationContext
+
+    private val resources = applicationContext.resources
+
+    private val downloadManager: DownloadManager = applicationContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
     fun addDownloadRefs(refs: List<Long>) {
         refs.map { downloadStatus.put(it, DownloadStatus()) }
@@ -79,17 +80,17 @@ class OfflineItemManager(
                             DownloadManager.STATUS_PENDING -> R.drawable.ic_download
                             else -> R.drawable.ic_error
                         }
-                val statusIcon = applicationContext.resources.getDrawable(statusIconRes, null)
+                val statusIcon = resources.getDrawable(statusIconRes, null)
 
                 downloadStatus[id] = DownloadStatus(status, statusIcon, bytesSoFar, bytesTotal)
             } while (cursor.moveToNext())
         }
     }
 
-    fun download(event: Event, recording: Recording): LiveData<LiveEvent<State, String, Exception>> {
+    fun download(event: Event, recording: Recording, scope: CoroutineScope): LiveData<LiveEvent<State, String, Exception>> {
         val result = MutableLiveData<LiveEvent<State, String, Exception>>()
         result.postValue(LiveEvent(State.Downloading))
-        handler.runOnBackgroundThread {
+        scope.launch(Dispatchers.IO) {
             if (ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
                 result.postValue(LiveEvent(State.PermissionRequired))
@@ -143,8 +144,9 @@ class OfflineItemManager(
     }
 
     fun deleteOfflineItem(guid: String) {
-        offlineEventDao.getByEventGuidSync(guid)?.let {
-            deleteOfflineItem(it)
+        val offlineEvent = offlineEventDao.getByEventGuidSync(guid)
+        if (offlineEvent != null) {
+            deleteOfflineItem(offlineEvent)
         }
     }
 
@@ -157,7 +159,7 @@ class OfflineItemManager(
 
     inner class DownloadStatus(
         val status: Int = DownloadManager.STATUS_PENDING,
-        val statusIcon: Drawable = applicationContext.resources.getDrawable(R.drawable.ic_download, null),
+        val statusIcon: Drawable = resources.getDrawable(R.drawable.ic_download, null),
         val currentBytes: Int = 0,
         val totalBytes: Int = 0
     )
@@ -170,8 +172,6 @@ class OfflineItemManager(
     ) : BroadcastReceiver() {
         private val TAG = DownloadCancelHandler::class.java.simpleName
 
-        val handler = ThreadHandler()
-
         override fun onReceive(p0: Context?, p1: Intent?) {
             val downloadId = p1?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0)
             if (downloadId != null && downloadId == id) {
@@ -181,7 +181,8 @@ class OfflineItemManager(
                 val downloadStatus = offlineItemManager.downloadStatus[downloadId]
                 if (downloadStatus?.status == DownloadManager.STATUS_FAILED) {
                     Log.d(TAG, "Deleting item")
-                    handler.runOnBackgroundThread {
+
+                    GlobalScope.launch(Dispatchers.IO) {
                         offlineItemManager.deleteOfflineItem(downloadId)
                     }
                 }
@@ -191,9 +192,7 @@ class OfflineItemManager(
     }
 
     private fun getMovieDir(): String {
-        val sharedPref: SharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(applicationContext)
-        var dir = sharedPref.getString("download_folder", null)
+        val dir = preferencesManager.downloadFolder
         return dir ?: Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).path
     }
 
