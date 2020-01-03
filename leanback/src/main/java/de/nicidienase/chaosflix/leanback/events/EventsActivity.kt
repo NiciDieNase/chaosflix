@@ -26,7 +26,7 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        conference = intent.getParcelableExtra<Conference>(CONFERENCE)
+        conference = intent.getParcelableExtra(CONFERENCE)
         setContentView(R.layout.activity_events_browse)
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(this)).get(BrowseViewModel::class.java)
     }
@@ -37,10 +37,8 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
             when (event?.state) {
                 MediaRepository.State.RUNNING -> {
                     Log.i(TAG, "Refresh running")
-                    supportFragmentManager?.let {
-                        if (errorFragment == null) {
-                            errorFragment = BrowseErrorFragment.showErrorFragment(it, R.id.browse_fragment)
-                        }
+                    if (errorFragment == null) {
+                        errorFragment = BrowseErrorFragment.showErrorFragment(supportFragmentManager, R.id.browse_fragment)
                     }
                 }
                 MediaRepository.State.DONE -> {
@@ -49,7 +47,7 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
                         val errorMessage = event.error ?: "Error refreshing events"
                         errorFragment?.setErrorContent(errorMessage, supportFragmentManager)
                     } else {
-                        if (event.data?.isEmpty() ?: false) {
+                        if (event.data?.isEmpty() == true) {
                             errorFragment?.setErrorContent("No Events found for this conference", supportFragmentManager)
                         } else {
                             errorFragment?.dismiss(supportFragmentManager)
@@ -60,7 +58,7 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
         })
         viewModel.getEventsforConference(conference).observe(this, Observer { events ->
             events?.let {
-                if (it.size > 0) {
+                if (it.isNotEmpty()) {
                     val tagList = events.map { it.tags ?: emptyArray() }.toTypedArray().flatten()
                     val filteredTags = tagList.filterNot { it.matches("\\d+".toRegex()) }.filterNot { it == conference.acronym }.toSet()
                     updateFragment(filteredTags.size > 1)
@@ -99,7 +97,7 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
         val CONFERENCE = "conference"
         @JvmStatic
         val SHARED_ELEMENT_NAME = "shared_element"
-        val TAG = EventsActivity::class.java.simpleName
+        private val TAG = EventsActivity::class.java.simpleName
 
         @JvmStatic
         @JvmOverloads
