@@ -1,3 +1,3 @@
-import de.nicidienase.chaosflix.ChaosflixApplication
+package de.nicidienase.chaosflix
 
 fun stageInit(application: ChaosflixApplication) {}
