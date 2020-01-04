@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.common.mediadata
 
+import android.net.Uri
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
@@ -130,7 +131,7 @@ class MediaRepository(
     }
 
     @WorkerThread
-    fun saveConferences(conferencesWrapper: ConferencesWrapper): List<Conference> {
+    suspend fun saveConferences(conferencesWrapper: ConferencesWrapper): List<Conference> {
         return conferencesWrapper.conferencesMap.map { entry ->
             val conferenceGroup: ConferenceGroup = getOrCreateConferenceGroup(entry.key)
             val conferenceList = entry.value
@@ -142,7 +143,7 @@ class MediaRepository(
         }.flatten()
     }
 
-    fun getOrCreateConferenceGroup(name: String): ConferenceGroup {
+    private suspend fun getOrCreateConferenceGroup(name: String): ConferenceGroup {
         val conferenceGroup: ConferenceGroup? =
             conferenceGroupDao.getConferenceGroupByName(name)
         if (conferenceGroup != null) {
@@ -158,7 +159,7 @@ class MediaRepository(
         return group
     }
 
-    fun saveEvents(persistentConference: Conference, events: List<EventDto>): List<Event> {
+    private suspend fun saveEvents(persistentConference: Conference, events: List<EventDto>): List<Event> {
         val persistantEvents = events.map { Event(it, persistentConference.id) }
         eventDao.updateOrInsert(*persistantEvents.toTypedArray())
         persistantEvents.forEach {
@@ -167,12 +168,12 @@ class MediaRepository(
         return persistantEvents
     }
 
-    fun saveEvent(event: EventDto): Event {
+    private suspend fun saveEvent(event: EventDto): Event {
         val acronym = event.conferenceUrl.split("/").last()
-        val conferenceId = conferenceDao.findConferenceByAcronymSync(acronym)?.id
-            ?: updateConferencesAndGet(acronym)
+        val conferenceId = conferenceDao.findConferenceByAcronym(acronym)?.id
+            ?: updateConferencesAndGet(acronym)?.id
 
-        check(conferenceId != -1L) { "Could not find Conference for event" }
+        checkNotNull(conferenceId) { "Could not find Conference for event" }
 
         val persistentEvent = Event(event, conferenceId)
         val id = eventDao.insert(persistentEvent)
@@ -180,24 +181,49 @@ class MediaRepository(
         return persistentEvent
     }
 
-    fun updateConferencesAndGet(acronym: String): Long {
+    private suspend fun updateConferencesAndGet(acronym: String): Conference? {
         val response: Response<ConferencesWrapper>? = recordingApi.getConferencesWrapper().execute()
         val conferences = response?.body()?.let { conferencesWrapper ->
             return@let saveConferences(conferencesWrapper)
         }
-        return conferences?.find { it.acronym == acronym }?.id ?: -1
+        return conferences?.find { it.acronym == acronym }
     }
 
-    fun saveRelatedEvents(event: Event): List<RelatedEvent> {
+    private suspend fun saveRelatedEvents(event: Event): List<RelatedEvent> {
         val list = event.related?.map { it.parentEventId = event.id; it }
         relatedEventDao.updateOrInsert(*list?.toTypedArray() ?: emptyArray())
         return list ?: emptyList()
     }
 
-    fun saveRecordings(event: Event, recordings: List<RecordingDto>): List<Recording> {
+    private suspend fun saveRecordings(event: Event, recordings: List<RecordingDto>): List<Recording> {
         val persistentRecordings = recordings.map { Recording(it, event.id) }
         recordingDao.updateOrInsert(*persistentRecordings.toTypedArray())
         return persistentRecordings
+    }
+
+    suspend fun findEventForUri(data: Uri): Event? {
+        var event: Event? = eventDao.findEventForFrontendUrl(data.toString())
+
+        val pathSegment = data.lastPathSegment
+        if (event == null && pathSegment != null) {
+            event = searchEvent(pathSegment)
+        }
+
+        return event
+    }
+
+    private suspend fun searchEvent(queryString: String): Event? {
+        val searchEvents = recordingApi.searchEvents(queryString)
+        if (searchEvents.events.isNotEmpty()) {
+            val eventDto = searchEvents.events[0]
+            val conference = updateConferencesAndGet(eventDto.conferenceUrl.split("/").last())
+            if (conference?.id != null) {
+                var event = Event(eventDto, conference.id)
+                eventDao.updateOrInsert(event)
+                return event
+            }
+        }
+        return null
     }
 
     suspend fun getAllOfflineEvents(): List<Long> = database.offlineEventDao().getAllDownloadReferences()
