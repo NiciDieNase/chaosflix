@@ -25,7 +25,9 @@ import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class OfflineItemManager(
@@ -41,6 +43,9 @@ class OfflineItemManager(
     private val resources = applicationContext.resources
 
     private val downloadManager: DownloadManager = applicationContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+
+    private val supervisorJob = SupervisorJob()
+    private val downloadScope: CoroutineScope = CoroutineScope(Dispatchers.IO + supervisorJob)
 
     fun addDownloadRefs(refs: List<Long>) {
         refs.map { downloadStatus.put(it, DownloadStatus()) }
@@ -87,15 +92,18 @@ class OfflineItemManager(
         }
     }
 
-    fun download(event: Event, recording: Recording, scope: CoroutineScope): LiveData<LiveEvent<State, String, Exception>> {
+    fun download(
+        event: Event,
+        recording: Recording
+    ): LiveData<LiveEvent<State, String, Exception>> {
         val result = MutableLiveData<LiveEvent<State, String, Exception>>()
         result.postValue(LiveEvent(State.Downloading))
-        scope.launch(Dispatchers.IO) {
+        downloadScope.launch(Dispatchers.IO) {
             if (ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
                 result.postValue(LiveEvent(State.PermissionRequired))
             } else {
-                val offlineEvent = offlineEventDao.getByEventGuidSync(event.guid)
+                val offlineEvent = offlineEventDao.getByEventGuidSuspend(event.guid)
                 if (offlineEvent == null) {
 
                     val request = DownloadManager.Request(Uri.parse(recording.recordingUrl))
@@ -136,25 +144,20 @@ class OfflineItemManager(
         return result
     }
 
-    fun deleteOfflineItem(downloadId: Long) {
-        val offlineEvent = offlineEventDao.getByDownloadReferenceSync(downloadId)
+    suspend fun deleteOfflineItem(guid: String) {
+        val offlineEvent = offlineEventDao.getByEventGuidSuspend(guid)
         if (offlineEvent != null) {
             deleteOfflineItem(offlineEvent)
         }
     }
 
-    fun deleteOfflineItem(guid: String) {
-        val offlineEvent = offlineEventDao.getByEventGuidSync(guid)
-        if (offlineEvent != null) {
-            deleteOfflineItem(offlineEvent)
+    suspend fun deleteOfflineItem(item: OfflineEvent) {
+        withContext(Dispatchers.IO) {
+            downloadManager.remove(item.downloadReference)
+            val file = File(item.localPath)
+            if (file.exists()) file.delete()
+            offlineEventDao.deleteById(item.id)
         }
-    }
-
-    fun deleteOfflineItem(item: OfflineEvent) {
-        downloadManager.remove(item.downloadReference)
-        val file = File(item.localPath)
-        if (file.exists()) file.delete()
-        offlineEventDao.deleteById(item.id)
     }
 
     inner class DownloadStatus(
@@ -181,7 +184,7 @@ class OfflineItemManager(
                     Log.d(TAG, "Deleting item")
 
                     GlobalScope.launch(Dispatchers.IO) {
-                        offlineItemManager.deleteOfflineItem(downloadId)
+                        offlineEventDao.deleteByDownloadReference(downloadId)
                     }
                 }
                 p0?.unregisterReceiver(this)

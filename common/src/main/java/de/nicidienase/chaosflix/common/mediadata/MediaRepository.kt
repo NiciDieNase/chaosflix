@@ -1,8 +1,10 @@
 package de.nicidienase.chaosflix.common.mediadata
 
 import android.net.Uri
+import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventDto
@@ -241,6 +243,31 @@ class MediaRepository(
 
     suspend fun saveOrUpdate(watchlistItem: WatchlistItem) {
         watchlistItemDao.updateOrInsert(watchlistItem)
+    }
+
+    fun getReleatedEvents(event: Event, viewModelScope: CoroutineScope): LiveData<List<Event>> {
+        val data = MutableLiveData<List<Event>>()
+        viewModelScope.launch(Dispatchers.IO) {
+            val guids = relatedEventDao.getRelatedEventsForEventSuspend(event.id)
+            val relatedEvents: List<Event> = guids.mapNotNull { findEventForGuid(it) }
+            if (guids.size != relatedEvents.size) {
+                Log.e(TAG, "Could not find all related Events")
+            }
+            data.postValue(relatedEvents)
+        }
+        return data
+    }
+
+    private suspend fun findEventForGuid(guid: String): Event? {
+        val eventFromDB = eventDao.findEventByGuidSync(guid)
+        if (eventFromDB != null) {
+            return eventFromDB
+        }
+        return updateSingleEvent(guid)
+    }
+
+    companion object {
+        private val TAG = MediaRepository::class.java.simpleName
     }
 
     enum class State {

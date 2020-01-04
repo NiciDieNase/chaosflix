@@ -23,7 +23,7 @@ abstract class EventDao : BaseDao<Event>() {
     abstract fun findEventByGuid(guid: String): LiveData<Event?>
 
     @Query("SELECT * FROM event WHERE guid = :guid LIMIT 1")
-    abstract fun findEventByGuidSync(guid: String): Event?
+    abstract suspend fun findEventByGuidSync(guid: String): Event?
 
     @Query("SELECT * FROM event WHERE id in (:ids)")
     abstract fun findEventsByIds(ids: LongArray): LiveData<List<Event>>
@@ -32,7 +32,7 @@ abstract class EventDao : BaseDao<Event>() {
     abstract fun findEventsByGUIDs(ids: List<String>): LiveData<List<Event>>
 
     @Query("SELECT * FROM event WHERE guid in (:guids)")
-    abstract fun findEventsByGUIDsSync(guids: List<String>): List<Event>
+    abstract suspend fun findEventsByGUIDsSuspend(guids: List<String>): List<Event>
 
     @Query("SELECT * FROM event WHERE isPromoted IS 1")
     abstract fun findPromotedEvents(): LiveData<List<Event>>

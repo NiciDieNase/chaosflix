@@ -1,7 +1,6 @@
 <resources>
-    <string name="api_media_ccc_url">https://api.media.ccc.de</string>
-    <string name="streaming_media_ccc_url">https://streaming.media.ccc.de</string>
-    <!--<string name="streaming_media_ccc_url">http://192.168.178.98:8000</string>-->
+    <string name="api_media_ccc_url" translatable="false">https://api.media.ccc.de</string>
+    <string name="streaming_media_ccc_url" translatable="false">https://streaming.media.ccc.de</string>
 
     <string name="app_name">Chaosflix</string>
     <string name="related_movies">Related Videos</string>

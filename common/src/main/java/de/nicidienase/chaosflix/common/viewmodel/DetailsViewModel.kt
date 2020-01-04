@@ -44,30 +44,26 @@ class DetailsViewModel(
     fun getBookmarkForEvent(guid: String): LiveData<WatchlistItem?> =
             database.watchlistItemDao().getItemForEvent(guid)
 
-    fun createBookmark(guid: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            database.watchlistItemDao().saveItem(WatchlistItem(eventGuid = guid))
-        }
+    fun createBookmark(guid: String) = viewModelScope.launch(Dispatchers.IO) {
+        database.watchlistItemDao().saveItem(WatchlistItem(eventGuid = guid))
     }
 
-    fun removeBookmark(guid: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            database.watchlistItemDao().deleteItem(guid)
-        }
+    fun removeBookmark(guid: String) = viewModelScope.launch(Dispatchers.IO) {
+        database.watchlistItemDao().deleteItem(guid)
     }
 
     fun download(event: Event, recording: Recording) =
-            offlineItemManager.download(event, recording, viewModelScope)
+            offlineItemManager.download(event, recording)
 
-    private fun fileExists(guid: String): Boolean {
-        val offlineItem = database.offlineEventDao().getByEventGuidSync(guid)
+    private suspend fun fileExists(guid: String): Boolean {
+        val offlineItem = database.offlineEventDao().getByEventGuidSuspend(guid)
         return offlineItem != null && File(offlineItem.localPath).exists()
     }
 
     fun deleteOfflineItem(event: Event): LiveData<Boolean> {
         val result = MutableLiveData<Boolean>()
-        viewModelScope.launch(Dispatchers.IO) {
-            database.offlineEventDao().getByEventGuidSync(event.guid)?.let {
+        viewModelScope.launch {
+            database.offlineEventDao().getByEventGuidSuspend(event.guid)?.let {
                 offlineItemManager.deleteOfflineItem(it)
             }
             result.postValue(true)
@@ -75,14 +71,8 @@ class DetailsViewModel(
         return result
     }
 
-    fun getRelatedEvents(event: Event): LiveData<List<Event>> {
-        val data = MutableLiveData<List<Event>>()
-        viewModelScope.launch(Dispatchers.IO) {
-            val guids = database.relatedEventDao().getRelatedEventsForEventSync(event.id).map { it.relatedEventGuid }
-            data.postValue(database.eventDao().findEventsByGUIDsSync(guids))
-        }
-        return data
-    }
+    fun getRelatedEvents(event: Event): LiveData<List<Event>> =
+            mediaRepository.getReleatedEvents(event, viewModelScope)
 
     fun relatedEventSelected(event: Event) {
         val bundle = Bundle()
@@ -92,7 +82,7 @@ class DetailsViewModel(
 
     fun playEvent(event: Event) {
         viewModelScope.launch(Dispatchers.IO) {
-            val offlineEvent = database.offlineEventDao().getByEventGuidSync(event.guid)
+            val offlineEvent = database.offlineEventDao().getByEventGuidSuspend(event.guid)
             if (offlineEvent != null) {
                 // Play offlineEvent
                 val recording = database.recordingDao().findRecordingByIdSync(offlineEvent.recordingId)
