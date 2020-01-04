@@ -4,6 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -12,29 +15,28 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.nicidienase.chaosflix.common.viewmodel.FavoritesImportViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.ImportItemAdapter
 import de.nicidienase.chaosflix.touch.databinding.FragmentFavoritesImportBinding
 
 class FavoritesImportFragment : Fragment() {
 
     private lateinit var viewModel: FavoritesImportViewModel
+    private lateinit var adapter: ImportItemAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true)
         val binding = FragmentFavoritesImportBinding.inflate(inflater, container, false)
         binding.setLifecycleOwner(this)
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(requireContext())).get(FavoritesImportViewModel::class.java)
 
         binding.importList.layoutManager = LinearLayoutManager(context)
-        val adapter = ImportItemAdapter()
+        adapter = ImportItemAdapter()
         binding.importList.adapter = adapter
-
-        binding.importButton.setOnClickListener {
-            viewModel.import(adapter.currentList)
-        }
 
         viewModel.state.observe(this, Observer {
             when (it.state) {
@@ -73,6 +75,21 @@ class FavoritesImportFragment : Fragment() {
             else -> {
                 // Handle other intents, such as being started from the home screen
             }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.import_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_item_import -> {
+                viewModel.import(adapter.currentList)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

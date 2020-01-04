@@ -12,7 +12,7 @@ class FavoritesImportActivity : AppCompatActivity() {
         setContentView(R.layout.activity_favorites_import)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.title = "Import"
+        supportActionBar?.title = getString(R.string.import_activity_label)
     }
 
     companion object {
