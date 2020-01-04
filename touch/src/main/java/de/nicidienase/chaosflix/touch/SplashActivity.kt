@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix.touch
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -16,6 +17,18 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        when (intent.action) {
+            Intent.ACTION_VIEW -> {
+                setContentView(R.layout.activity_splash)
+                handleViewAction(intent.data)
+            }
+            else -> {
+                goToOverview()
+            }
+        }
+    }
+
+    private fun handleViewAction(data: Uri?) {
         val viewModel = ViewModelProviders.of(
             this,
             ViewModelFactory.getInstance(this)
@@ -37,18 +50,10 @@ class SplashActivity : AppCompatActivity() {
             }
         })
 
-        when (intent.action) {
-            Intent.ACTION_VIEW -> {
-                val uri = intent.data
-                if (uri != null) {
-                    viewModel.findEventForUri(uri)
-                } else {
-                    goToOverview()
-                }
-            }
-            else -> {
-                goToOverview()
-            }
+        if (data != null) {
+            viewModel.findEventForUri(data)
+        } else {
+            goToOverview()
         }
     }
 

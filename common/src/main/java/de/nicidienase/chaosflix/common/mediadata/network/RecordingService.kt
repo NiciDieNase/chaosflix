@@ -21,9 +21,6 @@ interface RecordingService {
     @GET("public/conferences/{name}")
     fun getConferenceByName(@Path("name") name: String): Call<ConferenceDto>
 
-    @GET("public/conferences/{name}")
-    suspend fun getConferenceByNameSuspending(@Path("name") name: String): ConferenceDto?
-
     @GET("public/events/{id}")
     fun getEvent(@Path("id") id: Long): Call<EventDto>
 
@@ -38,6 +35,9 @@ interface RecordingService {
 
     @GET("public/conferences")
     suspend fun getConferencesWrapperSuspending(): ConferencesWrapper?
+
+    @GET("public/conferences/{acronym}")
+    suspend fun getConferenceByNameSuspending(@Path("acronym")acronym: String): ConferenceDto?
 
     @GET("public/events/search")
     suspend fun searchEventsSuspending(@Query("q") query: String): EventsResponse?
