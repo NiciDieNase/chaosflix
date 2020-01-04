@@ -77,7 +77,7 @@ class PlayerActivity : AppCompatActivity() {
         const val ROOM = "room"
         const val STREAM = "stream"
 
-        val OFFLINE_URI = "recording_uri"
+        const val OFFLINE_URI = "recording_uri"
 
         fun launch(context: Context, event: Event, uri: String) {
             val i = Intent(context, PlayerActivity::class.java)
