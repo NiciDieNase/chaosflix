@@ -40,7 +40,7 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
             return PreferencesViewModel(mediaRepository, database.watchlistItemDao(), externalFilesDir) as T
         } else if (modelClass.isAssignableFrom(SplashViewModel::class.java)) {
             return SplashViewModel(mediaRepository) as T
-        }else {
+        } else {
             throw UnsupportedOperationException("The requested ViewModel is currently unsupported. " +
                     "Please make sure to implement are correct creation of it. " +
                     " Request: ${modelClass.canonicalName}")

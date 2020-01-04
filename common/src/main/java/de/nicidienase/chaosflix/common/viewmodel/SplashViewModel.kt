@@ -4,10 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceDao
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.EventDao
-import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
