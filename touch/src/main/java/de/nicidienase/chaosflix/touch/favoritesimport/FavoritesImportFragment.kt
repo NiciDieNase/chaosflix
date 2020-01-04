@@ -32,7 +32,7 @@ class FavoritesImportFragment : Fragment() {
         val adapter = ImportItemAdapter()
         binding.importList.adapter = adapter
 
-        binding.appCompatButton.setOnClickListener {
+        binding.importButton.setOnClickListener {
             viewModel.import(adapter.currentList)
         }
 
