@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import de.nicidienase.chaosflix.touch.databinding.ItemFavoritImportBinding
 import de.nicidienase.chaosflix.common.ImportItem
 
-class ImportItemAdapter(private val clickListener: ((ImportItem) -> Unit)? = null) : ListAdapter<ImportItem, ImportItemAdapter.ViewHolder>(
+class ImportItemAdapter : ListAdapter<ImportItem, ImportItemAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<ImportItem>() {
         override fun areItemsTheSame(oldItem: ImportItem, newItem: ImportItem) = oldItem === newItem
         override fun areContentsTheSame(oldItem: ImportItem, newItem: ImportItem) = oldItem == newItem
