@@ -55,7 +55,6 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
                 externalFilesDir
             ) as T
             FavoritesImportViewModel::class.java -> FavoritesImportViewModel(
-                database.watchlistItemDao(),
                 mediaRepository
             ) as T
             SplashViewModel::class.java -> SplashViewModel(mediaRepository) as T

@@ -9,14 +9,12 @@ import de.nicidienase.chaosflix.common.eventimport.FahrplanExport
 import de.nicidienase.chaosflix.common.eventimport.FahrplanLecture
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
-import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class FavoritesImportViewModel(
-    private val watchlistItemDao: WatchlistItemDao,
     private val mediaRepository: MediaRepository
 ) : ViewModel() {
 
@@ -48,8 +46,8 @@ class FavoritesImportViewModel(
             for (item in events) {
                 Log.d(TAG, "${item.lecture.title}: ${item.selected}")
                 val guid = item.event?.guid
-                if (item.selected && guid != null && watchlistItemDao.getItemForGuid(guid) == null) {
-                    watchlistItemDao.saveItem(WatchlistItem(eventGuid = guid))
+                if (item.selected && guid != null) {
+                    mediaRepository.saveOrUpdate(WatchlistItem(eventGuid = guid))
                 }
             }
             state.postValue(LiveEvent(State.IMPORT_DONE))

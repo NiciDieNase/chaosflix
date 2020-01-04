@@ -16,6 +16,8 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RelatedEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RelatedEventDao
 import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
+import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
+import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
@@ -39,6 +41,7 @@ class MediaRepository(
     private val eventDao: EventDao by lazy { database.eventDao() }
     private val recordingDao: RecordingDao by lazy { database.recordingDao() }
     private val relatedEventDao: RelatedEventDao by lazy { database.relatedEventDao() }
+    private val watchlistItemDao: WatchlistItemDao by lazy { database.watchlistItemDao() }
 
     fun updateConferencesAndGroups(): SingleLiveEvent<LiveEvent<State, List<Conference>, String>> {
         val updateState = SingleLiveEvent<LiveEvent<State, List<Conference>, String>>()
@@ -235,6 +238,10 @@ class MediaRepository(
     }
 
     suspend fun getAllOfflineEvents(): List<Long> = database.offlineEventDao().getAllDownloadReferences()
+
+    suspend fun saveOrUpdate(watchlistItem: WatchlistItem) {
+        watchlistItemDao.updateOrInsert(watchlistItem)
+    }
 
     enum class State {
         DONE, RUNNING
