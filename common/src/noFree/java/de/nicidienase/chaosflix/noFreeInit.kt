@@ -1,5 +1,6 @@
+package de.nicidienase.chaosflix
+
 import android.preference.PreferenceManager
-import de.nicidienase.chaosflix.ChaosflixApplication
 import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
 import de.nicidienase.chaosflix.common.PreferencesManager
 
