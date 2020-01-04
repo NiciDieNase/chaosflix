@@ -37,7 +37,7 @@ interface RecordingService {
     suspend fun getConferencesWrapperSuspending(): ConferencesWrapper?
 
     @GET("public/conferences/{acronym}")
-    suspend fun getConferenceByNameSuspending(acronym: String): ConferenceDto?
+    suspend fun getConferenceByNameSuspending(@Path("acronym")acronym: String): ConferenceDto?
 
     @GET("public/events/search")
     suspend fun searchEventsSuspending(@Query("q") query: String): EventsResponse?
