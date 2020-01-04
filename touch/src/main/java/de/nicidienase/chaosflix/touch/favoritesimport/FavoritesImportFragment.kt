@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.common.viewmodel.FavoritesImportViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.R
@@ -31,32 +32,38 @@ class FavoritesImportFragment : Fragment() {
     ): View? {
         setHasOptionsMenu(true)
         val binding = FragmentFavoritesImportBinding.inflate(inflater, container, false)
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(requireContext())).get(FavoritesImportViewModel::class.java)
 
         binding.importList.layoutManager = LinearLayoutManager(context)
         adapter = ImportItemAdapter()
         binding.importList.adapter = adapter
 
+        viewModel.items.observe(this, Observer {events ->
+            adapter.submitList(events)
+            adapter.notifyDataSetChanged()
+        })
+
         viewModel.state.observe(this, Observer {
+            val errorMessage = it.error
             when (it.state) {
                 FavoritesImportViewModel.State.EVENTS_FOUND -> {
-                    it.data?.let { events ->
-                        adapter.submitList(events)
-                        adapter.notifyDataSetChanged()
-                    }
                     binding.incOverlay.loadingOverlay.visibility = View.GONE
                 }
                 FavoritesImportViewModel.State.WORKING -> {
                     binding.incOverlay.loadingOverlay.visibility = View.VISIBLE
                 }
                 FavoritesImportViewModel.State.ERROR -> {
-                    Log.e(TAG, "Error", it.error)
+                    Log.e(TAG, "Error $errorMessage")
                 }
                 FavoritesImportViewModel.State.IMPORT_DONE -> {
                     // TODO navigate to favorites
                     activity?.finish()
                 }
+            }
+
+            if(errorMessage != null) {
+                Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
             }
         })
 
@@ -86,7 +93,11 @@ class FavoritesImportFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_item_import -> {
-                viewModel.import(adapter.currentList)
+                viewModel.import()
+                true
+            }
+            R.id.menu_item_select_all -> {
+                viewModel.selectAll()
                 true
             }
             else -> super.onOptionsItemSelected(item)

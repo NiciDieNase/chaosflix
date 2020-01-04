@@ -4,4 +4,7 @@
     <item android:id="@+id/menu_item_import"
         android:title="@string/import_favorites"
         app:showAsAction="always"/>
+    <item android:id="@+id/menu_item_select_all"
+        android:title="@string/select_all"
+        app:showAsAction="ifRoom"/>
 </menu>
