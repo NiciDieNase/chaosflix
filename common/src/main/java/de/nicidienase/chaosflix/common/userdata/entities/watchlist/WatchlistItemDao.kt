@@ -9,7 +9,7 @@ import androidx.room.Delete
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.BaseDao
 
 @Dao
-abstract class WatchlistItemDao: BaseDao<WatchlistItem>() {
+abstract class WatchlistItemDao : BaseDao<WatchlistItem>() {
 
     @Query("SELECT * from watchlist_item")
     abstract fun getAll(): LiveData<List<WatchlistItem>>

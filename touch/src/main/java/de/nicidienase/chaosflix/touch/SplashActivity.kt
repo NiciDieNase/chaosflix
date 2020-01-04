@@ -40,7 +40,7 @@ class SplashActivity : AppCompatActivity() {
         when (intent.action) {
             Intent.ACTION_VIEW -> {
                 val uri = intent.data
-                if(uri != null){
+                if (uri != null) {
                     viewModel.findEventForUri(uri)
                 } else {
                     goToOverview()
