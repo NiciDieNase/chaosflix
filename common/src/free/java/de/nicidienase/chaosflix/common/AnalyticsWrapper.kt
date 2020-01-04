@@ -1,6 +1,8 @@
 package de.nicidienase.chaosflix.common
 
-class AnalyticsWrapper(context: android.app.Application) {
+import android.app.Application
+
+object AnalyticsWrapper {
     fun init(application: Application) {}
 
     fun startAnalytics() {}
