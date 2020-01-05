@@ -7,11 +7,16 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.nicidienase.chaosflix.touch.databinding.ItemFavoritImportBinding
 import de.nicidienase.chaosflix.common.ImportItem
+import java.lang.NumberFormatException
 
 class ImportItemAdapter : ListAdapter<ImportItem, ImportItemAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<ImportItem>() {
         override fun areItemsTheSame(oldItem: ImportItem, newItem: ImportItem) = oldItem === newItem
-        override fun areContentsTheSame(oldItem: ImportItem, newItem: ImportItem) = oldItem == newItem
+        override fun areContentsTheSame(oldItem: ImportItem, newItem: ImportItem): Boolean {
+            return oldItem.selected == newItem.selected &&
+                    oldItem.lecture == newItem.lecture &&
+                    oldItem.event == newItem.event
+        }
 }) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -26,6 +31,14 @@ class ImportItemAdapter : ListAdapter<ImportItem, ImportItemAdapter.ViewHolder>(
             holder.binding.checkBox.apply {
                 isChecked = !isChecked
             }
+        }
+    }
+
+    override fun getItemId(position: Int): Long {
+        return try {
+            getItem(position).lecture.lectureId?.toLong() ?: 0
+        } catch (ex: NumberFormatException) {
+            -1
         }
     }
 

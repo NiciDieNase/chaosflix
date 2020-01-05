@@ -1,9 +1,7 @@
 package de.nicidienase.chaosflix.touch.favoritesimport
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -34,36 +32,37 @@ class FavoritesImportFragment : Fragment() {
         setHasOptionsMenu(true)
         val binding = FragmentFavoritesImportBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
-        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(requireContext())).get(FavoritesImportViewModel::class.java)
+        viewModel = ViewModelProviders.of(requireActivity(), ViewModelFactory.getInstance(requireContext())).get(FavoritesImportViewModel::class.java)
 
         binding.importList.layoutManager = LinearLayoutManager(context)
         adapter = ImportItemAdapter()
+        adapter.setHasStableIds(true)
+        binding.importList.setHasFixedSize(true)
         binding.importList.adapter = adapter
 
-        viewModel.items.observe(this, Observer {events ->
-            adapter.submitList(events)
+        viewModel.items.observe(this, Observer { events ->
+            if (events != null) {
+                adapter.submitList(events.toList())
+            }
         })
 
         viewModel.state.observe(this, Observer {
-            val errorMessage = it.error
             when (it.state) {
-                FavoritesImportViewModel.State.EVENTS_FOUND -> {
-                    binding.incOverlay.loadingOverlay.visibility = View.GONE
-                }
-                FavoritesImportViewModel.State.WORKING -> {
-                    binding.incOverlay.loadingOverlay.visibility = View.VISIBLE
-                }
-                FavoritesImportViewModel.State.ERROR -> {
-                    Log.e(TAG, "Error $errorMessage")
-                }
                 FavoritesImportViewModel.State.IMPORT_DONE -> {
                     // TODO navigate to favorites
                     activity?.finish()
                 }
             }
+        })
 
-            if(errorMessage != null) {
+        viewModel.working.observe(this, Observer { working ->
+            binding.incOverlay.loadingOverlay.visibility = if (working) View.VISIBLE else View.GONE
+        })
+
+        viewModel.errorMessage.observe(this, Observer { errorMessage ->
+            if (errorMessage != null) {
                 Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
+                viewModel.errorShown()
             }
         })
 
