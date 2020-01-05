@@ -22,14 +22,20 @@ class FavoritesImportViewModel(
 
     val state: SingleLiveEvent<LiveEvent<State, List<ImportItem>, String>> = SingleLiveEvent()
 
+    private var lastImport: String = ""
+
     private val _items = MutableLiveData<List<ImportItem>>()
     val items: LiveData<List<ImportItem>>
         get() = _items
 
-    fun handleLectures(string: String) {
+    fun handleLectures(jsonImport: String) {
+        if(jsonImport == lastImport){
+            return
+        }
+        lastImport = jsonImport
         state.postValue(LiveEvent(State.WORKING))
         viewModelScope.launch(Dispatchers.IO) {
-            val export = Gson().fromJson(string, FahrplanExport::class.java)
+            val export = Gson().fromJson(jsonImport, FahrplanExport::class.java)
             val events: List<ImportItem>
             try {
                 events = export.lectures.map { lecture: FahrplanLecture ->

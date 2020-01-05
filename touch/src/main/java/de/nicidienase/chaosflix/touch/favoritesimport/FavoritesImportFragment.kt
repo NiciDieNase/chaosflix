@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.touch.favoritesimport
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -41,7 +42,6 @@ class FavoritesImportFragment : Fragment() {
 
         viewModel.items.observe(this, Observer {events ->
             adapter.submitList(events)
-            adapter.notifyDataSetChanged()
         })
 
         viewModel.state.observe(this, Observer {
@@ -67,11 +67,6 @@ class FavoritesImportFragment : Fragment() {
             }
         })
 
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         val intent = activity?.intent
         when {
             intent?.action == Intent.ACTION_SEND -> {
@@ -83,6 +78,8 @@ class FavoritesImportFragment : Fragment() {
                 // Handle other intents, such as being started from the home screen
             }
         }
+
+        return binding.root
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
