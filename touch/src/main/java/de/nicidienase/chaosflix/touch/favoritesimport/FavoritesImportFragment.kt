@@ -33,9 +33,12 @@ class FavoritesImportFragment : Fragment() {
         val binding = FragmentFavoritesImportBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         viewModel = ViewModelProviders.of(requireActivity(), ViewModelFactory.getInstance(requireContext())).get(FavoritesImportViewModel::class.java)
+        binding.viewModel = viewModel
 
         binding.importList.layoutManager = LinearLayoutManager(context)
-        adapter = ImportItemAdapter()
+        adapter = ImportItemAdapter {
+            viewModel.itemChanged(it)
+        }
         adapter.setHasStableIds(true)
         binding.importList.setHasFixedSize(true)
         binding.importList.adapter = adapter
@@ -44,6 +47,10 @@ class FavoritesImportFragment : Fragment() {
             if (events != null) {
                 adapter.submitList(events.toList())
             }
+        })
+
+        viewModel.selectAll.observe(this, Observer {
+            activity?.invalidateOptionsMenu()
         })
 
         viewModel.state.observe(this, Observer {
@@ -66,6 +73,14 @@ class FavoritesImportFragment : Fragment() {
             }
         })
 
+        viewModel.importItemCount.observe(this, Observer { count ->
+            if (count == 0) {
+                binding.buttonImport.hide()
+            } else {
+                binding.buttonImport.show()
+            }
+        })
+
         val intent = activity?.intent
         when {
             intent?.action == Intent.ACTION_SEND -> {
@@ -83,17 +98,24 @@ class FavoritesImportFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.import_menu, menu)
+        if (viewModel.selectAll.value != false) {
+            menu.removeItem(R.id.menu_item_unselect_all)
+        } else {
+            menu.removeItem(R.id.menu_item_select_all)
+        }
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_item_import -> {
-                viewModel.import()
-                true
-            }
             R.id.menu_item_select_all -> {
                 viewModel.selectAll()
+                viewModel.selectAll.value = false
+                true
+            }
+            R.id.menu_item_unselect_all -> {
+                viewModel.selectNone()
+                viewModel.selectAll.value = true
                 true
             }
             else -> super.onOptionsItemSelected(item)

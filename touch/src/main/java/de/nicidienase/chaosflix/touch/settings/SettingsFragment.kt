@@ -119,7 +119,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     importFavorites()
                 } else {
-                    Snackbar.make(listView, "Cannot import without Storage Permission.", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(listView, "Cannot importFavorites without Storage Permission.", Snackbar.LENGTH_SHORT).show()
                 }
             }
             PERMISSION_REQUEST_EXPORT_FAVORITES -> {

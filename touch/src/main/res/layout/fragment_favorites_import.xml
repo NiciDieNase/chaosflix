@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="viewModel"
+            type="de.nicidienase.chaosflix.common.viewmodel.FavoritesImportViewModel" />
+    </data>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -22,7 +28,21 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:listitem="@layout/item_favorit_import" />
 
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/button_import"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:backgroundTint="@color/primary"
+                android:text="@string/import_label"
+                android:visibility="invisible"
+                android:onClick="@{()->viewModel.importFavorites()}"
+                app:icon="@drawable/ic_bookmark"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"            />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <include
             android:id="@+id/inc_overlay"
             layout="@layout/loading_overlay"/>

@@ -57,4 +57,5 @@
     <string name="import_favorites">Import Favorites</string>
     <string name="import_activity_label">Fahrplan-Import</string>
     <string name="select_all">Select all</string>
+    <string name="import_label">Bookmark</string>
 </resources>

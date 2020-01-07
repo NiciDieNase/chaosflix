@@ -9,7 +9,7 @@ import de.nicidienase.chaosflix.touch.databinding.ItemFavoritImportBinding
 import de.nicidienase.chaosflix.common.ImportItem
 import java.lang.NumberFormatException
 
-class ImportItemAdapter : ListAdapter<ImportItem, ImportItemAdapter.ViewHolder>(
+class ImportItemAdapter(private val onListItemClick: ((ImportItem) -> Unit)? = null) : ListAdapter<ImportItem, ImportItemAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<ImportItem>() {
         override fun areItemsTheSame(oldItem: ImportItem, newItem: ImportItem) = oldItem === newItem
         override fun areContentsTheSame(oldItem: ImportItem, newItem: ImportItem): Boolean {
@@ -31,6 +31,7 @@ class ImportItemAdapter : ListAdapter<ImportItem, ImportItemAdapter.ViewHolder>(
             holder.binding.checkBox.apply {
                 isChecked = !isChecked
             }
+            onListItemClick?.invoke(item)
         }
     }
 
