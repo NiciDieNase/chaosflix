@@ -64,7 +64,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	private PlayerViewModel viewModel;
 	private PlaybackItem item;
 
-	FragmentExoPlayerBinding binding;
+	private FragmentExoPlayerBinding binding;
 
 	public ExoPlayerFragment() {
 	}
@@ -87,12 +87,12 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 			playbackState = savedInstanceState.getBoolean(PLAYBACK_STATE, true);
 		}
 
-		viewModel = ViewModelProviders.of(this, ViewModelFactory.Companion.getInstance(requireContext())).get(PlayerViewModel.class);
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		binding = DataBindingUtil.inflate(inflater, R.layout.fragment_exo_player, container, false);
+		viewModel = ViewModelProviders.of(this, ViewModelFactory.Companion.getInstance(requireContext())).get(PlayerViewModel.class);
 
 		Toolbar toolbar = binding.getRoot().findViewById(R.id.toolbar);
 		toolbar.setTitle(item.getTitle());
@@ -170,8 +170,11 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 
 		AdaptiveTrackSelection.Factory trackSelectorFactory = new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
 		DefaultTrackSelector trackSelector = new DefaultTrackSelector(trackSelectorFactory);
-		LoadControl loadControl = new DefaultLoadControl();
-		DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(getContext(), null, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+		DefaultRenderersFactory renderersFactory
+				= new DefaultRenderersFactory(
+						getContext(),
+				null,
+				DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
 
 
 		exoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector);
