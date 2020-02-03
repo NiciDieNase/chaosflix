@@ -1,15 +1,15 @@
 package de.nicidienase.chaosflix.touch.browse.download
 
-import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import de.nicidienase.chaosflix.common.OfflineItemManager
-import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventView
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.databinding.ItemOfflineEventBinding
 
 class OfflineEventAdapter(

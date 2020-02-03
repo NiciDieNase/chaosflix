@@ -1,10 +1,10 @@
 package de.nicidienase.chaosflix.touch.about
 
-import androidx.databinding.DataBindingUtil
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import android.view.View
+import androidx.databinding.DataBindingUtil
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.databinding.ActivityAboutBinding
 import mehdi.sakout.aboutpage.AboutPage

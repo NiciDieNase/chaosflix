@@ -3,9 +3,8 @@ package de.nicidienase.chaosflix.leanback.detail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
 import android.view.WindowManager
-
+import androidx.fragment.app.FragmentActivity
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
 import de.nicidienase.chaosflix.leanback.R

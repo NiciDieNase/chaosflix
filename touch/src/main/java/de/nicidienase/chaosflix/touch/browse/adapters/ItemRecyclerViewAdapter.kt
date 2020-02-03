@@ -1,8 +1,8 @@
 package de.nicidienase.chaosflix.touch.browse.adapters
 
-import androidx.recyclerview.widget.RecyclerView
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.recyclerview.widget.RecyclerView
 import java.util.Collections
 
 abstract class ItemRecyclerViewAdapter<T, VH : RecyclerView.ViewHolder?>() :

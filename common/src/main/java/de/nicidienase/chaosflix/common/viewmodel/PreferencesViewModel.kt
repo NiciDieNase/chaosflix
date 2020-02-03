@@ -11,13 +11,13 @@ import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 import de.nicidienase.chaosflix.common.util.LiveEvent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class PreferencesViewModel(
     private val mediaRepository: MediaRepository,

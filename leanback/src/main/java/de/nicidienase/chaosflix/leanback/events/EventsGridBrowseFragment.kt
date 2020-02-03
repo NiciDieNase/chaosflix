@@ -3,6 +3,9 @@ package de.nicidienase.chaosflix.leanback.events
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
+import android.util.DisplayMetrics
+import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.leanback.app.BackgroundManager
 import androidx.leanback.app.VerticalGridSupportFragment
 import androidx.leanback.widget.ArrayObjectAdapter
@@ -12,9 +15,6 @@ import androidx.leanback.widget.Presenter
 import androidx.leanback.widget.Row
 import androidx.leanback.widget.RowPresenter
 import androidx.leanback.widget.VerticalGridPresenter
-import androidx.core.content.ContextCompat
-import android.util.DisplayMetrics
-import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget

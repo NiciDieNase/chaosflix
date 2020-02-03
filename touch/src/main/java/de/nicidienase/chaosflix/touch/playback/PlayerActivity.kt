@@ -3,13 +3,13 @@ package de.nicidienase.chaosflix.touch.playback
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import de.nicidienase.chaosflix.touch.R
+import androidx.appcompat.app.AppCompatActivity
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.cast.CastService
 
 class PlayerActivity : AppCompatActivity() {

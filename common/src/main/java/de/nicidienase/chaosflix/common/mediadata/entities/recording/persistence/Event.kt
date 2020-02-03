@@ -1,14 +1,14 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence
 
+import android.os.Parcel
+import android.os.Parcelable
+import android.text.Html
+import android.text.Spanned
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import android.os.Parcel
-import android.os.Parcelable
-import android.text.Html
-import android.text.Spanned
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventDto
 
 @Entity(tableName = "event",

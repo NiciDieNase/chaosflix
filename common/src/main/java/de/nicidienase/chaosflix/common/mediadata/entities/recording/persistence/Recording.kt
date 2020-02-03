@@ -1,12 +1,12 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence
 
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import android.os.Parcel
-import android.os.Parcelable
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.RecordingDto
 
 @Entity(tableName = "recording",

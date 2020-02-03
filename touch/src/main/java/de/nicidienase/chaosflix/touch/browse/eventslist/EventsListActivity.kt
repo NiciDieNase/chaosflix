@@ -3,12 +3,12 @@ package de.nicidienase.chaosflix.touch.browse.eventslist
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
-import de.nicidienase.chaosflix.touch.R
+import androidx.appcompat.app.AppCompatActivity
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.cast.CastService
 import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
 

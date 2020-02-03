@@ -1,15 +1,15 @@
 package de.nicidienase.chaosflix.touch.settings
 
 import android.Manifest
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.preference.PreferenceManager
-import com.google.android.material.snackbar.Snackbar
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceFragmentCompat
+import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.checkPermission
 import de.nicidienase.chaosflix.common.viewmodel.PreferencesViewModel

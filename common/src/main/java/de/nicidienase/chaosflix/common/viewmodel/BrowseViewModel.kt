@@ -11,8 +11,8 @@ import de.nicidienase.chaosflix.common.PreferencesManager
 import de.nicidienase.chaosflix.common.ResourcesFacade
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.StreamingRepository
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.common.util.LiveDataMerger
