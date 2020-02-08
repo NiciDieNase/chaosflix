@@ -53,17 +53,31 @@ android {
     productFlavors {
         prod {
             dimension "stage"
-            buildConfigField "String", "APPCENTER_ID", "$appcenterId"
+            if(project.hasProperty("appcenterId")){
+                buildConfigField "String", "APPCENTER_ID", "$appcenterId"
+            } else {
+                buildConfigField "String", "APPCENTER_ID", ""
+            }
+
         }
 
         dev {
             dimension "stage"
-            buildConfigField "String", "APPCENTER_ID", "$appcenterDevId"
+            if(project.hasProperty("appcenterDevId")){
+                buildConfigField "String", "APPCENTER_ID", "$appcenterDevId"
+            } else {
+                buildConfigField "String", "APPCENTER_ID", ""
+            }
+
         }
 
         mock {
             dimension "stage"
-            buildConfigField "String", "APPCENTER_ID", "$appcenterDevId"
+            if(project.hasProperty("appcenterDevId")){
+                buildConfigField "String", "APPCENTER_ID", "$appcenterDevId"
+            } else {
+                buildConfigField "String", "APPCENTER_ID", ""
+            }
             buildConfigField "String", "STREAMING_API_BASE_URL", "\"https://gist.githubusercontent.com\""
             buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/NiciDieNase/1ca017f180242f0ee683a1f592efc4ed/raw/0104592b57f4b29863fd0684a510462af276f30e/example_streams_v2.json\""
         }
