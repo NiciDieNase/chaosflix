@@ -214,6 +214,12 @@ class MediaRepository(
         return event
     }
 
+    suspend fun findConferenceForUri(data: Uri): Conference? {
+        val conference =
+            conferenceDao.findConferenceByAcronymSuspend(data.lastPathSegment)
+        return conference
+    }
+
     private suspend fun searchEvent(queryString: String): Event? {
         val searchEvents = recordingApi.searchEvents(queryString)
         if (searchEvents.events.isNotEmpty()) {
