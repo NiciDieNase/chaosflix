@@ -5,7 +5,10 @@ Features:
 	<li>Livestreams</li>
 	<li>Talks als Lesezeichen Speichern</li>
 	<li>Talks zum offline Schauen herunterladen</li>
-	<li>Chromecast-Unterstützung</li>
 </ul>
+
+Chromecast-Unterstützung fehlt leider in der Version auf F-Droid, da hierfür unfreie Bibliotheken nötig sind.
+
+Die Version für Fernseher (AndroidTV und FireTV) ist zur Zeit nicht auf F-Droid
 
 Bugreports, Verbesserungsvorschläge, etc. sind willkommen: https://github.com/NiciDieNase/chaosflix/issues
