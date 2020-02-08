@@ -37,6 +37,10 @@
                     android:scheme="https"
                     android:host="media.ccc.de"
                     android:pathPrefix="/v/"/>
+                <data
+                    android:scheme="https"
+                    android:host="media.ccc.de"
+                    android:pathPrefix="/c/"/>
             </intent-filter>
         </activity>
         <activity android:name=".browse.BrowseActivity">
