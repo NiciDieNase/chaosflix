@@ -19,7 +19,6 @@ import de.nicidienase.chaosflix.common.util.LiveDataMerger
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class BrowseViewModel(
     val offlineItemManager: OfflineItemManager,
