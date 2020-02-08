@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="privacy_policy">Chaosflix does not collect or transmit any personalized data.\n\nFor statistical and troubleshooting purposes an anonymous ID, type, version and language of the device, service life and crash logs are collected using Microsoft Visual Studio App Center.</string>
+    <string name="privacy_policy">Chaosflix does not collect or transmit any personalized data.\n\nFor statistical and troubleshooting purposes an anonymous ID, type, version and language of the device, service life and crash logs are collected using Microsoft Visual Studio App Center.\nThis can be disable in preferences.</string>
 </resources>
