@@ -8,8 +8,8 @@ import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.PreferencesManager
 import de.nicidienase.chaosflix.common.ResourcesFacade
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
@@ -20,8 +20,8 @@ import de.nicidienase.chaosflix.common.util.LiveDataMerger
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import de.nicidienase.chaosflix.common.util.ThreadHandler
-import retrofit2.Response
 import java.io.IOException
+import retrofit2.Response
 
 class BrowseViewModel(
     val offlineItemManager: OfflineItemManager,

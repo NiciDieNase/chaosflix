@@ -2,11 +2,9 @@ package de.nicidienase.chaosflix
 
 import android.support.test.runner.AndroidJUnit4
 import de.nicidienase.chaosflix.common.entities.userdata.PlaybackProgress
-
+import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import org.junit.Test
 import org.junit.runner.RunWith
-
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 
 /**
  * Created by felix on 31.10.17.

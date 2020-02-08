@@ -6,10 +6,10 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.cast.CastService
 
 class PlayerActivity : AppCompatActivity() {

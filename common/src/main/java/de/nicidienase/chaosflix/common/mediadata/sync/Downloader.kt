@@ -6,8 +6,8 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferenceDt
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventDto
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.RecordingDto
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RelatedEvent
@@ -16,8 +16,8 @@ import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import de.nicidienase.chaosflix.common.util.ThreadHandler
-import retrofit2.Response
 import java.io.IOException
+import retrofit2.Response
 
 class Downloader(
     private val recordingApi: RecordingService,

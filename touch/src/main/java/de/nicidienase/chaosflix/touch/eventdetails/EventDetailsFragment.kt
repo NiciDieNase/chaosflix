@@ -21,14 +21,14 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
-import de.nicidienase.chaosflix.touch.databinding.FragmentEventDetailsBinding
-import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import de.nicidienase.chaosflix.touch.OnEventSelectedListener
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
+import de.nicidienase.chaosflix.touch.databinding.FragmentEventDetailsBinding
 
 class EventDetailsFragment : Fragment() {
 

@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import de.nicidienase.chaosflix.common.OfflineItemManager
-import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventView
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.databinding.ItemOfflineEventBinding
 
 class OfflineEventAdapter(

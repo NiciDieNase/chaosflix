@@ -6,11 +6,11 @@ import com.google.gson.Gson
 import de.nicidienase.chaosflix.BuildConfig
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.SingletonHolder
+import java.util.concurrent.TimeUnit
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 
 class ApiFactory private constructor(val res: Resources) {
 

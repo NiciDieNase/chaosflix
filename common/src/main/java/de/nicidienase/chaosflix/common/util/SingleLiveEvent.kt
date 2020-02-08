@@ -21,7 +21,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.support.annotation.MainThread
 import android.util.Log
-
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
