@@ -12,7 +12,6 @@ references:
     working_directory: *workspace_root
 
     environment:
-#      TERM: dumb
       JVM_OPTS: -XX\:MaxHeapSize\=2048m -Xmx1536m
       LIBS: NoFree
       BUILD_TYPE: Release
@@ -23,6 +22,13 @@ references:
   attach_workspace: &attach_workspace
     attach_workspace:
       at: *workspace_root
+
+  setup_env: &setup_env
+          name: Setup environment
+          command: |
+            .circleci/setup_env.sh >> $BASH_ENV    parallelism: 3
+            echo "VERSION_CODE_TOUCH=$(.circleci/getVersionCode.sh -t)" >> $BASH_ENV
+            echo "VERSION_CODE_LEANBACK=$(.circleci/getVersionCode.sh -l)" >> $BASH_ENV
 
   general_cache_key: &general_cache_key
       key: app-{{ checksum ".circleci/config.yml" }}-{{ checksum "gradle.properties" }}-{{ checksum "build.gradle" }}-{{ checksum "touch/build.gradle" }}-{{ checksum "leanback/build.gradle" }}-{{ checksum "common/build.gradle" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
@@ -36,12 +42,9 @@ jobs:
 
       - restore_cache:
           <<: *general_cache_key
+
       - run:
-          name: Setup environment
-          command: |
-            .circleci/setup_env.sh >> $BASH_ENV
-            echo "VERSION_CODE_TOUCH=$(.circleci/getVersionCode.sh -t)" >> $BASH_ENV
-            echo "VERSION_CODE_LEANBACK=$(.circleci/getVersionCode.sh -l)" >> $BASH_ENV
+          <<: *setup_env
 
       - run:
           name: Download Dependencies
@@ -94,11 +97,7 @@ jobs:
           <<: *general_cache_key
 
       - run:
-          name: Setup environment
-          command: |
-            .circleci/setup_env.sh >> $BASH_ENV
-            echo "VERSION_CODE_TOUCH=$(.circleci/getVersionCode.sh -t)" >> $BASH_ENV
-            echo "VERSION_CODE_LEANBACK=$(.circleci/getVersionCode.sh -l)" >> $BASH_ENV
+          <<: *setup_env
 
       - run:
           name: Run checks
@@ -109,8 +108,14 @@ jobs:
               lint ktlintCheck
 
       - store_artifacts:
-          path: app/build/reports/
-          destination: lint_reports/app/
+          path: common/build/reports/
+          destination: lint_reports/common/
+      - store_artifacts:
+          path: touch/build/reports/
+          destination: lint_reports/touch/
+      - store_artifacts:
+          path: leanback/build/reports/
+          destination: lint_reports/leanback/
 
   test:
     <<: *container_config
@@ -121,15 +126,7 @@ jobs:
           <<: *general_cache_key
 
       - run:
-          name: Setup environment
-          command: |
-            .circleci/setup_env.sh >> $BASH_ENV
-            echo "VERSION_CODE_TOUCH=$(.circleci/getVersionCode.sh -t)" >> $BASH_ENV
-            echo "VERSION_CODE_LEANBACK=$(.circleci/getVersionCode.sh -l)" >> $BASH_ENV
-
-      - run:
-          name: Env
-          command: cat $BASH_ENV
+          <<: *setup_env
 
       - run:
           name: Test Common
@@ -152,15 +149,6 @@ jobs:
               -PversionName=${VERSION_NAME} \
               leanback:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest \
 
-      - store_artifacts:
-          path: touch/build/reports
-          destination: touch-reports
-      - store_artifacts:
-          path: leanback/build/reports
-          destination: leanback-reports
-      - store_artifacts:
-          path: leanback/build/reports
-          destination: leanback-reports
       - store_test_results:
           path: common/build/test-results
       - store_test_results:
@@ -168,7 +156,7 @@ jobs:
       - store_test_results:
           path: leanback/build/test-results
 
-  publish:
+  publish-appcenter:
     <<: *container_config
     steps:
       - *attach_workspace
@@ -177,15 +165,10 @@ jobs:
           <<: *general_cache_key
 
       - run:
-          name: Setup environment
-          command: .circleci/setup_env.sh >> $BASH_ENV
+          <<: *setup_env
 
       - run:
           name: Touch Appcenter Upload
-          branches:
-            only:
-              - master
-              - develop
           command: |
             git log --format="%h %s" master..HEAD > $RELEASENOTES_FILE
             .circleci/appCenterUpload.sh \
@@ -200,10 +183,6 @@ jobs:
 
       - run:
           name: Leanback Appcenter Upload
-          branches:
-            only:
-              - master
-              - develop
           command: |
             git log --format="%h %s" master..HEAD > $RELEASENOTES_FILE
             .circleci/appCenterUpload.sh \
@@ -215,6 +194,25 @@ jobs:
               "leanback/build/outputs/mapping/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/mapping.txt" \
               "$VERSION_CODE_LEANBACK" \
               "$VERSION_NAME"
+
+  publish-play:
+    <<: *container_config
+    steps:
+      - *attach_workspace
+
+      - restore_cache:
+          <<: *general_cache_key
+
+      - run:
+          <<: *setup_env
+
+      - run:
+          name: Setup environment
+          command: .circleci/setup_env.sh >> $BASH_ENV
+      - run:
+          name: Touch Playstore Upload
+          command: echo "TODO"
+
 
 workflows:
   version: 2
@@ -228,7 +226,21 @@ workflows:
       - test:
           requires:
             - build
-      - publish:
+      - publish-appcenter:
           requires:
             - test
             - check
+          filters:
+            branches:
+              only:
+                - master
+                - develop
+      - publish-play:
+          requires:
+            - test
+            - check
+          filters:
+            branches:
+              only:
+                - master
+                - develop
