@@ -1,4 +1,4 @@
-version: 2.0
+version: 2.1
 
 references:
 
@@ -97,8 +97,8 @@ jobs:
       - restore_cache:
           <<: *general_cache_key
 
-      #- run:
-          #<<: *setup_env
+      - run:
+          <<: *setup_env
 
       - run:
           name: Lint Common
@@ -150,8 +150,8 @@ jobs:
       - restore_cache:
           <<: *general_cache_key
 
-      #- run:
-          #<<: *setup_env
+      - run:
+          <<: *setup_env
 
       - run:
           name: Test Common
@@ -189,8 +189,8 @@ jobs:
       - restore_cache:
           <<: *general_cache_key
 
-      #- run:
-          #<<: *setup_env
+      - run:
+          <<: *setup_env
 
       - run:
           name: Touch Appcenter Upload

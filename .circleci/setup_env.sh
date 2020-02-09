@@ -22,5 +22,3 @@ echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE \
  -PchaosflixStorePassword=$KEYSTORE_PASSWORD \
  -PchaosflixKeyName=$KEY_NAME \
  -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\""
-
-env
