@@ -15,9 +15,12 @@ echo "export LIBS_LOWER=\"$(tr '[:upper:]' '[:lower:]' <<< ${LIBS:0:1})${LIBS:1}
 echo "$ENCODED_KEYSTORE" | base64 --decode > ${HOME}/code/keystore.jks
 KEYSTORE=${HOME}/code/keystore.jks
 
-echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE\
- -PchaosflixStorePassword=$KEYSTORE_PASSWORD\
- -PchaosflixKeyName=$KEY_NAME\
- -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\
- -PappcenterId=$APPCENTER_ID\
+echo "export KEY_CONFIG=\"-PappcenterId=$APPCENTER_ID\
  -PappcenterDevId=$APPCENTER_DEV_ID\""
+
+echo "export SIGN_CONFIG=\"-PchaosflixKeystore=$KEYSTORE \
+ -PchaosflixStorePassword=$KEYSTORE_PASSWORD \
+ -PchaosflixKeyName=$KEY_NAME \
+ -PchaosflixKeyPassword=$KEYSTORE_PASSWORD\""
+
+env
