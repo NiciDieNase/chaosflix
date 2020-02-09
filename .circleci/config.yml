@@ -90,22 +90,47 @@ jobs:
 
   check:
     <<: *container_config
+    parallelism: 4
     steps:
       - *attach_workspace
 
       - restore_cache:
           <<: *general_cache_key
 
-      - run:
-          <<: *setup_env
+      #- run:
+          #<<: *setup_env
 
       - run:
-          name: Run checks
+          name: Lint Common
           command: |
             ./gradlew $KEY_CONFIG \
               -PversionCode=$VERSION_CODE_LEANBACK \
               -PversionName=${VERSION_NAME} \
-              lint ktlintCheck
+              common:lint${STAGE}${LIBS}${BUILD_TYPE}
+
+      - run:
+          name: Lint Touch
+          command: |
+            ./gradlew $KEY_CONFIG \
+              -PversionCode=$VERSION_CODE_LEANBACK \
+              -PversionName=${VERSION_NAME} \
+              touch:lint${STAGE}${LIBS}${BUILD_TYPE}
+
+      - run:
+          name: Lint Leanback
+          command: |
+            ./gradlew $KEY_CONFIG \
+              -PversionCode=$VERSION_CODE_LEANBACK \
+              -PversionName=${VERSION_NAME} \
+              leanback:lint${STAGE}${LIBS}${BUILD_TYPE} \
+
+      - run:
+          name: Ktlint
+          command: |
+            ./gradlew $KEY_CONFIG \
+              -PversionCode=$VERSION_CODE_LEANBACK \
+              -PversionName=${VERSION_NAME} \
+              ktlintCheck
 
       - store_artifacts:
           path: common/build/reports/
@@ -125,8 +150,8 @@ jobs:
       - restore_cache:
           <<: *general_cache_key
 
-      - run:
-          <<: *setup_env
+      #- run:
+          #<<: *setup_env
 
       - run:
           name: Test Common
@@ -164,8 +189,8 @@ jobs:
       - restore_cache:
           <<: *general_cache_key
 
-      - run:
-          <<: *setup_env
+      #- run:
+          #<<: *setup_env
 
       - run:
           name: Touch Appcenter Upload
