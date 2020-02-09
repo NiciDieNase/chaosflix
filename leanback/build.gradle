@@ -16,7 +16,7 @@ android {
         minSdkVersion rootProject.ext.minSDK
         targetSdkVersion rootProject.ext.targetSDK
         // odd for touch, even for leanback
-        versionCode rootProject.ext.leanbackVersionCode
+        versionCode 1
         versionName versionString
         if(project.hasProperty("versionCode")){
             versionCode = project.property("versionCode") as int

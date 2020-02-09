@@ -30,9 +30,6 @@ allprojects {
 
 
 ext{
-    touchVersionCode = 1
-    leanbackVersionCode = 1
-
     minSDK = 22
     targetSDK = 28
     compileSdkVersion = 28
