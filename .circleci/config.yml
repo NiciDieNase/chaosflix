@@ -26,7 +26,7 @@ references:
   setup_env: &setup_env
           name: Setup environment
           command: |
-            .circleci/setup_env.sh >> $BASH_ENV    parallelism: 3
+            .circleci/setup_env.sh >> $BASH_ENV
             echo "VERSION_CODE_TOUCH=$(.circleci/getVersionCode.sh -t)" >> $BASH_ENV
             echo "VERSION_CODE_LEANBACK=$(.circleci/getVersionCode.sh -l)" >> $BASH_ENV
 
@@ -90,7 +90,7 @@ jobs:
 
   check:
     <<: *container_config
-    parallelism: 4
+    parallelism: 1 #4
     steps:
       - *attach_workspace
 
