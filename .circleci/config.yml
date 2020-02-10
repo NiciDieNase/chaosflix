@@ -236,7 +236,12 @@ jobs:
           command: .circleci/setup_env.sh >> $BASH_ENV
       - run:
           name: Touch Playstore Upload
-          command: echo "TODO"
+          command: |
+            echo "$ENCODED_PLAY_CREDENTIALS" | base64 --decode > ./chaosflix-d1d09f33cbb2.json
+            ./gradlew $KEY_CONFIG \
+              -PversionCode=$VERSION_CODE_TOUCH \
+              -PversionName=${VERSION_NAME} \
+              touch:publishApk
 
 
 workflows:
@@ -268,4 +273,4 @@ workflows:
             branches:
               only:
                 - master
-                - develop
+                - feature/playUpload
