@@ -273,4 +273,3 @@ workflows:
             branches:
               only:
                 - master
-                - feature/playUpload
