@@ -105,7 +105,7 @@
 					android:textColor="@color/white"
 					app:layout_constraintBottom_toBottomOf="@+id/imageView"
 					app:layout_constraintEnd_toEndOf="@+id/imageView"
-					bind:time="@{event.length}"
+					time="@{event.length}"
 					tools:text="1:23:45"/>
 
 			</androidx.constraintlayout.widget.ConstraintLayout>
