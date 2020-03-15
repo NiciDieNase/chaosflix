@@ -1,0 +1,3 @@
+Watch streams and recordings from media.ccc.de on your phone, tablet or AndroidTV-device
+
+Suggestions, Bugreports, etc. are welcome on https://github.com/NiciDieNase/chaosflix/issues
