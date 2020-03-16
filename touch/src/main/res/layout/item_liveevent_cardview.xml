@@ -31,14 +31,15 @@
                     android:id="@+id/imageView"
                     android:layout_width="@dimen/thumbnail_width"
                     android:layout_height="@dimen/thumbnail_height"
-                    android:scaleType="fitCenter"/>
+                    android:scaleType="fitCenter"
+                    tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:orientation="vertical">
 
                     <TextView
