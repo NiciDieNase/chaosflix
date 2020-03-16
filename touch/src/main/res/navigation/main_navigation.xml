@@ -17,10 +17,19 @@
         android:id="@+id/eventDetailsFragment"
         android:name="de.nicidienase.chaosflix.touch.eventdetails.EventDetailsFragment"
         android:label="EventDetailsFragment"
-        tools:layout="@layout/fragment_event_details"/>
+        tools:layout="@layout/fragment_event_details">
+        <argument
+            android:name="event"
+            app:argType="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event" />
+    </fragment>
     <fragment
         android:id="@+id/livestreamListFragment"
         android:name="de.nicidienase.chaosflix.touch.browse.streaming.LivestreamListFragment"
         android:label="LivestreamListFragment"
         tools:layout="@layout/fragment_livestreams"/>
+    <fragment
+        android:id="@+id/downloadsListFragment"
+        android:name="de.nicidienase.chaosflix.touch.browse.download.DownloadsListFragment"
+        android:label="DownloadsListFragment"
+        tools:layout="@layout/fragment_downloads"/>
 </navigation>

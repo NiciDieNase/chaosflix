@@ -134,7 +134,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
         viewModel.getBookmarkForEvent(guid)
                 .observe(viewLifecycleOwner, Observer { watchlistItem: WatchlistItem? ->
                     this.watchlistItem = watchlistItem
-                    listener?.invalidateOptionsMenu()
+                    activity?.invalidateOptionsMenu()
                 })
     }
 
@@ -201,7 +201,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
             R.id.action_unbookmark -> {
                 viewModel.removeBookmark(event.guid)
                 watchlistItem = null
-                listener?.invalidateOptionsMenu()
+                activity?.invalidateOptionsMenu()
                 return true
             }
             R.id.action_download -> {
@@ -234,7 +234,6 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
 
     interface OnEventDetailsFragmentInteractionListener {
         fun onToolbarStateChange()
-        fun invalidateOptionsMenu()
     }
 
     companion object {

@@ -43,6 +43,8 @@
                     android:pathPrefix="/c/"/>
             </intent-filter>
         </activity>
+        <activity android:name=".NavigationActivity"
+            android:exported="true"/>
         <activity android:name=".browse.BrowseActivity">
             <meta-data
                 android:name="android.app.searchable"

@@ -3,6 +3,8 @@ package de.nicidienase.chaosflix.touch.browse;
 import android.content.Context;
 import android.os.Bundle;
 import com.google.android.material.snackbar.Snackbar;
+
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,7 +70,14 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 			ConferenceGroupsFragmentPager fragmentPager = new ConferenceGroupsFragmentPager(this.getContext(), getChildFragmentManager());
 			fragmentPager.setContent(conferenceGroups);
 			binding.viewpager.setAdapter(fragmentPager);
-			binding.viewpager.onRestoreInstanceState(getArguments().getParcelable(VIEWPAGER_STATE));
+			Bundle arguments = getArguments();
+			Parcelable viewpagerState = null;
+			if (arguments != null) {
+				viewpagerState = arguments.getParcelable(VIEWPAGER_STATE);
+				if(viewpagerState != null){
+					binding.viewpager.onRestoreInstanceState(viewpagerState);
+				}
+			}
 
 			binding.slidingTabs.setupWithViewPager(binding.viewpager);
 			if (conferenceGroups.size() > 0) {
@@ -110,7 +119,7 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 	@Override
 	public void onPause() {
 		super.onPause();
-		getArguments().putParcelable(VIEWPAGER_STATE, binding.viewpager.onSaveInstanceState());
+//		getArguments().putParcelable(VIEWPAGER_STATE, binding.viewpager.onSaveInstanceState());
 	}
 
 	@Override

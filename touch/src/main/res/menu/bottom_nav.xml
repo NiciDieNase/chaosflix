@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item
+		android:id="@+id/conferencesTabBrowseFragment"
+		android:icon="@drawable/ic_video_archive"
+		android:title="@string/recordings"/>
+	<item
+		android:id="@+id/livestreamListFragment"
+		android:icon="@drawable/ic_camera"
+		android:title="@string/livestreams"/>
+<!--	<item-->
+<!--		android:id="@+id/nav_bookmarks"-->
+<!--		android:icon="@drawable/ic_bookmark"-->
+<!--		android:title="@string/bookmarks"/>-->
+<!--	<item-->
+<!--		android:id="@+id/nav_inprogress"-->
+<!--		android:icon="@android:drawable/ic_media_play"-->
+<!--		android:title="@string/continue_watching"/>-->
+	<item
+		android:id="@+id/downloadsListFragment"
+		android:icon="@drawable/ic_download_dark"
+		android:title="Downloads"/>
+</menu>
