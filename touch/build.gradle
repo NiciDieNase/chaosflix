@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-android-extensions'
+    id 'com.github.triplet.play' version '2.6.2'
 }
 
 String appName = "Chaosflix"
@@ -113,6 +114,12 @@ android {
     lintOptions.abortOnError false
     dataBinding.enabled = true
     testOptions.unitTests.includeAndroidResources = true
+
+    playConfigs {
+        prodNoFreeRelease {
+            enabled = true
+        }
+    }
 }
 
 configurations {
@@ -168,4 +175,12 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
+}
+
+play {
+    serviceAccountCredentials = file("../chaosflix-d1d09f33cbb2.json")
+    track = "alpha"
+    releaseStatus = "draft"
+    enabled = false
+    artifactDir = file("build/outputs/apk/prodNoFree/release/touch-prod-noFree-release.apk")
 }
