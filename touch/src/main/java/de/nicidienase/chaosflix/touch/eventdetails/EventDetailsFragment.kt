@@ -108,13 +108,12 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
             }
         })
 
-        viewModel = ViewModelProviders.of(
-                requireActivity(),
-                ViewModelFactory.getInstance(requireContext()))
-                .get(DetailsViewModel::class.java)
+        viewModel = ViewModelProviders
+            .of(requireActivity(), ViewModelFactory.getInstance(requireContext()))
+            .get(DetailsViewModel::class.java)
 
         viewModel.setEvent(event)
-                .observe(this, Observer {
+                .observe(viewLifecycleOwner, Observer {
                     Log.d(TAG, "Loading Event ${event.title}, ${event.guid}")
                     updateBookmark(event.guid)
                     binding.thumbImage.transitionName = getString(R.string.thumbnail) + event.guid
@@ -124,7 +123,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
                             .apply(RequestOptions().fitCenter())
                             .into(binding.thumbImage)
                 })
-        viewModel.getRelatedEvents(event).observe(this, Observer {
+        viewModel.getRelatedEvents(event).observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 relatedEventsAdapter.items = it
             }
@@ -151,7 +150,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
         if (context is OnEventDetailsFragmentInteractionListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+            throw RuntimeException("$context must implement OnFragmentInteractionListener")
         }
     }
 
