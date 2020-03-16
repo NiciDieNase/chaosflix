@@ -65,7 +65,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 	}
 
 	@Override
-	public void onAttach(Context context) {
+	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		setHasOptionsMenu(true);
 		if (context instanceof OnEventSelectedListener) {
@@ -182,8 +182,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		SearchView searchView = (SearchView) searchMenuItem.getActionView();
 		SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
 
-		searchView.setSearchableInfo(searchManager.
-				                                          getSearchableInfo(getActivity().getComponentName()));
+		searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
 		searchView.setSubmitButtonEnabled(true);
 		searchView.setIconified(false);
 		searchView.setOnQueryTextListener(this);

@@ -36,7 +36,7 @@ class LivestreamListFragment : BrowseFragment() {
             listener = context
             adapter = LivestreamAdapter(listener)
         } else {
-            throw RuntimeException(context.toString() + " must implement LivestreamListFragment.InteractionListener")
+            throw RuntimeException("$context must implement LivestreamListFragment.InteractionListener")
         }
     }
 
@@ -44,10 +44,10 @@ class LivestreamListFragment : BrowseFragment() {
         binding = FragmentLivestreamsBinding.inflate(inflater, container, false)
         setupToolbar(binding.incToolbar.toolbar, R.string.livestreams)
         if (columnCount <= 1) {
-            binding.list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+            binding.list.layoutManager = LinearLayoutManager(context)
         } else {
             binding.list.layoutManager =
-                androidx.recyclerview.widget.GridLayoutManager(context, columnCount)
+                GridLayoutManager(context, columnCount)
         }
         binding.list.adapter = adapter
         binding.swipeRefreshLayout.setOnRefreshListener {

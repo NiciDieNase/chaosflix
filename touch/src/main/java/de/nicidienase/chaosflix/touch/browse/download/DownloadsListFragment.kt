@@ -34,17 +34,17 @@ class DownloadsListFragment : BrowseFragment() {
             }
             list.adapter = offlineEventAdapter
             if (columnCount <= 1) {
-                list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+                list.layoutManager = LinearLayoutManager(context)
             } else {
                 list.layoutManager =
-                    androidx.recyclerview.widget.GridLayoutManager(context, columnCount - 1)
+                    GridLayoutManager(context, columnCount - 1)
             }
             viewModel.getOfflineDisplayEvents().observe(viewLifecycleOwner, Observer {
                 if (it != null) {
                     offlineEventAdapter.items = it
                 }
             })
-            return root
+            return this.root
         }
     }
 

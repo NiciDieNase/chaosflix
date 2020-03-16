@@ -31,7 +31,7 @@ open class BrowseFragment : androidx.fragment.app.Fragment() {
             activity.setupDrawerToggle(toolbar)
         }
         activity.setSupportActionBar(toolbar)
-        activity.supportActionBar?.setTitle(title)
+        activity.supportActionBar?.title = title
         if (isRoot) {
             activity.supportActionBar?.setDisplayShowHomeEnabled(true)
         } else {
@@ -41,9 +41,9 @@ open class BrowseFragment : androidx.fragment.app.Fragment() {
 
     protected fun setLoadingOverlayVisibility(visible: Boolean) {
         if (visible) {
-            overlay?.setVisibility(View.VISIBLE)
+            overlay?.visibility = View.VISIBLE
         } else {
-            overlay?.setVisibility(View.INVISIBLE)
+            overlay?.visibility = View.INVISIBLE
         }
     }
 }

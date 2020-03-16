@@ -17,6 +17,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.appbar.AppBarLayout
@@ -88,10 +89,10 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
                 viewModel.relatedEventSelected(it)
             }
             adapter = relatedEventsAdapter
-            val orientation = androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
+            val orientation = RecyclerView.VERTICAL
             layoutManager =
-                androidx.recyclerview.widget.LinearLayoutManager(context, orientation, false)
-            val itemDecoration = androidx.recyclerview.widget.DividerItemDecoration(
+                LinearLayoutManager(context, orientation, false)
+            val itemDecoration = DividerItemDecoration(
                 binding.relatedItemsList.context,
                 orientation
             )
