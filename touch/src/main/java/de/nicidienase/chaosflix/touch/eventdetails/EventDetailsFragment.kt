@@ -132,7 +132,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
 
     private fun updateBookmark(guid: String) {
         viewModel.getBookmarkForEvent(guid)
-                .observe(this, Observer { watchlistItem: WatchlistItem? ->
+                .observe(viewLifecycleOwner, Observer { watchlistItem: WatchlistItem? ->
                     this.watchlistItem = watchlistItem
                     listener?.invalidateOptionsMenu()
                 })
@@ -165,7 +165,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
         menu.findItem(R.id.action_bookmark).isVisible = watchlistItem == null
         menu.findItem(R.id.action_unbookmark).isVisible = watchlistItem != null
 // 		menu.findItem(R.id.action_download).isVisible = viewModel.writeExternalStorageAllowed
-// 		viewModel.offlineItemExists(event).observe(this, Observer { itemExists->
+// 		viewModel.offlineItemExists(event).observe(viewLivecycleOwner, Observer { itemExists->
 // 					itemExists?.let {exists ->
 // 						menu.findItem(R.id.action_download).isVisible =
 // 								viewModel.writeExternalStorageAllowed && !exists
@@ -209,7 +209,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
                 return true
             }
             R.id.action_delete_offline_item -> {
-                viewModel.deleteOfflineItem(event).observe(this, Observer { success ->
+                viewModel.deleteOfflineItem(event).observe(viewLifecycleOwner, Observer { success ->
                     if (success != null) {
                         view?.let { Snackbar.make(it, "Deleted Download", Snackbar.LENGTH_SHORT).show() }
                     }

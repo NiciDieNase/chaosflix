@@ -156,7 +156,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
         actionAdapter.add(watchlistAction)
         event.guid.let {
             loadPlaybackProgress(it)
-            detailsViewModel.getBookmarkForEvent(it).observe(this, Observer { watchlistItem ->
+            detailsViewModel.getBookmarkForEvent(it).observe(viewLifecycleOwner, Observer { watchlistItem ->
                 if (watchlistItem != null) {
                     watchlistAction.id = ACTION_REMOVE_WATCHLIST
                     watchlistAction.label1 = getString(R.string.remove_from_watchlist)
@@ -175,7 +175,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
         initializeBackgroundWithImage(event.posterUrl)
 
-        detailsViewModel.getRecordingForEvent(event).observe(this, Observer { recordings ->
+        detailsViewModel.getRecordingForEvent(event).observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null && !recordings.isEmpty()) {
                 onNewRecordings(event, recordings)
             } else {
@@ -183,7 +183,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
             }
         })
 
-        detailsViewModel.getRelatedEvents(event).observe(this, Observer { events ->
+        detailsViewModel.getRelatedEvents(event).observe(viewLifecycleOwner, Observer { events ->
             if (relatedEventsAdapter == null) {
                 relatedEventsAdapter = ArrayObjectAdapter(CardPresenter(R.style.EventCardStyle))
                 val header = HeaderItem(getString(R.string.related_talks))

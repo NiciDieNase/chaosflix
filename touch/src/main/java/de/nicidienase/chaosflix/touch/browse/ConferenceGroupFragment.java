@@ -69,7 +69,7 @@ public class ConferenceGroupFragment extends BrowseFragment {
 			conferencesAdapter = new ConferenceRecyclerViewAdapter(listener);
 			conferencesAdapter.setHasStableIds(true);
 			recyclerView.setAdapter(conferencesAdapter);
-			getViewModel().getConferencesByGroup(conferenceGroup.getId()).observe(this, conferenceList -> {
+			getViewModel().getConferencesByGroup(conferenceGroup.getId()).observe(getViewLifecycleOwner(), conferenceList -> {
 				if(conferenceList != null){
 					if(conferenceList.size() > 0){
 						setLoadingOverlayVisibility(false);

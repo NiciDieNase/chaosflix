@@ -39,7 +39,7 @@ class DownloadsListFragment : BrowseFragment() {
                 list.layoutManager =
                     androidx.recyclerview.widget.GridLayoutManager(context, columnCount - 1)
             }
-            viewModel.getOfflineDisplayEvents().observe(this@DownloadsListFragment, Observer {
+            viewModel.getOfflineDisplayEvents().observe(viewLifecycleOwner, Observer {
                 if (it != null) {
                     offlineEventAdapter.items = it
                 }

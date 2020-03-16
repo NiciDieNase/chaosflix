@@ -142,7 +142,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun importFavorites() {
         var snackbar: Snackbar? = null
-        viewModel.importFavorites().observe(this, Observer { event ->
+        viewModel.importFavorites().observe(viewLifecycleOwner, Observer { event ->
             when {
                 event?.state == PreferencesViewModel.State.Loading -> {
                     snackbar?.dismiss()

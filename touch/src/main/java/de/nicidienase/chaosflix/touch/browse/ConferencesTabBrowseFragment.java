@@ -61,7 +61,7 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 		setupToolbar(binding.incToolbar.toolbar, R.string.app_name);
 		setOverlay(binding.incOverlay.loadingOverlay);
 
-		getViewModel().getConferenceGroups().observe(this, conferenceGroups -> {
+		getViewModel().getConferenceGroups().observe(getViewLifecycleOwner(), conferenceGroups -> {
 			if(conferenceGroups.size() > 0){
 				this.setLoadingOverlayVisibility(false);
 			}
@@ -75,7 +75,7 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 				setLoadingOverlayVisibility(false);
 			}
 		});
-		getViewModel().getUpdateState().observe(this, state -> {
+		getViewModel().getUpdateState().observe(getViewLifecycleOwner(), state -> {
 			if(state == null){
 				return;
 			}
