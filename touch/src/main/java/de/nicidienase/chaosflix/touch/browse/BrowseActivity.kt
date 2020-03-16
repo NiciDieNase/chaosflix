@@ -28,6 +28,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import de.nicidienase.chaosflix.touch.NavigationActivity
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.about.AboutActivity
@@ -77,6 +78,10 @@ class BrowseActivity : AppCompatActivity(),
                 R.id.nav_streams -> showStreamsFragment()
                 R.id.nav_downloads -> showDownloadsFragment()
                 R.id.nav_preferences -> showSettingsPage()
+                R.id.nav_new_navigation -> {
+                    startActivity(Intent(this, NavigationActivity::class.java))
+                    finish()
+                }
                 else -> Snackbar.make(binding.drawerLayout, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
             }
             binding.drawerLayout.closeDrawers()
