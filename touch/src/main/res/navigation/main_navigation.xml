@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/recordings"
+    app:startDestination="@id/conferencesTabBrowseFragment">
+    <fragment
+        android:id="@+id/conferencesTabBrowseFragment"
+        android:name="de.nicidienase.chaosflix.touch.browse.ConferencesTabBrowseFragment"
+        android:label="ConferencesTabBrowseFragment"
+        tools:layout="@layout/fragment_tab_pager_layout">
+        <action
+            android:id="@+id/action_conferencesTabBrowseFragment_to_eventDetailsFragment"
+            app:destination="@id/eventDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventDetailsFragment"
+        android:name="de.nicidienase.chaosflix.touch.eventdetails.EventDetailsFragment"
+        android:label="EventDetailsFragment"
+        tools:layout="@layout/fragment_event_details"/>
+    <fragment
+        android:id="@+id/livestreamListFragment"
+        android:name="de.nicidienase.chaosflix.touch.browse.streaming.LivestreamListFragment"
+        android:label="LivestreamListFragment"
+        tools:layout="@layout/fragment_livestreams"/>
+</navigation>
