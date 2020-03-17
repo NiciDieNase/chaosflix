@@ -43,10 +43,7 @@ import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
 import de.nicidienase.chaosflix.touch.playback.PlayerActivity
 import de.nicidienase.chaosflix.touch.settings.SettingsActivity
 
-class BrowseActivity : AppCompatActivity(),
-        ConferencesTabBrowseFragment.OnInteractionListener,
-        LivestreamListFragment.InteractionListener,
-        OnEventSelectedListener {
+class BrowseActivity : AppCompatActivity(), OnEventSelectedListener {
 
     private var drawerOpen: Boolean = false
 
@@ -168,11 +165,11 @@ class BrowseActivity : AppCompatActivity(),
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onConferenceSelected(conference: Conference) {
+    fun onConferenceSelected(conference: Conference) {
         EventsListActivity.start(this, conference)
     }
 
-    override fun onStreamSelected(streamingItem: StreamingItem) {
+    fun onStreamSelected(streamingItem: StreamingItem) {
         val entries = HashMap<String, StreamUrl>()
 
         if (castService.connected) {

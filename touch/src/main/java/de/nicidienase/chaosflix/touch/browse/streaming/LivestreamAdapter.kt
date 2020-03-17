@@ -9,13 +9,10 @@ import com.bumptech.glide.request.RequestOptions
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.touch.databinding.ItemLiveeventCardviewBinding
 
-class LivestreamAdapter(val listener: LivestreamListFragment.InteractionListener, liveConferences: List<LiveConference> = emptyList()) : androidx.recyclerview.widget.RecyclerView.Adapter<LivestreamAdapter.ViewHolder>() {
+class LivestreamAdapter(val listener: (StreamingItem) -> Unit) : androidx.recyclerview.widget.RecyclerView
+.Adapter<LivestreamAdapter.ViewHolder>() {
 
-    lateinit var items: MutableList<StreamingItem>
-
-    init {
-        setContent(liveConferences)
-    }
+    var items: MutableList<StreamingItem> = mutableListOf()
 
     private fun convertToStreamingItemList(liveConferences: List<LiveConference>) {
         liveConferences.map { liveConference ->
@@ -55,7 +52,7 @@ class LivestreamAdapter(val listener: LivestreamListFragment.InteractionListener
                 .apply(RequestOptions().fitCenter())
                 .into(holder.binding.imageView)
 
-        holder.binding.root.setOnClickListener { listener.onStreamSelected(item) }
+        holder.binding.root.setOnClickListener { listener(item) }
     }
 
     inner class ViewHolder(val binding: ItemLiveeventCardviewBinding) : androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root)

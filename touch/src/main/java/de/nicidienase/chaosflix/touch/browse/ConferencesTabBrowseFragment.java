@@ -1,19 +1,18 @@
 package de.nicidienase.chaosflix.touch.browse;
 
-import android.content.Context;
 import android.os.Bundle;
-import com.google.android.material.snackbar.Snackbar;
-
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference;
-import de.nicidienase.chaosflix.touch.databinding.FragmentTabPagerLayoutBinding;
 import de.nicidienase.chaosflix.touch.browse.adapters.ConferenceGroupsFragmentPager;
+import de.nicidienase.chaosflix.touch.databinding.FragmentTabPagerLayoutBinding;
 
 
 public class ConferencesTabBrowseFragment extends BrowseFragment {
@@ -24,7 +23,6 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 	private static final String CURRENTTAB_KEY   = "current_tab";
 	private static final String VIEWPAGER_STATE  = "viewpager_state";
 	private              int    mColumnCount     = 1;
-	private OnInteractionListener         listener;
 	private FragmentTabPagerLayoutBinding binding;
 	private Snackbar snackbar;
 
@@ -34,16 +32,6 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 		args.putInt(ARG_COLUMN_COUNT, columnCount);
 		fragment.setArguments(args);
 		return fragment;
-	}
-
-	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-		if (context instanceof OnInteractionListener) {
-			listener = (OnInteractionListener) context;
-		} else {
-			throw new RuntimeException(context.toString() + " must implement OnInteractionListener");
-		}
 	}
 
 	@Override
@@ -120,15 +108,5 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 	public void onPause() {
 		super.onPause();
 //		getArguments().putParcelable(VIEWPAGER_STATE, binding.viewpager.onSaveInstanceState());
-	}
-
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		listener = null;
-	}
-
-	public interface OnInteractionListener {
-		void onConferenceSelected(Conference conference);
 	}
 }

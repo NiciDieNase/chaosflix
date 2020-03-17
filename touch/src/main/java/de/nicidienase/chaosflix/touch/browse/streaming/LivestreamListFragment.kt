@@ -1,6 +1,5 @@
 package de.nicidienase.chaosflix.touch.browse.streaming
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,7 +15,6 @@ import de.nicidienase.chaosflix.touch.databinding.FragmentLivestreamsBinding
 
 class LivestreamListFragment : BrowseFragment() {
 
-    private lateinit var listener: InteractionListener
     private lateinit var binding: FragmentLivestreamsBinding
     lateinit var adapter: LivestreamAdapter
     lateinit var snackbar: Snackbar
@@ -30,15 +28,6 @@ class LivestreamListFragment : BrowseFragment() {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is InteractionListener) {
-            listener = context
-            adapter = LivestreamAdapter(listener)
-        } else {
-            throw RuntimeException("$context must implement LivestreamListFragment.InteractionListener")
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentLivestreamsBinding.inflate(inflater, container, false)
@@ -49,6 +38,9 @@ class LivestreamListFragment : BrowseFragment() {
             binding.list.layoutManager =
                 GridLayoutManager(context, columnCount)
         }
+        adapter = LivestreamAdapter({
+            // TODO navigat to player/livestream-details
+        })
         binding.list.adapter = adapter
         binding.swipeRefreshLayout.setOnRefreshListener {
             updateList()
@@ -81,10 +73,6 @@ class LivestreamListFragment : BrowseFragment() {
             }
             Log.d(TAG, "Refresh done")
         })
-    }
-
-    interface InteractionListener {
-        fun onStreamSelected(streamingItem: StreamingItem)
     }
 
     companion object {
