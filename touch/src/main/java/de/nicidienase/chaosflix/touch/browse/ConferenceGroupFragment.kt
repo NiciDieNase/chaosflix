@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -40,6 +41,9 @@ class ConferenceGroupFragment : BrowseFragment() {
 			}
 			recyclerView.layoutManager = layoutManager
 			val conferencesAdapter = ConferenceRecyclerViewAdapter {
+				findNavController().navigate(
+						ConferencesTabBrowseFragmentDirections.actionConferencesTabBrowseFragmentToEventsListFragment(it)
+				)
 				// TODO navigate to events-list for conference
 			}
 			conferencesAdapter?.setHasStableIds(true)
@@ -52,7 +56,7 @@ class ConferenceGroupFragment : BrowseFragment() {
 					conferencesAdapter.conferences = conferenceList
 					val layoutState = arguments!!.getParcelable<Parcelable>(LAYOUTMANAGER_STATE)
 					if (layoutState != null) {
-						layoutManager!!.onRestoreInstanceState(layoutState)
+						layoutManager?.onRestoreInstanceState(layoutState)
 					}
 				}
 			})

@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-android-extensions'
     id 'com.github.triplet.play' version '2.6.2'
+    id "androidx.navigation.safeargs.kotlin"
 }
 
 String appName = "Chaosflix"

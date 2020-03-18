@@ -10,8 +10,8 @@
         android:label="ConferencesTabBrowseFragment"
         tools:layout="@layout/fragment_tab_pager_layout">
         <action
-            android:id="@+id/action_conferencesTabBrowseFragment_to_eventDetailsFragment"
-            app:destination="@id/eventDetailsFragment" />
+            android:id="@+id/action_conferencesTabBrowseFragment_to_eventsListFragment"
+            app:destination="@id/eventsListFragment" />
     </fragment>
     <fragment
         android:id="@+id/eventDetailsFragment"
@@ -32,4 +32,16 @@
         android:name="de.nicidienase.chaosflix.touch.browse.download.DownloadsListFragment"
         android:label="DownloadsListFragment"
         tools:layout="@layout/fragment_downloads"/>
+    <fragment
+        android:id="@+id/eventsListFragment"
+        android:name="de.nicidienase.chaosflix.touch.browse.eventslist.EventsListFragment"
+        tools:layout="@layout/fragment_events_list"
+        android:label="EventsListFragment" >
+        <action
+            android:id="@+id/action_eventsListFragment_to_eventDetailsFragment"
+            app:destination="@id/eventDetailsFragment" />
+        <argument
+            android:name="conference"
+            app:argType="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference" />
+    </fragment>
 </navigation>

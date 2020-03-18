@@ -1,6 +1,5 @@
 package de.nicidienase.chaosflix.touch.eventdetails
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,7 +11,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -26,19 +24,15 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
-import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventDetailsBinding
 
 class EventDetailsFragment : androidx.fragment.app.Fragment() {
 
-    private var listener: OnEventDetailsFragmentInteractionListener? = null
-
     private var appBarExpanded: Boolean = false
     private lateinit var event: Event
     private var watchlistItem: WatchlistItem? = null
-    private var eventSelectedListener: OnEventSelectedListener? = null
 
     private var layout: View? = null
 
@@ -79,10 +73,8 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
         val binding = FragmentEventDetailsBinding.bind(view)
         binding.event = event
         binding.playFab.setOnClickListener { play() }
-        if (listener != null) {
-            (activity as AppCompatActivity).setSupportActionBar(binding.animToolbar)
-            (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        }
+        (activity as AppCompatActivity).setSupportActionBar(binding.animToolbar)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.relatedItemsList.apply {
             relatedEventsAdapter = EventRecyclerViewAdapter {
@@ -102,7 +94,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
         binding.appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             val v = Math.abs(verticalOffset).toDouble() / appBarLayout.totalScrollRange
             if (appBarExpanded xor (v > 0.8)) {
-                listener?.onToolbarStateChange()
+                requireActivity().invalidateOptionsMenu()
                 appBarExpanded = v > 0.8
 //                binding.collapsingToolbar.isTitleEnabled = appBarExpanded
             }
@@ -140,23 +132,6 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
 
     private fun play() {
         viewModel.playEvent(event)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnEventSelectedListener) {
-            eventSelectedListener = context
-        }
-        if (context is OnEventDetailsFragmentInteractionListener) {
-            listener = context
-        } else {
-            throw RuntimeException("$context must implement OnFragmentInteractionListener")
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -238,7 +213,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
 
     companion object {
         private val TAG = EventDetailsFragment::class.java.simpleName
-        private const val EVENT_PARAM = "event_param"
+        private const val EVENT_PARAM = "event"
 
         fun newInstance(event: Event): EventDetailsFragment {
             val fragment = EventDetailsFragment()
