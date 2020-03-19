@@ -39,7 +39,6 @@ class LivestreamListFragment : BrowseFragment() {
         }
     }
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentLivestreamsBinding.inflate(inflater, container, false)
         setupToolbar(binding.incToolbar.toolbar, R.string.livestreams)
@@ -97,7 +96,7 @@ class LivestreamListFragment : BrowseFragment() {
             if (dashStreams.size > 0 &&
                     viewModel.getAutoselectStream()) {
                 val streamUrl = dashStreams.first().urls["dash"]
-                if(streamUrl != null){
+                if (streamUrl != null) {
                     playLivestream(PlaybackItem.fromStream(streamingItem.conference.conference,
                             streamingItem.room.display,
                             streamUrl))
@@ -115,7 +114,7 @@ class LivestreamListFragment : BrowseFragment() {
                         .setItems(strings) { _, i ->
                             Toast.makeText(requireContext(), strings[i], Toast.LENGTH_LONG).show()
                             val streamUrl = entries[strings[i]]
-                            if(streamUrl != null){
+                            if (streamUrl != null) {
                                 playLivestream(PlaybackItem.fromStream(
                                         streamingItem.conference.conference,
                                         streamingItem.room.display,
@@ -127,7 +126,7 @@ class LivestreamListFragment : BrowseFragment() {
         }
     }
 
-    fun playLivestream(item: PlaybackItem){
+    fun playLivestream(item: PlaybackItem) {
         findNavController().navigate(LivestreamListFragmentDirections.actionLivestreamListFragmentToExoPlayerFragment(item))
     }
 

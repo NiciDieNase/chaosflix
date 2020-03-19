@@ -38,7 +38,6 @@ import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventDetailsBinding
 import de.nicidienase.chaosflix.touch.playback.PlaybackItem
-import de.nicidienase.chaosflix.touch.playback.PlayerActivity
 import kotlinx.android.synthetic.main.activity_eventdetails.fragment_container
 
 class EventDetailsFragment : Fragment() {
@@ -114,7 +113,6 @@ class EventDetailsFragment : Fragment() {
 //                binding.collapsingToolbar.isTitleEnabled = appBarExpanded
             }
         })
-
 
         viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(requireContext()))
             .get(DetailsViewModel::class.java)
@@ -206,8 +204,6 @@ class EventDetailsFragment : Fragment() {
         })
     }
 
-
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == WRITE_PERMISSION_REQUEST) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
@@ -231,7 +227,7 @@ class EventDetailsFragment : Fragment() {
 //        } else {
             if (localFile != null) {
                 findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentToExoPlayerFragment(PlaybackItem.fromEvent(event,
-                        recordingUri =  localFile)))
+                        recordingUri = localFile)))
 //                PlayerActivity.launch(requireContext(), event, localFile)
             } else {
 //                PlayerActivity.launch(requireContext(), event, recording)
@@ -307,7 +303,7 @@ class EventDetailsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                findNavController().popBackStack(R.id.eventsListFragment,false)
+                findNavController().popBackStack(R.id.eventsListFragment, false)
                 return true
             }
             R.id.action_play -> {
