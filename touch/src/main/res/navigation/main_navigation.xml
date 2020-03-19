@@ -24,12 +24,19 @@
         <action
             android:id="@+id/action_eventDetailsFragment_self"
             app:destination="@id/eventDetailsFragment" />
+        <action
+            android:id="@+id/action_eventDetailsFragment_to_exoPlayerFragment"
+            app:destination="@id/exoPlayerFragment" />
     </fragment>
     <fragment
         android:id="@+id/livestreamListFragment"
         android:name="de.nicidienase.chaosflix.touch.browse.streaming.LivestreamListFragment"
         android:label="LivestreamListFragment"
-        tools:layout="@layout/fragment_livestreams"/>
+        tools:layout="@layout/fragment_livestreams">
+        <action
+            android:id="@+id/action_livestreamListFragment_to_exoPlayerFragment"
+            app:destination="@id/exoPlayerFragment" />
+    </fragment>
     <fragment
         android:id="@+id/downloadsListFragment"
         android:name="de.nicidienase.chaosflix.touch.browse.download.DownloadsListFragment"
@@ -46,5 +53,14 @@
         <argument
             android:name="conference"
             app:argType="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference" />
+    </fragment>
+    <fragment
+        android:id="@+id/exoPlayerFragment"
+        android:name="de.nicidienase.chaosflix.touch.playback.ExoPlayerFragment"
+        android:label="ExoPlayerFragment"
+        tools:layout="@layout/fragment_exo_player">
+        <argument
+            android:name="playbackItem"
+            app:argType="de.nicidienase.chaosflix.touch.playback.PlaybackItem" />
     </fragment>
 </navigation>

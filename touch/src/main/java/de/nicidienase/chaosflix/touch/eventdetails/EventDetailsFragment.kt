@@ -37,6 +37,7 @@ import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventDetailsBinding
+import de.nicidienase.chaosflix.touch.playback.PlaybackItem
 import de.nicidienase.chaosflix.touch.playback.PlayerActivity
 import kotlinx.android.synthetic.main.activity_eventdetails.fragment_container
 
@@ -229,9 +230,14 @@ class EventDetailsFragment : Fragment() {
 //            castService.loadMediaAndPlay(recording, event)
 //        } else {
             if (localFile != null) {
-                PlayerActivity.launch(requireContext(), event, localFile)
+                findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentToExoPlayerFragment(PlaybackItem.fromEvent(event,
+                        recordingUri =  localFile)))
+//                PlayerActivity.launch(requireContext(), event, localFile)
             } else {
-                PlayerActivity.launch(requireContext(), event, recording)
+//                PlayerActivity.launch(requireContext(), event, recording)
+
+                findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentToExoPlayerFragment(PlaybackItem.fromEvent(event,
+                        recording.recordingUrl)))
             }
 //        }
     }

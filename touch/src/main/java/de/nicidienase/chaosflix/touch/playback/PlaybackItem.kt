@@ -2,6 +2,9 @@ package de.nicidienase.chaosflix.touch.playback
 
 import android.os.Parcel
 import android.os.Parcelable
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 
 data class PlaybackItem(val title: String, val subtitle: String, val eventGuid: String, val uri: String) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -29,6 +32,18 @@ data class PlaybackItem(val title: String, val subtitle: String, val eventGuid: 
 
         override fun newArray(size: Int): Array<PlaybackItem?> {
             return arrayOfNulls(size)
+        }
+
+        fun fromEvent(event: Event, recordingUri: String? = null, recording: Recording? = null): PlaybackItem {
+            return PlaybackItem(
+                    event.title,
+                    event.subtitle ?: "",
+                    event.guid,
+                    recordingUri ?: recording?.recordingUrl ?: "")
+        }
+
+        fun fromStream(conference: String, display: String, streamUrl: StreamUrl): PlaybackItem {
+            return PlaybackItem(conference, display, "", streamUrl.url)
         }
     }
 }
