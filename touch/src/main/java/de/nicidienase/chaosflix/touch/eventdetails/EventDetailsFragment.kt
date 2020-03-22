@@ -166,7 +166,7 @@ class EventDetailsFragment : Fragment() {
                             viewModel.download(e, r).observe(viewLifecycleOwner, Observer {
                                 when (it?.state) {
                                     OfflineItemManager.State.Downloading -> {
-                                        Snackbar.make(fragment_container, "Download started", Snackbar.LENGTH_LONG).show()
+                                        Snackbar.make(binding.root, "Download started", Snackbar.LENGTH_LONG).show()
                                     }
                                     OfflineItemManager.State.PermissionRequired -> {
                                         pendingDownload = liveEvent.data
@@ -303,7 +303,11 @@ class EventDetailsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                findNavController().popBackStack(R.id.eventsListFragment, false)
+                findNavController().apply {
+                    popBackStack(R.id.eventsListFragment, false) ||
+                            navigateUp()
+
+                }
                 return true
             }
             R.id.action_play -> {

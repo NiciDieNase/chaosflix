@@ -13,6 +13,7 @@ import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,92 +26,59 @@ import de.nicidienase.chaosflix.touch.browse.BrowseFragment
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventsListBinding
 
-class EventsListFragment : BrowseFragment(), SearchView.OnQueryTextListener {
+abstract class EventsListFragment : BrowseFragment(), SearchView.OnQueryTextListener {
     private var columnCount = 1
     private var eventAdapter: EventRecyclerViewAdapter? = null
-    private var conference: Conference? = null
     private var layoutManager: LinearLayoutManager? = null
     private var snackbar: Snackbar? = null
     private var type = 0
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        setHasOptionsMenu(true)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            columnCount = arguments?.getInt(ARG_COLUMN_COUNT) ?: 1
-            type = arguments?.getInt(ARG_TYPE) ?: TYPE_EVENTS
-            conference = arguments?.getParcelable(ARG_CONFERENCE)
-        }
+        setHasOptionsMenu(true)
+        columnCount = resources.getInteger(R.integer.num_columns)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = FragmentEventsListBinding.inflate(inflater, container, false)
         val activity = requireActivity() as AppCompatActivity
         activity.setSupportActionBar(binding.incToolbar.toolbar)
-        overlay = binding.incOverlay.loadingOverlay
+//        overlay = binding.incOverlay.loadingOverlay
         layoutManager = if (columnCount <= 1) {
             LinearLayoutManager(context)
         } else {
             GridLayoutManager(context, columnCount)
         }
         binding.list.layoutManager = layoutManager
-        eventAdapter = EventRecyclerViewAdapter { event ->
-            findNavController().navigate(EventsListFragmentDirections.actionEventsListFragmentToEventDetailsFragment(event))
-        }
+        eventAdapter = EventRecyclerViewAdapter { navigateToDetails(it) }
         eventAdapter?.setHasStableIds(true)
         binding.list.adapter = eventAdapter
         layoutManager?.let {
             val itemDecoration = DividerItemDecoration(binding.list.context, it.orientation)
             binding.list.addItemDecoration(itemDecoration)
         }
-        val listObserver = Observer<List<Event>> { persistentEvents: List<Event>? ->
-            setLoadingOverlayVisibility(false)
-            persistentEvents?.let { setEvents(it) }
-        }
-        if (type == TYPE_BOOKMARKS) {
-            setupToolbar(binding.incToolbar.toolbar, R.string.bookmarks)
-            viewModel.getBookmarkedEvents().observe(viewLifecycleOwner, listObserver)
-        } else if (type == TYPE_IN_PROGRESS) {
-            setupToolbar(binding.incToolbar.toolbar, R.string.continue_watching)
-            viewModel.getInProgressEvents().observe(viewLifecycleOwner, listObserver)
-        } else if (type == TYPE_EVENTS) {
-            run {
-                setupToolbar(binding.incToolbar.toolbar, conference?.title ?: "", false)
-                // 				eventAdapter.setShowTags(conference.getTagsUsefull());
-                viewModel.getEventsforConference(conference!!).observe(viewLifecycleOwner, Observer { events: List<Event>? ->
-                    if (events != null) {
-                        setEvents(events)
-                        setLoadingOverlayVisibility(false)
-                    }
-                })
-                viewModel.updateEventsForConference(conference!!).observe(viewLifecycleOwner, Observer { state ->
-                    when (state.state) {
-                        MediaRepository.State.RUNNING -> setLoadingOverlayVisibility(true)
-                        MediaRepository.State.DONE -> setLoadingOverlayVisibility(false)
-                    }
-                    if (state.error != null) {
-                        showSnackbar(state.error)
-                    }
-                })
-            }
-        }
+        binding.swipeRefreshLayout.isEnabled = false
+        setupEvents(binding)
         return binding.root
     }
 
-    private fun showSnackbar(message: String?) {
-        if (snackbar != null) {
-            snackbar?.dismiss()
-        }
-        snackbar = Snackbar.make(view!!, message!!, Snackbar.LENGTH_LONG)
-        snackbar?.setAction("Okay") { view: View? -> snackbar?.dismiss() }
-        snackbar?.show()
+    protected abstract fun navigateToDetails(event: Event)
+
+    protected abstract fun setupEvents(binding: FragmentEventsListBinding)
+
+    protected fun setRefreshing(binding: FragmentEventsListBinding, refreshing: Boolean){
+        binding.swipeRefreshLayout.isRefreshing = refreshing
     }
 
-    private fun setEvents(events: List<Event>) {
+    protected fun showSnackbar(message: String, binding: FragmentEventsListBinding) {
+        snackbar?.dismiss()
+        snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).apply {
+            setAction("Okay") { view: View? -> snackbar?.dismiss() }
+            show()
+        }
+    }
+
+    protected fun setEvents(events: List<Event>) {
         eventAdapter?.items = events
         val layoutState = arguments?.getParcelable<Parcelable>(LAYOUTMANAGER_STATE)
         if (layoutState != null) {
@@ -154,7 +122,7 @@ class EventsListFragment : BrowseFragment(), SearchView.OnQueryTextListener {
         const val TYPE_BOOKMARKS = 1
         const val TYPE_IN_PROGRESS = 2
         fun newInstance(type: Int, conference: Conference?, columnCount: Int): EventsListFragment {
-            val fragment = EventsListFragment()
+            val fragment = ConferenceEventListFragment()
             val args = Bundle()
             args.putInt(ARG_TYPE, type)
             args.putInt(ARG_COLUMN_COUNT, columnCount)

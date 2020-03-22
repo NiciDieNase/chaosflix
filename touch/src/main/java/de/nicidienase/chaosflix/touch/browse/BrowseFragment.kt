@@ -5,6 +5,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
@@ -16,7 +17,7 @@ open class BrowseFragment : androidx.fragment.app.Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(activity!!, ViewModelFactory.getInstance(requireContext())).get(BrowseViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(), ViewModelFactory.getInstance(requireContext())).get(BrowseViewModel::class.java)
     }
 
     @JvmOverloads

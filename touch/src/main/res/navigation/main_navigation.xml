@@ -20,13 +20,28 @@
         tools:layout="@layout/fragment_event_details">
         <argument
             android:name="event"
-            app:argType="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event" />
+            app:argType="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event"
+            app:nullable="true"
+            android:defaultValue="@null" />
         <action
             android:id="@+id/action_eventDetailsFragment_self"
             app:destination="@id/eventDetailsFragment" />
         <action
             android:id="@+id/action_eventDetailsFragment_to_exoPlayerFragment"
             app:destination="@id/exoPlayerFragment" />
+        <deepLink
+            android:id="@+id/deepLink2"
+            app:uri="media.ccc.de/v/{eventName}" />
+        <argument
+            android:name="eventName"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="eventGuid"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/livestreamListFragment"
@@ -38,21 +53,23 @@
             app:destination="@id/exoPlayerFragment" />
     </fragment>
     <fragment
-        android:id="@+id/downloadsListFragment"
-        android:name="de.nicidienase.chaosflix.touch.browse.download.DownloadsListFragment"
-        android:label="DownloadsListFragment"
-        tools:layout="@layout/fragment_downloads"/>
-    <fragment
         android:id="@+id/eventsListFragment"
-        android:name="de.nicidienase.chaosflix.touch.browse.eventslist.EventsListFragment"
-        tools:layout="@layout/fragment_events_list"
-        android:label="EventsListFragment" >
+        android:name="de.nicidienase.chaosflix.touch.browse.eventslist.ConferenceEventListFragment"
+        tools:layout="@layout/fragment_events_list">
         <action
             android:id="@+id/action_eventsListFragment_to_eventDetailsFragment"
             app:destination="@id/eventDetailsFragment" />
         <argument
             android:name="conference"
             app:argType="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference" />
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="media.ccc.de/c/{conferenceName}" />
+        <argument
+            android:name="conferenceName"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/exoPlayerFragment"
@@ -62,5 +79,13 @@
         <argument
             android:name="playbackItem"
             app:argType="de.nicidienase.chaosflix.touch.playback.PlaybackItem" />
+    </fragment>
+    <fragment
+        android:id="@+id/myChaosflixFragment"
+        android:name="de.nicidienase.chaosflix.touch.browse.mediathek.MediathekFragment"
+        android:label="MyChaosflixFragment" >
+        <action
+            android:id="@+id/action_myChaosflixFragment_to_eventDetailsFragment"
+            app:destination="@id/eventDetailsFragment" />
     </fragment>
 </navigation>

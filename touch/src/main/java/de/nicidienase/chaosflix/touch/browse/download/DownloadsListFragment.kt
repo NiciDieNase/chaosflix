@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment
+import de.nicidienase.chaosflix.touch.browse.mediathek.MyChaosflixFragmentDirections
 import de.nicidienase.chaosflix.touch.databinding.FragmentDownloadsBinding
 
 class DownloadsListFragment : BrowseFragment() {
@@ -28,9 +30,11 @@ class DownloadsListFragment : BrowseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         with(FragmentDownloadsBinding.inflate(inflater, container, false)) {
             setupToolbar(incToolbar.toolbar, R.string.downloads)
+            incToolbar.toolbar.visibility = View.GONE
             overlay = incOverlay.loadingOverlay
-            val offlineEventAdapter = OfflineEventAdapter(viewModel.offlineItemManager, viewModel::deleteOfflineItem) {
-                viewModel.showDetailsForEvent(it)
+            val offlineEventAdapter = OfflineEventAdapter(viewModel.offlineItemManager, viewModel::deleteOfflineItem) { guid ->
+//                viewModel.showDetailsForEvent(guid)
+                findNavController().navigate(MyChaosflixFragmentDirections.actionMyChaosflixFragmentToEventDetailsFragment(eventGuid = guid))
             }
             list.adapter = offlineEventAdapter
             if (columnCount <= 1) {

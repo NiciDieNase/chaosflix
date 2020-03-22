@@ -62,7 +62,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun goToOverview() {
-        BrowseActivity.launch(this)
+        NavigationActivity.launch(this)
         finish()
     }
 

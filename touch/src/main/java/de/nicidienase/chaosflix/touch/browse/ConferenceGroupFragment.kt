@@ -42,7 +42,7 @@ class ConferenceGroupFragment : BrowseFragment() {
             recyclerView.layoutManager = layoutManager
             val conferencesAdapter = ConferenceRecyclerViewAdapter {
                 findNavController().navigate(
-                        ConferencesTabBrowseFragmentDirections.actionConferencesTabBrowseFragmentToEventsListFragment(it)
+                        ConferencesTabBrowseFragmentDirections.actionConferencesTabBrowseFragmentToEventsListFragment(conference = it)
                 )
                 // TODO navigate to events-list for conference
             }

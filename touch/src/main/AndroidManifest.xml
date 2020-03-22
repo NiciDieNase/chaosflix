@@ -29,22 +29,10 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data
-                    android:scheme="https"
-                    android:host="media.ccc.de"
-                    android:pathPrefix="/v/"/>
-                <data
-                    android:scheme="https"
-                    android:host="media.ccc.de"
-                    android:pathPrefix="/c/"/>
-            </intent-filter>
         </activity>
-        <activity android:name=".NavigationActivity"
-            android:exported="true"/>
+        <activity android:name=".NavigationActivity">
+            <nav-graph android:value="@navigation/main_navigation"/>
+        </activity>
         <activity android:name=".browse.BrowseActivity">
             <meta-data
                 android:name="android.app.searchable"
