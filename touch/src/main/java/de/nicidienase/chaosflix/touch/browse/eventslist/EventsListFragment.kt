@@ -11,22 +11,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
+import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
+import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.R
-import de.nicidienase.chaosflix.touch.browse.BrowseFragment
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventsListBinding
 
-abstract class EventsListFragment : BrowseFragment(), SearchView.OnQueryTextListener {
+abstract class EventsListFragment : Fragment(), SearchView.OnQueryTextListener {
+
+    protected val viewModel: BrowseViewModel by viewModels { ViewModelFactory.getInstance(requireContext()) }
+
     private var columnCount = 1
     private var eventAdapter: EventRecyclerViewAdapter? = null
     private var layoutManager: LinearLayoutManager? = null
@@ -66,7 +68,7 @@ abstract class EventsListFragment : BrowseFragment(), SearchView.OnQueryTextList
 
     protected abstract fun setupEvents(binding: FragmentEventsListBinding)
 
-    protected fun setRefreshing(binding: FragmentEventsListBinding, refreshing: Boolean){
+    protected fun setRefreshing(binding: FragmentEventsListBinding, refreshing: Boolean) {
         binding.swipeRefreshLayout.isRefreshing = refreshing
     }
 

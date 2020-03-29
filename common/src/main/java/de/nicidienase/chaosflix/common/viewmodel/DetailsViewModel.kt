@@ -44,7 +44,7 @@ class DetailsViewModel(
 
     val event: LiveData<Event?>
         get() {
-            if(eventId == 0L){
+            if (eventId == 0L) {
                 error("event not set")
             }
             return database.eventDao().findEventById(eventId)
@@ -98,7 +98,7 @@ class DetailsViewModel(
     fun deleteOfflineItem(): LiveData<Boolean> {
         val result = MutableLiveData<Boolean>()
         viewModelScope.launch {
-            database.eventDao().findEventByIdSync(eventId)?.guid?.let {guid ->
+            database.eventDao().findEventByIdSync(eventId)?.guid?.let { guid ->
                 database.offlineEventDao().getByEventGuidSuspend(guid)?.let {
                     offlineItemManager.deleteOfflineItem(it)
                 }

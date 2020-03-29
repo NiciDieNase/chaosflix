@@ -3,14 +3,16 @@ package de.nicidienase.chaosflix.common.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.PreferencesManager
 import de.nicidienase.chaosflix.common.ResourcesFacade
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
+import de.nicidienase.chaosflix.common.mediadata.SearchResultDataSourceFactory
 import de.nicidienase.chaosflix.common.mediadata.StreamingRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
@@ -112,11 +114,20 @@ class BrowseViewModel(
     }
     fun getAutoselectStream() = preferencesManager.getAutoselectStream()
 
-    suspend fun searchEvents(s: String): List<Event> {
-        return mediaRepository.findEvents(s)
-	}
+    fun searchEventsPaged(query: String): LiveData<PagedList<Event>> {
+        val config = PagedList.Config.Builder()
+            .setPageSize(25)
+            .setInitialLoadSizeHint(25)
+            .setEnablePlaceholders(true)
+            .build()
 
-	companion object {
+        return LivePagedListBuilder<Int, Event>(
+            SearchResultDataSourceFactory(query, mediaRepository, viewModelScope),
+            config
+        ).build()
+    }
+
+    companion object {
         private val TAG = BrowseViewModel::class.simpleName
     }
 }

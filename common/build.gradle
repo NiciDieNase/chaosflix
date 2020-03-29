@@ -132,6 +132,10 @@ dependencies {
     api "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
 
 
+    def paging_version = "2.1.2"
+    api "androidx.paging:paging-runtime:$paging_version"
+
+
 
     api 'androidx.recyclerview:recyclerview:1.1.0'
 

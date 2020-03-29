@@ -7,11 +7,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
 @BindingAdapter("imageUrl")
-fun loadImage(imageView: ImageView, url: String) {
-    Glide.with(imageView.context)
-            .load(url)
+fun loadImage(imageView: ImageView, url: String?) {
+    url?.let {
+        Glide.with(imageView.context)
+            .load(it)
             .apply(RequestOptions().fitCenter())
             .into(imageView)
+    }
 }
 
 @BindingAdapter("time")

@@ -72,7 +72,6 @@ class EventDetailsFragment : Fragment() {
 //        //		transition.setDuration(getResources().getInteger(R.integer.anim_duration));
 //        sharedElementEnterTransition = transition
 
-
 //        if (arguments != null) {
 //            val parcelable = arguments?.getParcelable<Event>(EVENT_PARAM)
 //            if (parcelable != null) {
@@ -81,7 +80,6 @@ class EventDetailsFragment : Fragment() {
 //                throw IllegalStateException("Event Missing")
 //            }
 //        }
-
     }
 
     override fun onCreateView(
@@ -117,8 +115,8 @@ class EventDetailsFragment : Fragment() {
                     error("neither guid nor event-name set")
                 }
             }
-            liveData.observe(viewLifecycleOwner, Observer {event ->
-                if(event != null){
+            liveData.observe(viewLifecycleOwner, Observer { event ->
+                if (event != null) {
                     binding.event = event
                     Log.d(TAG, "Loading Event ${event.title}, ${event.guid}")
                     updateBookmark()
@@ -161,7 +159,6 @@ class EventDetailsFragment : Fragment() {
 //                binding.collapsingToolbar.isTitleEnabled = appBarExpanded
             }
         })
-
 
         viewModel.state.observe(viewLifecycleOwner, Observer { liveEvent ->
             if (liveEvent == null) {
@@ -372,7 +369,7 @@ class EventDetailsFragment : Fragment() {
             R.id.action_share -> {
                 lifecycleScope.launch {
                     val event = viewModel.event.value
-                    if (event != null){
+                    if (event != null) {
                         val shareIntent = Intent(Intent.ACTION_SEND, Uri.parse(event.frontendLink))
                         shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.watch_this))
                         shareIntent.putExtra(Intent.EXTRA_TEXT, event.frontendLink)

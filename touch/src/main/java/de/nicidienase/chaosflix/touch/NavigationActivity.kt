@@ -34,14 +34,14 @@ class NavigationActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            if(noToolbarDestinations.contains(destination.id)){
+            if (noToolbarDestinations.contains(destination.id)) {
                 supportActionBar?.hide()
-	            binding.toolbar.visibility = View.GONE
+                binding.toolbar.visibility = View.GONE
             } else {
                 supportActionBar?.show()
-	            binding.toolbar.visibility = View.VISIBLE
+                binding.toolbar.visibility = View.VISIBLE
             }
-            if(noBottomNavDestinations.contains(destination.id)){
+            if (noBottomNavDestinations.contains(destination.id)) {
                 binding.bottomNavigation.visibility = View.GONE
             } else {
                 binding.bottomNavigation.visibility = View.VISIBLE
@@ -50,15 +50,15 @@ class NavigationActivity : AppCompatActivity() {
 
         val viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(this)).get(BrowseViewModel::class.java)
         viewModel.getLivestreams().observe(this, Observer {
-            if(it.isEmpty()){
+            if (it.isEmpty()) {
                 binding.bottomNavigation.removeBadge(R.id.livestreamListFragment)
             } else {
-                val roomCount = it.flatMap { it.groups.map { it.rooms.size } }.reduce {acc: Int, i: Int -> acc + i }
+                val roomCount = it.flatMap { it.groups.map { it.rooms.size } }.reduce { acc: Int, i: Int -> acc + i }
                 binding.bottomNavigation.getOrCreateBadge(R.id.livestreamListFragment).number = roomCount
             }
         })
 
-        if(Intent.ACTION_SEARCH == intent?.action) {
+        if (Intent.ACTION_SEARCH == intent?.action) {
             intent.getStringExtra(SearchManager.QUERY)?.also { query ->
                 findNavController(R.id.nav_host).navigate(R.id.searchFragment, bundleOf("query" to query))
             }
@@ -67,7 +67,7 @@ class NavigationActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        if(Intent.ACTION_SEARCH == intent?.action) {
+        if (Intent.ACTION_SEARCH == intent?.action) {
             intent.getStringExtra(SearchManager.QUERY)?.also { query ->
                 findNavController(R.id.nav_host).navigate(R.id.searchFragment, bundleOf("query" to query))
             }
@@ -75,7 +75,7 @@ class NavigationActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return when (item?.itemId){
+        return when (item?.itemId) {
             android.R.id.home -> findNavController(R.id.nav_host).navigateUp()
             else -> super.onOptionsItemSelected(item)
         }

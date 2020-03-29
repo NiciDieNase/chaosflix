@@ -7,38 +7,37 @@ import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventsListBinding
 
-class ConferenceEventListFragment: EventsListFragment() {
+class ConferenceEventListFragment : EventsListFragment() {
 
-	private val args: ConferenceEventListFragmentArgs by navArgs()
+    private val args: ConferenceEventListFragmentArgs by navArgs()
 
-	override fun navigateToDetails(event: Event) {
-		findNavController().navigate(ConferenceEventListFragmentDirections.actionEventsListFragmentToEventDetailsFragment(eventGuid = event.guid))
-	}
+    override fun navigateToDetails(event: Event) {
+        findNavController().navigate(ConferenceEventListFragmentDirections.actionEventsListFragmentToEventDetailsFragment(eventGuid = event.guid))
+    }
 
-	override fun setupEvents(binding: FragmentEventsListBinding) {
-		args.conference.let { conference ->
-			activity?.actionBar?.title = conference.acronym
-//			setupToolbar(binding.incToolbar.toolbar, conference.title, false)
-			// 				eventAdapter.setShowTags(conference.getTagsUsefull());
-			viewModel.getEventsforConference(conference).observe(viewLifecycleOwner, Observer { events: List<Event>? ->
-				if (events != null) {
-					setEvents(events)
-					setLoadingOverlayVisibility(false)
-				}
-			})
-			viewModel.updateEventsForConference(conference).observe(viewLifecycleOwner, Observer { state ->
-				when (state.state) {
-					MediaRepository.State.RUNNING -> setRefreshing(binding, true)
-					MediaRepository.State.DONE -> setRefreshing(binding, false)
-				}
-				state.error?.let {
-					showSnackbar(it, binding)
-				}
-			})
-		}
-		binding.swipeRefreshLayout.isEnabled = true
-		binding.swipeRefreshLayout.setOnRefreshListener {
-			args.conference?.let { viewModel.updateEventsForConference(it) }
-		}
-	}
+    override fun setupEvents(binding: FragmentEventsListBinding) {
+        args.conference.let { conference ->
+            activity?.actionBar?.title = conference.acronym
+// 			setupToolbar(binding.incToolbar.toolbar, conference.title, false)
+            // 				eventAdapter.setShowTags(conference.getTagsUsefull());
+            viewModel.getEventsforConference(conference).observe(viewLifecycleOwner, Observer { events: List<Event>? ->
+                if (events != null) {
+                    setEvents(events)
+                }
+            })
+            viewModel.updateEventsForConference(conference).observe(viewLifecycleOwner, Observer { state ->
+                when (state.state) {
+                    MediaRepository.State.RUNNING -> setRefreshing(binding, true)
+                    MediaRepository.State.DONE -> setRefreshing(binding, false)
+                }
+                state.error?.let {
+                    showSnackbar(it, binding)
+                }
+            })
+        }
+        binding.swipeRefreshLayout.isEnabled = true
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            args.conference?.let { viewModel.updateEventsForConference(it) }
+        }
+    }
 }

@@ -10,7 +10,6 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.viewmodel.SplashViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
-import de.nicidienase.chaosflix.touch.browse.BrowseActivity
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity
 import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
 

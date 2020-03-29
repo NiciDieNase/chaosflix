@@ -5,6 +5,8 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -12,10 +14,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
+import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
+import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.ConferenceRecyclerViewAdapter
 
-class ConferenceGroupFragment : BrowseFragment() {
+class ConferenceGroupFragment : Fragment() {
+
+    private val viewModel: BrowseViewModel by viewModels { ViewModelFactory.getInstance(requireContext()) }
 
     private var columnCount = 1
     private lateinit var conferenceGroup: ConferenceGroup
@@ -48,9 +54,6 @@ class ConferenceGroupFragment : BrowseFragment() {
             view.adapter = conferencesAdapter
             viewModel.getConferencesByGroup(conferenceGroup.id).observe(viewLifecycleOwner, Observer<List<Conference>> { conferenceList: List<Conference>? ->
                 if (conferenceList != null) {
-                    if (conferenceList.isNotEmpty()) {
-                        setLoadingOverlayVisibility(false)
-                    }
                     conferencesAdapter.conferences = conferenceList
                     val layoutState = arguments!!.getParcelable<Parcelable>(LAYOUTMANAGER_STATE)
                     if (layoutState != null) {

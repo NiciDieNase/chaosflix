@@ -8,18 +8,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
+import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
+import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.R
-import de.nicidienase.chaosflix.touch.browse.BrowseFragment
 import de.nicidienase.chaosflix.touch.databinding.FragmentLivestreamsBinding
 import de.nicidienase.chaosflix.touch.playback.PlaybackItem
 
-class LivestreamListFragment : BrowseFragment() {
+class LivestreamListFragment : Fragment() {
+
+    private val viewModel: BrowseViewModel by viewModels { ViewModelFactory.getInstance(requireContext()) }
 
     private lateinit var binding: FragmentLivestreamsBinding
     lateinit var adapter: LivestreamAdapter
@@ -41,7 +46,6 @@ class LivestreamListFragment : BrowseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentLivestreamsBinding.inflate(inflater, container, false)
-        setupToolbar(binding.incToolbar.toolbar, R.string.livestreams)
         if (columnCount <= 1) {
             binding.list.layoutManager = LinearLayoutManager(context)
         } else {

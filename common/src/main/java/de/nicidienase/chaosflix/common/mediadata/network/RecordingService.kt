@@ -6,6 +6,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventDto
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventsResponse
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.RecordingDto
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -29,6 +30,9 @@ interface RecordingService {
 
     @GET("public/events/search")
     suspend fun searchEvents(@Query("q") query: String, @Query("page") page: Int = 0): EventsResponse
+
+    @GET("public/events/search")
+    suspend fun searchEventsCall(@Query("q") query: String, @Query("page") page: Int = 0): Response<EventsResponse>
 
     @GET("public/recordings/{id}")
     fun getRecording(@Path("id") id: Long): Call<RecordingDto>

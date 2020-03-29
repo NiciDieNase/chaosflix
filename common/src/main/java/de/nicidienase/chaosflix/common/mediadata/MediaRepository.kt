@@ -171,7 +171,7 @@ class MediaRepository(
         return persistantEvents
     }
 
-    private suspend fun saveEvent(event: EventDto): Event = withContext(Dispatchers.IO){
+    private suspend fun saveEvent(event: EventDto): Event = withContext(Dispatchers.IO) {
         val acronym = event.conferenceUrl.split("/").last()
         val conferenceId = conferenceDao.findConferenceByAcronym(acronym)?.id
                 ?: updateConferencesAndGet(acronym)?.id
@@ -215,10 +215,16 @@ class MediaRepository(
         return event
     }
 
-    suspend fun findEvents(queryString: String): List<Event> {
-        val eventsResponse = recordingApi.searchEvents(queryString)
-        return eventsResponse.events.mapNotNull {
-            saveEvent(it)
+    suspend fun findEvents(queryString: String, page: Int = 1): SearchResponse? = withContext(Dispatchers.IO) {
+        val eventsResponse = recordingApi.searchEventsCall(queryString, page)
+        return@withContext if (eventsResponse.isSuccessful) {
+            val total = eventsResponse.headers()["total"]?.toInt() ?: 0
+            val links = parseLink(eventsResponse.headers()["link"])
+            val events = eventsResponse.body()?.events?.map { saveEvent(it) } ?: emptyList()
+
+            SearchResponse(events, total, links)
+        } else {
+            null
         }
     }
 
@@ -263,8 +269,26 @@ class MediaRepository(
         return updateSingleEvent(guid)
     }
 
+    data class SearchResponse(val events: List<Event>, val total: Int, val links: Map<String, String>) {
+        val hasNext: Boolean = hasLink("next")
+        val hasPrev: Boolean = hasLink("prev")
+
+        private fun hasLink(key: String) = links.keys.contains(key)
+    }
+
     companion object {
         private val TAG = MediaRepository::class.java.simpleName
+
+        fun parseLink(link: String?): Map<String, String> {
+            if (link == null) {
+                return emptyMap()
+            }
+            val links = link.split(",")
+            return links.associate {
+                val pair = it.split(";")
+                pair[1].substringAfter("\"").substringBefore("\"") to pair[0].substringAfter("<").substringBefore(">")
+            }
+        }
     }
 
     enum class State {

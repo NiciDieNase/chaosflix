@@ -1,10 +1,8 @@
 package de.nicidienase.chaosflix.common.mediadata.network
 
-import android.content.res.Resources
 import android.os.Build
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.BuildConfig
-import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.SingletonHolder2
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -25,7 +23,7 @@ class ApiFactory private constructor(apiUrl: String, cache: File? = null) {
             .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
             .addInterceptor(useragentInterceptor)
             .apply {
-                if(cache != null){
+                if (cache != null) {
                     cache(Cache(cache, CACHE_SIZE))
                 }
             }

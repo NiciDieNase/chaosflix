@@ -8,19 +8,18 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import de.nicidienase.chaosflix.touch.databinding.FragmentMediathekBinding
 
-class MediathekFragment: Fragment() {
+class MediathekFragment : Fragment() {
 
-	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		val binding = FragmentMediathekBinding.inflate(inflater)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val binding = FragmentMediathekBinding.inflate(inflater)
 
-		val mediathekPagerAdapter = MediathekPagerAdapter(this)
-		binding.viewpager.adapter = mediathekPagerAdapter
+        val mediathekPagerAdapter = MediathekPagerAdapter(this)
+        binding.viewpager.adapter = mediathekPagerAdapter
 
-		TabLayoutMediator(binding.tabs, binding.viewpager) { tab, position ->  
-			tab.text = mediathekPagerAdapter.getItemTitle(position)
-		}.attach()
+        TabLayoutMediator(binding.tabs, binding.viewpager) { tab, position ->
+            tab.text = mediathekPagerAdapter.getItemTitle(position)
+        }.attach()
 
-		return binding.root
-	}
+        return binding.root
+    }
 }
-

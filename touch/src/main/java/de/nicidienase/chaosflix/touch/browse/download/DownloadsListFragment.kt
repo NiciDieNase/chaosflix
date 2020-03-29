@@ -5,16 +5,20 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import de.nicidienase.chaosflix.touch.R
-import de.nicidienase.chaosflix.touch.browse.BrowseFragment
+import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
+import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.browse.mediathek.MediathekFragmentDirections
 import de.nicidienase.chaosflix.touch.databinding.FragmentDownloadsBinding
 
-class DownloadsListFragment : BrowseFragment() {
+class DownloadsListFragment : Fragment() {
+
+    private val viewModel: BrowseViewModel by viewModels { ViewModelFactory.getInstance(requireContext()) }
 
 // 	private lateinit var binding: FragmentDownloadsBinding
 
@@ -29,9 +33,6 @@ class DownloadsListFragment : BrowseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         with(FragmentDownloadsBinding.inflate(inflater, container, false)) {
-            setupToolbar(incToolbar.toolbar, R.string.downloads)
-            incToolbar.toolbar.visibility = View.GONE
-            overlay = incOverlay.loadingOverlay
             val offlineEventAdapter = OfflineEventAdapter(viewModel.offlineItemManager, viewModel::deleteOfflineItem) { guid ->
                 findNavController().navigate(MediathekFragmentDirections.actionMyChaosflixFragmentToEventDetailsFragment(eventGuid = guid))
             }
@@ -67,11 +68,6 @@ class DownloadsListFragment : BrowseFragment() {
     override fun onPause() {
         handler.removeCallbacks(updateRunnable)
         super.onPause()
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setLoadingOverlayVisibility(false)
     }
 
     companion object {
