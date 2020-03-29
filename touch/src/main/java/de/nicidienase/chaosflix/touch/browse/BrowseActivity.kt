@@ -31,7 +31,6 @@ import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.NavigationActivity
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.R
-import de.nicidienase.chaosflix.touch.about.AboutActivity
 import de.nicidienase.chaosflix.touch.browse.cast.CastService
 import de.nicidienase.chaosflix.touch.browse.download.DownloadsListFragment
 import de.nicidienase.chaosflix.touch.browse.eventslist.EventsListActivity
@@ -265,8 +264,8 @@ class BrowseActivity : AppCompatActivity(), OnEventSelectedListener {
     }
 
     private fun showAboutPage() {
-        val intent = Intent(this, AboutActivity::class.java)
-        startActivity(intent)
+//        val intent = Intent(this, AboutActivity::class.java)
+//        startActivity(intent)
     }
 
     override fun onBackPressed() {

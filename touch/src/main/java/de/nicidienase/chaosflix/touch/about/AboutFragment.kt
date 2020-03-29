@@ -1,46 +1,44 @@
 package de.nicidienase.chaosflix.touch.about
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import de.nicidienase.chaosflix.touch.R
-import de.nicidienase.chaosflix.touch.databinding.ActivityAboutBinding
 import mehdi.sakout.aboutpage.AboutPage
 import mehdi.sakout.aboutpage.Element
 
-class AboutActivity : AppCompatActivity() {
+class AboutFragment : Fragment() {
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
-        val binding = DataBindingUtil.setContentView<ActivityAboutBinding>(
-            this, R.layout.activity_about
-        )
-
-        binding.toolbarInc.toolbar.title = getString(R.string.about_chaosflix)
-        setSupportActionBar(binding.toolbarInc.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (activity as? AppCompatActivity)?.supportActionBar?.title = getString(R.string.about_chaosflix)
 
         val showLibs = Element().apply {
             title = resources.getString(R.string.showLibs)
             onClickListener =
-                View.OnClickListener { LibsFragment().show(supportFragmentManager, null) }
+                View.OnClickListener { LibsFragment().show(childFragmentManager, null) }
         }
         val privacyPolicy = Element().apply {
             title = "Privacy Policy"
             onClickListener = View.OnClickListener {
-                AlertDialog.Builder(this@AboutActivity)
+                AlertDialog.Builder(requireContext())
                     .setTitle("Privacy Policy")
                     .setMessage(R.string.privacy_policy)
                     .create().show()
             }
         }
 
-        val pInfo = packageManager.getPackageInfo(packageName, 0)
+        val pInfo = requireActivity().packageManager.getPackageInfo(requireActivity().packageName, 0)
         val version = pInfo.versionName
-        val aboutView = AboutPage(this)
+        val aboutView = AboutPage(requireContext())
             .setImage(R.drawable.icon_primary_background)
             .setDescription(resources.getString(R.string.description))
             .addItem(Element().setTitle("Version $version"))
@@ -61,6 +59,6 @@ class AboutActivity : AppCompatActivity() {
             .addPlayStore("de.nicidienase.chaosflix", getString(R.string.about_playstore))
             .create()
 
-        binding.container.addView(aboutView)
+        return aboutView
     }
 }

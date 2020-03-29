@@ -45,6 +45,7 @@ class DownloadsListFragment : Fragment() {
             }
             viewModel.getOfflineDisplayEvents().observe(viewLifecycleOwner, Observer {
                 if (it != null) {
+                    this.incOverlay.loadingOverlay.visibility = View.INVISIBLE
                     offlineEventAdapter.items = it
                 }
             })

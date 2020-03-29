@@ -99,4 +99,12 @@
             android:name="query"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="de.nicidienase.chaosflix.touch.settings.SettingsFragment"
+        android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="de.nicidienase.chaosflix.touch.about.AboutFragment"
+        android:label="AboutFragment" />
 </navigation>

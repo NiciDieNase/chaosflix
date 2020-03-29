@@ -4,6 +4,7 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -15,14 +16,19 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import de.nicidienase.chaosflix.touch.browse.cast.CastService
 import de.nicidienase.chaosflix.touch.databinding.ActivityNavigationBinding
 
 class NavigationActivity : AppCompatActivity() {
+
+    private lateinit var castService: CastService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityNavigationBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        castService = CastService(this)
 
         val navController = findNavController(R.id.nav_host)
         binding.bottomNavigation.setupWithNavController(navController)
@@ -74,9 +80,27 @@ class NavigationActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.main, menu)
+        menu?.let {
+            castService.addMediaRouteMenuItem(it)
+        }
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        val navController = findNavController(R.id.nav_host)
         return when (item?.itemId) {
-            android.R.id.home -> findNavController(R.id.nav_host).navigateUp()
+            android.R.id.home -> navController.navigateUp()
+            R.id.menus_item_settings -> {
+                navController.navigate(R.id.settingsFragment)
+                true
+            }
+            R.id.menu_item_about -> {
+                navController.navigate(R.id.aboutFragment)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
