@@ -95,12 +95,13 @@ abstract class EventsListFragment : BrowseFragment(), SearchView.OnQueryTextList
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.events_menu, menu)
         val searchMenuItem = menu.findItem(R.id.search)
-        val searchView = searchMenuItem.actionView as SearchView
         val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
-        searchView.isSubmitButtonEnabled = true
-        searchView.isIconified = false
-        searchView.setOnQueryTextListener(this)
+        (searchMenuItem.actionView as SearchView).apply {
+            setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
+            isSubmitButtonEnabled = true
+            isIconified = false
+            setOnQueryTextListener(this@EventsListFragment)
+        }
     }
 
     override fun onQueryTextSubmit(query: String): Boolean {

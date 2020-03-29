@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.common.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
@@ -111,7 +112,11 @@ class BrowseViewModel(
     }
     fun getAutoselectStream() = preferencesManager.getAutoselectStream()
 
-    companion object {
+    suspend fun searchEvents(s: String): List<Event> {
+        return mediaRepository.findEvents(s)
+	}
+
+	companion object {
         private val TAG = BrowseViewModel::class.simpleName
     }
 }

@@ -14,23 +14,27 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class ApiFactory private constructor(res: Resources, cache: File) {
+class ApiFactory private constructor(apiUrl: String, cache: File? = null) {
 
     private val chaosflixUserAgent: String by lazy { buildUserAgent() }
     private val gsonConverterFactory: GsonConverterFactory by lazy { GsonConverterFactory.create(Gson()) }
 
-    val client: OkHttpClient by lazy {
+    private val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
             .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
-            .cache(Cache(cache, CACHE_SIZE))
             .addInterceptor(useragentInterceptor)
+            .apply {
+                if(cache != null){
+                    cache(Cache(cache, CACHE_SIZE))
+                }
+            }
             .build()
     }
 
     val recordingApi: RecordingService by lazy {
         Retrofit.Builder()
-            .baseUrl(res.getString(R.string.recording_url))
+            .baseUrl(apiUrl)
             .client(client)
             .addConverterFactory(gsonConverterFactory)
             .build()
@@ -51,7 +55,7 @@ class ApiFactory private constructor(res: Resources, cache: File) {
         return@Interceptor chain.proceed(requestWithUseragent)
     }
 
-    companion object : SingletonHolder2<ApiFactory, Resources, File>(::ApiFactory) {
+    companion object : SingletonHolder2<ApiFactory, String, File?>(::ApiFactory) {
 
         private const val DEFAULT_TIMEOUT = 30L
         private const val CACHE_SIZE = 1024L * 5 // 5MB

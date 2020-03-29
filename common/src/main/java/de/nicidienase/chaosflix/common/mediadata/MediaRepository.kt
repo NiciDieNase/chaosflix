@@ -214,6 +214,19 @@ class MediaRepository(
         return event
     }
 
+    suspend fun findEvents(queryString: String): List<Event> {
+        val events = recordingApi.searchEvents(queryString)
+        return events.events.mapNotNull {
+            val conference = findConferenceForUri(Uri.parse(it.conferenceUrl))
+            return@mapNotNull if(conference != null){
+                Event(it, conference.id)
+            } else {
+                Log.e("TAG", "Could not find conference for event")
+                null
+            }
+        }
+    }
+
     suspend fun findConferenceForUri(data: Uri): Conference? {
         val conference =
             conferenceDao.findConferenceByAcronymSuspend(data.lastPathSegment)
@@ -226,7 +239,7 @@ class MediaRepository(
             val eventDto = searchEvents.events[0]
             val conference = updateConferencesAndGet(eventDto.conferenceUrl.split("/").last())
             if (conference?.id != null) {
-                var event = Event(eventDto, conference.id)
+                val event = Event(eventDto, conference.id)
                 eventDao.updateOrInsert(event)
                 return event
             }

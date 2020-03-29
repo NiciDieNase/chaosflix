@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: "de.mannodermaus.android-junit5"
 
 String versionString = new File("versionfile").text.trim()
 
@@ -127,6 +128,10 @@ dependencies {
     api "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     api "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    api "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    api "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+
+
 
     api 'androidx.recyclerview:recyclerview:1.1.0'
 
@@ -157,8 +162,15 @@ dependencies {
     debugImplementation 'com.facebook.stetho:stetho-okhttp:1.4.2'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0'
 
-    testImplementation "org.mockito:mockito-core:2.11.0"
-    testImplementation 'junit:junit:4.12'
+//    testImplementation "org.mockito:mockito-core:2.11.0"
+//    testImplementation 'junit:junit:4.12'
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.0"
+
+    testImplementation "junit:junit:4.13"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.6.0"
+
     testImplementation 'org.robolectric:robolectric:4.1'
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'

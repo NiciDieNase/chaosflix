@@ -10,7 +10,7 @@
 		android:icon="@drawable/ic_camera"
 		android:title="@string/livestreams"/>
 	<item
-		android:id="@+id/myChaosflixFragment"
+		android:id="@+id/mediathekFragment"
 		android:icon="@drawable/chaosflix_icon"
 		android:title="MyChaosflix"/>
 </menu>

@@ -53,12 +53,12 @@ data class ConferencesWrapper(var conferences: List<ConferenceDto>) {
     }
 
     private fun getListForTag(map: MutableMap<String, MutableList<ConferenceDto>>, s: String): MutableList<ConferenceDto> {
-        if (map.keys.contains(s)) {
-            return map[s]!!
+        return if (map.keys.contains(s)) {
+            map[s]!!
         } else {
             val list = ArrayList<ConferenceDto>()
-            map.put(s, list)
-            return list
+            map[s] = list
+            list
         }
     }
 

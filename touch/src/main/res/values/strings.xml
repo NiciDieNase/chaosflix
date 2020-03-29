@@ -54,4 +54,5 @@
 	<string name="play_button">Play-Button</string>
 	<string name="list_of_events">List of Events</string>
 	<string name="delete_item">Delete Item</string>
+	<string name="empty" />
 </resources>

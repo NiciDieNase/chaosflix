@@ -17,9 +17,12 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -38,12 +41,12 @@ import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventDetailsBinding
 import de.nicidienase.chaosflix.touch.playback.PlaybackItem
-import kotlinx.android.synthetic.main.activity_eventdetails.fragment_container
+import kotlinx.coroutines.launch
 
 class EventDetailsFragment : Fragment() {
 
     private var appBarExpanded: Boolean = false
-    private lateinit var event: Event
+//    private lateinit var event: Event
     private var watchlistItem: WatchlistItem? = null
 
     private var layout: View? = null
@@ -54,6 +57,12 @@ class EventDetailsFragment : Fragment() {
 
     private lateinit var relatedEventsAdapter: EventRecyclerViewAdapter
 
+    private val args: EventDetailsFragmentArgs by navArgs()
+
+//    private val eventGuid: String
+//        get() = args.eventGuid
+//                ?: error("Event Missing")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -63,14 +72,16 @@ class EventDetailsFragment : Fragment() {
 //        //		transition.setDuration(getResources().getInteger(R.integer.anim_duration));
 //        sharedElementEnterTransition = transition
 
-        if (arguments != null) {
-            val parcelable = arguments?.getParcelable<Event>(EVENT_PARAM)
-            if (parcelable != null) {
-                event = parcelable
-            } else {
-                throw IllegalStateException("Event Missing")
-            }
-        }
+
+//        if (arguments != null) {
+//            val parcelable = arguments?.getParcelable<Event>(EVENT_PARAM)
+//            if (parcelable != null) {
+//                event = parcelable
+//            } else {
+//                throw IllegalStateException("Event Missing")
+//            }
+//        }
+
     }
 
     override fun onCreateView(
@@ -85,7 +96,6 @@ class EventDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentEventDetailsBinding.bind(view)
-        binding.event = event
         binding.playFab.setOnClickListener { play() }
         (activity as AppCompatActivity).setSupportActionBar(binding.animToolbar)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -117,22 +127,42 @@ class EventDetailsFragment : Fragment() {
         viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(requireContext()))
             .get(DetailsViewModel::class.java)
 
-        viewModel.setEvent(event)
-                .observe(viewLifecycleOwner, Observer {
+        val eventGuid = args.eventGuid
+        val eventName = args.eventName
+        lifecycleScope.launch {
+            val liveData = when {
+                eventGuid != null -> {
+                    viewModel.setEvent(eventGuid)
+                }
+                eventName != null -> {
+                    viewModel.setEventFromLink(eventName)
+                }
+                else -> {
+                    error("neither guid nor event-name set")
+                }
+            }
+            liveData.observe(viewLifecycleOwner, Observer {event ->
+                if(event != null){
+                    binding.event = event
                     Log.d(TAG, "Loading Event ${event.title}, ${event.guid}")
-                    updateBookmark(event.guid)
+                    updateBookmark()
                     binding.thumbImage.transitionName = getString(R.string.thumbnail) + event.guid
 
                     Glide.with(binding.thumbImage)
                             .load(event.thumbUrl)
                             .apply(RequestOptions().fitCenter())
                             .into(binding.thumbImage)
-                })
-        viewModel.getRelatedEvents(event).observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                relatedEventsAdapter.items = it
-            }
-        })
+
+                    viewModel.getRelatedEvents(event).observe(viewLifecycleOwner, Observer {
+                        if (it != null) {
+                            relatedEventsAdapter.items = it
+                        }
+                    })
+                }
+            })
+        }
+
+
 
         viewModel.state.observe(viewLifecycleOwner, Observer { liveEvent ->
             if (liveEvent == null) {
@@ -183,7 +213,7 @@ class EventDetailsFragment : Fragment() {
                 }
                 DetailsViewModel.State.DisplayEvent -> {
                     event?.let {
-                        findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentSelf(event))
+                        findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentSelf(event.guid))
                     }
                 }
                 DetailsViewModel.State.PlayExternal -> {
@@ -219,6 +249,10 @@ class EventDetailsFragment : Fragment() {
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
+    }
+
+    private fun getLiveDataForEvent(): LiveData<Event?> {
+        return viewModel.event
     }
 
     private fun playItem(event: Event, recording: Recording, localFile: String? = null) {
@@ -264,8 +298,8 @@ class EventDetailsFragment : Fragment() {
         return "${if (recording.isHighQuality) "HD" else "SD"}  ${recording.folder}  [${recording.language}]"
     }
 
-    private fun updateBookmark(guid: String) {
-        viewModel.getBookmarkForEvent(guid)
+    private fun updateBookmark() {
+        viewModel.getBookmarkForEvent()
                 .observe(viewLifecycleOwner, Observer { watchlistItem: WatchlistItem? ->
                     this.watchlistItem = watchlistItem
                     activity?.invalidateOptionsMenu()
@@ -273,7 +307,7 @@ class EventDetailsFragment : Fragment() {
     }
 
     private fun play() {
-        viewModel.playEvent(event)
+        viewModel.playEvent()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -306,7 +340,6 @@ class EventDetailsFragment : Fragment() {
                 findNavController().apply {
                     popBackStack(R.id.eventsListFragment, false) ||
                             navigateUp()
-
                 }
                 return true
             }
@@ -315,22 +348,22 @@ class EventDetailsFragment : Fragment() {
                 return true
             }
             R.id.action_bookmark -> {
-                viewModel.createBookmark(event.guid)
-                updateBookmark(event.guid)
+                viewModel.createBookmark()
+                updateBookmark()
                 return true
             }
             R.id.action_unbookmark -> {
-                viewModel.removeBookmark(event.guid)
+                viewModel.removeBookmark()
                 watchlistItem = null
                 activity?.invalidateOptionsMenu()
                 return true
             }
             R.id.action_download -> {
-                viewModel.downloadRecordingForEvent(event)
+                viewModel.downloadRecordingForEvent()
                 return true
             }
             R.id.action_delete_offline_item -> {
-                viewModel.deleteOfflineItem(event).observe(viewLifecycleOwner, Observer { success ->
+                viewModel.deleteOfflineItem().observe(viewLifecycleOwner, Observer { success ->
                     if (success != null) {
                         view?.let { Snackbar.make(it, "Deleted Download", Snackbar.LENGTH_SHORT).show() }
                     }
@@ -338,15 +371,24 @@ class EventDetailsFragment : Fragment() {
                 return true
             }
             R.id.action_share -> {
-                val shareIntent = Intent(Intent.ACTION_SEND, Uri.parse(event.frontendLink))
-                shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.watch_this))
-                shareIntent.putExtra(Intent.EXTRA_TEXT, event.frontendLink)
-                shareIntent.type = "text/plain"
-                startActivity(shareIntent)
+                lifecycleScope.launch {
+                    val event = viewModel.event.value
+                    if (event != null){
+                        val shareIntent = Intent(Intent.ACTION_SEND, Uri.parse(event.frontendLink))
+                        shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.watch_this))
+                        shareIntent.putExtra(Intent.EXTRA_TEXT, event.frontendLink)
+                        shareIntent.type = "text/plain"
+                        startActivity(shareIntent)
+                    } else {
+                        view?.let {
+                            Snackbar.make(it, "Could not find share information", Snackbar.LENGTH_SHORT).show()
+                        }
+                    }
+                }
                 return true
             }
             R.id.action_external_player -> {
-                viewModel.playInExternalPlayer(event)
+                viewModel.playInExternalPlayer()
                 return true
             }
             else -> return super.onOptionsItemSelected(item)

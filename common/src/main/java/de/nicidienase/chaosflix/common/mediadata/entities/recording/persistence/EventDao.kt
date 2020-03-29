@@ -19,6 +19,9 @@ abstract class EventDao : BaseDao<Event>() {
     @Query("SELECT * FROM event WHERE id = :id ORDER BY title ASC")
     abstract fun findEventById(id: Long): LiveData<Event?>
 
+    @Query("SELECT * FROM event WHERE id = :id ORDER BY title ASC")
+    abstract suspend fun findEventByIdSync(id: Long): Event?
+
     @Query("SELECT * FROM event WHERE guid = :guid LIMIT 1")
     abstract fun findEventByGuid(guid: String): LiveData<Event?>
 

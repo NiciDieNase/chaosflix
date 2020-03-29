@@ -22,22 +22,22 @@ open class BrowseFragment : androidx.fragment.app.Fragment() {
 
     @JvmOverloads
     protected fun setupToolbar(toolbar: Toolbar, title: Int, isRoot: Boolean = true) {
-        setupToolbar(toolbar, resources.getString(title), isRoot)
+//        setupToolbar(toolbar, resources.getString(title), isRoot)
     }
 
     @JvmOverloads
     protected fun setupToolbar(toolbar: Toolbar, title: String, isRoot: Boolean = true) {
         val activity = activity as AppCompatActivity
-        if (activity is BrowseActivity) {
-            activity.setupDrawerToggle(toolbar)
-        }
-        activity.setSupportActionBar(toolbar)
-        activity.supportActionBar?.title = title
-        if (isRoot) {
-            activity.supportActionBar?.setDisplayShowHomeEnabled(true)
-        } else {
-            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        }
+//        if (activity is BrowseActivity) {
+//            activity.setupDrawerToggle(toolbar)
+//        }
+//        activity.setSupportActionBar(toolbar)
+//        activity.supportActionBar?.title = title
+//        if (isRoot) {
+//            activity.supportActionBar?.setDisplayShowHomeEnabled(true)
+//        } else {
+//            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+//        }
     }
 
     protected fun setLoadingOverlayVisibility(visible: Boolean) {

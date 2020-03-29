@@ -156,7 +156,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
         actionAdapter.add(watchlistAction)
         event.guid.let {
             loadPlaybackProgress(it)
-            detailsViewModel.getBookmarkForEvent(it).observe(viewLifecycleOwner, Observer { watchlistItem ->
+            detailsViewModel.getBookmarkForEvent().observe(viewLifecycleOwner, Observer { watchlistItem ->
                 if (watchlistItem != null) {
                     watchlistAction.id = ACTION_REMOVE_WATCHLIST
                     watchlistAction.label1 = getString(R.string.remove_from_watchlist)
@@ -175,7 +175,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
         initializeBackgroundWithImage(event.posterUrl)
 
-        detailsViewModel.getRecordingForEvent(event).observe(viewLifecycleOwner, Observer { recordings ->
+        detailsViewModel.getRecordingForEvent().observe(viewLifecycleOwner, Observer { recordings ->
             if (recordings != null && !recordings.isEmpty()) {
                 onNewRecordings(event, recordings)
             } else {
@@ -379,12 +379,12 @@ class EventDetailsFragment : DetailsSupportFragment() {
             Log.d(TAG, "OnActionClicked")
             when (action.id) {
                 ACTION_ADD_WATCHLIST -> {
-                    event?.guid?.let { detailsViewModel.createBookmark(it) }
+                    event?.guid?.let { detailsViewModel.createBookmark() }
                     val preferences = requireActivity().getSharedPreferences(getString(R.string.watchlist_preferences_key), Context.MODE_PRIVATE)
                     if (preferences.getBoolean(getString(R.string.watchlist_dialog_needed), true)) { // new item
                         showWatchlistInfoDialog(preferences)
                     } }
-                ACTION_REMOVE_WATCHLIST -> { event?.guid?.let { detailsViewModel.removeBookmark(it) } }
+                ACTION_REMOVE_WATCHLIST -> { event?.guid?.let { detailsViewModel.removeBookmark() } }
                 ACTION_PLAY -> { play(action) }
             }
         }

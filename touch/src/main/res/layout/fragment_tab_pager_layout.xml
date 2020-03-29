@@ -35,7 +35,18 @@
 			android:layout_height="match_parent"
 			app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
+		<com.google.android.material.floatingactionbutton.FloatingActionButton
+			android:id="@+id/search"
+
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="bottom|end"
+			android:layout_margin="8dp"
+			android:backgroundTint="@color/primary"
+			android:src="@drawable/ic_search" />
+
 		<include
+			android:visibility="invisible"
 			android:id="@+id/inc_overlay"
 			layout="@layout/loading_overlay"/>
 	</androidx.coordinatorlayout.widget.CoordinatorLayout>

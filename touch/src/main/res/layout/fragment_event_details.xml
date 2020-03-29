@@ -10,6 +10,10 @@
 		<variable
 			name="event"
 			type="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event"/>
+
+		<variable
+			name="viewModel"
+			type="de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel" />
 	</data>
 
 	<androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -143,6 +147,7 @@
 			android:clickable="true"
 			android:src="@drawable/ic_play"
 			android:contentDescription="@string/play_button"
+			android:onClick="@{}"
 			app:backgroundTint="@color/primary"
 			app:fabSize="normal"
 			app:layout_anchor="@+id/appbar"

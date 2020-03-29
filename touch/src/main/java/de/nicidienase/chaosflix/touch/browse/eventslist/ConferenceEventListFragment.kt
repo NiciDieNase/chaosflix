@@ -12,12 +12,13 @@ class ConferenceEventListFragment: EventsListFragment() {
 	private val args: ConferenceEventListFragmentArgs by navArgs()
 
 	override fun navigateToDetails(event: Event) {
-		findNavController().navigate(ConferenceEventListFragmentDirections.actionEventsListFragmentToEventDetailsFragment(event))
+		findNavController().navigate(ConferenceEventListFragmentDirections.actionEventsListFragmentToEventDetailsFragment(eventGuid = event.guid))
 	}
 
 	override fun setupEvents(binding: FragmentEventsListBinding) {
 		args.conference.let { conference ->
-			setupToolbar(binding.incToolbar.toolbar, conference.title, false)
+			activity?.actionBar?.title = conference.acronym
+//			setupToolbar(binding.incToolbar.toolbar, conference.title, false)
 			// 				eventAdapter.setShowTags(conference.getTagsUsefull());
 			viewModel.getEventsforConference(conference).observe(viewLifecycleOwner, Observer { events: List<Event>? ->
 				if (events != null) {

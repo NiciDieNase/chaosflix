@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.OfflineItemManager
@@ -25,31 +26,65 @@ class DetailsViewModel(
     private val mediaRepository: MediaRepository
 ) : ViewModel() {
 
+    private var eventId: Long = 0
+        set(value) {
+            field = value
+            viewModelScope.launch {
+                database.eventDao().findEventByIdSync(value)?.let {
+                    mediaRepository.updateRecordingsForEvent(it)
+                }
+            }
+        }
+
     val state: SingleLiveEvent<LiveEvent<State, Bundle, String>> =
             SingleLiveEvent()
 
     val autoselectRecording: Boolean
         get() = preferencesManager.getAutoselectRecording()
 
-    fun setEvent(event: Event): LiveData<Event?> {
-        mediaRepository.updateRecordingsForEvent(event)
-        return database.eventDao().findEventByGuid(event.guid)
+    val event: LiveData<Event?>
+        get() {
+            if(eventId == 0L){
+                error("event not set")
+            }
+            return database.eventDao().findEventById(eventId)
+        }
+
+    suspend fun setEventFromLink(link: String): LiveData<Event?> {
+        val event = database.eventDao().findEventForFrontendUrl(link)
+        eventId = event?.id ?: eventId
+        return database.eventDao().findEventById(eventId)
     }
 
-    fun getRecordingForEvent(event: Event): LiveData<List<Recording>> {
-        mediaRepository.updateRecordingsForEvent(event)
-        return database.recordingDao().findRecordingByEvent(event.id)
+    suspend fun setEvent(guid: String): LiveData<Event?> {
+        database.eventDao().findEventByGuidSync(guid)?.let {
+            eventId = it.id
+        }
+        return database.eventDao().findEventById(eventId)
     }
 
-    fun getBookmarkForEvent(guid: String): LiveData<WatchlistItem?> =
-            database.watchlistItemDao().getItemForEvent(guid)
-
-    fun createBookmark(guid: String) = viewModelScope.launch(Dispatchers.IO) {
-        database.watchlistItemDao().saveItem(WatchlistItem(eventGuid = guid))
+    fun getRecordingForEvent(): LiveData<List<Recording>> {
+        return database.recordingDao().findRecordingByEvent(eventId)
     }
 
-    fun removeBookmark(guid: String) = viewModelScope.launch(Dispatchers.IO) {
-        database.watchlistItemDao().deleteItem(guid)
+    fun getBookmarkForEvent(): LiveData<WatchlistItem?> = liveData {
+        database.eventDao().findEventByIdSync(eventId)?.let {
+            emitSource(
+                    database.watchlistItemDao().getItemForEvent(it.guid)
+            )
+        }
+    }
+
+    fun createBookmark() = viewModelScope.launch(Dispatchers.IO) {
+        database.eventDao().findEventByIdSync(eventId)?.guid?.let {
+            database.watchlistItemDao().saveItem(WatchlistItem(eventGuid = it))
+        } ?: state.postValue(LiveEvent(State.Error, error = "Could not create bookmark."))
+    }
+
+    fun removeBookmark() = viewModelScope.launch(Dispatchers.IO) {
+        database.eventDao().findEventByIdSync(eventId)?.guid?.let { guid ->
+            database.watchlistItemDao().deleteItem(guid)
+        }
     }
 
     fun download(event: Event, recording: Recording) =
@@ -60,11 +95,13 @@ class DetailsViewModel(
         return offlineItem != null && File(offlineItem.localPath).exists()
     }
 
-    fun deleteOfflineItem(event: Event): LiveData<Boolean> {
+    fun deleteOfflineItem(): LiveData<Boolean> {
         val result = MutableLiveData<Boolean>()
         viewModelScope.launch {
-            database.offlineEventDao().getByEventGuidSuspend(event.guid)?.let {
-                offlineItemManager.deleteOfflineItem(it)
+            database.eventDao().findEventByIdSync(eventId)?.guid?.let {guid ->
+                database.offlineEventDao().getByEventGuidSuspend(guid)?.let {
+                    offlineItemManager.deleteOfflineItem(it)
+                }
             }
             result.postValue(true)
         }
@@ -80,8 +117,9 @@ class DetailsViewModel(
         state.postValue(LiveEvent(State.DisplayEvent, data = bundle))
     }
 
-    fun playEvent(event: Event) {
+    fun playEvent() {
         viewModelScope.launch(Dispatchers.IO) {
+            val event = database.eventDao().findEventByIdSync(eventId) ?: error("No Event found")
             val offlineEvent = database.offlineEventDao().getByEventGuidSuspend(event.guid)
             if (offlineEvent != null) {
                 // Play offlineEvent
@@ -121,8 +159,20 @@ class DetailsViewModel(
         }
     }
 
+    fun downloadRecordingForEvent() = viewModelScope.launch {
+        database.eventDao().findEventByIdSync(eventId)?.let {
+            downloadRecordingForEvent(it)
+        }
+    }
+
     fun downloadRecordingForEvent(event: Event) =
             postStateWithEventAndRecordings(State.DownloadRecording, event)
+
+    fun playInExternalPlayer() = viewModelScope.launch {
+        database.eventDao().findEventByIdSync(eventId)?.let {
+            playInExternalPlayer(it)
+        }
+    }
 
     fun playInExternalPlayer(event: Event) = postStateWithEventAndRecordings(State.PlayExternal, event)
 
@@ -135,6 +185,8 @@ class DetailsViewModel(
             state.postValue(LiveEvent(s, bundle))
         }
     }
+
+    suspend fun getEvent(eventGuid: String): Event? = database.eventDao().findEventByGuidSync(eventGuid)
 
     enum class State {
         PlayOfflineItem,

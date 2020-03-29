@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment
-import de.nicidienase.chaosflix.touch.browse.mediathek.MyChaosflixFragmentDirections
+import de.nicidienase.chaosflix.touch.browse.mediathek.MediathekFragmentDirections
 import de.nicidienase.chaosflix.touch.databinding.FragmentDownloadsBinding
 
 class DownloadsListFragment : BrowseFragment() {
@@ -33,8 +33,7 @@ class DownloadsListFragment : BrowseFragment() {
             incToolbar.toolbar.visibility = View.GONE
             overlay = incOverlay.loadingOverlay
             val offlineEventAdapter = OfflineEventAdapter(viewModel.offlineItemManager, viewModel::deleteOfflineItem) { guid ->
-//                viewModel.showDetailsForEvent(guid)
-                findNavController().navigate(MyChaosflixFragmentDirections.actionMyChaosflixFragmentToEventDetailsFragment(eventGuid = guid))
+                findNavController().navigate(MediathekFragmentDirections.actionMyChaosflixFragmentToEventDetailsFragment(eventGuid = guid))
             }
             list.adapter = offlineEventAdapter
             if (columnCount <= 1) {

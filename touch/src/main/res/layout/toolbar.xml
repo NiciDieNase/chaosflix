@@ -5,6 +5,7 @@
 
 	<merge>
 		<androidx.appcompat.widget.Toolbar
+			android:visibility="gone"
 			android:id="@+id/toolbar"
 			style="@style/ColoredToolbarStyle"
 			android:layout_width="match_parent"

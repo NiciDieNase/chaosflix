@@ -5,6 +5,7 @@ import android.os.Environment
 import android.preference.PreferenceManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.PreferencesManager
@@ -16,7 +17,7 @@ import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 
 class ViewModelFactory private constructor(context: Context) : ViewModelProvider.Factory {
 
-    private val apiFactory = ApiFactory.getInstance(context.resources, context.cacheDir)
+    private val apiFactory = ApiFactory.getInstance(context.resources.getString(R.string.recording_url), context.cacheDir)
 
     private val database by lazy { ChaosflixDatabase.getInstance(context) }
     private val streamingRepository by lazy { StreamingRepository(apiFactory.streamingApi) }

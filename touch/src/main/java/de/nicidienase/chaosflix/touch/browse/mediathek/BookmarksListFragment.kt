@@ -21,6 +21,6 @@ class BookmarksListFragment : EventsListFragment() {
 
 	override fun navigateToDetails(event: Event) {
 		findNavController().navigate(
-				MyChaosflixFragmentDirections.actionMyChaosflixFragmentToEventDetailsFragment(event = event))
+				MediathekFragmentDirections.actionMyChaosflixFragmentToEventDetailsFragment(eventGuid = event.guid))
 	}
 }
