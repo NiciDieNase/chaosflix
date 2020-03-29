@@ -26,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class MediaRepository(
@@ -170,17 +171,17 @@ class MediaRepository(
         return persistantEvents
     }
 
-    private suspend fun saveEvent(event: EventDto): Event {
+    private suspend fun saveEvent(event: EventDto): Event = withContext(Dispatchers.IO){
         val acronym = event.conferenceUrl.split("/").last()
         val conferenceId = conferenceDao.findConferenceByAcronym(acronym)?.id
-            ?: updateConferencesAndGet(acronym)?.id
+                ?: updateConferencesAndGet(acronym)?.id
 
         checkNotNull(conferenceId) { "Could not find Conference for event" }
 
         val persistentEvent = Event(event, conferenceId)
         val id = eventDao.insert(persistentEvent)
         persistentEvent.id = id
-        return persistentEvent
+        return@withContext persistentEvent
     }
 
     private suspend fun updateConferencesAndGet(acronym: String): Conference? {
@@ -215,22 +216,14 @@ class MediaRepository(
     }
 
     suspend fun findEvents(queryString: String): List<Event> {
-        val events = recordingApi.searchEvents(queryString)
-        return events.events.mapNotNull {
-            val conference = findConferenceForUri(Uri.parse(it.conferenceUrl))
-            return@mapNotNull if(conference != null){
-                Event(it, conference.id)
-            } else {
-                Log.e("TAG", "Could not find conference for event")
-                null
-            }
+        val eventsResponse = recordingApi.searchEvents(queryString)
+        return eventsResponse.events.mapNotNull {
+            saveEvent(it)
         }
     }
 
     suspend fun findConferenceForUri(data: Uri): Conference? {
-        val conference =
-            conferenceDao.findConferenceByAcronymSuspend(data.lastPathSegment)
-        return conference
+        return conferenceDao.findConferenceByAcronymSuspend(data.lastPathSegment)
     }
 
     private suspend fun searchEvent(queryString: String): Event? {

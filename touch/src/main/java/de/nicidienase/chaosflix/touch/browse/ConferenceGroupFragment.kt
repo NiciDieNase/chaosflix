@@ -33,21 +33,19 @@ class ConferenceGroupFragment : BrowseFragment() {
         val view = inflater.inflate(R.layout.fragment_conferences_page, container, false)
         if (view is RecyclerView) {
             val context = view.getContext()
-            val recyclerView = view
             layoutManager = if (columnCount <= 1) {
                 LinearLayoutManager(context)
             } else {
                 GridLayoutManager(context, columnCount)
             }
-            recyclerView.layoutManager = layoutManager
+            view.layoutManager = layoutManager
             val conferencesAdapter = ConferenceRecyclerViewAdapter {
                 findNavController().navigate(
                         ConferencesTabBrowseFragmentDirections.actionConferencesTabBrowseFragmentToEventsListFragment(conference = it)
                 )
-                // TODO navigate to events-list for conference
             }
-            conferencesAdapter?.setHasStableIds(true)
-            recyclerView.adapter = conferencesAdapter
+            conferencesAdapter.setHasStableIds(true)
+            view.adapter = conferencesAdapter
             viewModel.getConferencesByGroup(conferenceGroup.id).observe(viewLifecycleOwner, Observer<List<Conference>> { conferenceList: List<Conference>? ->
                 if (conferenceList != null) {
                     if (conferenceList.isNotEmpty()) {
@@ -76,6 +74,11 @@ class ConferenceGroupFragment : BrowseFragment() {
         if (layoutManager != null) {
             arguments!!.putParcelable(LAYOUTMANAGER_STATE, layoutManager!!.onSaveInstanceState())
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        layoutManager = null
     }
 
     companion object {

@@ -100,30 +100,6 @@ class EventDetailsFragment : Fragment() {
         (activity as AppCompatActivity).setSupportActionBar(binding.animToolbar)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        binding.relatedItemsList.apply {
-            relatedEventsAdapter = EventRecyclerViewAdapter {
-                viewModel.relatedEventSelected(it)
-            }
-            adapter = relatedEventsAdapter
-            val orientation = RecyclerView.VERTICAL
-            layoutManager =
-                LinearLayoutManager(context, orientation, false)
-            val itemDecoration = DividerItemDecoration(
-                binding.relatedItemsList.context,
-                orientation
-            )
-            addItemDecoration(itemDecoration)
-        }
-
-        binding.appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-            val v = Math.abs(verticalOffset).toDouble() / appBarLayout.totalScrollRange
-            if (appBarExpanded xor (v > 0.8)) {
-                requireActivity().invalidateOptionsMenu()
-                appBarExpanded = v > 0.8
-//                binding.collapsingToolbar.isTitleEnabled = appBarExpanded
-            }
-        })
-
         viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(requireContext()))
             .get(DetailsViewModel::class.java)
 
@@ -162,6 +138,29 @@ class EventDetailsFragment : Fragment() {
             })
         }
 
+        binding.relatedItemsList.apply {
+            relatedEventsAdapter = EventRecyclerViewAdapter {
+                viewModel.relatedEventSelected(it)
+            }
+            adapter = relatedEventsAdapter
+            val orientation = RecyclerView.VERTICAL
+            layoutManager =
+                    LinearLayoutManager(context, orientation, false)
+            val itemDecoration = DividerItemDecoration(
+                    binding.relatedItemsList.context,
+                    orientation
+            )
+            addItemDecoration(itemDecoration)
+        }
+
+        binding.appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            val v = Math.abs(verticalOffset).toDouble() / appBarLayout.totalScrollRange
+            if (appBarExpanded xor (v > 0.8)) {
+                requireActivity().invalidateOptionsMenu()
+                appBarExpanded = v > 0.8
+//                binding.collapsingToolbar.isTitleEnabled = appBarExpanded
+            }
+        })
 
 
         viewModel.state.observe(viewLifecycleOwner, Observer { liveEvent ->

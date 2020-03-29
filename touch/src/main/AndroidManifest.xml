@@ -40,23 +40,6 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
         </activity>
-        <activity android:name=".browse.BrowseActivity">
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
-        </activity>
-
-        <activity
-            android:name=".browse.eventslist.EventsListActivity"
-            android:parentActivityName=".browse.BrowseActivity"/>
-
-        <activity
-            android:name=".eventdetails.EventDetailsActivity"
-            android:parentActivityName=".browse.eventslist.EventsListActivity"/>
-
-        <activity
-            android:name=".about.AboutActivity"
-            android:parentActivityName=".browse.BrowseActivity"/>
 
         <activity
             android:name=".playback.PlayerActivity"

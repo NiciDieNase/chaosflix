@@ -26,6 +26,7 @@ class ConferencesTabBrowseFragment : BrowseFragment(), SearchView.OnQueryTextLis
 	private var snackbar: Snackbar? = null
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		setHasOptionsMenu(true)
 		Log.d(TAG, "onCreate")
 		if (arguments != null) {
 			mColumnCount = arguments!!.getInt(ARG_COLUMN_COUNT)
@@ -46,6 +47,7 @@ class ConferencesTabBrowseFragment : BrowseFragment(), SearchView.OnQueryTextLis
 		setupToolbar(binding.incToolbar.toolbar, R.string.app_name)
 		overlay = binding.incOverlay.loadingOverlay
 		binding.search.setOnClickListener {
+			requireActivity().onSearchRequested()
 		}
 		viewModel.getConferenceGroups().observe(viewLifecycleOwner, Observer<List<ConferenceGroup?>> { conferenceGroups: List<ConferenceGroup?> ->
 			if (conferenceGroups.isNotEmpty()) {

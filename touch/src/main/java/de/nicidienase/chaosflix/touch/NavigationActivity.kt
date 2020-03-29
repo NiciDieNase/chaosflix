@@ -1,11 +1,13 @@
 package de.nicidienase.chaosflix.touch
 
+import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -55,6 +57,21 @@ class NavigationActivity : AppCompatActivity() {
                 binding.bottomNavigation.getOrCreateBadge(R.id.livestreamListFragment).number = roomCount
             }
         })
+
+        if(Intent.ACTION_SEARCH == intent?.action) {
+            intent.getStringExtra(SearchManager.QUERY)?.also { query ->
+                findNavController(R.id.nav_host).navigate(R.id.searchFragment, bundleOf("query" to query))
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if(Intent.ACTION_SEARCH == intent?.action) {
+            intent.getStringExtra(SearchManager.QUERY)?.also { query ->
+                findNavController(R.id.nav_host).navigate(R.id.searchFragment, bundleOf("query" to query))
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
