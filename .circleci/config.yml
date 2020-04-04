@@ -249,17 +249,15 @@ workflows:
 
   build_test_publish:
     jobs:
-      - build
-      - check:
+      - check
+      - test
+      - build:
           requires:
-            - build
-      - test:
-          requires:
-            - build
+            - check
+            - test
       - publish-appcenter:
           requires:
-            - test
-            - check
+            - build
           filters:
             branches:
               only:
@@ -267,8 +265,7 @@ workflows:
                 - develop
       - publish-play:
           requires:
-            - test
-            - check
+            - build
           filters:
             branches:
               only:
