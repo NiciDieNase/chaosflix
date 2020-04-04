@@ -219,9 +219,12 @@ class MediaRepository(
     }
 
     suspend fun findConferenceForUri(data: Uri): Conference? {
-        val conference =
-            conferenceDao.findConferenceByAcronymSuspend(data.lastPathSegment)
-        return conference
+        val acronym = data.lastPathSegment
+        if(acronym != null){
+            return conferenceDao.findConferenceByAcronymSuspend(acronym)
+        } else {
+            error("missing path")
+        }
     }
 
     suspend fun findEventByTitle(title: String): Event? {

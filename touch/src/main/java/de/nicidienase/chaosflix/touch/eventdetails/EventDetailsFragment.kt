@@ -12,11 +12,10 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.appbar.AppBarLayout
@@ -69,13 +68,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        layout = inflater.inflate(R.layout.fragment_event_details, container, false)
-        return layout
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentEventDetailsBinding.bind(view)
+        val binding = FragmentEventDetailsBinding.inflate(inflater, container, false)
         binding.event = event
         binding.playFab.setOnClickListener { play() }
         if (listener != null) {
@@ -88,12 +81,15 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
                 viewModel.relatedEventSelected(it)
             }
             adapter = relatedEventsAdapter
-            val orientation = androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
-            layoutManager =
-                androidx.recyclerview.widget.LinearLayoutManager(context, orientation, false)
+            val columns: Int = resources.getInteger(R.integer.num_columns)
+            layoutManager = if(columns == 1){
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            } else {
+                StaggeredGridLayoutManager(columns, StaggeredGridLayoutManager.VERTICAL)
+            }
             val itemDecoration = androidx.recyclerview.widget.DividerItemDecoration(
                 binding.relatedItemsList.context,
-                orientation
+                    LinearLayoutManager.VERTICAL
             )
             addItemDecoration(itemDecoration)
         }
@@ -128,6 +124,8 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
                 relatedEventsAdapter.items = it
             }
         })
+
+        return binding.root
     }
 
     private fun updateBookmark(guid: String) {

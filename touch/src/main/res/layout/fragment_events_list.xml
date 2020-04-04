@@ -21,7 +21,8 @@
 		<FrameLayout
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			app:layout_behavior="@string/appbar_scrolling_view_behavior">
+			app:layout_behavior="@string/appbar_scrolling_view_behavior"
+			android:background="@color/background">
 
 			<androidx.recyclerview.widget.RecyclerView
 				android:id="@+id/list"
@@ -34,6 +35,7 @@
 
 		<include
 			android:id="@+id/inc_overlay"
+			tools:visibility="gone"
 			layout="@layout/loading_overlay"/>
 	</androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

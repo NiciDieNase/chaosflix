@@ -43,11 +43,11 @@ abstract class EventDao : BaseDao<Event>() {
     @Query("SELECT * FROM event WHERE conferenceId = :id ORDER BY title ASC")
     abstract fun findEventsByConferenceSync(id: Long): List<Event>
 
-    @Query("SELECT * FROM event INNER JOIN watchlist_item WHERE event.guid = watchlist_item.event_guid")
-    abstract fun findBookmarkedEvents(): LiveData<List<Event>>
+	@Query("SELECT event.* FROM event INNER JOIN watchlist_item WHERE event.guid = watchlist_item.event_guid")
+	abstract fun findBookmarkedEvents(): LiveData<List<Event>>
 
-    @Query("SELECT * FROM event INNER JOIN playback_progress WHERE event.guid = playback_progress.event_guid")
-    abstract fun findInProgressEvents(): LiveData<List<Event>>
+	@Query("SELECT event.* FROM event INNER JOIN playback_progress WHERE event.guid = playback_progress.event_guid")
+	abstract fun findInProgressEvents(): LiveData<List<Event>>
 
     @Query("SELECT * FROM event WHERE frontendLink LIKE :url ")
     abstract fun findEventsByFrontendurl(url: String): LiveData<List<Event?>>

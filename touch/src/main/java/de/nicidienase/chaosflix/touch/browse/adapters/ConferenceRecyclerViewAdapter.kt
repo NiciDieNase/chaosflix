@@ -8,7 +8,7 @@ import de.nicidienase.chaosflix.touch.browse.ConferencesTabBrowseFragment
 import de.nicidienase.chaosflix.touch.databinding.ItemConferenceCardviewBinding
 
 class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseFragment.OnInteractionListener?) :
-        androidx.recyclerview.widget.RecyclerView.Adapter<ConferenceRecyclerViewAdapter.ViewHolder>() {
+        RecyclerView.Adapter<ConferenceRecyclerViewAdapter.ViewHolder>() {
 
     var conferences: List<Conference> = emptyList()
         set(value) {
@@ -18,7 +18,7 @@ class ConferenceRecyclerViewAdapter(private val mListener: ConferencesTabBrowseF
 
     override fun getItemCount() = conferences.size
 
-    class ViewHolder(val binding: ItemConferenceCardviewBinding) : androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding: ItemConferenceCardviewBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun getItemId(position: Int): Long {
         return conferences.get(position).id

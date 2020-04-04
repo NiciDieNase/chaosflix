@@ -107,7 +107,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		eventAdapter.setHasStableIds(true);
 		binding.list.setAdapter(eventAdapter);
 		DividerItemDecoration itemDecoration = new DividerItemDecoration(binding.list.getContext(), layoutManager.getOrientation());
-		binding.list.addItemDecoration(itemDecoration);
+//		binding.list.addItemDecoration(itemDecoration);
 
 		Observer<List<Event>> listObserver = persistentEvents -> {
 			setLoadingOverlayVisibility(false);
