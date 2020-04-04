@@ -146,7 +146,6 @@
 			android:clickable="true"
 			android:src="@drawable/ic_play"
 			android:contentDescription="@string/play_button"
-			android:onClick="@{}"
 			app:backgroundTint="@color/primary"
 			app:fabSize="normal"
 			app:layout_anchor="@+id/appbar"
