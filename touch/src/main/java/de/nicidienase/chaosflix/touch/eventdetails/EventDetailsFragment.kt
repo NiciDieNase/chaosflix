@@ -82,7 +82,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
             }
             adapter = relatedEventsAdapter
             val columns: Int = resources.getInteger(R.integer.num_columns)
-            layoutManager = if(columns == 1){
+            layoutManager = if (columns == 1) {
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             } else {
                 StaggeredGridLayoutManager(columns, StaggeredGridLayoutManager.VERTICAL)
