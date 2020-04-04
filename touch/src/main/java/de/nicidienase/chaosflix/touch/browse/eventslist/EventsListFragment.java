@@ -125,7 +125,6 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		} else if (type == TYPE_EVENTS) {
 			{
 				setupToolbar(binding.incToolbar.toolbar, conference.getTitle(), false);
-//				eventAdapter.setShowTags(conference.getTagsUsefull());
 				getViewModel().getEventsforConference(conference).observe(this, events -> {
 					if(events != null){
 						setEvents(events);

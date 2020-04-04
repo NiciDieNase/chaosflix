@@ -134,6 +134,10 @@ class FavoritesImportViewModel(
         }
     }
 
+    fun unavailableItemClicked(item: ImportItem) {
+        showErrorMessage("No recording for ${item.lecture.title} found, maybe it was not recorded or it has not been published yet.")
+    }
+
     enum class State {
         IMPORT_DONE
     }

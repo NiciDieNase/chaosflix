@@ -9,11 +9,13 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import de.nicidienase.chaosflix.common.ImportItem
 import de.nicidienase.chaosflix.common.viewmodel.FavoritesImportViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.R
@@ -37,9 +39,13 @@ class FavoritesImportFragment : Fragment() {
         binding.viewModel = viewModel
 
         binding.importList.layoutManager = LinearLayoutManager(context)
-        adapter = ImportItemAdapter {
+        val onItemClick: (ImportItem) -> Unit = {
             viewModel.itemChanged(it)
         }
+        val onLectureClick: (ImportItem) -> Unit = {
+            viewModel.unavailableItemClicked(it)
+        }
+        adapter = ImportItemAdapter(onListItemClick = onItemClick, onLectureClick = onLectureClick)
         adapter.setHasStableIds(true)
         binding.importList.setHasFixedSize(true)
         binding.importList.adapter = adapter
@@ -78,7 +84,12 @@ class FavoritesImportFragment : Fragment() {
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer { errorMessage ->
             if (errorMessage != null) {
-                Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_LONG).apply {
+                    view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text).maxLines = 5
+                    setAction("OK", View.OnClickListener {
+                        this.dismiss()
+                    }).show()
+                }
                 viewModel.errorShown()
             }
         })
