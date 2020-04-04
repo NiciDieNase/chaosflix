@@ -35,6 +35,37 @@ references:
 
 jobs:
 
+  setup:
+    <<: *container_config
+    steps:
+      - checkout
+
+      - restore_cache:
+          <<: *general_cache_key
+
+      - run:
+          <<: *setup_env
+
+      - run:
+          name: Download Dependencies
+          command: |
+            ./gradlew $KEY_CONFIG $SIGN_CONFIG \
+              -PversionCode=$VERSION_CODE_TOUCH \
+              -PversionName=${VERSION_NAME} \
+              androidDependencies
+
+      - save_cache:
+          <<: *general_cache_key
+          paths:
+            - "~/.gradle"
+            - "~/.m2"
+            - "/opt/android-sdk-linux/licenses/"
+
+      - persist_to_workspace:
+          root: *workspace_root
+          paths:
+            - .
+
   build:
     <<: *container_config
     steps:
@@ -249,8 +280,13 @@ workflows:
 
   build_test_publish:
     jobs:
-      - check
-      - test
+      - setup
+      - check:
+          requires:
+            - setup
+      - test:
+          requires:
+            - setup
       - build:
           requires:
             - check
