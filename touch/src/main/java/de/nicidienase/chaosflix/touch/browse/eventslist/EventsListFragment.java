@@ -118,9 +118,11 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 
 		if (type == TYPE_BOOKMARKS) {
 			setupToolbar(binding.incToolbar.toolbar, R.string.bookmarks);
+			eventAdapter.setShowConferenceName(true);
 			getViewModel().getBookmarkedEvents().observe(this, listObserver);
 		} else if (type == TYPE_IN_PROGRESS) {
 			setupToolbar(binding.incToolbar.toolbar, R.string.continue_watching);
+			eventAdapter.setShowConferenceName(true);
 			getViewModel().getInProgressEvents().observe(this, listObserver);
 		} else if (type == TYPE_EVENTS) {
 			{

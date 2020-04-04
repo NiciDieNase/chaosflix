@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix.touch.browse.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -9,6 +10,8 @@ import de.nicidienase.chaosflix.touch.databinding.ItemEventCardviewBinding
 
 open class EventRecyclerViewAdapter(val listener: (Event) -> Unit) :
         ItemRecyclerViewAdapter<Event, EventRecyclerViewAdapter.ViewHolder>() {
+
+    var showConferenceName: Boolean = false
 
     override fun getComparator(): Comparator<in Event>? {
         return Comparator { o1, o2 -> o1.title.compareTo(o2.title) }
@@ -36,6 +39,9 @@ open class EventRecyclerViewAdapter(val listener: (Event) -> Unit) :
         holder.binding.event = event
         holder.binding.root.setOnClickListener {
             listener(event)
+        }
+        if (showConferenceName) {
+            holder.binding.conferenceNameText.visibility = View.VISIBLE
         }
 
         ViewCompat.setTransitionName(holder.binding.titleText, "title_${event.guid}")

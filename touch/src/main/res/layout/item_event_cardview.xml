@@ -59,8 +59,8 @@
 					android:textAppearance="@style/TextAppearance.AppCompat.Medium"
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintStart_toEndOf="@+id/imageView"
-					app:layout_constraintTop_toTopOf="parent"
-					tools:text="This is a very long title text that propably won't fit in one line, maybe even need three."/>
+					app:layout_constraintTop_toBottomOf="@+id/conference_name_text"
+					tools:text="This is a very long title text that propably won't fit in one line, maybe even need three." />
 
 				<androidx.appcompat.widget.AppCompatTextView
 					android:id="@+id/subtitle_text"
@@ -74,25 +74,24 @@
 					android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
 					android:visibility="@{event.subtitle.length() == 0 ? View.GONE : View.VISIBLE}"
 					app:layout_constraintBottom_toBottomOf="parent"
-					app:layout_constraintEnd_toStartOf="@+id/tag_text"
+					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintStart_toEndOf="@+id/imageView"
 					app:layout_constraintTop_toBottomOf="@+id/title_text"
 					app:layout_constraintVertical_bias="0.0"
 					tools:text="subtitle"/>
 
 				<androidx.appcompat.widget.AppCompatTextView
-					android:id="@+id/tag_text"
-					android:layout_width="wrap_content"
+					android:id="@+id/conference_name_text"
+					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="8dp"
-					android:layout_marginEnd="8dp"
-					android:layout_marginBottom="8dp"
-					android:gravity="bottom|end"
+					android:text="@{event.conference}"
 					android:visibility="gone"
-					app:layout_constraintBottom_toBottomOf="parent"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/subtitle_text"
-					tools:text="TAGS"/>
+					app:layout_constraintEnd_toEndOf="@+id/title_text"
+					app:layout_constraintStart_toStartOf="@+id/title_text"
+					app:layout_constraintTop_toTopOf="parent"
+					tools:text="42c3: Don't panic"
+					tools:visibility="visible" />
 
 				<androidx.appcompat.widget.AppCompatTextView
 					android:id="@+id/duration"
@@ -107,6 +106,17 @@
 					app:layout_constraintEnd_toEndOf="@+id/imageView"
 					time="@{event.length}"
 					tools:text="1:23:45"/>
+
+				<ProgressBar
+					android:id="@+id/progressBar3"
+					style="?android:attr/progressBarStyleHorizontal"
+					progress="@{event}"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					app:layout_constraintBottom_toBottomOf="@+id/imageView"
+					app:layout_constraintEnd_toEndOf="@+id/imageView"
+					app:layout_constraintStart_toStartOf="@+id/imageView"
+					app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
 			</androidx.constraintlayout.widget.ConstraintLayout>
 		</androidx.cardview.widget.CardView>

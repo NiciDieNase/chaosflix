@@ -55,6 +55,9 @@ data class Event(
     var recordings: List<Recording>? = null
 ) : Parcelable, Comparable<Event> {
 
+    @Ignore
+    var progress: Long = 0
+
     override fun compareTo(other: Event): Int = title.compareTo(other.title)
 
     constructor(parcel: Parcel) : this(

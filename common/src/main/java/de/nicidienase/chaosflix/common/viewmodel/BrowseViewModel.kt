@@ -2,6 +2,7 @@ package de.nicidienase.chaosflix.common.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.nicidienase.chaosflix.R
@@ -49,8 +50,8 @@ class BrowseViewModel(
     fun getConferencesByGroup(groupId: Long) =
             database.conferenceDao().findConferenceByGroup(groupId)
 
-    fun getEventsforConference(conference: Conference) =
-            database.eventDao().findEventsByConference(conference.id)
+    fun getEventsforConference(conference: Conference): LiveData<List<Event>> =
+            database.eventDao().getEventsWithConferenceForConfernce(conference.id)
 
     fun getUpdateState() =
             mediaRepository.updateConferencesAndGroups()
@@ -74,11 +75,18 @@ class BrowseViewModel(
         return itemDao.getWatchlistEvents()
     }
 
-    fun getInProgressEvents(): LiveData<List<Event>> = updateAndGetEventsForGuids {
-        database
-                .playbackProgressDao()
-                .getAllSync()
-                .map { it.eventGuid } }
+    fun getInProgressEvents(): LiveData<List<Event>> {
+        val dao = database.playbackProgressDao()
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.getAllSync().forEach {
+                mediaRepository.updateSingleEvent(it.eventGuid)
+            }
+        }
+        return Transformations.map(dao.getInProgessEvents()) { list ->
+            list.forEach { it.event.progress = it.progress }
+            list.map { it.event }
+        }
+    }
 
     fun getPromotedEvents(): LiveData<List<Event>> = database.eventDao().findPromotedEvents()
 

@@ -18,7 +18,9 @@ abstract class WatchlistItemDao : BaseDao<WatchlistItem>() {
     @Query("SELECT * FROM  watchlist_item")
     abstract fun getAllSync(): List<WatchlistItem>
 
-    @Query("SELECT * FROM watchlist_item JOIN event ON watchlist_item.event_guid=event.guid")
+    @Query("""SELECT event.*, conference.title as conference FROM watchlist_item 
+        JOIN event ON watchlist_item.event_guid=event.guid 
+        JOIN conference ON event.conferenceId = conference.id""")
     abstract fun getWatchlistEvents(): LiveData<List<Event>>
 
     @Query("SELECT * FROM  watchlist_item WHERE event_guid = :guid LIMIT 1")
