@@ -64,10 +64,15 @@ class BrowseViewModel(
                     return@merge LiveEvent(liveEvent?.state ?: MediaRepository.State.DONE, list ?: liveEvent?.data, liveEvent?.error)
                 }
 
-    fun getBookmarkedEvents(): LiveData<List<Event>> = updateAndGetEventsForGuids {
-        database
-                .watchlistItemDao()
-                .getAllSync().map { it.eventGuid } }
+    fun getBookmarkedEvents(): LiveData<List<Event>> {
+        val itemDao = database.watchlistItemDao()
+        viewModelScope.launch(Dispatchers.IO) {
+            itemDao.getAllSync().forEach {
+                mediaRepository.updateSingleEvent(it.eventGuid)
+            }
+        }
+        return itemDao.getWatchlistEvents()
+    }
 
     fun getInProgressEvents(): LiveData<List<Event>> = updateAndGetEventsForGuids {
         database

@@ -28,6 +28,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class MediaRepository(
@@ -115,9 +116,9 @@ class MediaRepository(
         return updateState
     }
 
-    suspend fun updateSingleEvent(guid: String): Event? {
+    suspend fun updateSingleEvent(guid: String): Event? = withContext(Dispatchers.IO) {
         val event = recordingApi.getEventByGUIDSuspending(guid)
-        return if (event != null) {
+        return@withContext if (event != null) {
             saveEvent(event)
         } else {
             null
