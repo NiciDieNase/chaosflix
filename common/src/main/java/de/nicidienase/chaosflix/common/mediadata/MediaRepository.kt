@@ -226,16 +226,19 @@ class MediaRepository(
     suspend fun findEventByTitle(title: String): Event? {
         var event: Event? = eventDao.findEventByTitleSuspend(title)
         if (event == null) {
-            event = searchEvent(title)
+            event = searchEvent(title, true)
         }
         return event
     }
 
-    private suspend fun searchEvent(queryString: String): Event? {
+    private suspend fun searchEvent(queryString: String, updateConference: Boolean = false): Event? {
         val searchEvents = recordingApi.searchEvents(queryString)
         if (searchEvents.events.isNotEmpty()) {
             val eventDto = searchEvents.events[0]
             val conference = updateConferencesAndGet(eventDto.conferenceUrl.split("/").last())
+            if(updateConference && conference != null){
+                updateEventsForConference(conference)
+            }
             if (conference?.id != null) {
                 var event = Event(eventDto, conference.id)
                 eventDao.updateOrInsert(event)

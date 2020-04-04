@@ -2,6 +2,7 @@ package de.nicidienase.chaosflix.touch.favoritesimport
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -43,17 +44,17 @@ class FavoritesImportFragment : Fragment() {
         binding.importList.setHasFixedSize(true)
         binding.importList.adapter = adapter
 
-        viewModel.items.observe(this, Observer { events ->
+        viewModel.items.observe(viewLifecycleOwner, Observer { events ->
             if (events != null) {
                 adapter.submitList(events.toList())
             }
         })
 
-        viewModel.selectAll.observe(this, Observer {
+        viewModel.selectAll.observe(viewLifecycleOwner, Observer {
             activity?.invalidateOptionsMenu()
         })
 
-        viewModel.state.observe(this, Observer {
+        viewModel.state.observe(viewLifecycleOwner, Observer {
             when (it.state) {
                 FavoritesImportViewModel.State.IMPORT_DONE -> {
                     // TODO navigate to favorites
@@ -62,18 +63,27 @@ class FavoritesImportFragment : Fragment() {
             }
         })
 
-        viewModel.working.observe(this, Observer { working ->
+        viewModel.working.observe(viewLifecycleOwner, Observer { working ->
             binding.incOverlay.loadingOverlay.visibility = if (working) View.VISIBLE else View.GONE
         })
+        viewModel.processCount.observe(viewLifecycleOwner, Observer {pair ->
+            Log.i(TAG,"Progress ${pair.first}/${pair.second}")
+            binding.incOverlay.progressbar.apply {
+                if(pair.second != 0){
+	                visibility = View.VISIBLE
+                    progress = (100 * pair.first / pair.second)
+                }
+            }
+        })
 
-        viewModel.errorMessage.observe(this, Observer { errorMessage ->
+        viewModel.errorMessage.observe(viewLifecycleOwner, Observer { errorMessage ->
             if (errorMessage != null) {
                 Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
                 viewModel.errorShown()
             }
         })
 
-        viewModel.importItemCount.observe(this, Observer { count ->
+        viewModel.importItemCount.observe(viewLifecycleOwner, Observer { count ->
             if (count == 0) {
                 binding.buttonImport.hide()
             } else {

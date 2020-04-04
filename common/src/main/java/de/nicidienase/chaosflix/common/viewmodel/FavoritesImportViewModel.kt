@@ -37,6 +37,10 @@ class FavoritesImportViewModel(
     val working: LiveData<Boolean>
         get() = _working
 
+    private val _processCount = MutableLiveData<Pair<Int,Int>> (0 to 0)
+    val processCount: LiveData<Pair<Int,Int>>
+        get() = _processCount
+
     val importItemCount: LiveData<Int> = Transformations.map(items) { items ->
         val selectedItems = items?.filter { it.selected && it.event != null }
         return@map selectedItems?.count() ?: 0
@@ -59,9 +63,11 @@ class FavoritesImportViewModel(
     internal suspend fun handleLecturesInternal(jsonImport: String) {
         val export = Gson().fromJson(jsonImport, FahrplanExport::class.java)
         val events: List<ImportItem>
+        _processCount.postValue(0 to export.lectures.size)
         try {
-            events = export.lectures.map { lecture: FahrplanLecture ->
+            events = export.lectures.mapIndexed { index, lecture ->
                 val event = mediaRepository.findEventByTitle(lecture.title)
+                _processCount.postValue(index to export.lectures.size)
                 ImportItem(
                     lecture = lecture,
                     event = event,
