@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.common.ImportItem
 import de.nicidienase.chaosflix.common.eventimport.FahrplanExport
-import de.nicidienase.chaosflix.common.eventimport.FahrplanLecture
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
@@ -37,8 +36,8 @@ class FavoritesImportViewModel(
     val working: LiveData<Boolean>
         get() = _working
 
-    private val _processCount = MutableLiveData<Pair<Int,Int>> (0 to 0)
-    val processCount: LiveData<Pair<Int,Int>>
+    private val _processCount = MutableLiveData<Pair<Int, Int>> (0 to 0)
+    val processCount: LiveData<Pair<Int, Int>>
         get() = _processCount
 
     val importItemCount: LiveData<Int> = Transformations.map(items) { items ->

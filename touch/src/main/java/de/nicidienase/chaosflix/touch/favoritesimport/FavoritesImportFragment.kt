@@ -66,11 +66,11 @@ class FavoritesImportFragment : Fragment() {
         viewModel.working.observe(viewLifecycleOwner, Observer { working ->
             binding.incOverlay.loadingOverlay.visibility = if (working) View.VISIBLE else View.GONE
         })
-        viewModel.processCount.observe(viewLifecycleOwner, Observer {pair ->
-            Log.i(TAG,"Progress ${pair.first}/${pair.second}")
+        viewModel.processCount.observe(viewLifecycleOwner, Observer { pair ->
+            Log.i(TAG, "Progress ${pair.first}/${pair.second}")
             binding.incOverlay.progressbar.apply {
-                if(pair.second != 0){
-	                visibility = View.VISIBLE
+                if (pair.second != 0) {
+                    visibility = View.VISIBLE
                     progress = (100 * pair.first / pair.second)
                 }
             }

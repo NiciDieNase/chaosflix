@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import de.nicidienase.chaosflix.touch.databinding.ItemFavoritImportBinding
 import de.nicidienase.chaosflix.common.ImportItem
+import de.nicidienase.chaosflix.touch.databinding.ItemFavoritImportBinding
 import java.lang.NumberFormatException
 
 class ImportItemAdapter(private val onListItemClick: ((ImportItem) -> Unit)? = null) : ListAdapter<ImportItem, ImportItemAdapter.ViewHolder>(

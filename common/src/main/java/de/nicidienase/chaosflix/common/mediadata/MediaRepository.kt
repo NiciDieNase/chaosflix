@@ -236,7 +236,7 @@ class MediaRepository(
         if (searchEvents.events.isNotEmpty()) {
             val eventDto = searchEvents.events[0]
             val conference = updateConferencesAndGet(eventDto.conferenceUrl.split("/").last())
-            if(updateConference && conference != null){
+            if (updateConference && conference != null) {
                 updateEventsForConference(conference)
             }
             if (conference?.id != null) {
