@@ -31,6 +31,8 @@
 		<item name="android:textColorSecondary">@color/white</item>
 	</style>
 
+	<style name="ColoredTabLayout" parent="@style/Widget.MaterialComponents.TabLayout.Colored"/>
+
 	<style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
 		<item name="android:windowBackground">@drawable/splash_screen</item>
 	</style>
