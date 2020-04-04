@@ -18,7 +18,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:background="@drawable/player_controls_background"
             android:orientation="vertical">
 
@@ -43,15 +42,31 @@
             android:gravity="center_horizontal|center_vertical"
             android:orientation="horizontal">
 
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@id/exo_rew"
+                android:src="@drawable/ic_replay_30"
+                style="@style/ExoMediaButton.Rewind"
+                android:layout_marginEnd="16dp"
+                android:scaleX="2"
+                android:scaleY="2"/>
+
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@id/exo_play"
                 style="@style/ExoMediaButton.Play"
                 android:scaleX="2"
                 android:scaleY="2"/>
 
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@id/exo_pause"
                 style="@style/ExoMediaButton.Pause"
+                android:scaleX="2"
+                android:scaleY="2"/>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@id/exo_ffwd"
+                android:src="@drawable/ic_forward_30"
+                style="@style/ExoMediaButton.FastForward"
+                android:layout_marginStart="16dp"
                 android:scaleX="2"
                 android:scaleY="2"/>
 

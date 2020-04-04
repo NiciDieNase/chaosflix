@@ -32,6 +32,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    lintOptions {
+          abortOnError false
+    }
+
     buildTypes {
         debug {
             minifyEnabled false
@@ -48,43 +52,59 @@ android {
     productFlavors {
         prod {
             dimension "stage"
-            if (project.hasProperty('appcenterId')){
-                buildConfigField "String", "APPCENTER_ID", "$appcenterId"
-            } else {
-                buildConfigField "String", "APPCENTER_ID", "\"\""
-            }
         }
 
         dev {
             dimension "stage"
-
-            if (project.hasProperty('appcenterDevId')){
-                buildConfigField "String", "APPCENTER_ID", "$appcenterDevId"
-            } else {
-                buildConfigField "String", "APPCENTER_ID", "\"\""
-            }
         }
 
         mock {
             dimension "stage"
-            if (project.hasProperty('appcenterDevId')){
-                buildConfigField "String", "APPCENTER_ID", "$appcenterDevId"
-            } else {
-                buildConfigField "String", "APPCENTER_ID", "\"\""
-            }
             buildConfigField "String", "STREAMING_API_BASE_URL", "\"https://gist.githubusercontent.com\""
             buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/NiciDieNase/1ca017f180242f0ee683a1f592efc4ed/raw/0104592b57f4b29863fd0684a510462af276f30e/example_streams_v2.json\""
         }
 
         free {
             dimension "libs"
+
+            ext {
+                prod = null
+                dev = null
+                mock = null
+            }
         }
         noFree{
             dimension "libs"
+            ext {
+                if(project.hasProperty("appcenterId")){
+                    prod = appcenterId
+                } else {
+                    prod = null
+                    println "AppcenterId not set"
+                }
+                if(project.hasProperty("appcenterDevId")){
+                    dev = appcenterDevId
+                    mock = appcenterDevId
+                } else {
+                    dev = null
+                    mock = null
+                    println "AppcenterId not set"
+                }
+
+            }
         }
     }
+
+    libraryVariants.all { variant ->
+        def flavors = variant.productFlavors
+        // flavorDimensions "stage" -> 0, "libs" -> 1
+        def stage = flavors[0]
+        def libs = flavors[1]
+
+        variant.buildConfigField "String", "APPCENTER_ID", "${libs[stage.name]}"
+    }
+
     variantFilter { variant ->
-        def names = variant.flavors*.name
         if (name.contains("prod") && name.contains("Debug")){
             setIgnore(true)
         }

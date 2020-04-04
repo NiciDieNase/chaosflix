@@ -8,6 +8,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.touch.browse.streaming.StreamingItem
 
+@SuppressWarnings("unused")
 class CastService(activity: Activity, withMiniController: Boolean = true) {
 
     val connected: Boolean = false

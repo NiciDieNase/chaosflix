@@ -7,15 +7,15 @@ import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
+import java.lang.Exception
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 class SplashViewModel(
     private val mediaRepository: MediaRepository
 ) : ViewModel() {
 
-    val state: SingleLiveEvent<LiveEvent<State, Event, Exception>> = SingleLiveEvent()
+    val state: SingleLiveEvent<LiveEvent<State, Any, Exception>> = SingleLiveEvent()
 
     fun findEventForUri(data: Uri) = viewModelScope.launch(Dispatchers.IO) {
         try {
@@ -27,6 +27,19 @@ class SplashViewModel(
             }
         } catch (e: Exception) {
             state.postValue(LiveEvent(State.NOT_FOUND, error = e))
+        }
+    }
+
+    fun findConferenceForUri(data: Uri) = viewModelScope.launch(Dispatchers.IO) {
+        try {
+            val conference = mediaRepository.findConferenceForUri(data)
+            if (conference != null) {
+                state.postValue(LiveEvent(State.FOUND, conference))
+            } else {
+                state.postValue(LiveEvent(State.NOT_FOUND))
+            }
+        } catch (ex: Exception) {
+            state.postValue(LiveEvent(State.NOT_FOUND, error = ex))
         }
     }
 

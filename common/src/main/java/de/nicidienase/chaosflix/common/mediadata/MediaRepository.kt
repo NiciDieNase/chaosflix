@@ -23,12 +23,12 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
+import java.io.IOException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import retrofit2.Response
-import java.io.IOException
 
 class MediaRepository(
     private val recordingApi: RecordingService,
@@ -215,6 +215,12 @@ class MediaRepository(
         }
 
         return event
+    }
+
+    suspend fun findConferenceForUri(data: Uri): Conference? {
+        val conference =
+            conferenceDao.findConferenceByAcronymSuspend(data.lastPathSegment)
+        return conference
     }
 
     suspend fun findEventByTitle(title: String): Event? {

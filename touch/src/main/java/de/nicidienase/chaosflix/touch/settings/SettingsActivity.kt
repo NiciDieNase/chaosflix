@@ -1,8 +1,8 @@
 package de.nicidienase.chaosflix.touch.settings
 
-import androidx.databinding.DataBindingUtil
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.databinding.ActivitySettingsBinding
 

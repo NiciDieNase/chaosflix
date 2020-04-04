@@ -1,0 +1,11 @@
+Watch streams and recordings from media.ccc.de on your phone, tablet or AndroidTV-device
+
+Features:
+<ul>
+	<li>Livestreams</li>
+	<li>Bookmarking Talks</li>
+	<li>Download Talks for offline viewing</li>
+	<li>Watch on Chromecast</li>
+</ul>
+
+Suggestions, Bugreports, etc. are welcome on https://github.com/NiciDieNase/chaosflix/issues

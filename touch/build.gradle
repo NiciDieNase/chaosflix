@@ -1,7 +1,10 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-android-extensions'
+    id 'com.github.triplet.play' version '2.6.2'
+}
 
 String appName = "Chaosflix"
 String versionString = new File("versionfile").text.trim()
@@ -17,7 +20,7 @@ android {
         targetSdkVersion rootProject.ext.targetSDK
         manifestPlaceholders = [label: appName]
         // odd for touch, even for leanback
-        versionCode rootProject.ext.touchVersionCode
+        versionCode 1
         versionName versionString
 
         if(project.hasProperty("versionCode")){
@@ -57,6 +60,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'proguard-rules.pro'
             if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore).exists() && file(chaosflixKeystore).isFile()) {
+
                 signingConfig signingConfigs.release
             }
         }
@@ -110,6 +114,12 @@ android {
     lintOptions.abortOnError false
     dataBinding.enabled = true
     testOptions.unitTests.includeAndroidResources = true
+
+    playConfigs {
+        prodNoFreeRelease {
+            enabled = true
+        }
+    }
 }
 
 configurations {
@@ -153,4 +163,12 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
+}
+
+play {
+    serviceAccountCredentials = file("../chaosflix-d1d09f33cbb2.json")
+    track = "alpha"
+    releaseStatus = "draft"
+    enabled = false
+    artifactDir = file("build/outputs/apk/prodNoFree/release/touch-prod-noFree-release.apk")
 }

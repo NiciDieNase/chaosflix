@@ -1,12 +1,12 @@
 package de.nicidienase.chaosflix.leanback
 
 import android.content.Context
-import androidx.leanback.widget.Presenter
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.leanback.widget.Presenter
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
 import de.nicidienase.chaosflix.leanback.databinding.DetailViewBinding

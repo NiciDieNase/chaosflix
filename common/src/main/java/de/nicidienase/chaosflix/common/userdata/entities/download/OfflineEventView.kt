@@ -1,7 +1,7 @@
 package de.nicidienase.chaosflix.common.userdata.entities.download
 
-import androidx.room.ColumnInfo
 import androidx.annotation.Keep
+import androidx.room.ColumnInfo
 
 @Keep
 data class OfflineEventView(

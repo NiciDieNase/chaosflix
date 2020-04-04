@@ -1,10 +1,10 @@
 package de.nicidienase.chaosflix.touch.about
 
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import com.mikepenz.aboutlibraries.LibsBuilder
 import com.mikepenz.aboutlibraries.ui.LibsSupportFragment
 import de.nicidienase.chaosflix.touch.R

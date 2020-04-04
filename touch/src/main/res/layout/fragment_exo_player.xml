@@ -13,12 +13,15 @@
             android:id="@+id/video_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:fastforward_increment="30000"
+            app:rewind_increment="30000"
             app:controller_layout_id="@layout/exo_playback_controlsoverlay"/>
 
         <FrameLayout
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/transparent_white_70"
             android:layout_gravity="center_vertical|center_horizontal">
 
             <de.nicidienase.chaosflix.ChaosflixLoadingSpinner

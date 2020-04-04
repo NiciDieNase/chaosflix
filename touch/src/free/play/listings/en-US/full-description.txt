@@ -1,0 +1,14 @@
+Watch streams and recordings from media.ccc.de on your phone or tablet.
+
+Features:
+<ul>
+	<li>Livestreams</li>
+	<li>Bookmarking Talks</li>
+	<li>Download Talks for offline viewing</li>
+</ul>
+
+Chromecast support is not available for the version on F-Droid, since it requires non-free libraries.
+
+There is also a version for TVs (AndroidTV and FireTV) which is current not on F-Droid.
+
+Suggestions, Bugreports, etc. are welcome on https://github.com/NiciDieNase/chaosflix/issues

@@ -4,9 +4,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
+import java.util.Date
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.Date
 
 /**
  * Created by felix on 31.10.17.

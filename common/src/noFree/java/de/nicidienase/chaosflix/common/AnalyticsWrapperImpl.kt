@@ -21,11 +21,11 @@ object AnalyticsWrapperImpl : AnalyticsWrapper {
 
     override fun startAnalytics() {
         Analytics.setEnabled(true)
-//        Crashes.setEnabled(true)
+        Crashes.setEnabled(true)
     }
 
     override fun stopAnalytics() {
         Analytics.setEnabled(false)
-//        Crashes.setEnabled(false)
+        Crashes.setEnabled(false)
     }
 }
