@@ -63,7 +63,6 @@
 					android:id="@+id/anim_toolbar"
 					android:layout_width="match_parent"
 					android:layout_height="?attr/actionBarSize"
-					style="@style/ToolbarStyle"
 					app:titleTextColor="@color/white"
 					app:subtitleTextColor="@color/white"
 					app:layout_collapseMode="pin"

@@ -147,6 +147,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.6.3'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
 
+    api "com.google.code.gson:gson:2.8.6"
     api 'com.google.android.exoplayer:exoplayer:2.9.6'
 
     api 'com.github.bumptech.glide:glide:4.9.0'
@@ -175,9 +176,17 @@ dependencies {
     testImplementation "junit:junit:4.13"
     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.6.0"
 
+    testImplementation "io.mockk:mockk:1.9"
+
     testImplementation 'org.robolectric:robolectric:4.1'
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.5.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.2"
+
+    testImplementation "junit:junit:4.12"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.5.2"
 
 }

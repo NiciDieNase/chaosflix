@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-		xmlns:app="http://schemas.android.com/apk/res-auto">
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<androidx.coordinatorlayout.widget.CoordinatorLayout
 		android:layout_width="match_parent"
@@ -17,14 +17,14 @@
 
 			<com.google.android.material.tabs.TabLayout
 				android:id="@+id/sliding_tabs"
-				style="@style/ColoredToolbarStyle"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+				android:background="@color/primary"
 				app:layout_anchor="@id/toolbar"
 				app:layout_anchorGravity="bottom"
-				app:tabIndicatorColor="@color/white"
 				app:tabMode="scrollable"
 				app:tabSelectedTextColor="@color/white"
+				app:tabIndicatorColor="@color/white"
 				app:tabTextColor="@color/inactive_tab_color"/>
 
 		</com.google.android.material.appbar.AppBarLayout>

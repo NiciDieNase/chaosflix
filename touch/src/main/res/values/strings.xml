@@ -54,5 +54,9 @@
 	<string name="play_button">Play-Button</string>
 	<string name="list_of_events">List of Events</string>
 	<string name="delete_item">Delete Item</string>
+    <string name="import_favorites">Import Favorites</string>
+    <string name="import_activity_label">Fahrplan-Import</string>
+    <string name="select_all">Select all</string>
+    <string name="import_label">Bookmark</string>
 	<string name="empty" />
 </resources>

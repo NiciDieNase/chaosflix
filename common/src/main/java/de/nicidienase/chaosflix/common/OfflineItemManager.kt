@@ -173,8 +173,6 @@ class OfflineItemManager(
         private val offlineEventDao: OfflineEventDao,
         private val preferencesManager: PreferencesManager
     ) : BroadcastReceiver() {
-        private val TAG = DownloadCancelHandler::class.java.simpleName
-
         override fun onReceive(p0: Context?, p1: Intent?) {
             val downloadId = p1?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0)
             if (downloadId != null && downloadId == id) {
@@ -191,6 +189,10 @@ class OfflineItemManager(
                 }
                 p0?.unregisterReceiver(this)
             }
+        }
+
+        companion object {
+            private val TAG = DownloadCancelHandler::class.java.simpleName
         }
     }
 

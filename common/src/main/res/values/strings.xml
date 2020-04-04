@@ -46,7 +46,8 @@
     <string name="setting_metered_networks">Allow downloads over metered networks</string>
     <string name="settings_choose_recording">Automatically choose recording</string>
     <string name="export_favorites">Export Favorites</string>
-    <string name="import_favorites">Import Favorites</string>
+    <string name="import_favorites">Import to Favorites</string>
     <string name="error_event_not_found">Event not found</string>
     <string name="privacy_policy">Chaosflix does not collect or transmit any personalized data.</string>
+    <string name="no_recording_found_for">No Recording found for</string>
 </resources>

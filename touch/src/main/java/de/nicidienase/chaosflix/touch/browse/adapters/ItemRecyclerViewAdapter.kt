@@ -5,7 +5,7 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Collections
 
-abstract class ItemRecyclerViewAdapter<T, VH : RecyclerView.ViewHolder?>() :
+abstract class ItemRecyclerViewAdapter<T, VH : RecyclerView.ViewHolder?> :
     RecyclerView.Adapter<VH>(), Filterable {
 
     abstract fun getComparator(): Comparator<in T>?

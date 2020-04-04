@@ -22,30 +22,50 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
     private val database by lazy { ChaosflixDatabase.getInstance(context) }
     private val streamingRepository by lazy { StreamingRepository(apiFactory.streamingApi) }
     private val preferencesManager =
-            PreferencesManager(PreferenceManager.getDefaultSharedPreferences(context.applicationContext))
+        PreferencesManager(PreferenceManager.getDefaultSharedPreferences(context.applicationContext))
     private val offlineItemManager =
-            OfflineItemManager(context.applicationContext, database.offlineEventDao(), preferencesManager)
+        OfflineItemManager(
+            context.applicationContext,
+            database.offlineEventDao(),
+            preferencesManager
+        )
     private val externalFilesDir = Environment.getExternalStorageDirectory()
     private val resourcesFacade by lazy { ResourcesFacade(context) }
     private val mediaRepository by lazy { MediaRepository(apiFactory.recordingApi, database) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(BrowseViewModel::class.java)) {
-            return BrowseViewModel(offlineItemManager, mediaRepository, database, streamingRepository, preferencesManager, resourcesFacade) as T
-        } else if (modelClass.isAssignableFrom(PlayerViewModel::class.java)) {
-            return PlayerViewModel(database) as T
-        } else if (modelClass.isAssignableFrom(DetailsViewModel::class.java)) {
-            return DetailsViewModel(database, offlineItemManager, preferencesManager, mediaRepository) as T
-        } else if (modelClass.isAssignableFrom(PreferencesViewModel::class.java)) {
-            return PreferencesViewModel(mediaRepository, database.watchlistItemDao(), externalFilesDir) as T
-        } else if (modelClass.isAssignableFrom(SplashViewModel::class.java)) {
-            return SplashViewModel(mediaRepository) as T
-        } else {
-            throw UnsupportedOperationException("The requested ViewModel is currently unsupported. " +
-                    "Please make sure to implement are correct creation of it. " +
-                    " Request: ${modelClass.canonicalName}")
+        return when (modelClass) {
+            BrowseViewModel::class.java -> BrowseViewModel(
+                offlineItemManager,
+                mediaRepository,
+                database,
+                streamingRepository,
+                preferencesManager,
+                resourcesFacade) as T
+            PlayerViewModel::class.java -> PlayerViewModel(database) as T
+            DetailsViewModel::class.java -> DetailsViewModel(
+                database,
+                offlineItemManager,
+                preferencesManager,
+                mediaRepository
+            ) as T
+            PreferencesViewModel::class.java -> PreferencesViewModel(
+                mediaRepository,
+                database.watchlistItemDao(),
+                externalFilesDir
+            ) as T
+            FavoritesImportViewModel::class.java -> FavoritesImportViewModel(
+                mediaRepository
+            ) as T
+            SplashViewModel::class.java -> SplashViewModel(mediaRepository) as T
+            else -> throw UnsupportedOperationException(
+                "The requested ViewModel is currently unsupported. " +
+                        "Please make sure to implement are correct creation of it. " +
+                        " Request: ${modelClass.canonicalName}"
+            )
         }
     }
+
     companion object : SingletonHolder<ViewModelFactory, Context>(::ViewModelFactory)
-    }
+}

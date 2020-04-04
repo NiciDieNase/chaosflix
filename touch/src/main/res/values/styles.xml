@@ -6,24 +6,13 @@
 		<item name="windowActionBar">false</item>
 		<item name="windowNoTitle">true</item>
 		<item name="android:windowContentTransitions">true</item>
-		<item name="android:colorPrimary">@color/primary</item>
-		<item name="android:colorPrimaryDark">@color/primary_dark</item>
-		<item name="android:colorAccent">@color/accent</item>
-		<!--<item name="android:textColorPrimary"></item>-->
-		<!--<item name="android:textColorSecondary"></item>-->
-		<!--<item name="android:actionBarStyle">@style/ToolbarStyle</item>-->
-<!--		<item name="colorControlNormal">@color/white</item>-->
-		<item name="preferenceTheme">@style/SettingsStyle</item>
-	</style>
-
-	<style name="ToolbarStyle" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 		<item name="colorPrimary">@color/primary</item>
+		<item name="android:colorPrimary">@color/primary</item>
 		<item name="colorPrimaryDark">@color/primary_dark</item>
+		<item name="android:colorPrimaryDark">@color/primary_dark</item>
 		<item name="colorAccent">@color/accent</item>
-		<item name="android:textColor">@color/white</item>
-		<item name="android:textColorPrimary">@color/white</item>
-		<item name="android:textColorSecondary">@color/white</item>
-		<item name="colorControlNormal">@color/white</item>
+		<item name="android:colorAccent">@color/accent</item>
+		<item name="preferenceTheme">@style/SettingsStyle</item>
 	</style>
 
 	<style name="SettingsStyle" parent="@style/PreferenceThemeOverlay.v14.Material">
@@ -40,10 +29,6 @@
 		<item name="android:textColor">@color/white</item>
 		<item name="android:textColorPrimary">@color/white</item>
 		<item name="android:textColorSecondary">@color/white</item>
-	</style>
-
-	<style name="ColoredToolbarStyle" parent="ToolbarStyle">
-		<item name="android:background">@color/primary</item>
 	</style>
 
 	<style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">

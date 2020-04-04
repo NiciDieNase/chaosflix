@@ -52,6 +52,13 @@
             android:parentActivityName=".browse.BrowseActivity"/>
 
         <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
+        <activity android:name=".favoritesimport.FavoritesImportActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/json" />
+            </intent-filter>
+        </activity>
 
     </application>
 

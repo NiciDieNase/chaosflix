@@ -18,6 +18,8 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RelatedEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RelatedEventDao
 import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
+import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
+import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
@@ -42,6 +44,7 @@ class MediaRepository(
     private val eventDao: EventDao by lazy { database.eventDao() }
     private val recordingDao: RecordingDao by lazy { database.recordingDao() }
     private val relatedEventDao: RelatedEventDao by lazy { database.relatedEventDao() }
+    private val watchlistItemDao: WatchlistItemDao by lazy { database.watchlistItemDao() }
 
     fun updateConferencesAndGroups(): SingleLiveEvent<LiveEvent<State, List<Conference>, String>> {
         val updateState = SingleLiveEvent<LiveEvent<State, List<Conference>, String>>()
@@ -232,11 +235,22 @@ class MediaRepository(
         return conferenceDao.findConferenceByAcronymSuspend(data.lastPathSegment)
     }
 
-    private suspend fun searchEvent(queryString: String): Event? {
+    suspend fun findEventByTitle(title: String): Event? {
+        var event: Event? = eventDao.findEventByTitleSuspend(title)
+        if (event == null) {
+            event = searchEvent(title, true)
+        }
+        return event
+    }
+
+    private suspend fun searchEvent(queryString: String, updateConference: Boolean = false): Event? {
         val searchEvents = recordingApi.searchEvents(queryString)
         if (searchEvents.events.isNotEmpty()) {
             val eventDto = searchEvents.events[0]
             val conference = updateConferencesAndGet(eventDto.conferenceUrl.split("/").last())
+            if (updateConference && conference != null) {
+                updateEventsForConference(conference)
+            }
             if (conference?.id != null) {
                 val event = Event(eventDto, conference.id)
                 eventDao.updateOrInsert(event)
@@ -247,6 +261,10 @@ class MediaRepository(
     }
 
     suspend fun getAllOfflineEvents(): List<Long> = database.offlineEventDao().getAllDownloadReferences()
+
+    suspend fun saveOrUpdate(watchlistItem: WatchlistItem) {
+        watchlistItemDao.updateOrInsert(watchlistItem)
+    }
 
     fun getReleatedEvents(event: Event, viewModelScope: CoroutineScope): LiveData<List<Event>> {
         val data = MutableLiveData<List<Event>>()
