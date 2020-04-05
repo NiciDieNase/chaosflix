@@ -57,7 +57,8 @@ class AboutActivity : AppCompatActivity() {
             .addGroup("Connect with us")
             .addGitHub("nicidienase/chaosflix", getString(R.string.about_github))
             .addWebsite(getString(R.string.about_beta_url), getString(R.string.about_beta))
-            .addTwitter("nicidienase", getString(R.string.about_twitter))
+//            .addTwitter("nicidienase", getString(R.string.about_twitter))
+                .addTwitter("chaosflix_app")
             .addPlayStore("de.nicidienase.chaosflix", getString(R.string.about_playstore))
             .create()
 
