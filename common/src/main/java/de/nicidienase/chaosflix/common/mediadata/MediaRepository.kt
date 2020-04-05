@@ -119,7 +119,12 @@ class MediaRepository(
     suspend fun updateSingleEvent(guid: String): Event? = withContext(Dispatchers.IO) {
         val event = recordingApi.getEventByGUIDSuspending(guid)
         return@withContext if (event != null) {
-            saveEvent(event)
+            try {
+                saveEvent(event)
+            } catch (ex: IllegalArgumentException) {
+                Log.e(TAG, "could not save event", ex)
+                null
+            }
         } else {
             null
         }
@@ -239,14 +244,19 @@ class MediaRepository(
         val searchEvents = recordingApi.searchEvents(queryString)
         if (searchEvents.events.isNotEmpty()) {
             val eventDto = searchEvents.events[0]
-            val conference = updateConferencesAndGet(eventDto.conferenceUrl.split("/").last())
-            if (updateConference && conference != null) {
-                updateEventsForConference(conference)
-            }
-            if (conference?.id != null) {
-                var event = Event(eventDto, conference.id)
-                eventDao.updateOrInsert(event)
-                return event
+            try {
+                val conference = updateConferencesAndGet(eventDto.conferenceUrl.split("/").last())
+                if (updateConference && conference != null) {
+                    updateEventsForConference(conference)
+                }
+                if (conference?.id != null) {
+                    var event = Event(eventDto, conference.id)
+                    eventDao.updateOrInsert(event)
+                    return event
+                }
+            } catch (ex: IllegalArgumentException) {
+                Log.e(TAG, "could not load conference", ex)
+                return null
             }
         }
         return null
