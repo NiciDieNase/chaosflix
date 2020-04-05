@@ -123,6 +123,11 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
             if (it != null) {
                 relatedEventsAdapter.items = it
             }
+            if (it?.isNotEmpty() == true) {
+                binding.relatedItemsText.visibility = View.VISIBLE
+            } else {
+                binding.relatedItemsText.visibility = View.GONE
+            }
         })
 
         return binding.root
