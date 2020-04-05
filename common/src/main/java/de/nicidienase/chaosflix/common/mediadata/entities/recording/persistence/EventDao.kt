@@ -22,7 +22,9 @@ abstract class EventDao : BaseDao<Event>() {
     @Query("SELECT * FROM event WHERE guid = :guid LIMIT 1")
     abstract fun findEventByGuid(guid: String): LiveData<Event?>
 
-    @Query("SELECT * FROM event WHERE guid = :guid LIMIT 1")
+    @Query("""SELECT event.*, conference.acronym as conference FROM event 
+        JOIN conference ON event.conferenceId = conference.id 
+        WHERE guid = :guid LIMIT 1""")
     abstract suspend fun findEventByGuidSync(guid: String): Event?
 
     @Query("SELECT * FROM event WHERE id in (:ids)")
@@ -73,7 +75,7 @@ abstract class EventDao : BaseDao<Event>() {
 // 	@Query("SELECT * FROM event JOIN conference ON event.conferenceId=conference.id WHERE event.id = :eventId")
 // 	abstract suspend fun getAllEventsWithConference(eventId: Long): List<EventWithConference>
 
-    @Query("""SELECT event.*, conference.title as conference
+    @Query("""SELECT event.*, conference.acronym as conference
     FROM event JOIN conference ON event.conferenceId=conference.id 
     WHERE conference.id = :confernceId""")
     abstract fun getEventsWithConferenceForConfernce(confernceId: Long): LiveData<List<Event>>

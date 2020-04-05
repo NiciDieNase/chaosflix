@@ -9,7 +9,7 @@ import androidx.room.Query
 @Dao
 interface PlaybackProgressDao {
 
-    @Query("""SELECT event.*, progress.progress, progress.watch_date, conference.title as conference 
+    @Query("""SELECT event.*, progress.progress, progress.watch_date, conference.acronym as conference 
         FROM playback_progress as progress 
         JOIN event ON event_guid = event.guid 
         JOIN conference ON event.conferenceId = conference.id""")

@@ -80,6 +80,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
             relatedEventsAdapter = EventRecyclerViewAdapter {
                 viewModel.relatedEventSelected(it)
             }
+            relatedEventsAdapter.showConferenceName = true
             adapter = relatedEventsAdapter
             val columns: Int = resources.getInteger(R.integer.num_columns)
             layoutManager = if (columns == 1) {
@@ -87,11 +88,6 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
             } else {
                 StaggeredGridLayoutManager(columns, StaggeredGridLayoutManager.VERTICAL)
             }
-            val itemDecoration = androidx.recyclerview.widget.DividerItemDecoration(
-                binding.relatedItemsList.context,
-                    LinearLayoutManager.VERTICAL
-            )
-            addItemDecoration(itemDecoration)
         }
 
         binding.appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->

@@ -263,6 +263,7 @@ class MediaRepository(
         viewModelScope.launch(Dispatchers.IO) {
             val guids = relatedEventDao.getRelatedEventsForEventSuspend(event.id)
             val relatedEvents: List<Event> = guids.mapNotNull { findEventForGuid(it) }
+
             if (guids.size != relatedEvents.size) {
                 Log.e(TAG, "Could not find all related Events")
             }
