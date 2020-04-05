@@ -9,10 +9,9 @@
 			android:layout_width="match_parent"
 			android:layout_height="?attr/actionBarSize"
 			android:minHeight="?attr/actionBarSize"
+			style="@style/ToolbarStyle"
 			app:layout_scrollFlags="scroll|enterAlways|snap"
 			tools:title="Title"
-			app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-			app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
 			tools:showIn="@layout/activity_browse"/>
 	</merge>
 </layout>

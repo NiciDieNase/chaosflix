@@ -5,7 +5,6 @@
 	android:id="@+id/list"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:background="@color/background"
 	app:layout_anchor="@id/sliding_tabs"
 	app:layout_anchorGravity="bottom"
 	app:layout_behavior="@string/appbar_scrolling_view_behavior"
