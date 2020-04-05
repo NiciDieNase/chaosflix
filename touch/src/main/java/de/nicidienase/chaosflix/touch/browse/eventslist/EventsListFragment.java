@@ -22,6 +22,9 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event;
@@ -50,7 +53,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 	private EventRecyclerViewAdapter eventAdapter;
 	private Conference               conference;
 
-	private LinearLayoutManager layoutManager;
+	private RecyclerView.LayoutManager layoutManager;
 	private Snackbar            snackbar;
 	private int                 type;
 
@@ -96,7 +99,7 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		if (columnCount <= 1) {
 			layoutManager = new LinearLayoutManager(getContext());
 		} else {
-			layoutManager = new GridLayoutManager(getContext(), columnCount);
+			layoutManager = new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
 		}
 		binding.list.setLayoutManager(layoutManager);
 
@@ -106,8 +109,6 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
 		});
 		eventAdapter.setHasStableIds(true);
 		binding.list.setAdapter(eventAdapter);
-		DividerItemDecoration itemDecoration = new DividerItemDecoration(binding.list.getContext(), layoutManager.getOrientation());
-//		binding.list.addItemDecoration(itemDecoration);
 
 		Observer<List<Event>> listObserver = persistentEvents -> {
 			setLoadingOverlayVisibility(false);

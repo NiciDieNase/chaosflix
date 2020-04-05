@@ -6,15 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment
 import de.nicidienase.chaosflix.touch.databinding.FragmentDownloadsBinding
 
 class DownloadsListFragment : BrowseFragment() {
-
-// 	private lateinit var binding: FragmentDownloadsBinding
 
     private val handler = Handler()
 
@@ -34,10 +32,10 @@ class DownloadsListFragment : BrowseFragment() {
             }
             list.adapter = offlineEventAdapter
             if (columnCount <= 1) {
-                list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+                list.layoutManager = LinearLayoutManager(context)
             } else {
                 list.layoutManager =
-                    androidx.recyclerview.widget.GridLayoutManager(context, columnCount - 1)
+                    StaggeredGridLayoutManager(columnCount - 1, StaggeredGridLayoutManager.VERTICAL)
             }
             viewModel.getOfflineDisplayEvents().observe(this@DownloadsListFragment, Observer {
                 if (it != null) {

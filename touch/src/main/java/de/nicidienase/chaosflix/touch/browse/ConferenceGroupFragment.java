@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +64,7 @@ public class ConferenceGroupFragment extends BrowseFragment {
 			if (columnCount <= 1) {
 				layoutManager = new LinearLayoutManager(context);
 			} else {
-				layoutManager = new GridLayoutManager(context, columnCount);
+				layoutManager = new StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL);
 			}
 			recyclerView.setLayoutManager(layoutManager);
 
