@@ -25,6 +25,7 @@ import de.nicidienase.chaosflix.leanback.ChaosflixEventAdapter
 import de.nicidienase.chaosflix.leanback.DiffCallbacks
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
 import de.nicidienase.chaosflix.leanback.R
+import de.nicidienase.chaosflix.leanback.SelectableContentItem
 
 class ConferencesBrowseFragment : BrowseSupportFragment() {
     private val rowsAdapter = ArrayObjectAdapter(ListRowPresenter())
@@ -36,6 +37,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
     private lateinit var promotedRow: ListRow
     private lateinit var watchlistRow: ListRow
     private lateinit var inProgressRow: ListRow
+    private lateinit var settingsRow: ListRow
     private lateinit var promotedAdapter: ChaosflixEventAdapter
     private lateinit var watchListAdapter: ChaosflixEventAdapter
     private lateinit var inProgressAdapter: ChaosflixEventAdapter
@@ -45,6 +47,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 
     private val conferencePresenter = CardPresenter(R.style.ConferenceCardStyle)
     private val eventPresenter = CardPresenter(R.style.EventCardStyle)
+    private val settingsPresenter = CardPresenter(R.style.SettingsCardStyle)
 
     private val conferencesGroupRows = HashMap<String, ListRow>()
 
@@ -80,6 +83,12 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 
         onItemViewClickedListener = ItemViewClickedListener(this)
         adapter = rowsAdapter
+
+        val listRowAdapter = ArrayObjectAdapter(settingsPresenter)
+        listRowAdapter.add(SelectableContentItem.Settings)
+        listRowAdapter.add(SelectableContentItem.About)
+        settingsRow = ListRow(HeaderItem("Chaosflix"), listRowAdapter)
+        rowsAdapter.add(0, settingsRow)
 
         viewModel.getConferenceGroups().observe(this, Observer { conferenceGroups ->
             if (conferenceGroups != null && conferenceGroups.isNotEmpty()) {
@@ -191,7 +200,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
             if (sectionVisible(section)) {
                 clearSection(section)
             } else {
-                addSectionIfNecessary(section)
+                    addSectionIfNecessary(section)
             }
             val i = rowsAdapter.indexOf(before)
             rowsAdapter.addAll(i, rows)
@@ -206,9 +215,10 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
     private fun addSectionIfNecessary(section: Section) {
         when (section) {
             Section.Streaming -> {
-                rowsAdapter.add(0, streamsDivider)
-                rowsAdapter.add(0, streamingSection)
-                rowsAdapter.notifyArrayItemRangeChanged(0, 2)
+                val startIndex = 1
+                rowsAdapter.add(startIndex, streamsDivider)
+                rowsAdapter.add(startIndex, streamingSection)
+                rowsAdapter.notifyArrayItemRangeChanged(startIndex, 2)
             }
             Section.Recommendations -> {
                 val index = rowsAdapter.indexOf(conferencesSection)

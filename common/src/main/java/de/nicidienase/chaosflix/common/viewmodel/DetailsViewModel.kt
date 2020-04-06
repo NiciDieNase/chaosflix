@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
+import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.PreferencesManager
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
@@ -15,6 +16,7 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import java.io.File
+import java.util.ArrayList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -101,19 +103,21 @@ class DetailsViewModel(
                 }
             } else {
                 // select quality then playEvent
-                val items = database.recordingDao().findRecordingByEventSync(event.id).toTypedArray()
+                val items: List<Recording> = database.recordingDao().findRecordingByEventSync(event.id)
                 val bundle = Bundle()
                 bundle.putParcelable(EVENT, event)
-                bundle.putParcelableArray(KEY_SELECT_RECORDINGS, items)
+                bundle.putParcelableArrayList(KEY_SELECT_RECORDINGS, ArrayList(items))
                 state.postValue(LiveEvent(State.SelectRecording, data = bundle))
             }
         }
     }
 
-    fun playRecording(event: Event, recording: Recording) {
-        val bundle = Bundle()
-        bundle.putParcelable(RECORDING, recording)
-        bundle.putParcelable(EVENT, event)
+    fun playRecording(event: Event, recording: Recording, urlForThumbs: String? = null) = viewModelScope.launch {
+        val bundle = Bundle().apply {
+            putParcelable(RECORDING, recording)
+            putParcelable(EVENT, event)
+            putString(THUMBS_URL, urlForThumbs)
+        }
         if (preferencesManager.externalPlayer) {
             state.postValue(LiveEvent(State.PlayExternal, bundle))
         } else {
@@ -128,12 +132,29 @@ class DetailsViewModel(
 
     private fun postStateWithEventAndRecordings(s: State, e: Event) {
         viewModelScope.launch(Dispatchers.IO) {
-            val items = database.recordingDao().findRecordingByEventSync(e.id).toTypedArray()
+            val items = database.recordingDao().findRecordingByEventSync(e.id)
             val bundle = Bundle()
             bundle.putParcelable(EVENT, e)
-            bundle.putParcelableArray(KEY_SELECT_RECORDINGS, items)
+            bundle.putParcelableArrayList(KEY_SELECT_RECORDINGS, ArrayList(items))
             state.postValue(LiveEvent(s, bundle))
         }
+    }
+
+    fun play(event: Event) = viewModelScope.launch {
+        if (autoselectRecording) {
+            val recordings = database.recordingDao().findRecordingByEventSync(event.id)
+            val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
+            val recordingUrl = ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl
+            playRecording(event, optimalRecording, recordingUrl)
+        } else {
+            playEvent(event)
+        }
+    }
+
+    fun recordingSelected(e: Event, r: Recording) = viewModelScope.launch {
+        val recordings: List<Recording> = database.recordingDao().findRecordingByEventSync(e.id)
+        val url = ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl
+        playRecording(e, r, url)
     }
 
     enum class State {
@@ -152,5 +173,6 @@ class DetailsViewModel(
         const val KEY_SELECT_RECORDINGS = "select_recordings"
         const val RECORDING = "recording"
         const val EVENT = "event"
+        const val THUMBS_URL = "thumbs_url"
     }
 }

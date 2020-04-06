@@ -1,7 +1,6 @@
 package de.nicidienase.chaosflix.leanback.conferences
 
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
 import de.nicidienase.chaosflix.leanback.R
 
 class ConferencesActivity : androidx.fragment.app.FragmentActivity() {

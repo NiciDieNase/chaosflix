@@ -14,10 +14,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
-import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
+import de.nicidienase.chaosflix.common.util.RecordingUtil
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
@@ -51,7 +51,7 @@ class EventDetailsActivity : AppCompatActivity(),
             val event = liveEvent.data?.getParcelable<Event>(DetailsViewModel.EVENT)
             val recording = liveEvent.data?.getParcelable<Recording>(DetailsViewModel.RECORDING)
             val localFile = liveEvent.data?.getString(DetailsViewModel.KEY_LOCAL_PATH)
-            val selectItems: Array<Recording>? = liveEvent.data?.getParcelableArray(DetailsViewModel.KEY_SELECT_RECORDINGS) as Array<Recording>?
+            val selectItems: List<Recording>? = liveEvent.data?.getParcelableArrayList(DetailsViewModel.KEY_SELECT_RECORDINGS)
             when (liveEvent.state) {
                 DetailsViewModel.State.DisplayEvent -> {
                     if (event != null) {
@@ -70,14 +70,14 @@ class EventDetailsActivity : AppCompatActivity(),
                 }
                 DetailsViewModel.State.SelectRecording -> {
                     if (event != null && selectItems != null) {
-                            selectRecording(event, selectItems.asList()) { e, r ->
-                                viewModel.playRecording(e, r)
+                            selectRecording(event, selectItems) { e, r ->
+                                viewModel.recordingSelected(e, r)
                             }
                     }
                 }
                 DetailsViewModel.State.DownloadRecording -> {
                     if (event != null && selectItems != null) {
-                        selectRecording(event, selectItems.asList()) { e, r ->
+                        selectRecording(event, selectItems) { e, r ->
                             viewModel.download(e, r).observe(this, Observer {
                                 when (it?.state) {
                                     OfflineItemManager.State.Downloading -> {
@@ -99,7 +99,7 @@ class EventDetailsActivity : AppCompatActivity(),
                 DetailsViewModel.State.PlayExternal -> {
                     if (event != null) {
                         if (selectItems != null) {
-                            selectRecording(event, selectItems.asList()) { _, r ->
+                            selectRecording(event, selectItems) { _, r ->
                                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(r.recordingUrl)))
                             }
                         } else if (recording != null) {
@@ -140,29 +140,21 @@ class EventDetailsActivity : AppCompatActivity(),
     }
 
     private fun selectRecording(event: Event, recordings: List<Recording>, action: (Event, Recording) -> Unit) {
-        if (viewModel.autoselectRecording) {
-            val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
-            action.invoke(event, optimalRecording)
-        } else {
-            val items: List<String> = recordings.map { getStringForRecording(it) }
-            selectRecordingFromList(items, DialogInterface.OnClickListener { _, i ->
-                action.invoke(event, recordings[i])
-            })
+        val items: List<String> = recordings.map { RecordingUtil.getStringForRecording(it) }
+        selectRecordingFromList(items) { i ->
+            action.invoke(event, recordings[i])
         }
     }
 
-    private fun getStringForRecording(recording: Recording): String {
-        return "${if (recording.isHighQuality) "HD" else "SD"}  ${recording.folder}  [${recording.language}]"
-    }
-
-    private fun selectRecordingFromList(items: List<String>, resultHandler: DialogInterface.OnClickListener) {
-            if (selectDialog != null) {
-                selectDialog?.dismiss()
-            }
-            val builder = AlertDialog.Builder(this)
-            builder.setItems(items.toTypedArray(), resultHandler)
-            selectDialog = builder.create()
-            selectDialog?.show()
+    private fun selectRecordingFromList(items: List<String>, resultHandler: (Int) -> Unit) {
+        val onClickListener = DialogInterface.OnClickListener { _, which -> resultHandler.invoke(which) }
+        if (selectDialog != null) {
+            selectDialog?.dismiss()
+        }
+        val builder = AlertDialog.Builder(this)
+        builder.setItems(items.toTypedArray(), onClickListener)
+        selectDialog = builder.create()
+        selectDialog?.show()
     }
 
     private fun showFragmentForEvent(event: Event, addToBackStack: Boolean = false) {

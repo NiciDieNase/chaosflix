@@ -49,8 +49,6 @@ class BrowseActivity : AppCompatActivity(),
 
     private var drawerOpen: Boolean = false
 
-    private val TAG = BrowseActivity::class.simpleName
-
     private lateinit var drawerToggle: ActionBarDrawerToggle
     private lateinit var binding: ActivityBrowseBinding
 
@@ -303,6 +301,9 @@ class BrowseActivity : AppCompatActivity(),
     }
 
     companion object {
+
+        private val TAG = BrowseActivity::class.simpleName
+
         fun launch(context: Context) {
             context.startActivity(Intent(context, BrowseActivity::class.java))
         }

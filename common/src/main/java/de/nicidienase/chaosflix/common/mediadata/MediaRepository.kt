@@ -86,11 +86,17 @@ class MediaRepository(
         return updateState }
 
     private suspend fun updateEventsForConferencesSuspending(conference: Conference): List<Event> {
-        val conferenceByName = recordingApi.getConferenceByNameSuspending(conference.acronym)
-        val events = conferenceByName?.events
-        return if (events != null) {
-            saveEvents(conference, events)
+        val response = recordingApi.getConferenceByNameSuspending(conference.acronym)
+        return if (response.isSuccessful) {
+            val conferenceByName = response.body()
+            val events = conferenceByName?.events
+            if (events != null) {
+                saveEvents(conference, events)
+            } else {
+                emptyList()
+            }
         } else {
+            Log.e(TAG, response.message())
             emptyList()
         }
     }

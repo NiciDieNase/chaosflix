@@ -121,9 +121,12 @@ configurations {
 dependencies {
     implementation project(':common')
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.leanback:leanback:1.0.0'
     implementation 'androidx.leanback:leanback-preference:1.0.0'
+    implementation "androidx.legacy:legacy-preference-v14:1.0.0"
+    implementation "androidx.tvprovider:tvprovider:1.0.0"
+
     implementation 'com.google.android.exoplayer:extension-leanback:2.9.6'
     androidTestImplementation('androidx.test:rules:1.1.1') {
         exclude module: 'support-annotations'

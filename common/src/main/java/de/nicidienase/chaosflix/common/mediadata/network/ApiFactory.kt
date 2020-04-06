@@ -2,11 +2,13 @@ package de.nicidienase.chaosflix.common.mediadata.network
 
 import android.content.res.Resources
 import android.os.Build
+import android.util.Log
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.BuildConfig
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.SingletonHolder2
 import java.io.File
+import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 import okhttp3.Cache
 import okhttp3.Interceptor
@@ -48,7 +50,12 @@ class ApiFactory private constructor(res: Resources, cache: File) {
         val requestWithUseragent = chain.request().newBuilder()
             .header("User-Agent", chaosflixUserAgent)
             .build()
-        return@Interceptor chain.proceed(requestWithUseragent)
+        try {
+            return@Interceptor chain.proceed(requestWithUseragent)
+        } catch (ex: SocketTimeoutException) {
+            Log.e("UserAgentIntercepor", ex.message, ex)
+            return@Interceptor null
+        }
     }
 
     companion object : SingletonHolder2<ApiFactory, Resources, File>(::ApiFactory) {

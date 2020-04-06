@@ -20,7 +20,7 @@ abstract class RecordingDao : BaseDao<Recording>() {
     abstract fun findRecordingByEvent(id: Long): LiveData<List<Recording>>
 
     @Query("SELECT * FROM recording WHERE eventId = :id")
-    abstract fun findRecordingByEventSync(id: Long): List<Recording>
+    abstract suspend fun findRecordingByEventSync(id: Long): List<Recording>
 
     @Query("SELECT * FROM recording WHERE backendId = :backendId")
     abstract fun findRecordingByBackendId(backendId: Long): Recording?

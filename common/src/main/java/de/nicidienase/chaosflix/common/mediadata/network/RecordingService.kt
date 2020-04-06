@@ -6,6 +6,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventDto
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventsResponse
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.RecordingDto
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -37,7 +38,7 @@ interface RecordingService {
     suspend fun getConferencesWrapperSuspending(): ConferencesWrapper?
 
     @GET("public/conferences/{acronym}")
-    suspend fun getConferenceByNameSuspending(@Path("acronym")acronym: String): ConferenceDto?
+    suspend fun getConferenceByNameSuspending(@Path("acronym")acronym: String): Response<ConferenceDto?>
 
     @GET("public/events/search")
     suspend fun searchEventsSuspending(@Query("q") query: String): EventsResponse?

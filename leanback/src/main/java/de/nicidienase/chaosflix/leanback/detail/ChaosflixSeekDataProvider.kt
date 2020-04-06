@@ -10,6 +10,8 @@ import android.os.Build
 import android.util.Log
 import androidx.leanback.media.PlaybackGlue
 import androidx.leanback.widget.PlaybackSeekDataProvider
+import de.nicidienase.chaosflix.common.AnalyticsWrapper
+import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +38,8 @@ class ChaosflixSeekDataProvider(
     private val thumbnails: MutableMap<Long, Bitmap> = mutableMapOf()
     private val dummyThumbnails: MutableMap<Long, Bitmap> = mutableMapOf()
 
+    private val calcTimes: MutableList<Long> = mutableListOf()
+
     private val positions: LongArray by lazy {
         val list = mutableListOf<Long>()
         for (i in 0..(length * 1000) step calculateInterval(length)) {
@@ -49,19 +53,24 @@ class ChaosflixSeekDataProvider(
     private fun calculateInterval(length: Long): Long {
         return 1000L * when (length) {
             in 0..60 -> 1 // 0..1min
-            in 60..(1800) -> 30 // 1..30min
-            in (30 * 60)..(90 * 60) -> 60 // 30..90min
-            else -> 90
+            in 60..(30 * 60) -> 10 // 1..30min
+            in (30 * 60)..(90 * 60) -> 15 // 30..90min
+            else -> 30
         }
     }
 
-    override fun getSeekPositions(): LongArray {
+    fun initialize() {
         if (canceled) {
+            canceled = false
             Log.d(TAG, "Retriever was canceled before, reinitializing")
             mediaMetadataRetriever = MediaMetadataRetriever()
             mediaMetadataRetriever.setDataSource(url, mapOf("User-Agent" to ApiFactory.buildUserAgent()))
             generateThumbs()
         }
+    }
+
+    override fun getSeekPositions(): LongArray {
+        initialize()
         return positions
     }
 
@@ -78,7 +87,9 @@ class ChaosflixSeekDataProvider(
             for (i in positions.indices) {
                 if (!thumbnails.containsKey(positions[i])) {
                     val bitmap = createBitmapForIndex(i)
-                    thumbnails[positions[i]] = bitmap
+                    if (bitmap != null) {
+                        thumbnails[positions[i]] = bitmap
+                    }
                     yield()
                 }
             }
@@ -95,9 +106,11 @@ class ChaosflixSeekDataProvider(
                 callback?.onThumbnailLoaded(dummyThumbnails[positions[index]], index)
                 scope.launch {
                     val thumb = createBitmapForIndex(index)
-                    thumbnails[positions[index]] = thumb
-                    withContext(Dispatchers.Main) {
-                        callback?.onThumbnailLoaded(thumb, index)
+                    if (thumb != null) {
+                        thumbnails[positions[index]] = thumb
+                        withContext(Dispatchers.Main) {
+                            callback?.onThumbnailLoaded(thumb, index)
+                        }
                     }
                 }
             }
@@ -109,16 +122,21 @@ class ChaosflixSeekDataProvider(
                 }
                 scope.launch {
                     val thumb = createBitmapForIndex(index)
-                    thumbnails[positions[index]] = thumb
-                    withContext(Dispatchers.Main) {
-                        callback?.onThumbnailLoaded(thumb, index)
+                    if (thumb != null) {
+                        thumbnails[positions[index]] = thumb
+                        withContext(Dispatchers.Main) {
+                            callback?.onThumbnailLoaded(thumb, index)
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun createBitmapForIndex(index: Int): Bitmap {
+    private fun createBitmapForIndex(index: Int): Bitmap? {
+        if (canceled) {
+            return null
+        }
         val startTime = System.currentTimeMillis()
         val pos = positions[index] * 1000
         val thumb: Bitmap =
@@ -134,7 +152,9 @@ class ChaosflixSeekDataProvider(
         val time = String.format("%d:%02d", seconds / 60, seconds % 60)
         drawStringToBitmap(thumb, time)
 
-        Log.d(TAG, "Adding Thumbnail ($index/${positions.size}) (took ${System.currentTimeMillis() - startTime}ms)")
+        val duration = System.currentTimeMillis() - startTime
+        calcTimes.add(duration)
+        Log.d(TAG, "Adding Thumbnail ($index/${positions.size}) (took ${duration}ms)")
         return thumb
     }
 
@@ -178,6 +198,16 @@ class ChaosflixSeekDataProvider(
             generateThumbsJob?.cancelAndJoin()
             mediaMetadataRetriever.release()
         }
+        AnalyticsWrapperImpl.addAnalyticsEvent(AnalyticsWrapper.thumbnailsStatEvent,
+                mapOf(
+                        "avg" to calcTimes.toLongArray().average().toLong().toString(),
+                        "positions_count" to positions.size.toString(),
+                        "calculated_count" to calcTimes.size.toString()
+                )
+        )
+        calcTimes.clear()
+        thumbnails.clear()
+        dummyThumbnails.clear()
         Log.d(TAG, "SeekData reset Done")
         super.reset()
     }
@@ -198,6 +228,7 @@ class ChaosflixSeekDataProvider(
             if (glue.isPrepared) {
                 glue.seekProvider = chaosflixSeekDataProvider
                 glue.isSeekEnabled = true
+                chaosflixSeekDataProvider.initialize()
             } else {
                 glue.addPlayerCallback(object : PlaybackGlue.PlayerCallback() {
                     override fun onPreparedStateChanged(glue: PlaybackGlue?) {
@@ -206,6 +237,7 @@ class ChaosflixSeekDataProvider(
                             (glue as ChaosMediaPlayerGlue).seekProvider =
                                 chaosflixSeekDataProvider
                             glue.isSeekEnabled = true
+                            chaosflixSeekDataProvider.initialize()
                         }
                     }
                 })

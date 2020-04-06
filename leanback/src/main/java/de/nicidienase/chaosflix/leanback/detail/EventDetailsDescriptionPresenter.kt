@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.leanback
+package de.nicidienase.chaosflix.leanback.detail
 
 import android.content.Context
 import android.text.TextUtils
@@ -13,40 +13,42 @@ import de.nicidienase.chaosflix.leanback.databinding.DetailViewBinding
 
 class EventDetailsDescriptionPresenter(private val context: Context) : Presenter() {
 
-    override fun onCreateViewHolder(parent: ViewGroup): Presenter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
         val binding = DetailViewBinding.inflate(LayoutInflater.from(context))
         return DescriptionViewHolder(binding.root, binding)
     }
 
-    override fun onBindViewHolder(viewHolder: Presenter.ViewHolder, item: Any) {
+    override fun onBindViewHolder(viewHolder: ViewHolder, item: Any) {
         if (viewHolder !is DescriptionViewHolder) { context
             throw IllegalStateException("Wrong ViewHolder")
         }
-        val dataHolder: DetailDataHolder
-        if (item is Event) {
-            val sb = StringBuilder()
-            val speaker = TextUtils.join(", ", item.persons ?: emptyArray())
-            sb.append(item.description)
-                    .append("\n")
-                    .append("\nreleased at: ").append(item.releaseDate)
-                    .append("\nTags: ").append(android.text.TextUtils.join(", ", item.tags!!))
-            dataHolder = DetailDataHolder(item.title,
-                    item.subtitle,
-                    speaker,
-                    sb.toString())
-        } else if (item is Room) {
+        viewHolder.binding.item = when (item) {
+            is Event -> {
+                val sb = StringBuilder()
+                val speaker = TextUtils.join(", ", item.persons ?: emptyArray())
+                sb.append(item.description)
+                        .append("\n")
+                        .append("\nreleased at: ").append(item.releaseDate)
+                        .append("\nTags: ").append(TextUtils.join(", ", item.tags!!))
+                DetailDataHolder(item.title,
+                        item.subtitle,
+                        speaker,
+                        sb.toString())
+            }
+            is Room -> {
 
-            val currentTalk = item.talks?.get("current")
-            val nextTalk = item.talks?.get("next")
-            dataHolder = DetailDataHolder(title = item.display,
-                    subtitle = item.schedulename,
-                    speakers = currentTalk?.description ?: "",
-                    description = "Next Talk: ${nextTalk?.description ?: "no talk scheduled"}")
-        } else {
-            Log.e(TAG, "Item is neither PersistentEvent nor Room, this should not be happening")
-            dataHolder = DetailDataHolder("", "", "", "")
+                val currentTalk = item.talks?.get("current")
+                val nextTalk = item.talks?.get("next")
+                DetailDataHolder(title = item.display,
+                        subtitle = item.schedulename,
+                        speakers = currentTalk?.description ?: "",
+                        description = "Next Talk: ${nextTalk?.description ?: "no talk scheduled"}")
+            }
+            else -> {
+                Log.e(TAG, "Item is neither PersistentEvent nor Room, this should not be happening")
+                DetailDataHolder("", "", "", "")
+            }
         }
-        viewHolder.binding.item = dataHolder
     }
 
     inner class DetailDataHolder internal constructor(val title: String, val subtitle: String?, val speakers: String, val description: String) {
@@ -69,9 +71,9 @@ class EventDetailsDescriptionPresenter(private val context: Context) : Presenter
                 "")
     }
 
-    inner class DescriptionViewHolder(view: View, val binding: DetailViewBinding) : Presenter.ViewHolder(view)
+    inner class DescriptionViewHolder(view: View, val binding: DetailViewBinding) : ViewHolder(view)
 
-    override fun onUnbindViewHolder(vh: Presenter.ViewHolder) {}
+    override fun onUnbindViewHolder(vh: ViewHolder) {}
 
     companion object {
         private val TAG = EventDetailsDescriptionPresenter::class.java.simpleName
