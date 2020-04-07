@@ -1,7 +1,7 @@
 package de.nicidienase.chaosflix.common
 
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
-import kotlin.collections.ArrayList
 
 object ChaosflixUtil {
     fun getOptimalRecording(recordings: List<Recording>, originalLanguage: String): Recording {
@@ -66,6 +66,23 @@ object ChaosflixUtil {
         result.addAll(hqMp4Recordings)
         result.addAll(lqMp4Recordings)
         return result
+    }
+
+    fun areTagsUsefull(events: List<Event>, acronym: String): Boolean {
+        val tagList = events.map { it.tags ?: emptyArray() }
+                .toTypedArray()
+                .flatten()
+                .filterNot { it.matches("\\d+".toRegex()) }
+                .filterNot { it.toLowerCase() == acronym.toLowerCase() }
+        val tagCount: MutableMap<String,Int> = mutableMapOf()
+        for(tag in tagList.filterNotNull()) {
+            tagCount[tag] = tagCount[tag]?.plus(1) ?: 1
+        }
+        val usefulTags = tagCount.keys
+                .filter { tagCount[it]!! < events.size - 1 }
+                .filter { tagCount[it]!! > 1}
+                .filter { it.length >= 3 }
+        return usefulTags.isNotEmpty()
     }
 
     fun getStringForTag(tag: String): String {

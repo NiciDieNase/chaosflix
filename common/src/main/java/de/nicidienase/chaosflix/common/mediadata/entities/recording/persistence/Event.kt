@@ -108,7 +108,7 @@ data class Event(
             isPromoted = event.isPromoted,
             viewCount = event.viewCount,
             persons = event.persons,
-            tags = event.tags,
+            tags = event.tags?.filterNotNull()?.toTypedArray(),
             related = event.related?.map { RelatedEvent(event.eventID, it) },
             recordings = event.recordings?.map { Recording(it) }
     )
