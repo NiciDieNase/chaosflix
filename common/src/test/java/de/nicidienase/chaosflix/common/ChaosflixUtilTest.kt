@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 
 class ChaosflixUtilTest {
 
-
     val api = ApiFactory.getInstance("https://api.media.ccc.de", null).recordingApi
 
     @Test
@@ -34,7 +33,6 @@ class ChaosflixUtilTest {
 
     @Test
     fun chaosradio() = genericTest("chaosradio", false)
-
 
     fun genericTest(acronym: String, expResult: Boolean) = runBlocking {
         val conference = api.getConferenceByName(acronym).body()

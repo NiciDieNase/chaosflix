@@ -50,7 +50,7 @@ class ItemViewClickedListener(private val fragment: Fragment) : OnItemViewClicke
                     SelectableContentItem.About -> {
                     }
                     SelectableContentItem.LeakCanary -> {
-                        if(BuildConfig.DEBUG){
+                        if (BuildConfig.DEBUG) {
                             LeakCanaryLauncher.launch(fragment.requireContext())
                         }
                     }
