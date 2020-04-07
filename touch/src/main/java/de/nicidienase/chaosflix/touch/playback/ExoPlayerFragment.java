@@ -1,18 +1,8 @@
 package de.nicidienase.chaosflix.touch.playback;
 
-import androidx.lifecycle.ViewModelProviders;
-import androidx.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,11 +11,19 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -44,11 +42,12 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.material.snackbar.Snackbar;
 
-import de.nicidienase.chaosflix.touch.R;
 import de.nicidienase.chaosflix.common.viewmodel.PlayerViewModel;
-import de.nicidienase.chaosflix.touch.databinding.FragmentExoPlayerBinding;
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory;
+import de.nicidienase.chaosflix.touch.R;
+import de.nicidienase.chaosflix.touch.databinding.FragmentExoPlayerBinding;
 
 public class ExoPlayerFragment extends Fragment implements PlayerEventListener.PlayerStateChangeListener {
 	private static final String TAG = ExoPlayerFragment.class.getSimpleName();
@@ -145,7 +144,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 		if (exoPlayer != null) {
 			exoPlayer.setPlayWhenReady(playbackState);
 
-			viewModel.getPlaybackProgressLiveData(item.getEventGuid()).observe(this, playbackProgress -> {
+			viewModel.getPlaybackProgressLiveData(item.getEventGuid()).observe(getViewLifecycleOwner(), playbackProgress -> {
 				if (playbackProgress != null) {
 					exoPlayer.seekTo(playbackProgress.getProgress());
 				}

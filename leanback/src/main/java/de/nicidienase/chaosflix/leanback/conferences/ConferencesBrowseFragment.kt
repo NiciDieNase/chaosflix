@@ -2,6 +2,7 @@ package de.nicidienase.chaosflix.leanback.conferences
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.DividerRow
@@ -20,6 +21,7 @@ import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.BrowseErrorFragment
+import de.nicidienase.chaosflix.leanback.BuildConfig
 import de.nicidienase.chaosflix.leanback.CardPresenter
 import de.nicidienase.chaosflix.leanback.ChaosflixEventAdapter
 import de.nicidienase.chaosflix.leanback.DiffCallbacks
@@ -57,8 +59,9 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
         Conferences
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         title = resources.getString(R.string.app_name)
         badgeDrawable = resources.getDrawable(R.drawable.chaosflix_icon, null)
 
@@ -87,10 +90,13 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
         val listRowAdapter = ArrayObjectAdapter(settingsPresenter)
         listRowAdapter.add(SelectableContentItem.Settings)
         listRowAdapter.add(SelectableContentItem.About)
+        if(BuildConfig.DEBUG){
+            listRowAdapter.add(SelectableContentItem.LeakCanary)
+        }
         settingsRow = ListRow(HeaderItem("Chaosflix"), listRowAdapter)
         rowsAdapter.add(0, settingsRow)
 
-        viewModel.getConferenceGroups().observe(this, Observer { conferenceGroups ->
+        viewModel.getConferenceGroups().observe(viewLifecycleOwner, Observer { conferenceGroups ->
             if (conferenceGroups != null && conferenceGroups.isNotEmpty()) {
                 val conferenceRows = ArrayList<Row>()
                 errorFragment?.dismiss(fragmentManager)
@@ -108,7 +114,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
             }
         })
 
-        viewModel.getUpdateState().observe(this, Observer { downloaderEvent ->
+        viewModel.getUpdateState().observe(viewLifecycleOwner, Observer { downloaderEvent ->
             when (downloaderEvent?.state) {
                 MediaRepository.State.RUNNING -> {
                     Log.i(TAG, "Refresh running")
@@ -127,7 +133,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
             }
         })
 
-        viewModel.getBookmarkedEvents().observe(this, Observer { bookmarks ->
+        viewModel.getBookmarkedEvents().observe(viewLifecycleOwner, Observer { bookmarks ->
             if (bookmarks != null) {
                 watchListAdapter.setItems(bookmarks, DiffCallbacks.eventDiffCallback)
                 watchListAdapter.notifyItemRangeChanged(0, bookmarks.size)
@@ -136,7 +142,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
                 }
             }
         })
-        viewModel.getInProgressEvents().observe(this, Observer { inProgress ->
+        viewModel.getInProgressEvents().observe(viewLifecycleOwner, Observer { inProgress ->
             if (inProgress != null) {
                 inProgressAdapter.setItems(inProgress, DiffCallbacks.eventDiffCallback)
                 inProgressAdapter.notifyItemRangeChanged(0, inProgress.size)
@@ -146,7 +152,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
             }
         })
 
-        viewModel.getPromotedEvents().observe(this, Observer { promoted ->
+        viewModel.getPromotedEvents().observe(viewLifecycleOwner, Observer { promoted ->
             if (promoted != null) {
                 promotedAdapter.setItems(promoted, DiffCallbacks.eventDiffCallback)
                 promotedAdapter.notifyItemRangeChanged(0, promoted.size)
@@ -156,12 +162,17 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
             }
         })
 
-        viewModel.getLivestreams().observe(this, Observer { liveConferences ->
+        viewModel.getLivestreams().observe(viewLifecycleOwner, Observer { liveConferences ->
             if (liveConferences != null && liveConferences.isNotEmpty()) {
                 val streamRows = buildStreamRows(eventPresenter, liveConferences)
                 updateStreams(streamRows)
             }
         })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        errorFragment = null
     }
 
     private fun updateSectionRecomendations() =
@@ -275,7 +286,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
     }
 
     private fun bindConferencesToRow(group: ConferenceGroup, row: ListRow) {
-        viewModel.getConferencesByGroup(group.id).observe(this, Observer { conferences ->
+        viewModel.getConferencesByGroup(group.id).observe(viewLifecycleOwner, Observer { conferences ->
             (row.adapter as ArrayObjectAdapter).setItems(conferences?.sorted(), DiffCallbacks.conferenceDiffCallback)
         })
     }

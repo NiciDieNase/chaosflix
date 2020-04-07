@@ -3,17 +3,16 @@ package de.nicidienase.chaosflix.touch.browse;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import de.nicidienase.chaosflix.touch.R;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup;
+import de.nicidienase.chaosflix.touch.R;
 import de.nicidienase.chaosflix.touch.browse.adapters.ConferenceRecyclerViewAdapter;
 
 public class ConferenceGroupFragment extends BrowseFragment {
@@ -71,7 +70,7 @@ public class ConferenceGroupFragment extends BrowseFragment {
 			conferencesAdapter = new ConferenceRecyclerViewAdapter(listener);
 			conferencesAdapter.setHasStableIds(true);
 			recyclerView.setAdapter(conferencesAdapter);
-			getViewModel().getConferencesByGroup(conferenceGroup.getId()).observe(this, conferenceList -> {
+			getViewModel().getConferencesByGroup(conferenceGroup.getId()).observe(getViewLifecycleOwner(), conferenceList -> {
 				if(conferenceList != null){
 					if(conferenceList.size() > 0){
 						setLoadingOverlayVisibility(false);

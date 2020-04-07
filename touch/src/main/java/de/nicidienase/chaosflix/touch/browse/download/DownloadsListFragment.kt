@@ -37,7 +37,7 @@ class DownloadsListFragment : BrowseFragment() {
                 list.layoutManager =
                     StaggeredGridLayoutManager(columnCount - 1, StaggeredGridLayoutManager.VERTICAL)
             }
-            viewModel.getOfflineDisplayEvents().observe(this@DownloadsListFragment, Observer {
+            viewModel.getOfflineDisplayEvents().observe(viewLifecycleOwner, Observer {
                 if (it != null) {
                     offlineEventAdapter.items = it
                 }

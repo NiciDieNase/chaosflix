@@ -105,7 +105,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
                 .get(DetailsViewModel::class.java)
 
         viewModel.setEvent(event)
-                .observe(this, Observer {
+                .observe(viewLifecycleOwner, Observer {
                     Log.d(TAG, "Loading Event ${event.title}, ${event.guid}")
                     updateBookmark(event.guid)
                     binding.thumbImage.transitionName = getString(R.string.thumbnail) + event.guid
@@ -115,7 +115,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
                             .apply(RequestOptions().fitCenter())
                             .into(binding.thumbImage)
                 })
-        viewModel.getRelatedEvents(event).observe(this, Observer {
+        viewModel.getRelatedEvents(event).observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 relatedEventsAdapter.items = it
             }
@@ -131,7 +131,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
 
     private fun updateBookmark(guid: String) {
         viewModel.getBookmarkForEvent(guid)
-                .observe(this, Observer { watchlistItem: WatchlistItem? ->
+                .observe(viewLifecycleOwner, Observer { watchlistItem: WatchlistItem? ->
                     this.watchlistItem = watchlistItem
                     listener?.invalidateOptionsMenu()
                 })
@@ -164,7 +164,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
         menu.findItem(R.id.action_bookmark).isVisible = watchlistItem == null
         menu.findItem(R.id.action_unbookmark).isVisible = watchlistItem != null
 // 		menu.findItem(R.id.action_download).isVisible = viewModel.writeExternalStorageAllowed
-// 		viewModel.offlineItemExists(event).observe(this, Observer { itemExists->
+// 		viewModel.offlineItemExists(event).observe(viewLifecycleOwner, Observer { itemExists->
 // 					itemExists?.let {exists ->
 // 						menu.findItem(R.id.action_download).isVisible =
 // 								viewModel.writeExternalStorageAllowed && !exists
@@ -208,7 +208,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
                 return true
             }
             R.id.action_delete_offline_item -> {
-                viewModel.deleteOfflineItem(event).observe(this, Observer { success ->
+                viewModel.deleteOfflineItem(event).observe(viewLifecycleOwner, Observer { success ->
                     if (success != null) {
                         view?.let { Snackbar.make(it, "Deleted Download", Snackbar.LENGTH_SHORT).show() }
                     }

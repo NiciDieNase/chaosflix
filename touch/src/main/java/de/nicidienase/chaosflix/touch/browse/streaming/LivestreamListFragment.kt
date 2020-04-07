@@ -69,7 +69,7 @@ class LivestreamListFragment : BrowseFragment() {
 // 		}, 500)
         binding.swipeRefreshLayout.isRefreshing = true
         Log.d(TAG, "Refresh starting")
-        viewModel.getLivestreams().observe(this, Observer {
+        viewModel.getLivestreams().observe(viewLifecycleOwner, Observer {
             it?.let { adapter.setContent(it) }
             binding.swipeRefreshLayout.isRefreshing = false
             if (it?.size == 0 && !snackbar.isShown) {
