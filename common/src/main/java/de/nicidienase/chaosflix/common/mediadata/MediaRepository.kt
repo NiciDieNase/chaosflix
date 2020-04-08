@@ -4,7 +4,6 @@ import android.net.Uri
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventDto
@@ -268,18 +267,14 @@ class MediaRepository(
         watchlistItemDao.updateOrInsert(watchlistItem)
     }
 
-    fun getReleatedEvents(event: Event, viewModelScope: CoroutineScope): LiveData<List<Event>> {
-        val data = MutableLiveData<List<Event>>()
-        viewModelScope.launch(Dispatchers.IO) {
-            val guids = relatedEventDao.getRelatedEventsForEventSuspend(event.id)
-            val relatedEvents: List<Event> = guids.mapNotNull { findEventForGuid(it) }
+    suspend fun getReleatedEvents(event: Event, viewModelScope: CoroutineScope): List<Event> = withContext(Dispatchers.IO){
+        val guids = relatedEventDao.getRelatedEventsForEventSuspend(event.id)
+        val relatedEvents: List<Event> = guids.mapNotNull { findEventForGuid(it) }
 
-            if (guids.size != relatedEvents.size) {
-                Log.e(TAG, "Could not find all related Events")
-            }
-            data.postValue(relatedEvents)
+        if (guids.size != relatedEvents.size) {
+            Log.e(TAG, "Could not find all related Events")
         }
-        return data
+        return@withContext relatedEvents
     }
 
     private suspend fun findEventForGuid(guid: String): Event? {

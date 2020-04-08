@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.ChaosflixUtil
@@ -90,8 +91,9 @@ class DetailsViewModel(
         return result
     }
 
-    fun getRelatedEvents(event: Event): LiveData<List<Event>> =
-            mediaRepository.getReleatedEvents(event, viewModelScope)
+    fun getRelatedEvents(event: Event): LiveData<List<Event>> = liveData {
+        emit(mediaRepository.getReleatedEvents(event, viewModelScope))
+    }
 
     fun relatedEventSelected(event: Event) {
         val bundle = Bundle()
@@ -134,7 +136,7 @@ class DetailsViewModel(
         }
     }
 
-    fun playRecording(event: Event, recording: Recording, urlForThumbs: String? = null) = viewModelScope.launch {
+    private fun playRecording(event: Event, recording: Recording, urlForThumbs: String? = null) = viewModelScope.launch {
         val bundle = Bundle().apply {
             putParcelable(RECORDING, recording)
             putParcelable(EVENT, event)
