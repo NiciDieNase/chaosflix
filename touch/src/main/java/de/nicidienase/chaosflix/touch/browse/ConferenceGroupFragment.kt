@@ -23,7 +23,6 @@ class ConferenceGroupFragment : BrowseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_conferences_page, container, false)
 
-
         val columnCount = resources.getInteger(R.integer.num_columns)
         val conferenceGroup: ConferenceGroup? = arguments?.getParcelable(ARG_GROUP)
 
@@ -51,7 +50,6 @@ class ConferenceGroupFragment : BrowseFragment() {
                         }
                     }
                 })
-
             }
         }
         return view
@@ -69,13 +67,11 @@ class ConferenceGroupFragment : BrowseFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable(LAYOUTMANAGER_STATE, layoutManager?.onSaveInstanceState())
-
     }
 
     override fun onPause() {
         super.onPause()
         arguments?.putParcelable(LAYOUTMANAGER_STATE, layoutManager?.onSaveInstanceState())
-
     }
 
     override fun onDetach() {
