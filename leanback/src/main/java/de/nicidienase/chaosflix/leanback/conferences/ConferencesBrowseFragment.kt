@@ -44,7 +44,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
     private lateinit var watchListAdapter: ChaosflixEventAdapter
     private lateinit var inProgressAdapter: ChaosflixEventAdapter
 
-    var errorFragment: BrowseErrorFragment? = null
+    private var errorFragment: BrowseErrorFragment? = null
     private lateinit var viewModel: BrowseViewModel
 
     private val conferencePresenter = CardPresenter(R.style.ConferenceCardStyle)
@@ -71,7 +71,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
         watchListAdapter = ChaosflixEventAdapter(eventPresenter)
         inProgressAdapter = ChaosflixEventAdapter(eventPresenter)
         promotedAdapter = ChaosflixEventAdapter(eventPresenter)
-        promotedRow = ListRow(HeaderItem(getString(R.string.recomended)), promotedAdapter)
+        promotedRow = ListRow(HeaderItem(getString(R.string.recommended)), promotedAdapter)
         watchlistRow = ListRow(HeaderItem(getString(R.string.watchlist)), watchListAdapter)
         inProgressRow = ListRow(HeaderItem(getString(R.string.continue_watching)), inProgressAdapter)
 
@@ -100,6 +100,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
             if (conferenceGroups != null && conferenceGroups.isNotEmpty()) {
                 val conferenceRows = ArrayList<Row>()
                 errorFragment?.dismiss(fragmentManager)
+                errorFragment = null
                 for (group in conferenceGroups.sorted()) {
                     var row = conferencesGroupRows.get(group.name)
                     if (row == null) {
@@ -128,6 +129,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
                         errorFragment?.setErrorContent(errorMessage, fragmentManager)
                     } else {
                         errorFragment?.dismiss(fragmentManager)
+                        errorFragment = null
                     }
                 }
             }

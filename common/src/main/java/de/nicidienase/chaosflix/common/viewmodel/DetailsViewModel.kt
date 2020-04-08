@@ -18,7 +18,7 @@ import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
-import java.util.*
+import java.util.ArrayList
 
 class DetailsViewModel(
     private val database: ChaosflixDatabase,

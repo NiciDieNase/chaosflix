@@ -24,7 +24,7 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
 
     private var fragment: EventsFragment? = null
 
-    var errorFragment: BrowseErrorFragment? = null
+    private var errorFragment: BrowseErrorFragment? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +53,7 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
                             errorFragment?.setErrorContent("No Events found for this conference", supportFragmentManager)
                         } else {
                             errorFragment?.dismiss(supportFragmentManager)
+                            errorFragment = null
                         }
                     }
                 }
@@ -83,6 +84,7 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
                     EventsGridBrowseFragment.create(conference)
                 }
         errorFragment?.dismiss(supportFragmentManager) ?: Log.e(TAG, "Cannot dismiss, errorFragment is null")
+        errorFragment = null
         supportFragmentManager.beginTransaction().replace(R.id.browse_fragment, newFragment).commit()
 
         fragment = newFragment as EventsFragment
