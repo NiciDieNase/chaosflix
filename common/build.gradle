@@ -151,7 +151,7 @@ dependencies {
 
     api 'commons-io:commons-io:2.4'
 
-    def appCenterSdkVersion = '2.2.0'
+    def appCenterSdkVersion = '2.5.1'
     noFreeImplementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
     noFreeImplementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
     noFreeImplementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"

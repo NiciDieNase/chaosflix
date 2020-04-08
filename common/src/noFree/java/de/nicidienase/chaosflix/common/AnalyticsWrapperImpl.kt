@@ -35,5 +35,9 @@ object AnalyticsWrapperImpl : AnalyticsWrapper {
         Analytics.trackEvent(event, params)
     }
 
+    override fun trackException(exception: Exception) {
+        Crashes.trackError(exception)
+    }
+
     private val TAG = AnalyticsWrapperImpl::class.java.simpleName
 }

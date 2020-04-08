@@ -9,6 +9,9 @@ object AnalyticsWrapperImpl : AnalyticsWrapper {
     override fun startAnalytics() {}
 
     override fun stopAnalytics() {}
+    override fun trackException(exception: Exception) {
+        Log.e(TAG, exception.message, exception)
+    }
 
     override fun addAnalyticsEvent(event: String, params: Map<String, String>) {
         Log.i(TAG, "Not Tracking analytics event $event with parameters $params")
