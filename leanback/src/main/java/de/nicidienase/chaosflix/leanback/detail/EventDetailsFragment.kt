@@ -72,6 +72,7 @@ import kotlinx.coroutines.launch
 class EventDetailsFragment : DetailsSupportFragment() {
 
     private var selectDialog: AlertDialog? = null
+    private var loadingDialog: AlertDialog? = null
 
     private val uiScope = CoroutineScope(Dispatchers.Main)
 
@@ -80,8 +81,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
     private var event: Event? = null
     private var room: Room? = null
-
-    private var currentRecordings: List<Recording>? = null
 
     private lateinit var rowsAdapter: ArrayObjectAdapter
 
@@ -169,6 +168,8 @@ class EventDetailsFragment : DetailsSupportFragment() {
                     }
                 }
                 DetailsViewModel.State.SelectRecording -> {
+                    loadingDialog?.dismiss()
+                    loadingDialog = null
                     val event: Event? = state.data?.getParcelable(DetailsViewModel.EVENT)
                     val recordings: List<Recording>? = state.data?.getParcelableArrayList(DetailsViewModel.KEY_SELECT_RECORDINGS)
                     if (event != null && recordings != null && recordings.isNotEmpty()) {
@@ -184,12 +185,24 @@ class EventDetailsFragment : DetailsSupportFragment() {
                 DetailsViewModel.State.Error -> {
                     showError(state.error)
                 }
-                else -> {
-                    // Download
-                    Log.e(TAG, "Case not relevant for leanback UI, this should not happen")
+                DetailsViewModel.State.Loading -> {
+                    showLoadingDialog()
                 }
+                DetailsViewModel.State.PlayOfflineItem -> irrelevantCase()
+                DetailsViewModel.State.DownloadRecording -> irrelevantCase()
+                DetailsViewModel.State.PlayExternal -> irrelevantCase()
             }
         })
+    }
+
+    fun showLoadingDialog() {
+        loadingDialog = AlertDialog.Builder(requireContext())
+                .setTitle("Loading Recordings")
+                .create().apply { show() }
+    }
+
+    private fun irrelevantCase() {
+        Log.e(TAG, "Case not relevant for leanback UI, this should not happen")
     }
 
     private fun showError(errorMessage: String?) {
@@ -315,7 +328,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
                     }
 
                     override fun onLoadFailed(errorDrawable: Drawable?) {
-                        detailsOverview.setImageDrawable(ContextCompat.getDrawable(requireContext(), DEFAULT_DRAWABLE))
+                        detailsOverview.imageDrawable = ContextCompat.getDrawable(requireContext(), DEFAULT_DRAWABLE)
                     }
                 })
     }

@@ -30,11 +30,10 @@ import java.util.Timer
 import java.util.TimerTask
 
 class EventsGridBrowseFragment : VerticalGridSupportFragment(), EventsActivity.EventsFragment {
-    private val NUM_COLUMNS = 4
 
     private val handler = Handler()
     private val rowsAdapter: ArrayObjectAdapter =
-        ArrayObjectAdapter(CardPresenter(R.style.EventGridCardStyle))
+            ArrayObjectAdapter(CardPresenter(R.style.EventGridCardStyle))
     private lateinit var defaultBackground: Drawable
     private var metrics: DisplayMetrics? = null
     private var backgroundTimer: Timer? = null
@@ -49,10 +48,8 @@ class EventsGridBrowseFragment : VerticalGridSupportFragment(), EventsActivity.E
             defaultBackground = this
         }
 
-        val conference: Conference? = arguments?.getParcelable(EventsRowsBrowseFragment.CONFERENCE)
-        if (conference == null) {
-            throw IllegalStateException("No conference passed")
-        }
+        val conference: Conference = arguments?.getParcelable(EventsRowsBrowseFragment.CONFERENCE)
+                ?: throw IllegalStateException("No conference passed")
 
         loadImage(conference.logoUrl, this::setBadgeDrawable)
         title = conference.title
@@ -91,16 +88,16 @@ class EventsGridBrowseFragment : VerticalGridSupportFragment(), EventsActivity.E
         options.centerCrop()
 
         Glide.with(this)
-            .load(url)
-            .apply(options)
-            .into(object : SimpleTarget<Drawable>() {
-                override fun onResourceReady(
-                    resource: Drawable,
-                    transition: Transition<in Drawable>?
-                ) {
-                    consumer.invoke(resource)
-                }
-            })
+                .load(url)
+                .apply(options)
+                .into(object : SimpleTarget<Drawable>() {
+                    override fun onResourceReady(
+                            resource: Drawable,
+                            transition: Transition<in Drawable>?
+                    ) {
+                        consumer.invoke(resource)
+                    }
+                })
     }
 
     protected fun updateBackground(uri: String) {
@@ -120,10 +117,10 @@ class EventsGridBrowseFragment : VerticalGridSupportFragment(), EventsActivity.E
 
     private inner class ItemViewSelectedListener : OnItemViewSelectedListener {
         override fun onItemSelected(
-            itemViewHolder: Presenter.ViewHolder,
-            item: Any,
-            rowViewHolder: RowPresenter.ViewHolder,
-            row: Row
+                itemViewHolder: Presenter.ViewHolder,
+                item: Any,
+                rowViewHolder: RowPresenter.ViewHolder,
+                row: Row
         ) {
             if (item is Event) {
                 try {
@@ -156,6 +153,8 @@ class EventsGridBrowseFragment : VerticalGridSupportFragment(), EventsActivity.E
 
         private const val BACKGROUND_UPDATE_DELAY = 300
         private const val CONFERENCE = "conference"
+
+        private const val NUM_COLUMNS = 4
 
         fun create(conference: Conference): EventsGridBrowseFragment {
             return EventsGridBrowseFragment().apply {

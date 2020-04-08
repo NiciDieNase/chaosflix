@@ -77,7 +77,8 @@ abstract class EventDao : BaseDao<Event>() {
 
     @Query("""SELECT event.*, conference.acronym as conference
     FROM event JOIN conference ON event.conferenceId=conference.id 
-    WHERE conference.id = :confernceId""")
+    WHERE conference.id = :confernceId
+    ORDER BY event.title""")
     abstract fun getEventsWithConferenceForConfernce(confernceId: Long): LiveData<List<Event>>
 
     override suspend fun updateOrInsertInternal(item: Event) {

@@ -34,7 +34,7 @@ class ConferenceGroupFragment : BrowseFragment() {
                 StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL)
             }
             view.layoutManager = layoutManager
-            val conferencesAdapter: ConferenceRecyclerViewAdapter = ConferenceRecyclerViewAdapter(listener)
+            val conferencesAdapter = ConferenceRecyclerViewAdapter(listener)
             conferencesAdapter.setHasStableIds(true)
             view.adapter = conferencesAdapter
             val groupId = conferenceGroup?.id
@@ -45,7 +45,7 @@ class ConferenceGroupFragment : BrowseFragment() {
                             setLoadingOverlayVisibility(false)
                         }
                         conferencesAdapter.conferences = conferenceList
-                        val layoutState = arguments?.getParcelable<Parcelable>(LAYOUTMANAGER_STATE)?.let {
+                        arguments?.getParcelable<Parcelable>(LAYOUTMANAGER_STATE)?.let {
                             layoutManager?.onRestoreInstanceState(it)
                         }
                     }

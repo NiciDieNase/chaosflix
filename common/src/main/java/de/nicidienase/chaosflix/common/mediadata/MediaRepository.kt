@@ -23,13 +23,13 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import java.io.IOException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
+import java.io.IOException
 
 class MediaRepository(
     private val recordingApi: RecordingService,
@@ -101,25 +101,19 @@ class MediaRepository(
         }
     }
 
-    fun updateRecordingsForEvent(event: Event): LiveData<LiveEvent<State, List<Recording>, String>> {
-        val updateState = SingleLiveEvent<LiveEvent<State, List<Recording>, String>>()
-        coroutineScope.launch(Dispatchers.IO) {
-            try {
-                val eventDto = recordingApi.getEventByGUIDSuspending(event.guid)
-                val recordingDtos = eventDto?.recordings
-                if (recordingDtos != null) {
-                    val recordings: List<Recording> = saveRecordings(event, recordingDtos)
-                    updateState.postValue(LiveEvent(State.DONE, data = recordings))
-                } else {
-                    updateState.postValue(LiveEvent(State.DONE, error = "Error updating Recordings for ${event.title}"))
-                }
-            } catch (e: IOException) {
-                updateState.postValue(LiveEvent(State.DONE, error = e.message))
-            } catch (e: Exception) {
-                updateState.postValue(LiveEvent(State.DONE, error = "Error updating Recordings for ${event.title} (${e.cause})"))
-                e.printStackTrace() }
+    suspend fun updateRecordingsForEvent(event: Event): List<Recording>? {
+        return try {
+            val eventDto = recordingApi.getEventByGUIDSuspending(event.guid)
+            val recordingDtos = eventDto?.recordings
+            if (recordingDtos != null) {
+                saveRecordings(event, recordingDtos)
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
-        return updateState
     }
 
     suspend fun updateSingleEvent(guid: String): Event? = withContext(Dispatchers.IO) {

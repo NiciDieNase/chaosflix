@@ -15,10 +15,10 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import java.io.File
-import java.util.ArrayList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
+import java.util.*
 
 class DetailsViewModel(
     private val database: ChaosflixDatabase,
@@ -30,16 +30,33 @@ class DetailsViewModel(
     val state: SingleLiveEvent<LiveEvent<State, Bundle, String>> =
             SingleLiveEvent()
 
+    private var waitingForRecordings = false
+
     val autoselectRecording: Boolean
         get() = preferencesManager.getAutoselectRecording()
 
     fun setEvent(event: Event): LiveData<Event?> {
-        mediaRepository.updateRecordingsForEvent(event)
+        viewModelScope.launch {
+            val recordings = mediaRepository.updateRecordingsForEvent(event)
+            if(waitingForRecordings){
+                if(recordings != null){
+                    waitingForRecordings = false
+                    val bundle = Bundle()
+                    bundle.putParcelable(EVENT, event)
+                    bundle.putParcelableArrayList(KEY_SELECT_RECORDINGS, ArrayList(recordings))
+                    state.postValue(LiveEvent(State.SelectRecording, data = bundle))
+                } else {
+                    state.postValue(LiveEvent(State.Error, error = "Could not load recordings."))
+                }
+            }
+        }
         return database.eventDao().findEventByGuid(event.guid)
     }
 
     fun getRecordingForEvent(event: Event): LiveData<List<Recording>> {
-        mediaRepository.updateRecordingsForEvent(event)
+        viewModelScope.launch {
+            mediaRepository.updateRecordingsForEvent(event)
+        }
         return database.recordingDao().findRecordingByEvent(event.id)
     }
 
@@ -104,10 +121,15 @@ class DetailsViewModel(
             } else {
                 // select quality then playEvent
                 val items: List<Recording> = database.recordingDao().findRecordingByEventSync(event.id)
-                val bundle = Bundle()
-                bundle.putParcelable(EVENT, event)
-                bundle.putParcelableArrayList(KEY_SELECT_RECORDINGS, ArrayList(items))
-                state.postValue(LiveEvent(State.SelectRecording, data = bundle))
+                if(items.isNotEmpty()){
+                    val bundle = Bundle()
+                    bundle.putParcelable(EVENT, event)
+                    bundle.putParcelableArrayList(KEY_SELECT_RECORDINGS, ArrayList(items))
+                    state.postValue(LiveEvent(State.SelectRecording, data = bundle))
+                } else {
+                    state.postValue(LiveEvent(State.Loading))
+                    waitingForRecordings = true
+                }
             }
         }
     }
@@ -164,7 +186,8 @@ class DetailsViewModel(
         DownloadRecording,
         DisplayEvent,
         PlayExternal,
-        Error
+        Error,
+        Loading
     }
 
     companion object {
