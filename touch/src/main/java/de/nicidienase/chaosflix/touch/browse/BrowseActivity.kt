@@ -17,8 +17,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.navigation.NavigationView
@@ -236,12 +234,12 @@ class BrowseActivity : AppCompatActivity(),
     }
 
     private fun showBookmarksFragment() {
-        val bookmarksFragment = EventsListFragment.newInstance(EventsListFragment.TYPE_BOOKMARKS, null, numColumns)
+        val bookmarksFragment = EventsListFragment.newInstance(EventsListFragment.TYPE_BOOKMARKS, null)
         showFragment(bookmarksFragment, "bookmarks")
     }
 
     private fun showInProgressFragment() {
-        val progressEventsFragment = EventsListFragment.newInstance(EventsListFragment.TYPE_IN_PROGRESS, null, numColumns)
+        val progressEventsFragment = EventsListFragment.newInstance(EventsListFragment.TYPE_IN_PROGRESS, null)
         showFragment(progressEventsFragment, "in_progress")
     }
 

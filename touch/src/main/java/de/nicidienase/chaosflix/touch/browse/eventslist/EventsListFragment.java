@@ -35,7 +35,6 @@ import kotlin.Unit;
 
 public class EventsListFragment extends BrowseFragment implements SearchView.OnQueryTextListener {
 
-    private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String ARG_TYPE = "type";
     private static final String ARG_CONFERENCE = "conference";
     private static final String LAYOUTMANAGER_STATE = "layoutmanager-state";
@@ -45,7 +44,6 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
     public static final int TYPE_BOOKMARKS = 1;
     public static final int TYPE_IN_PROGRESS = 2;
 
-    private int columnCount = 1;
     private OnEventSelectedListener listener;
 
     private EventRecyclerViewAdapter eventAdapter;
@@ -55,11 +53,10 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
     private Snackbar snackbar;
     private int type;
 
-    public static EventsListFragment newInstance(int type, Conference conference, int columnCount) {
+    public static EventsListFragment newInstance(int type, Conference conference) {
         EventsListFragment fragment = new EventsListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_TYPE, type);
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
         args.putParcelable(ARG_CONFERENCE, conference);
         fragment.setArguments(args);
         return fragment;
@@ -80,7 +77,6 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            columnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             type = getArguments().getInt(ARG_TYPE);
             conference = getArguments().getParcelable(ARG_CONFERENCE);
         }
@@ -89,6 +85,8 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentEventsListBinding binding = FragmentEventsListBinding.inflate(inflater, container, false);
+
+        int columnCount = getResources().getInteger(R.integer.num_columns);
 
         AppCompatActivity activity = (AppCompatActivity) requireActivity();
         activity.setSupportActionBar(binding.incToolbar.toolbar);
