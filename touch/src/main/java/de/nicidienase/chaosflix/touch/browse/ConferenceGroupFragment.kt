@@ -24,7 +24,7 @@ class ConferenceGroupFragment : BrowseFragment() {
         val view = inflater.inflate(R.layout.fragment_conferences_page, container, false)
 
 
-        val columnCount = arguments?.getInt(ARG_COLUMN_COUNT, 1) ?: 1
+        val columnCount = resources.getInteger(R.integer.num_columns)
         val conferenceGroup: ConferenceGroup? = arguments?.getParcelable(ARG_GROUP)
 
         if (view is RecyclerView) {
