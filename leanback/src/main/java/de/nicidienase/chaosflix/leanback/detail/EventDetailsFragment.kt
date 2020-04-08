@@ -255,6 +255,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
                 }
             })
         }
+        actionAdapter.add(Action(ACTION_RELATED,getString(R.string.related_talks)))
         detailsOverview.actionsAdapter = actionAdapter
 
         rowsAdapter.add(detailsOverview)
@@ -432,6 +433,8 @@ class EventDetailsFragment : DetailsSupportFragment() {
         private val ACTION_ADD_WATCHLIST = 1L
         @JvmStatic
         private val ACTION_REMOVE_WATCHLIST = 2L
+        @JvmStatic
+        private val ACTION_RELATED = 3L
     }
 
     private inner class DetailActionClickedListener : OnActionClickedListener {
@@ -450,6 +453,9 @@ class EventDetailsFragment : DetailsSupportFragment() {
                 }
                 ACTION_PLAY -> {
                     event?.let { detailsViewModel.play(it) }
+                }
+                ACTION_RELATED -> {
+                    setSelectedPosition(1)
                 }
             }
         }
