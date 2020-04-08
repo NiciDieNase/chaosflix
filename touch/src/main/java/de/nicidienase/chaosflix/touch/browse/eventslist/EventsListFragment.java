@@ -80,7 +80,6 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            columnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             type = getArguments().getInt(ARG_TYPE);
             conference = getArguments().getParcelable(ARG_CONFERENCE);
         }
@@ -89,6 +88,8 @@ public class EventsListFragment extends BrowseFragment implements SearchView.OnQ
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentEventsListBinding binding = FragmentEventsListBinding.inflate(inflater, container, false);
+
+        columnCount = getArguments().getInt(ARG_COLUMN_COUNT, 1);
 
         AppCompatActivity activity = (AppCompatActivity) requireActivity();
         activity.setSupportActionBar(binding.incToolbar.toolbar);
