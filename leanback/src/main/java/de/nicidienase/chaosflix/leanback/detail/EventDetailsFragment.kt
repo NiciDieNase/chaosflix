@@ -171,12 +171,12 @@ class EventDetailsFragment : DetailsSupportFragment() {
                     loadingDialog?.dismiss()
                     loadingDialog = null
                     val event: Event? = state.data?.getParcelable(DetailsViewModel.EVENT)
-                    val recordings: List<Recording>? = state.data?.getParcelableArrayList(DetailsViewModel.KEY_SELECT_RECORDINGS)
+                    val recordings: List<Recording>? = state.data?.getParcelableArrayList<Recording>(DetailsViewModel.KEY_SELECT_RECORDINGS)
+                            ?.filterNot { it.mimeType.startsWith("audio")}
                     if (event != null && recordings != null && recordings.isNotEmpty()) {
                         RecordingSelectDialog.create(recordings) {
                             detailsViewModel.recordingSelected(event, it)
                         }.show(childFragmentManager)
-
 //                        selectRecordingFromList(recordings) {
 //                            detailsViewModel.recordingSelected(event, it)
 //                        }
