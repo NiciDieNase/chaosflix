@@ -28,7 +28,7 @@ class EventsListActivity : AppCompatActivity(), OnEventSelectedListener {
         val conference = intent.getParcelableExtra<Conference>(CONFERENCE_KEY)
 
         if (savedInstanceState == null) {
-            val eventsListFragment = EventsListFragment.newInstance(EventsListFragment.TYPE_EVENTS, conference, numColumns)
+            val eventsListFragment = EventsListFragment.newInstance(EventsListFragment.TYPE_EVENTS, conference)
 
             supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, eventsListFragment)
