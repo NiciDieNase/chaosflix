@@ -34,6 +34,24 @@ class ChaosflixUtilTest {
     @Test
     fun chaosradio() = genericTest("chaosradio", false)
 
+    @Test
+    fun fiffkon18() = genericTest("fiffkon18", false)
+
+    @Test
+    fun denog7() = genericTest("denog7", false)
+    
+    @Test
+    fun denog8() = genericTest("denog8", false)
+    
+    @Test
+    fun denog10() = genericTest("denog10", false)
+    
+    @Test
+    fun denog11() = genericTest("denog11", false)
+
+    @Test
+    fun openChaos() = genericTest("openchaos", false)
+
     fun genericTest(acronym: String, expResult: Boolean) = runBlocking {
         val conference = api.getConferenceByName(acronym).body()
         val map = conference?.events?.map { Event(it) }

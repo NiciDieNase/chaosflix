@@ -82,7 +82,7 @@ object ChaosflixUtil {
                 .filter { tagCount[it]!! < events.size - 1 }
                 .filter { tagCount[it]!! > 1 }
                 .filter { it.length >= 3 }
-        return usefulTags.isNotEmpty()
+        return usefulTags.size > 2
     }
 
     fun getStringForTag(tag: String): String {
