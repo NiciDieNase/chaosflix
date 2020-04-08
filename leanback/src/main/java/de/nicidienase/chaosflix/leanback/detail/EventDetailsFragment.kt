@@ -173,9 +173,13 @@ class EventDetailsFragment : DetailsSupportFragment() {
                     val event: Event? = state.data?.getParcelable(DetailsViewModel.EVENT)
                     val recordings: List<Recording>? = state.data?.getParcelableArrayList(DetailsViewModel.KEY_SELECT_RECORDINGS)
                     if (event != null && recordings != null && recordings.isNotEmpty()) {
-                        selectRecordingFromList(recordings.map { RecordingUtil.getStringForRecording(it) }) {
-                            detailsViewModel.recordingSelected(event, recordings[it])
-                        }
+                        RecordingSelectDialog.create(recordings) {
+                            detailsViewModel.recordingSelected(event, it)
+                        }.show(childFragmentManager)
+
+//                        selectRecordingFromList(recordings) {
+//                            detailsViewModel.recordingSelected(event, it)
+//                        }
                     } else {
                         showError("Sorry, could not load recordings")
                     }
@@ -217,13 +221,14 @@ class EventDetailsFragment : DetailsSupportFragment() {
         }
     }
 
-    private fun selectRecordingFromList(items: List<String>, resultHandler: (Int) -> Unit) {
-        val onClickListener = DialogInterface.OnClickListener { _, which -> resultHandler.invoke(which) }
+    private fun selectRecordingFromList(items: List<Recording>, resultHandler: (Recording) -> Unit) {
+        val onClickListener = DialogInterface.OnClickListener { _, which -> resultHandler.invoke(items[which]) }
         if (selectDialog != null) {
             selectDialog?.dismiss()
         }
         val builder = AlertDialog.Builder(requireContext())
-        builder.setItems(items.toTypedArray(), onClickListener)
+        val strings = items.map { RecordingUtil.getStringForRecording(it) }.toTypedArray()
+        builder.setItems(strings, onClickListener)
         selectDialog = builder.create()
         selectDialog?.show()
     }

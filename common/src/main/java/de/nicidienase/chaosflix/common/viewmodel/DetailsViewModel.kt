@@ -173,10 +173,12 @@ class DetailsViewModel(
         }
     }
 
-    fun recordingSelected(e: Event, r: Recording) = viewModelScope.launch {
-        val recordings: List<Recording> = database.recordingDao().findRecordingByEventSync(e.id)
-        val url = ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl
-        playRecording(e, r, url)
+    fun recordingSelected(e: Event, r: Recording) {
+        viewModelScope.launch {
+            val recordings: List<Recording> = database.recordingDao().findRecordingByEventSync(e.id)
+            val url = ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl
+            playRecording(e, r, url)
+        }
     }
 
     enum class State {
