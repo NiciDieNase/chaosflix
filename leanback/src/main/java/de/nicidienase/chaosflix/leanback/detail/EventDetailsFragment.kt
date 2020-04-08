@@ -188,9 +188,13 @@ class EventDetailsFragment : DetailsSupportFragment() {
                 DetailsViewModel.State.Loading -> {
                     showLoadingDialog()
                 }
+                DetailsViewModel.State.PlayExternal -> {
+                    state.data?.getParcelable<Recording>(DetailsViewModel.RECORDING)?.let{ recording ->
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(recording.recordingUrl)))
+                    }
+                }
                 DetailsViewModel.State.PlayOfflineItem -> irrelevantCase()
                 DetailsViewModel.State.DownloadRecording -> irrelevantCase()
-                DetailsViewModel.State.PlayExternal -> irrelevantCase()
             }
         })
     }

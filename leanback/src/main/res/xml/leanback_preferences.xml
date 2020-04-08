@@ -1,43 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        android:title="Streaming">
-
         <SwitchPreference
             android:defaultValue="false"
             android:key="auto_select_stream"
             android:summary="@string/pref_autoselect_stream"
             android:title="@string/setting_choose_stream"/>
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:title="Recordings">
         <SwitchPreference
             android:defaultValue="false"
             android:key="auto_select_recording"
             android:summary="@string/pref_autoselect_recording"
             android:title="@string/settings_choose_recording"/>
 
-<!--        <SwitchPreference-->
-<!--            android:defaultValue="false"-->
-<!--            android:key="auto_external_player"-->
-<!--            android:title="@string/pref_external_player"-->
-<!--            android:summary=""/>-->
-
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:title="Privacy">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="auto_external_player"
+            android:title="@string/pref_external_player"
+            android:summary=""/>
 
         <SwitchPreference
             android:title="Disable Statistics and Crash Reports"
             android:key="disable_analytics"
             android:defaultValue="false"/>
-
-    </PreferenceCategory>
 
 
 </PreferenceScreen>
