@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.common.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -75,7 +76,8 @@ class BrowseViewModel(
         return itemDao.getWatchlistEvents()
     }
 
-    fun getInProgressEvents(): LiveData<List<Event>> {
+    @JvmOverloads
+    fun getInProgressEvents(filterFinished: Boolean = false): LiveData<List<Event>> {
         val dao = database.playbackProgressDao()
         viewModelScope.launch(Dispatchers.IO) {
             dao.getAllSync().forEach {
@@ -84,7 +86,13 @@ class BrowseViewModel(
         }
         return Transformations.map(dao.getInProgessEvents()) { list ->
             list.forEach { it.event.progress = it.progress }
-            list.map { it.event }
+            if(filterFinished){
+                val result = list.partition { it.progress / 1000 > (it.event.length - 10) }
+                Log.d(TAG, "Filtered ${result.first.size} finished items: ${result.first.map { "${it.progress / 1000}-${it.event.length}|"}}")
+                result.second.map { it.event }
+            } else {
+                list.map { it.event }
+            }
         }
     }
 

@@ -9,10 +9,11 @@ import androidx.room.Query
 @Dao
 interface PlaybackProgressDao {
 
-    @Query("""SELECT event.*, progress.progress, progress.watch_date, conference.acronym as conference 
-        FROM playback_progress as progress 
+    @Query("""SELECT event.*, p.progress, p.watch_date, conference.acronym as conference 
+        FROM playback_progress as p 
         JOIN event ON event_guid = event.guid 
-        JOIN conference ON event.conferenceId = conference.id""")
+        JOIN conference ON event.conferenceId = conference.id
+        ORDER BY p.watch_date DESC""")
     fun getInProgessEvents(): LiveData<List<ProgressEventView>>
 
     @Query("SELECT * from playback_progress")

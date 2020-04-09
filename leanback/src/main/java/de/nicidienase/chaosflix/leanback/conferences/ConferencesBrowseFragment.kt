@@ -144,7 +144,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
                 }
             }
         })
-        viewModel.getInProgressEvents().observe(viewLifecycleOwner, Observer { inProgress ->
+        viewModel.getInProgressEvents(filterFinished = true).observe(viewLifecycleOwner, Observer { inProgress ->
             if (inProgress != null) {
                 inProgressAdapter.setItems(inProgress, DiffCallbacks.eventDiffCallback)
                 inProgressAdapter.notifyItemRangeChanged(0, inProgress.size)
@@ -182,8 +182,8 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
                     Section.Recommendations,
                     { listOf(
                         promotedRow,
-                        watchlistRow // ,
-//                        inProgressRow
+                        watchlistRow,
+                        inProgressRow
                     ).filter { it.adapter.size() > 0 } },
                     recomendationsDivider)
 
