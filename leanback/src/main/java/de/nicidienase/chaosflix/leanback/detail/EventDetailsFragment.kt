@@ -52,7 +52,6 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.Util
-import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
@@ -147,7 +146,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
         }
         adapter = this.rowsAdapter
 
-//        Handler().postDelayed(this::startEntranceTransition, 500)
         startEntranceTransition()
         setupObserver(detailsViewModel)
     }
@@ -159,6 +157,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
                     val recording: Recording? = state.data?.getParcelable(DetailsViewModel.RECORDING)
                     val parcelable: Event? = state.data?.getParcelable(DetailsViewModel.EVENT)
                     val url = state.data?.getString(DetailsViewModel.THUMBS_URL)
+                    val progress: Long? = state.data?.getLong(DetailsViewModel.PROGRESS)
                     if (recording != null) {
                         if (parcelable != null) {
                             prepareSeekProvider(parcelable.length, url ?: recording.recordingUrl)
@@ -166,6 +165,9 @@ class EventDetailsFragment : DetailsSupportFragment() {
                         detailsBackgroundController.switchToVideo()
                         preparePlayer(recording.recordingUrl)
                         playerAdapter.play()
+                        if(progress != null && progress > 10_000L) {
+                            playerAdapter.seekTo(progress - 5_000)
+                        }
                     }
                 }
                 DetailsViewModel.State.SelectRecording -> {

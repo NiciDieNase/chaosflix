@@ -135,10 +135,14 @@ class DetailsViewModel(
     }
 
     private fun playRecording(event: Event, recording: Recording, urlForThumbs: String? = null) = viewModelScope.launch {
+        val progress = database.playbackProgressDao().getProgressForEventSync(event.guid)
         val bundle = Bundle().apply {
             putParcelable(RECORDING, recording)
             putParcelable(EVENT, event)
             putString(THUMBS_URL, urlForThumbs)
+            progress?.let {
+                putLong(PROGRESS, it.progress)
+            }
         }
         if (preferencesManager.externalPlayer) {
             state.postValue(LiveEvent(State.PlayExternal, bundle))
@@ -199,5 +203,6 @@ class DetailsViewModel(
         const val RECORDING = "recording"
         const val EVENT = "event"
         const val THUMBS_URL = "thumbs_url"
+        const val PROGRESS = "progress"
     }
 }
