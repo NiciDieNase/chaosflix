@@ -100,7 +100,11 @@ class BrowseViewModel(
         return result
     }
 
-    fun getLivestreams(): LiveData<List<LiveConference>> = streamingRepository.update(viewModelScope)
+    fun getLivestreams(): LiveData<List<LiveConference>> = streamingRepository.streamingConferences
+
+    fun updateLiveStreams() = viewModelScope.launch {
+        streamingRepository.update()
+    }
 
     fun getOfflineDisplayEvents() = database.offlineEventDao().getOfflineEventsDisplay()
 

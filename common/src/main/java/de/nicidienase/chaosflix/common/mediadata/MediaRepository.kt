@@ -193,7 +193,7 @@ class MediaRepository(
     }
 
     private suspend fun updateConferencesAndGet(acronym: String): Conference? {
-        val response: Response<ConferencesWrapper>? = recordingApi.getConferencesWrapper().execute()
+        val response: Response<ConferencesWrapper>? = recordingApi.getConferencesWrapper()
         val conferences = response?.body()?.let { conferencesWrapper ->
             return@let saveConferences(conferencesWrapper)
         }
