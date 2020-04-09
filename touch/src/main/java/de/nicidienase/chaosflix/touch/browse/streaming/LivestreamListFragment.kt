@@ -62,9 +62,10 @@ class LivestreamListFragment : BrowseFragment() {
             }
             binding.swipeRefreshLayout.isRefreshing = false
         })
+        viewModel.updateLiveStreams()
 
         snackbar = Snackbar.make(binding.root, R.string.no_livestreams, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.reload, View.OnClickListener { this.updateList() })
+                .setAction(R.string.reload) { this.updateList() }
         return binding.root
     }
 

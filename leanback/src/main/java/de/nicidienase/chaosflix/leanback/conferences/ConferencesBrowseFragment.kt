@@ -170,6 +170,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
                 updateStreams(streamRows)
             }
         })
+        viewModel.updateLiveStreams()
     }
 
     override fun onDestroyView() {
