@@ -5,5 +5,6 @@ import androidx.annotation.DrawableRes
 enum class SelectableContentItem(val title: String, @DrawableRes val icon: Int, val data: Any? = null) {
     Settings("Settings", R.drawable.ic_settings),
     About("About", R.drawable.ic_info),
-    LeakCanary("Leak Canary", R.drawable.ic_warning)
+    LeakCanary("Leak Canary", R.drawable.ic_warning),
+    UpdateStreams("Update Streams", R.drawable.ic_refresh)
 }

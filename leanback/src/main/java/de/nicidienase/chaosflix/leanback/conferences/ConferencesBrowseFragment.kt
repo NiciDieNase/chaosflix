@@ -84,10 +84,13 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 
         rowsAdapter.add(conferencesSection)
 
-        onItemViewClickedListener = ItemViewClickedListener(this)
+        onItemViewClickedListener = ItemViewClickedListener(this){
+            viewModel.updateLiveStreams()
+        }
         adapter = rowsAdapter
 
         val listRowAdapter = ArrayObjectAdapter(settingsPresenter)
+        listRowAdapter.add(SelectableContentItem.UpdateStreams)
         listRowAdapter.add(SelectableContentItem.Settings)
 //        listRowAdapter.add(SelectableContentItem.About)
         if (BuildConfig.DEBUG) {

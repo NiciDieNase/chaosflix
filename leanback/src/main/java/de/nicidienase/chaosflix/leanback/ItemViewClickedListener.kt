@@ -18,7 +18,7 @@ import de.nicidienase.chaosflix.leanback.events.EventsActivity
 import de.nicidienase.chaosflix.leanback.events.EventsActivity.Companion.start
 import de.nicidienase.chaosflix.leanback.settings.ChaosflixSettingsActivity
 
-class ItemViewClickedListener(private val fragment: Fragment) : OnItemViewClickedListener {
+class ItemViewClickedListener(private val fragment: Fragment, private val streamUpdater: (()->Unit)? = null) : OnItemViewClickedListener {
     override fun onItemClicked(itemViewHolder: Presenter.ViewHolder, item: Any, rowViewHolder: RowPresenter.ViewHolder?, row: Row?) {
         Log.d(TAG, "onItemClicked")
         val activity = fragment.requireActivity()
@@ -53,6 +53,9 @@ class ItemViewClickedListener(private val fragment: Fragment) : OnItemViewClicke
                         if (BuildConfig.DEBUG) {
                             LeakCanaryLauncher.launch(fragment.requireContext())
                         }
+                    }
+                    SelectableContentItem.UpdateStreams -> {
+                        streamUpdater?.invoke()
                     }
                 }
             }
