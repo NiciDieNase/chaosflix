@@ -8,7 +8,7 @@ import androidx.leanback.widget.PlaybackControlsRow
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter
 import java.util.concurrent.TimeUnit
 
-class ChaosMediaPlayerGlue(context: Context, playerAdapter: LeanbackPlayerAdapter, private val bookmarkCreator: (()->Unit)? = null) :
+class ChaosMediaPlayerGlue(context: Context, playerAdapter: LeanbackPlayerAdapter, private val bookmarkCreator: (() -> Unit)? = null) :
         PlaybackTransportControlGlue<LeanbackPlayerAdapter>(context, playerAdapter) {
 
     private val mThumbsUpAction = PlaybackControlsRow.ThumbsUpAction(context).apply { index = PlaybackControlsRow.ThumbsUpAction.INDEX_OUTLINE }
@@ -50,8 +50,8 @@ class ChaosMediaPlayerGlue(context: Context, playerAdapter: LeanbackPlayerAdapte
     }
 
     private fun notifyActionChanged(
-            action: PlaybackControlsRow.MultiAction,
-            adapter: ArrayObjectAdapter?
+        action: PlaybackControlsRow.MultiAction,
+        adapter: ArrayObjectAdapter?
     ) {
         if (adapter != null) {
             val index = adapter.indexOf(action)

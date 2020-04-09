@@ -84,7 +84,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 
         rowsAdapter.add(conferencesSection)
 
-        onItemViewClickedListener = ItemViewClickedListener(this){
+        onItemViewClickedListener = ItemViewClickedListener(this) {
             viewModel.updateLiveStreams()
         }
         adapter = rowsAdapter
