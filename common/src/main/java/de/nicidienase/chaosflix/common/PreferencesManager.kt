@@ -13,11 +13,14 @@ class PreferencesManager(val sharedPref: SharedPreferences) {
     val downloadFolder: String?
         get() = sharedPref.getString(keyDownloadFolder, null)
 
+    var autoselectRecording: Boolean
+        get() = sharedPref.getBoolean(keyAutoselectRecording, false)
+        set(value) = sharedPref.edit().putBoolean(keyAutoselectRecording, value).apply()
+
     fun getMetered() = sharedPref.getBoolean(keyMetered, false)
 
     fun getAutoselectStream() = sharedPref.getBoolean(keyAutoselectStream, false)
 
-    fun getAutoselectRecording() = sharedPref.getBoolean(keyAutoselectRecording, false)
 
     companion object {
         private val keyMetered = "allow_metered_networks"

@@ -15,10 +15,10 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import java.io.File
-import java.util.ArrayList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
+import java.util.ArrayList
 
 class DetailsViewModel(
     private val database: ChaosflixDatabase,
@@ -32,8 +32,9 @@ class DetailsViewModel(
 
     private var waitingForRecordings = false
 
-    val autoselectRecording: Boolean
-        get() = preferencesManager.getAutoselectRecording()
+    var autoselectRecording: Boolean
+        get() = preferencesManager.autoselectRecording
+        set(value) { preferencesManager.autoselectRecording = value }
 
     fun setEvent(event: Event): LiveData<Event?> {
         viewModelScope.launch {
@@ -161,8 +162,8 @@ class DetailsViewModel(
         }
     }
 
-    fun play(event: Event) = viewModelScope.launch {
-        if (autoselectRecording) {
+    fun play(event: Event, autoselect: Boolean = autoselectRecording) = viewModelScope.launch {
+        if (autoselect) {
             val recordings = database.recordingDao().findRecordingByEventSync(event.id)
             val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
             val recordingUrl = ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl

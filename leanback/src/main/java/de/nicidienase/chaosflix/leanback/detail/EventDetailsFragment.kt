@@ -175,12 +175,12 @@ class EventDetailsFragment : DetailsSupportFragment() {
                     val recordings: List<Recording>? = state.data?.getParcelableArrayList<Recording>(DetailsViewModel.KEY_SELECT_RECORDINGS)
                             ?.filterNot { it.mimeType.startsWith("audio") }
                     if (event != null && recordings != null && recordings.isNotEmpty()) {
-                        RecordingSelectDialog.create(recordings) {
-                            detailsViewModel.recordingSelected(event, it)
-                        }.show(childFragmentManager)
-//                        selectRecordingFromList(recordings) {
+//                        RecordingSelectDialog.create(recordings) {
 //                            detailsViewModel.recordingSelected(event, it)
-//                        }
+//                        }.show(childFragmentManager)
+                        selectRecordingFromList(event, recordings) {
+                            detailsViewModel.recordingSelected(event, it)
+                        }
                     } else {
                         showError("Sorry, could not load recordings")
                     }
@@ -222,15 +222,23 @@ class EventDetailsFragment : DetailsSupportFragment() {
         }
     }
 
-    private fun selectRecordingFromList(items: List<Recording>, resultHandler: (Recording) -> Unit) {
+    private fun selectRecordingFromList(event: Event, items: List<Recording>, resultHandler: (Recording) -> Unit) {
         val onClickListener = DialogInterface.OnClickListener { _, which -> resultHandler.invoke(items[which]) }
         if (selectDialog != null) {
             selectDialog?.dismiss()
         }
-        val builder = AlertDialog.Builder(requireContext())
         val strings = items.map { RecordingUtil.getStringForRecording(it) }.toTypedArray()
-        builder.setItems(strings, onClickListener)
-        selectDialog = builder.create()
+        selectDialog = AlertDialog.Builder(requireContext())
+                .setItems(strings, onClickListener)
+                .setNegativeButton("Autoselect") { _, _ ->
+                    detailsViewModel.play(event, true)
+                }
+                .setPositiveButton("Always select automatically") { _, _ ->
+                    detailsViewModel.autoselectRecording = true
+                    detailsViewModel.play(event, true)
+                }
+                .create()
+
         selectDialog?.show()
     }
 
@@ -281,14 +289,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
                     length,
                     url
             )
-    }
-
-    private fun preparePlayer(
-        recordings: List<Recording>,
-        event: Event
-    ) {
-        val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
-        preparePlayer(optimalRecording.recordingUrl)
     }
 
     private fun onCreateStream(room: Room, rowsAdapter: ArrayObjectAdapter) {
