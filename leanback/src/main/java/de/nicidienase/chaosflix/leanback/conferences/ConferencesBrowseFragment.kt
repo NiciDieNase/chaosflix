@@ -89,7 +89,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
 
         val listRowAdapter = ArrayObjectAdapter(settingsPresenter)
         listRowAdapter.add(SelectableContentItem.Settings)
-        listRowAdapter.add(SelectableContentItem.About)
+//        listRowAdapter.add(SelectableContentItem.About)
         if (BuildConfig.DEBUG) {
             listRowAdapter.add(SelectableContentItem.LeakCanary)
         }

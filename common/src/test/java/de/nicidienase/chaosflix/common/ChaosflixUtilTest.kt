@@ -39,13 +39,13 @@ class ChaosflixUtilTest {
 
     @Test
     fun denog7() = genericTest("denog7", false)
-    
+
     @Test
     fun denog8() = genericTest("denog8", false)
-    
+
     @Test
     fun denog10() = genericTest("denog10", false)
-    
+
     @Test
     fun denog11() = genericTest("denog11", false)
 

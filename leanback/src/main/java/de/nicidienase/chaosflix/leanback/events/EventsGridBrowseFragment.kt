@@ -92,8 +92,8 @@ class EventsGridBrowseFragment : VerticalGridSupportFragment(), EventsActivity.E
                 .apply(options)
                 .into(object : SimpleTarget<Drawable>() {
                     override fun onResourceReady(
-                            resource: Drawable,
-                            transition: Transition<in Drawable>?
+                        resource: Drawable,
+                        transition: Transition<in Drawable>?
                     ) {
                         consumer.invoke(resource)
                     }
@@ -117,10 +117,10 @@ class EventsGridBrowseFragment : VerticalGridSupportFragment(), EventsActivity.E
 
     private inner class ItemViewSelectedListener : OnItemViewSelectedListener {
         override fun onItemSelected(
-                itemViewHolder: Presenter.ViewHolder,
-                item: Any,
-                rowViewHolder: RowPresenter.ViewHolder,
-                row: Row
+            itemViewHolder: Presenter.ViewHolder,
+            item: Any,
+            rowViewHolder: RowPresenter.ViewHolder,
+            row: Row
         ) {
             if (item is Event) {
                 try {

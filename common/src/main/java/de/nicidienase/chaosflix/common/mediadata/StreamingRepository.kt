@@ -15,7 +15,7 @@ class StreamingRepository(
 
     suspend fun update() = withContext(Dispatchers.IO) {
         val response = streamingApi.getStreamingConferences()
-        if(response.isSuccessful) {
+        if (response.isSuccessful) {
             _streamingConferences.postValue(response.body())
         }
     }

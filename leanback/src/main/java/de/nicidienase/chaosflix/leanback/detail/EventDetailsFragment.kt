@@ -172,7 +172,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
                     loadingDialog = null
                     val event: Event? = state.data?.getParcelable(DetailsViewModel.EVENT)
                     val recordings: List<Recording>? = state.data?.getParcelableArrayList<Recording>(DetailsViewModel.KEY_SELECT_RECORDINGS)
-                            ?.filterNot { it.mimeType.startsWith("audio")}
+                            ?.filterNot { it.mimeType.startsWith("audio") }
                     if (event != null && recordings != null && recordings.isNotEmpty()) {
                         RecordingSelectDialog.create(recordings) {
                             detailsViewModel.recordingSelected(event, it)
@@ -193,7 +193,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
                     showLoadingDialog()
                 }
                 DetailsViewModel.State.PlayExternal -> {
-                    state.data?.getParcelable<Recording>(DetailsViewModel.RECORDING)?.let{ recording ->
+                    state.data?.getParcelable<Recording>(DetailsViewModel.RECORDING)?.let { recording ->
                         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(recording.recordingUrl)))
                     }
                 }
@@ -255,7 +255,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
                 }
             })
         }
-        actionAdapter.add(Action(ACTION_RELATED,getString(R.string.related_talks)))
+        actionAdapter.add(Action(ACTION_RELATED, getString(R.string.related_talks)))
         detailsOverview.actionsAdapter = actionAdapter
 
         rowsAdapter.add(detailsOverview)

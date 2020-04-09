@@ -9,14 +9,14 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.util.RecordingUtil
 import de.nicidienase.chaosflix.leanback.R
 
-class RecordingSelectDialog private constructor(): GuidedStepSupportFragment() {
+class RecordingSelectDialog private constructor() : GuidedStepSupportFragment() {
 
     private lateinit var recordings: List<Recording>
 
     private var onRecordingSelected: ((Recording) -> Unit?)? = null
 
     override fun onCreateGuidance(savedInstanceState: Bundle?): Guidance {
-        return Guidance("Select Recording","", null, null)
+        return Guidance("Select Recording", "", null, null)
     }
 
     override fun onCreateActions(actions: MutableList<GuidedAction?>, savedInstanceState: Bundle?) {
@@ -42,7 +42,7 @@ class RecordingSelectDialog private constructor(): GuidedStepSupportFragment() {
     companion object {
         const val RECORDINGS = "recordings"
 
-        fun create(recordings: List<Recording>, onRecordingSelected: (Recording)->Unit?): RecordingSelectDialog {
+        fun create(recordings: List<Recording>, onRecordingSelected: (Recording) -> Unit?): RecordingSelectDialog {
             val recordingSelectDialog = RecordingSelectDialog()
             recordingSelectDialog.recordings = recordings
             recordingSelectDialog.onRecordingSelected = onRecordingSelected

@@ -34,7 +34,7 @@ class LivestreamListFragment : BrowseFragment() {
             listener = context
             adapter = LivestreamAdapter(listener)
         } else {
-            throw RuntimeException(context.toString() + " must implement LivestreamListFragment.InteractionListener")
+            throw RuntimeException("$context must implement LivestreamListFragment.InteractionListener")
         }
     }
 
@@ -52,7 +52,7 @@ class LivestreamListFragment : BrowseFragment() {
             updateList()
         }
         viewModel.getLivestreams().observe(viewLifecycleOwner, Observer {
-            if(it != null){
+            if (it != null) {
                 adapter.setContent(it)
                 if (it.isEmpty() && !snackbar.isShown) {
                     snackbar.show()
@@ -72,7 +72,6 @@ class LivestreamListFragment : BrowseFragment() {
         super.onViewCreated(view, savedInstanceState)
         updateList()
     }
-
 
     private fun updateList() {
         binding.swipeRefreshLayout.isRefreshing = true

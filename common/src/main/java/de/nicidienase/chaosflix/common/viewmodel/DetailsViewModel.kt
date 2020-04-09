@@ -15,10 +15,10 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.io.File
 import java.util.ArrayList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class DetailsViewModel(
     private val database: ChaosflixDatabase,
@@ -38,8 +38,8 @@ class DetailsViewModel(
     fun setEvent(event: Event): LiveData<Event?> {
         viewModelScope.launch {
             val recordings = mediaRepository.updateRecordingsForEvent(event)
-            if(waitingForRecordings){
-                if(recordings != null){
+            if (waitingForRecordings) {
+                if (recordings != null) {
                     waitingForRecordings = false
                     val bundle = Bundle()
                     bundle.putParcelable(EVENT, event)
@@ -120,7 +120,7 @@ class DetailsViewModel(
             } else {
                 // select quality then playEvent
                 val items: List<Recording> = database.recordingDao().findRecordingByEventSync(event.id)
-                if(items.isNotEmpty()){
+                if (items.isNotEmpty()) {
                     val bundle = Bundle()
                     bundle.putParcelable(EVENT, event)
                     bundle.putParcelableArrayList(KEY_SELECT_RECORDINGS, ArrayList(items))
