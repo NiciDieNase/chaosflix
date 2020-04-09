@@ -8,18 +8,14 @@ import androidx.leanback.widget.PlaybackControlsRow
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter
 import java.util.concurrent.TimeUnit
 
-class ChaosMediaPlayerGlue(context: Context, playerAdapter: LeanbackPlayerAdapter) :
+class ChaosMediaPlayerGlue(context: Context, playerAdapter: LeanbackPlayerAdapter, private val bookmarkCreator: (()->Unit)? = null) :
         PlaybackTransportControlGlue<LeanbackPlayerAdapter>(context, playerAdapter) {
 
-    private val mThumbsUpAction = PlaybackControlsRow.ThumbsUpAction(context)
-
-    init {
-        mThumbsUpAction.index = PlaybackControlsRow.ThumbsUpAction.INDEX_OUTLINE
-    }
+    private val mThumbsUpAction = PlaybackControlsRow.ThumbsUpAction(context).apply { index = PlaybackControlsRow.ThumbsUpAction.INDEX_OUTLINE }
 
     override fun onCreateSecondaryActions(adapter: ArrayObjectAdapter) {
         super.onCreateSecondaryActions(adapter)
-        adapter.add(mThumbsUpAction)
+//        adapter.add(mThumbsUpAction)
     }
 
     override fun onActionClicked(action: Action) {
@@ -38,21 +34,24 @@ class ChaosMediaPlayerGlue(context: Context, playerAdapter: LeanbackPlayerAdapte
 
     private fun dispatchAction(action: Action) {
         // Primary actions are handled manually.
-        if (action === mThumbsUpAction) {
-            // TODO create watchlist entry
-        } else if (action is PlaybackControlsRow.MultiAction) {
-            action.nextIndex()
-            // Notify adapter of action changes to handle secondary actions, such as, thumbs up/down
-            // and repeat.
-            notifyActionChanged(
-                    action,
-                    controlsRow.secondaryActionsAdapter as ArrayObjectAdapter)
+        when (action) {
+            mThumbsUpAction -> {
+                bookmarkCreator?.invoke()
+            }
+            is PlaybackControlsRow.MultiAction -> {
+                action.nextIndex()
+                // Notify adapter of action changes to handle secondary actions, such as, thumbs up/down
+                // and repeat.
+                notifyActionChanged(
+                        action,
+                        controlsRow.secondaryActionsAdapter as ArrayObjectAdapter)
+            }
         }
     }
 
     private fun notifyActionChanged(
-        action: PlaybackControlsRow.MultiAction,
-        adapter: ArrayObjectAdapter?
+            action: PlaybackControlsRow.MultiAction,
+            adapter: ArrayObjectAdapter?
     ) {
         if (adapter != null) {
             val index = adapter.indexOf(action)

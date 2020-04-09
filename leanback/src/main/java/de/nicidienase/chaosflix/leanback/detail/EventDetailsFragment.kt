@@ -371,7 +371,9 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
     private fun buildPlayerGlue(): ChaosMediaPlayerGlue {
         playerAdapter = LeanbackPlayerAdapter(context, player, 16)
-        return ChaosMediaPlayerGlue(requireContext(), playerAdapter)
+        return ChaosMediaPlayerGlue(requireContext(), playerAdapter) {
+            event?.guid?.let { detailsViewModel.createBookmark(it) }
+        }
     }
 
     private fun preparePlayer(url: String, overrideExtension: String = "") {
