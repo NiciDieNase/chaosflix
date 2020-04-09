@@ -84,16 +84,15 @@ class BrowseViewModel(
                 mediaRepository.updateSingleEvent(it.eventGuid)
             }
         }
-        return Transformations.map(dao.getInProgessEvents()) { list ->
-            list.forEach { it.event.progress = it.progress }
-            if(filterFinished){
-                val result = list.partition { it.progress / 1000 > (it.event.length - 10) }
-                Log.d(TAG, "Filtered ${result.first.size} finished items: ${result.first.map { "${it.progress / 1000}-${it.event.length}|"}}")
-                result.second.map { it.event }
-            } else {
-                list.map { it.event }
+        return Transformations.map(dao.getAllWithEvent()) {list ->
+            return@map if(filterFinished){
+                    val result = list.partition { it.progress.progress / 1000 > (it.event.length - 10) }
+                    Log.d(TAG, "Filtered ${result.first.size} finished items: ${result.first.map { "${it.progress.progress / 1000}-${it.event.length}|"}}")
+                    result.second.map { it.event }
+                } else {
+                    list.map { it.event }
+                }
             }
-        }
     }
 
     fun getPromotedEvents(): LiveData<List<Event>> = database.eventDao().findPromotedEvents()
@@ -134,7 +133,7 @@ class BrowseViewModel(
             offlineItemManager.deleteOfflineItem(guid)
         }
     }
-    fun getAutoselectStream() = preferencesManager.getAutoselectStream()
+    fun getAutoselectStream() = preferencesManager.autoselectStream
 
     companion object {
         private val TAG = BrowseViewModel::class.simpleName

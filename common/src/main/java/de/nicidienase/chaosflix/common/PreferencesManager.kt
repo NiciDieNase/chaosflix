@@ -2,7 +2,7 @@ package de.nicidienase.chaosflix.common
 
 import android.content.SharedPreferences
 
-class PreferencesManager(val sharedPref: SharedPreferences) {
+class PreferencesManager(private val sharedPref: SharedPreferences) {
 
     val externalPlayer: Boolean
         get() = sharedPref.getBoolean(keyAlwaysUseExternalPlayer, false)
@@ -17,10 +17,11 @@ class PreferencesManager(val sharedPref: SharedPreferences) {
         get() = sharedPref.getBoolean(keyAutoselectRecording, false)
         set(value) = sharedPref.edit().putBoolean(keyAutoselectRecording, value).apply()
 
+    var autoselectStream: Boolean
+        get() = sharedPref.getBoolean(keyAutoselectStream, false)
+        set(value) = sharedPref.edit().putBoolean(keyAutoselectStream, value).apply()
+
     fun getMetered() = sharedPref.getBoolean(keyMetered, false)
-
-    fun getAutoselectStream() = sharedPref.getBoolean(keyAutoselectStream, false)
-
 
     companion object {
         private val keyMetered = "allow_metered_networks"

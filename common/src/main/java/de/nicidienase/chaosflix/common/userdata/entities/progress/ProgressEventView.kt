@@ -1,15 +1,14 @@
 package de.nicidienase.chaosflix.common.userdata.entities.progress
 
 import androidx.annotation.Keep
-import androidx.room.ColumnInfo
 import androidx.room.Embedded
+import androidx.room.Relation
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 
 @Keep
 class ProgressEventView(
-    val progress: Long,
-    @ColumnInfo(name = "watch_date")
-    val watchDate: Long,
     @Embedded
-    val event: Event
+    val progress: PlaybackProgress,
+    @Relation(entityColumn = "guid", parentColumn = "event_guid")
+    var event: Event
 )

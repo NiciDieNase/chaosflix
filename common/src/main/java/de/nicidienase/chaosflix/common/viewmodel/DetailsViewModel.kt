@@ -36,8 +36,12 @@ class DetailsViewModel(
         get() = preferencesManager.autoselectRecording
         set(value) { preferencesManager.autoselectRecording = value }
 
+    var autoselectStream: Boolean
+        get() = preferencesManager.autoselectStream
+        set(value) { preferencesManager.autoselectStream = value }
+
     fun setEvent(event: Event): LiveData<Event?> {
-        viewModelScope.launch {
+        viewModelScope.launch (Dispatchers.IO) {
             val recordings = mediaRepository.updateRecordingsForEvent(event)
             if (waitingForRecordings) {
                 if (recordings != null) {
@@ -82,7 +86,7 @@ class DetailsViewModel(
 
     fun deleteOfflineItem(event: Event): LiveData<Boolean> {
         val result = MutableLiveData<Boolean>()
-        viewModelScope.launch {
+        viewModelScope.launch (Dispatchers.IO) {
             database.offlineEventDao().getByEventGuidSuspend(event.guid)?.let {
                 offlineItemManager.deleteOfflineItem(it)
             }
@@ -134,7 +138,7 @@ class DetailsViewModel(
         }
     }
 
-    private fun playRecording(event: Event, recording: Recording, urlForThumbs: String? = null) = viewModelScope.launch {
+    private fun playRecording(event: Event, recording: Recording, urlForThumbs: String? = null) = viewModelScope.launch (Dispatchers.IO) {
         val progress = database.playbackProgressDao().getProgressForEventSync(event.guid)
         val bundle = Bundle().apply {
             putParcelable(RECORDING, recording)
@@ -166,7 +170,7 @@ class DetailsViewModel(
         }
     }
 
-    fun play(event: Event, autoselect: Boolean = autoselectRecording) = viewModelScope.launch {
+    fun play(event: Event, autoselect: Boolean = autoselectRecording) = viewModelScope.launch (Dispatchers.IO) {
         if (autoselect) {
             val recordings = database.recordingDao().findRecordingByEventSync(event.id)
             val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
@@ -178,7 +182,7 @@ class DetailsViewModel(
     }
 
     fun recordingSelected(e: Event, r: Recording) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val recordings: List<Recording> = database.recordingDao().findRecordingByEventSync(e.id)
             val url = ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl
             playRecording(e, r, url)

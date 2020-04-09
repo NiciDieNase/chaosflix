@@ -300,9 +300,8 @@ class EventDetailsFragment : DetailsSupportFragment() {
         initializeBackgroundWithImage(room.thumb)
 
         val dashStreams = room.streams.filter { it.slug == "dash-native" }
-        if (dashStreams.size > 0) {
-// 				&& detailsViewModel.getAutoselectStream()) {
-            dashStreams.first().urls.get("dash")?.url?.let { preparePlayer(it, "") }
+        if (dashStreams.isNotEmpty() ){ //&& detailsViewModel.autoselectStream ) {
+            dashStreams.first().urls["dash"]?.url?.let { preparePlayer(it, "") }
         }
 
         val actionAdapter = ArrayObjectAdapter()
