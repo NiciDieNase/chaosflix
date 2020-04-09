@@ -161,7 +161,7 @@ dependencies {
     debugImplementation 'com.facebook.stetho:stetho-okhttp:1.4.2'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
 
-    testImplementation "io.mockk:mockk:1.9.3.kotlin12"
+    testImplementation "io.mockk:mockk:1.9.3"
     testImplementation 'org.robolectric:robolectric:4.1'
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
