@@ -103,6 +103,7 @@ class MediaRepository(
     suspend fun updateRecordingsForEvent(event: Event): List<Recording>? {
         return try {
             val eventDto = recordingApi.getEventByGUIDSuspending(event.guid)
+            eventDto?.let { saveEvent(it) }
             val recordingDtos = eventDto?.recordings
             if (recordingDtos != null) {
                 saveRecordings(event, recordingDtos)
@@ -173,7 +174,7 @@ class MediaRepository(
         val persistantEvents = events.map { Event(it, persistentConference.id) }
         eventDao.updateOrInsert(*persistantEvents.toTypedArray())
         persistantEvents.forEach {
-            saveRelatedEvents(it)
+            it.related = saveRelatedEvents(it)
         }
         return persistantEvents
     }
@@ -186,7 +187,7 @@ class MediaRepository(
         checkNotNull(conferenceId) { "Could not find Conference for event" }
 
         val persistentEvent = Event(event, conferenceId)
-        val id = eventDao.insert(persistentEvent)
+        val id = eventDao.updateOrInsert(persistentEvent)
         persistentEvent.id = id
         return persistentEvent
     }
@@ -200,9 +201,9 @@ class MediaRepository(
     }
 
     private suspend fun saveRelatedEvents(event: Event): List<RelatedEvent> {
-        val list = event.related?.map { it.parentEventId = event.id; it }
-        relatedEventDao.updateOrInsert(*list?.toTypedArray() ?: emptyArray())
-        return list ?: emptyList()
+        val list: List<RelatedEvent> = event.related?.map { it.parentEventId = event.id; it } ?: emptyList()
+        relatedEventDao.updateOrInsert(*list.toTypedArray())
+        return list
     }
 
     private suspend fun saveRecordings(event: Event, recordings: List<RecordingDto>): List<Recording> {
@@ -267,14 +268,14 @@ class MediaRepository(
         watchlistItemDao.updateOrInsert(watchlistItem)
     }
 
-    suspend fun getReleatedEvents(event: Event, viewModelScope: CoroutineScope): List<Event> = withContext(Dispatchers.IO){
-        val guids = relatedEventDao.getRelatedEventsForEventSuspend(event.id)
-        val relatedEvents: List<Event> = guids.mapNotNull { findEventForGuid(it) }
-
-        if (guids.size != relatedEvents.size) {
-            Log.e(TAG, "Could not find all related Events")
+    fun getReleatedEvents(event: Event): LiveData<List<Event>> {
+        coroutineScope.launch {
+            val relatedEvents = relatedEventDao.getRelatedEventsForEventSuspend(event.id)
+            relatedEvents.forEach {
+                updateSingleEvent(it.relatedEventGuid)
+            }
         }
-        return@withContext relatedEvents
+        return relatedEventDao.newGetReletedEventsForEvent(event.id)
     }
 
     private suspend fun findEventForGuid(guid: String): Event? {

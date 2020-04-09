@@ -28,7 +28,7 @@ abstract class ConferenceDao : BaseDao<Conference>() {
     @Query("DELETE FROM conference")
     abstract fun delete()
 
-    override suspend fun updateOrInsertInternal(item: Conference) {
+    override suspend fun updateOrInsertInternal(item: Conference): Long {
         if (item.id != 0L) {
             update(item)
         } else {
@@ -40,5 +40,6 @@ abstract class ConferenceDao : BaseDao<Conference>() {
                 item.id = insert(item)
             }
         }
+        return item.id
     }
 }

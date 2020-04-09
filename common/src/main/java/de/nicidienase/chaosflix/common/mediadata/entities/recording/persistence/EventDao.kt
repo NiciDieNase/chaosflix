@@ -81,7 +81,7 @@ abstract class EventDao : BaseDao<Event>() {
     ORDER BY event.title""")
     abstract fun getEventsWithConferenceForConfernce(confernceId: Long): LiveData<List<Event>>
 
-    override suspend fun updateOrInsertInternal(item: Event) {
+    override suspend fun updateOrInsertInternal(item: Event): Long {
         if (item.id != 0L) {
             update(item)
         } else {
@@ -93,5 +93,6 @@ abstract class EventDao : BaseDao<Event>() {
                 item.id = insert(item)
             }
         }
+        return item.id
     }
 }

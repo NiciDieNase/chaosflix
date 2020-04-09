@@ -38,7 +38,7 @@ abstract class WatchlistItemDao : BaseDao<WatchlistItem>() {
     @Query("SELECT * FROM  watchlist_item WHERE event_guid = :guid LIMIT 1")
     abstract suspend fun getItemForGuid(guid: String): WatchlistItem?
 
-    override suspend fun updateOrInsertInternal(item: WatchlistItem) {
+    override suspend fun updateOrInsertInternal(item: WatchlistItem): Long {
         if (item.id != 0L) {
             update(item)
         } else {
@@ -50,5 +50,6 @@ abstract class WatchlistItemDao : BaseDao<WatchlistItem>() {
                 item.id = insert(item)
             }
         }
+        return item.id
     }
 }

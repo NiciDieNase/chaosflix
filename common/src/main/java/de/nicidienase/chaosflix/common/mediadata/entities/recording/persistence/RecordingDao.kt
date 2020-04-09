@@ -31,7 +31,7 @@ abstract class RecordingDao : BaseDao<Recording>() {
     @Query("DElETE FROM recording")
     abstract fun delete()
 
-    override suspend fun updateOrInsertInternal(item: Recording) {
+    override suspend fun updateOrInsertInternal(item: Recording): Long {
         if (item.id != 0L) {
             update(item)
         } else {
@@ -43,5 +43,6 @@ abstract class RecordingDao : BaseDao<Recording>() {
                 item.id = insert(item)
             }
         }
+        return item.id
     }
 }

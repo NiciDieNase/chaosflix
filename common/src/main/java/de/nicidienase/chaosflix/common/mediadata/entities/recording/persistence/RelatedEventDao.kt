@@ -9,8 +9,11 @@ abstract class RelatedEventDao : BaseDao<RelatedEvent>() {
     @Query("SELECT * FROM related WHERE parentEventId = :id")
     abstract fun getRelatedEventsForEvent(id: Long): LiveData<List<RelatedEvent>>
 
-    @Query("SELECT relatedEventGuid FROM related WHERE parentEventId = :id")
-    abstract suspend fun getRelatedEventsForEventSuspend(id: Long): List<String>
+    @Query("SELECT * FROM related WHERE parentEventId = :id")
+    abstract suspend fun getRelatedEventsForEventSuspend(id: Long): List<RelatedEvent>
+
+    @Query("""SELECT event.* FROM related JOIN event ON related.relatedEventGuid = event.guid WHERE related.parentEventId = :id""")
+    abstract fun newGetReletedEventsForEvent(id: Long): LiveData<List<Event>>
 
     @Query("SELECT * FROM related WHERE parentEventId = :parentId AND relatedEventGuid = :related")
     abstract suspend fun findSpecificRelatedEvent(parentId: Long, related: String): RelatedEvent?
@@ -18,7 +21,7 @@ abstract class RelatedEventDao : BaseDao<RelatedEvent>() {
     @Query("DElETE FROM related")
     abstract fun delete()
 
-    override suspend fun updateOrInsertInternal(item: RelatedEvent) {
+    override suspend fun updateOrInsertInternal(item: RelatedEvent): Long {
         if (item.id != 0L) {
             update(item)
         } else {
@@ -30,5 +33,6 @@ abstract class RelatedEventDao : BaseDao<RelatedEvent>() {
                 item.id = insert(item)
             }
         }
+        return item.id
     }
 }
