@@ -19,6 +19,4 @@ data class PlaybackProgress(
 ) {
     val date: Date
     get() = Date(watchDate)
-
-
 }

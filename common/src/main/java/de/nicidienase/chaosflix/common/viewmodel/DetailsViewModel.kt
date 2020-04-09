@@ -15,10 +15,10 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.io.File
 import java.util.ArrayList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class DetailsViewModel(
     private val database: ChaosflixDatabase,
@@ -41,7 +41,7 @@ class DetailsViewModel(
         set(value) { preferencesManager.autoselectStream = value }
 
     fun setEvent(event: Event): LiveData<Event?> {
-        viewModelScope.launch (Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val recordings = mediaRepository.updateRecordingsForEvent(event)
             if (waitingForRecordings) {
                 if (recordings != null) {
@@ -86,7 +86,7 @@ class DetailsViewModel(
 
     fun deleteOfflineItem(event: Event): LiveData<Boolean> {
         val result = MutableLiveData<Boolean>()
-        viewModelScope.launch (Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             database.offlineEventDao().getByEventGuidSuspend(event.guid)?.let {
                 offlineItemManager.deleteOfflineItem(it)
             }
@@ -138,7 +138,7 @@ class DetailsViewModel(
         }
     }
 
-    private fun playRecording(event: Event, recording: Recording, urlForThumbs: String? = null) = viewModelScope.launch (Dispatchers.IO) {
+    private fun playRecording(event: Event, recording: Recording, urlForThumbs: String? = null) = viewModelScope.launch(Dispatchers.IO) {
         val progress = database.playbackProgressDao().getProgressForEventSync(event.guid)
         val bundle = Bundle().apply {
             putParcelable(RECORDING, recording)
@@ -170,7 +170,7 @@ class DetailsViewModel(
         }
     }
 
-    fun play(event: Event, autoselect: Boolean = autoselectRecording) = viewModelScope.launch (Dispatchers.IO) {
+    fun play(event: Event, autoselect: Boolean = autoselectRecording) = viewModelScope.launch(Dispatchers.IO) {
         if (autoselect) {
             val recordings = database.recordingDao().findRecordingByEventSync(event.id)
             val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)

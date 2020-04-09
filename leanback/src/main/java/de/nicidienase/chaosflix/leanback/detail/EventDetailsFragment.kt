@@ -165,7 +165,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
                         detailsBackgroundController.switchToVideo()
                         preparePlayer(recording.recordingUrl)
                         playerAdapter.play()
-                        if(progress != null && progress > 10_000L) {
+                        if (progress != null && progress > 10_000L) {
                             playerAdapter.seekTo(progress - 5_000)
                         }
                     }
@@ -300,7 +300,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
         initializeBackgroundWithImage(room.thumb)
 
         val dashStreams = room.streams.filter { it.slug == "dash-native" }
-        if (dashStreams.isNotEmpty() ){ //&& detailsViewModel.autoselectStream ) {
+        if (dashStreams.isNotEmpty()) { // && detailsViewModel.autoselectStream ) {
             dashStreams.first().urls["dash"]?.url?.let { preparePlayer(it, "") }
         }
 
@@ -454,7 +454,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
                     event?.guid?.let { detailsViewModel.removeBookmark(it) }
                 }
                 ACTION_PLAY -> {
-                    if(player.playbackState == Player.STATE_IDLE) {
+                    if (player.playbackState == Player.STATE_IDLE) {
                         event?.let { detailsViewModel.play(it) }
                     } else {
                         detailsBackgroundController.switchToVideo()

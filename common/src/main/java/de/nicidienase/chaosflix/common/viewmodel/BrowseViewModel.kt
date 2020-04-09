@@ -84,8 +84,8 @@ class BrowseViewModel(
                 mediaRepository.updateSingleEvent(it.eventGuid)
             }
         }
-        return Transformations.map(dao.getAllWithEvent()) {list ->
-            return@map if(filterFinished){
+        return Transformations.map(dao.getAllWithEvent()) { list ->
+            return@map if (filterFinished) {
                     val result = list.partition { it.progress.progress / 1000 > (it.event.length - 10) }
                     Log.d(TAG, "Filtered ${result.first.size} finished items: ${result.first.map { "${it.progress.progress / 1000}-${it.event.length}|"}}")
                     result.second.map { it.event }
