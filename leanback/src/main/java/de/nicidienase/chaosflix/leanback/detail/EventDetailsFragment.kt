@@ -35,6 +35,7 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -203,7 +204,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
         })
     }
 
-    fun showLoadingDialog() {
+    private fun showLoadingDialog() {
         loadingDialog = AlertDialog.Builder(requireContext())
                 .setTitle("Loading Recordings")
                 .create().apply { show() }
@@ -452,7 +453,11 @@ class EventDetailsFragment : DetailsSupportFragment() {
                     event?.guid?.let { detailsViewModel.removeBookmark(it) }
                 }
                 ACTION_PLAY -> {
-                    event?.let { detailsViewModel.play(it) }
+                    if(player.playbackState == Player.STATE_IDLE) {
+                        event?.let { detailsViewModel.play(it) }
+                    } else {
+                        detailsBackgroundController.switchToVideo()
+                    }
                 }
                 ACTION_RELATED -> {
                     setSelectedPosition(1)
