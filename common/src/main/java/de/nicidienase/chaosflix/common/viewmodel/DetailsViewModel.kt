@@ -17,16 +17,16 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.io.File
 import java.util.ArrayList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class DetailsViewModel(
-        private val database: ChaosflixDatabase,
-        private val offlineItemManager: OfflineItemManager,
-        private val preferencesManager: PreferencesManager,
-        private val mediaRepository: MediaRepository
+    private val database: ChaosflixDatabase,
+    private val offlineItemManager: OfflineItemManager,
+    private val preferencesManager: PreferencesManager,
+    private val mediaRepository: MediaRepository
 ) : ViewModel() {
 
     private var eventId: Long = 0
@@ -77,9 +77,9 @@ class DetailsViewModel(
         return mediaRepository.getEvent(eventId)
     }
 
-    private fun loadEvent(eventProvider: suspend ()->Event?): LiveData<Event?> = liveData{
+    private fun loadEvent(eventProvider: suspend () -> Event?): LiveData<Event?> = liveData {
         val event = eventProvider.invoke()
-        if(event != null){
+        if (event != null) {
             emit(event)
             emitSource(setEventId(event.id))
         } else {
@@ -233,7 +233,7 @@ class DetailsViewModel(
 
     fun play(autoselect: Boolean = autoselectRecording) = viewModelScope.launch(Dispatchers.IO) {
         if (autoselect) {
-            mediaRepository.getEventSync(eventId)?.let {event ->
+            mediaRepository.getEventSync(eventId)?.let { event ->
                 val recordings = database.recordingDao().findRecordingByEventSync(eventId)
                 val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
                 val recordingUrl = ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl

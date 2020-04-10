@@ -259,7 +259,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
         rowsAdapter.add(detailsOverview)
         setThumb(event.thumbUrl, detailsOverview)
 
-
         var relatedEventsAdapter: ArrayObjectAdapter? = null
         detailsViewModel.getRelatedEvents().observe(viewLifecycleOwner, Observer { events ->
             if (relatedEventsAdapter == null) {

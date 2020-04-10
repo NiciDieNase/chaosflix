@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
+import java.util.Date
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Date
 
 class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
 
@@ -21,7 +21,7 @@ class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
             database.playbackProgressDao().getProgressForEvent(eventGuid)
 
     suspend fun getPlaybackProgress(): PlaybackProgress? {
-        return if(eventGuid.isNotBlank()){
+        return if (eventGuid.isNotBlank()) {
             database.playbackProgressDao().getProgressForEventSync(eventGuid)
         } else {
             null
@@ -42,7 +42,7 @@ class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
     }
 
     fun deletePlaybackProgress() {
-        if(eventGuid.isNotBlank()) {
+        if (eventGuid.isNotBlank()) {
             viewModelScope.launch(Dispatchers.IO) {
                 database.playbackProgressDao().deleteItem(eventGuid)
             }
