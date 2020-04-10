@@ -67,15 +67,15 @@ class ConferenceGroupFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        if (layoutManager != null) {
-            outState.putParcelable(LAYOUTMANAGER_STATE, layoutManager!!.onSaveInstanceState())
+        layoutManager?.let {
+            outState.putParcelable(LAYOUTMANAGER_STATE, it.onSaveInstanceState())
         }
     }
 
     override fun onPause() {
         super.onPause()
-        if (layoutManager != null) {
-            arguments!!.putParcelable(LAYOUTMANAGER_STATE, layoutManager!!.onSaveInstanceState())
+        layoutManager?.let {
+            arguments?.putParcelable(LAYOUTMANAGER_STATE, it.onSaveInstanceState())
         }
     }
 
