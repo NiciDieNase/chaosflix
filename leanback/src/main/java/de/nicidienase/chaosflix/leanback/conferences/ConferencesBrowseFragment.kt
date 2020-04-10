@@ -12,7 +12,7 @@ import androidx.leanback.widget.ListRowPresenter
 import androidx.leanback.widget.Row
 import androidx.leanback.widget.SectionRow
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
@@ -65,7 +65,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
         title = resources.getString(R.string.app_name)
         badgeDrawable = resources.getDrawable(R.drawable.chaosflix_icon, null)
 
-        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(requireContext())).get(BrowseViewModel::class.java)
+        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(requireContext())).get(BrowseViewModel::class.java)
 
         // Recomendation Rows and Adapter
         watchListAdapter = ChaosflixEventAdapter(eventPresenter)
@@ -102,7 +102,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
         viewModel.getConferenceGroups().observe(viewLifecycleOwner, Observer { conferenceGroups ->
             if (conferenceGroups != null && conferenceGroups.isNotEmpty()) {
                 val conferenceRows = ArrayList<Row>()
-                errorFragment?.dismiss(fragmentManager)
+                errorFragment?.dismiss(parentFragmentManager)
                 errorFragment = null
                 for (group in conferenceGroups.sorted()) {
                     var row = conferencesGroupRows.get(group.name)
@@ -122,16 +122,16 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
             when (downloaderEvent?.state) {
                 MediaRepository.State.RUNNING -> {
                     Log.i(TAG, "Refresh running")
-                    fragmentManager?.let {
+                    parentFragmentManager?.let {
                         errorFragment = BrowseErrorFragment.showErrorFragment(it, R.id.browse_fragment)
                     }
                 }
                 MediaRepository.State.DONE -> {
                     if (downloaderEvent.error != null) {
                         val errorMessage = downloaderEvent.error ?: "Error refreshing events"
-                        errorFragment?.setErrorContent(errorMessage, fragmentManager)
+                        errorFragment?.setErrorContent(errorMessage, parentFragmentManager)
                     } else {
-                        errorFragment?.dismiss(fragmentManager)
+                        errorFragment?.dismiss(parentFragmentManager)
                         errorFragment = null
                     }
                 }

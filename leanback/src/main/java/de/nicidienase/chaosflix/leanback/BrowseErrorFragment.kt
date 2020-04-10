@@ -18,7 +18,7 @@ class BrowseErrorFragment : ErrorSupportFragment() {
         }
         spinnerFragment = SpinnerFragment()
         spinnerFragment?.let {
-            fragmentManager?.beginTransaction()?.add(fragmentId, it)?.commit()
+            parentFragmentManager?.beginTransaction()?.add(fragmentId, it)?.commit()
         }
     }
 
@@ -26,19 +26,19 @@ class BrowseErrorFragment : ErrorSupportFragment() {
         setErrorContent(resources.getString(resourceId))
     }
 
-    fun setErrorContent(message: String, fragmentManager: androidx.fragment.app.FragmentManager? = activity?.supportFragmentManager) {
+    fun setErrorContent(message: String, parentFragmentManager: androidx.fragment.app.FragmentManager? = activity?.supportFragmentManager) {
         try {
             if (!isDetached) {
                 spinnerFragment?.let {
-                    fragmentManager?.beginTransaction()?.remove(it)?.commit()
+                    parentFragmentManager?.beginTransaction()?.remove(it)?.commit()
                 }
                 imageDrawable = resources.getDrawable(R.drawable.lb_ic_sad_cloud, null)
                 setMessage(message)
                 setDefaultBackground(TRANSLUCENT)
                 buttonText = resources.getString(R.string.dismiss_error)
 
-                if (fragmentManager != null) {
-                    setButtonClickListener { _ -> dismiss(fragmentManager) }
+                if (parentFragmentManager != null) {
+                    setButtonClickListener { _ -> dismiss(parentFragmentManager) }
                 } else {
                     setButtonClickListener { _ -> dismiss() }
                 }
@@ -51,22 +51,22 @@ class BrowseErrorFragment : ErrorSupportFragment() {
     override fun onPause() {
         super.onPause()
         spinnerFragment?.let {
-            fragmentManager?.beginTransaction()?.remove(it)?.commit()
+            parentFragmentManager?.beginTransaction()?.remove(it)?.commit()
         } ?: Log.e(TAG, "Could not remove spinnerFragment")
     }
 
-    fun dismiss(fragmentManager: androidx.fragment.app.FragmentManager? = activity?.supportFragmentManager) {
-        if (fragmentManager != null) {
-            with(fragmentManager.beginTransaction()) {
+    fun dismiss(parentFragmentManager: androidx.fragment.app.FragmentManager? = activity?.supportFragmentManager) {
+        if (parentFragmentManager != null) {
+            with(parentFragmentManager.beginTransaction()) {
                 spinnerFragment?.let {
                     remove(it)
                 }
                 remove(this@BrowseErrorFragment)
                 commit()
-                fragmentManager.popBackStack()
+                parentFragmentManager.popBackStack()
             }
         } else {
-            Log.e(TAG, "Cannot dismiss, fragmentManager is null")
+            Log.e(TAG, "Cannot dismiss, parentFragmentManager is null")
         }
     }
 

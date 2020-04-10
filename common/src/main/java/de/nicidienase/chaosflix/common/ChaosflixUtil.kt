@@ -2,6 +2,7 @@ package de.nicidienase.chaosflix.common
 
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Stream
 
 object ChaosflixUtil {
     fun getOptimalRecording(recordings: List<Recording>, originalLanguage: String): Recording {
@@ -26,6 +27,14 @@ object ChaosflixUtil {
             lqRecordings.isNotEmpty() -> lqRecordings[0]
             else -> null
         }
+    }
+
+    fun getStringForRecording(recording: Recording): String {
+        return "${if (recording.isHighQuality) "HD" else "SD"}  ${recording.folder}  [${recording.language}]"
+    }
+
+    fun getStringForStream(stream: Stream): String {
+        return "${stream.display}"
     }
 
     private fun getRecordingForGroup(group: List<Recording>?, language: String): Recording {

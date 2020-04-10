@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
-import androidx.fragment.app.FragmentActivity
+import androidx.core.os.bundleOf
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
 import de.nicidienase.chaosflix.leanback.R
@@ -20,6 +20,16 @@ class DetailsActivity : androidx.fragment.app.FragmentActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event_details)
+        val fragment = when(intent.getIntExtra(TYPE, 0)) {
+            TYPE_RECORDING -> EventDetailsFragment().apply {
+                arguments = bundleOf(EVENT to intent.getParcelableExtra<Event>(EVENT)                )
+            }
+            TYPE_STREAM -> StreamDetailsFragment().apply {
+                arguments = bundleOf(ROOM to intent.getParcelableExtra<Room>(ROOM))
+            }
+            else -> error("undefinded type")
+        }
+        supportFragmentManager.beginTransaction().replace(R.id.details_fragment_container, fragment).commit()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 

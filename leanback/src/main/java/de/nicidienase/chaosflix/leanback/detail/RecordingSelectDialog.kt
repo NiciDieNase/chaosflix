@@ -5,8 +5,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.leanback.app.GuidedStepSupportFragment
 import androidx.leanback.widget.GuidanceStylist.Guidance
 import androidx.leanback.widget.GuidedAction
+import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
-import de.nicidienase.chaosflix.common.util.RecordingUtil
 import de.nicidienase.chaosflix.leanback.R
 
 class RecordingSelectDialog private constructor() : GuidedStepSupportFragment() {
@@ -23,7 +23,7 @@ class RecordingSelectDialog private constructor() : GuidedStepSupportFragment() 
         recordings.forEach {
             val action = GuidedAction.Builder(requireContext())
                     .id(it.id)
-                    .title(RecordingUtil.getStringForRecording(it))
+                    .title(ChaosflixUtil.getStringForRecording(it))
                     .build()
             actions.add(action)
         }
@@ -36,7 +36,7 @@ class RecordingSelectDialog private constructor() : GuidedStepSupportFragment() 
     }
 
     fun show(fragmentManager: FragmentManager) {
-        add(fragmentManager, this, R.id.details_fragment)
+        add(fragmentManager, this, R.id.details_fragment_container)
     }
 
     companion object {

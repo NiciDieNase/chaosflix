@@ -14,17 +14,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
+import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
-import de.nicidienase.chaosflix.common.util.RecordingUtil
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.cast.CastService
 import de.nicidienase.chaosflix.touch.playback.PlayerActivity
-import kotlinx.android.synthetic.main.activity_eventdetails.*
+import kotlinx.android.synthetic.main.activity_eventdetails.fragment_container
 
 class EventDetailsActivity : AppCompatActivity(),
         EventDetailsFragment.OnEventDetailsFragmentInteractionListener,
@@ -140,7 +140,7 @@ class EventDetailsActivity : AppCompatActivity(),
     }
 
     private fun selectRecording(event: Event, recordings: List<Recording>, action: (Event, Recording) -> Unit) {
-        val items: List<String> = recordings.map { RecordingUtil.getStringForRecording(it) }
+        val items: List<String> = recordings.map { ChaosflixUtil.getStringForRecording(it) }
         selectRecordingFromList(items) { i ->
             action.invoke(event, recordings[i])
         }

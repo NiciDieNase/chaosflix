@@ -39,18 +39,6 @@ class ChaosflixSettingsFragment : LeanbackSettingsFragment() {
             } else {
                 setPreferencesFromResource(prefResId, root)
             }
-            // Disable preferences not relevant for leanback
-//            listOf("allow_metered_networks",
-//                    "auto_external_player",
-//                    "download_folder",
-//                    "delete_data",
-//                    "export_favorites",
-//                    "import_favorites").forEach {
-//                preferenceManager.findPreference(it).apply {
-//                    isVisible = false
-//                    isEnabled = false
-//                }
-//            }
         }
     }
 }

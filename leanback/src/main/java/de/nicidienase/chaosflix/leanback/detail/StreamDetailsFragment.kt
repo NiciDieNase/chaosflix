@@ -1,10 +1,7 @@
 package de.nicidienase.chaosflix.leanback.detail
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -23,11 +20,9 @@ import androidx.leanback.widget.ClassPresenterSelector
 import androidx.leanback.widget.DetailsOverviewRow
 import androidx.leanback.widget.FullWidthDetailsOverviewRowPresenter
 import androidx.leanback.widget.FullWidthDetailsOverviewSharedElementHelper
-import androidx.leanback.widget.HeaderItem
 import androidx.leanback.widget.ListRow
 import androidx.leanback.widget.ListRowPresenter
 import androidx.leanback.widget.OnActionClickedListener
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -35,7 +30,6 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayerFactory
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -52,37 +46,28 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.Util
-import de.nicidienase.chaosflix.common.ChaosflixUtil
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
-import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Stream
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.common.viewmodel.PlayerViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
-import de.nicidienase.chaosflix.leanback.CardPresenter
-import de.nicidienase.chaosflix.leanback.DiffCallbacks
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
 import de.nicidienase.chaosflix.leanback.R
-import de.nicidienase.chaosflix.leanback.conferences.ConferencesActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-class EventDetailsFragment : DetailsSupportFragment() {
+class StreamDetailsFragment : DetailsSupportFragment() {
 
     private var selectDialog: AlertDialog? = null
-    private var loadingDialog: AlertDialog? = null
-
-    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     private lateinit var detailsViewModel: DetailsViewModel
     private lateinit var playerViewModel: PlayerViewModel
 
-    private lateinit var event: Event
+    private lateinit var room: Room
 
     private lateinit var rowsAdapter: ArrayObjectAdapter
-
-    private var relatedEventsAdapter: ArrayObjectAdapter? = null
 
     private val detailsBackgroundController = DetailsSupportFragmentBackgroundController(this)
 
@@ -102,8 +87,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
         detailsViewModel = ViewModelProvider(this, viewModelFactory).get(DetailsViewModel::class.java)
         playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
 
-        event = arguments?.getParcelable(DetailsActivity.EVENT) ?: error("Missing Argument Event")
-        title = event.title
+        room = arguments?.getParcelable(DetailsActivity.ROOM) ?: error("Missing Argument Room")
 
         val selector = ClassPresenterSelector()
         val detailsPresenter = FullWidthDetailsOverviewRowPresenter(
@@ -123,83 +107,15 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
         detailsBackgroundController.enableParallax()
         playerGlue = buildPlayerGlue()
-        playerGlue.title = event.title
-        playerGlue.subtitle = event.subtitle ?: ""
+        playerGlue.title = room.display
         detailsBackgroundController.setupVideoPlayback(playerGlue)
 
         onItemViewClickedListener = ItemViewClickedListener(this)
 
-        onCreateRecording(event, rowsAdapter)
+        onCreateStream(room, rowsAdapter)
         adapter = this.rowsAdapter
 
         startEntranceTransition()
-        setupObserver(detailsViewModel)
-    }
-
-    private fun setupObserver(detailsViewModel: DetailsViewModel) {
-        detailsViewModel.state.observe(viewLifecycleOwner, Observer { state ->
-            when (state.state) {
-                DetailsViewModel.State.PlayOnlineItem -> {
-                    val recording: Recording? = state.data?.getParcelable(DetailsViewModel.RECORDING)
-                    val parcelable: Event? = state.data?.getParcelable(DetailsViewModel.EVENT)
-                    val url = state.data?.getString(DetailsViewModel.THUMBS_URL)
-                    val progress: Long? = state.data?.getLong(DetailsViewModel.PROGRESS)
-                    if (recording != null) {
-                        if (parcelable != null) {
-                            prepareSeekProvider(parcelable.length, url ?: recording.recordingUrl)
-                        }
-                        detailsBackgroundController.switchToVideo()
-                        preparePlayer(recording.recordingUrl)
-                        playerAdapter.play()
-                        if (progress != null && progress > 10_000L) {
-                            playerAdapter.seekTo(progress - 5_000)
-                        }
-                    }
-                }
-                DetailsViewModel.State.SelectRecording -> {
-                    loadingDialog?.dismiss()
-                    loadingDialog = null
-                    val event: Event? = state.data?.getParcelable(DetailsViewModel.EVENT)
-                    val recordings: List<Recording>? = state.data?.getParcelableArrayList<Recording>(DetailsViewModel.KEY_SELECT_RECORDINGS)
-                            ?.filterNot { it.mimeType.startsWith("audio") }
-                    if (event != null && recordings != null && recordings.isNotEmpty()) {
-//                        RecordingSelectDialog.create(recordings) {
-//                            detailsViewModel.recordingSelected(event, it)
-//                        }.show(childFragmentManager)
-                        selectRecordingFromList(event, recordings) {
-                            detailsViewModel.recordingSelected(event, it)
-                        }
-                    } else {
-                        showError("Sorry, could not load recordings")
-                    }
-                }
-                DetailsViewModel.State.DisplayEvent -> {
-                }
-                DetailsViewModel.State.Error -> {
-                    showError(state.error)
-                }
-                DetailsViewModel.State.Loading -> {
-                    showLoadingDialog()
-                }
-                DetailsViewModel.State.PlayExternal -> {
-                    state.data?.getParcelable<Recording>(DetailsViewModel.RECORDING)?.let { recording ->
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(recording.recordingUrl)))
-                    }
-                }
-                DetailsViewModel.State.PlayOfflineItem -> irrelevantCase()
-                DetailsViewModel.State.DownloadRecording -> irrelevantCase()
-            }
-        })
-    }
-
-    private fun showLoadingDialog() {
-        loadingDialog = AlertDialog.Builder(requireContext())
-                .setTitle("Loading Recordings")
-                .create().apply { show() }
-    }
-
-    private fun irrelevantCase() {
-        Log.e(TAG, "Case not relevant for leanback UI, this should not happen")
     }
 
     private fun showError(errorMessage: String?) {
@@ -210,78 +126,63 @@ class EventDetailsFragment : DetailsSupportFragment() {
         }
     }
 
-    private fun selectRecordingFromList(event: Event, recordings: List<Recording>, resultHandler: (Recording) -> Unit) {
-        val onClickListener = DialogInterface.OnClickListener { _, which -> resultHandler.invoke(recordings[which]) }
+    private fun selectStreamFromList(room: Room, streams: List<Stream>, resultHandler: (StreamUrl) -> Unit) {
         if (selectDialog != null) {
             selectDialog?.dismiss()
         }
-        val strings = recordings.map { ChaosflixUtil.getStringForRecording(it) }.toTypedArray()
+        val streamUrls: Map<String, StreamUrl> = streams.flatMap { stream -> stream.urls.map { "${stream.display} ${it.key}" to it.value } }.toMap()
+        val keys = streamUrls.keys.toTypedArray()
+        val onClickListener = DialogInterface.OnClickListener { _, which ->
+            val selectedKey = keys[which]
+            streamUrls[selectedKey]?.let { resultHandler.invoke(it) } ?: Log.e(TAG, "Selected Stream somehow does not exist")
+        }
         selectDialog = AlertDialog.Builder(requireContext())
-                .setItems(strings, onClickListener)
+                .setItems(keys, onClickListener)
                 .setNegativeButton("Autoselect") { _, _ ->
-                    detailsViewModel.play(event, true)
+                    getAutoselectedStream(room)?.let { resultHandler.invoke(it) }
                 }
                 .setPositiveButton("Always select automatically") { _, _ ->
-                    detailsViewModel.autoselectRecording = true
-                    detailsViewModel.play(event, true)
+                    detailsViewModel.autoselectStream = true
+                    getAutoselectedStream(room)?.let { resultHandler.invoke(it) }
                 }
                 .create()
 
         selectDialog?.show()
     }
 
-    private fun onCreateRecording(event: Event, rowsAdapter: ArrayObjectAdapter) {
-        detailsViewModel.setEvent(event)
+    private fun onCreateStream(room: Room, rowsAdapter: ArrayObjectAdapter) {
+        val detailsOverview = DetailsOverviewRow(room)
 
-        val detailsOverview = DetailsOverviewRow(event)
-        val actionAdapter = ArrayObjectAdapter()
-        actionAdapter.add(Action(ACTION_PLAY, "Play"))
-        val watchlistAction = Action(ACTION_ADD_WATCHLIST, getString(R.string.add_to_watchlist))
-        actionAdapter.add(watchlistAction)
-        event.guid.let {
-            loadPlaybackProgress(it)
-            detailsViewModel.getBookmarkForEvent(it).observe(viewLifecycleOwner, Observer { watchlistItem ->
-                if (watchlistItem != null) {
-                    watchlistAction.id = ACTION_REMOVE_WATCHLIST
-                    watchlistAction.label1 = getString(R.string.remove_from_watchlist)
-                    actionAdapter.notifyItemRangeChanged(actionAdapter.indexOf(watchlistAction), 1)
-                } else {
-                    watchlistAction.id = ACTION_ADD_WATCHLIST
-                    watchlistAction.label1 = getString(R.string.add_to_watchlist)
-                    actionAdapter.notifyItemRangeChanged(actionAdapter.indexOf(watchlistAction), 1)
-                }
-            })
-        }
-        actionAdapter.add(Action(ACTION_RELATED, getString(R.string.related_talks)))
-        detailsOverview.actionsAdapter = actionAdapter
+        setThumb(room.thumb, detailsOverview)
+        initializeBackgroundWithImage(room.thumb)
 
-        rowsAdapter.add(detailsOverview)
-        setThumb(event.thumbUrl, detailsOverview)
-
-        initializeBackgroundWithImage(event.posterUrl)
-
-        detailsViewModel.getRelatedEvents(event).observe(viewLifecycleOwner, Observer { events ->
-            if (relatedEventsAdapter == null) {
-                relatedEventsAdapter = ArrayObjectAdapter(CardPresenter(R.style.EventCardStyle))
-                val header = HeaderItem(getString(R.string.related_talks))
-                rowsAdapter.add(ListRow(header, relatedEventsAdapter))
+        val streamUrl = getAutoselectedStream(room)
+        if (detailsViewModel.autoselectStream && streamUrl != null) {
+            detailsBackgroundController.switchToVideo()
+            preparePlayer(streamUrl.url, "")
+        } else {
+            selectStreamFromList(room, room.streams) {
+                detailsBackgroundController.switchToVideo()
+                preparePlayer(it.url)
             }
-            relatedEventsAdapter?.setItems(events, DiffCallbacks.eventDiffCallback)
-        })
+        }
+
+        val actionAdapter = ArrayObjectAdapter()
+
+        val playAction = Action(ACTION_PLAY, "Play")
+        actionAdapter.add(playAction)
+
+        detailsOverview.actionsAdapter = actionAdapter
+        rowsAdapter.add(detailsOverview)
     }
 
-    private fun prepareSeekProvider(length: Long, url: String) {
-            ChaosflixSeekDataProvider.setSeekProvider(
-                    playerGlue,
-                    requireContext(),
-                    length,
-                    url
-            )
+    private fun getAutoselectedStream(room: Room): StreamUrl? {
+        val dashStreams = room.streams.filter { it.slug == "dash-native" }
+        return dashStreams.first().urls["dash"]
     }
 
     override fun onPause() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || activity?.isInPictureInPictureMode == false) {
-            playerViewModel.setPlaybackProgress(event.guid, playerAdapter.currentPosition)
             playerAdapter.pause()
         }
         super.onPause()
@@ -324,20 +225,9 @@ class EventDetailsFragment : DetailsSupportFragment() {
                 })
     }
 
-    private fun loadPlaybackProgress(eventGuid: String? = null) {
-        if (eventGuid != null) {
-            uiScope.launch {
-                val playbackProgress = playerViewModel.getPlaybackProgress(eventGuid)
-                playbackProgress?.progress?.let { playerAdapter.seekTo(it) }
-            }
-        }
-    }
-
     private fun buildPlayerGlue(): ChaosMediaPlayerGlue {
         playerAdapter = LeanbackPlayerAdapter(context, player, 16)
-        return ChaosMediaPlayerGlue(requireContext(), playerAdapter) {
-            detailsViewModel.createBookmark(event.guid)
-        }
+        return ChaosMediaPlayerGlue(requireContext(), playerAdapter)
     }
 
     private fun preparePlayer(url: String, overrideExtension: String = "") {
@@ -386,7 +276,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
     companion object {
         private val BANDWIDTH_METER = DefaultBandwidthMeter()
         @JvmStatic
-        val TAG = EventDetailsFragment::class.java.simpleName
+        val TAG = StreamDetailsFragment::class.java.simpleName
 
         @JvmStatic
         private val DETAIL_THUMB_WIDTH = 254
@@ -397,55 +287,17 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
         @JvmStatic
         private val ACTION_PLAY: Long = 0L
-        @JvmStatic
-        private val ACTION_ADD_WATCHLIST = 1L
-        @JvmStatic
-        private val ACTION_REMOVE_WATCHLIST = 2L
-        @JvmStatic
-        private val ACTION_RELATED = 3L
     }
 
     private inner class DetailActionClickedListener : OnActionClickedListener {
         override fun onActionClicked(action: Action) {
             Log.d(TAG, "OnActionClicked")
             when (action.id) {
-                ACTION_ADD_WATCHLIST -> {
-                    detailsViewModel.createBookmark(event.guid)
-                    val preferences = requireActivity().getSharedPreferences(getString(R.string.watchlist_preferences_key), Context.MODE_PRIVATE)
-                    if (preferences.getBoolean(getString(R.string.watchlist_dialog_needed), true)) { // new item
-                        showWatchlistInfoDialog(preferences)
-                    }
-                }
-                ACTION_REMOVE_WATCHLIST -> {
-                    detailsViewModel.removeBookmark(event.guid)
-                }
                 ACTION_PLAY -> {
-                    if (player.playbackState == Player.STATE_IDLE) {
-                        detailsViewModel.play(event)
-                    } else {
-                        detailsBackgroundController.switchToVideo()
-                    }
-                }
-                ACTION_RELATED -> {
-                    setSelectedPosition(1)
+                    detailsBackgroundController.switchToVideo()
                 }
             }
         }
 
-        fun showWatchlistInfoDialog(preferences: SharedPreferences) {
-            val builder = AlertDialog.Builder(requireContext())
-            builder.setTitle(R.string.watchlist_message)
-            builder.setNegativeButton(R.string.return_to_homescreen) { _, _ ->
-                val i = Intent(activity, ConferencesActivity::class.java)
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(i)
-            }
-            builder.setPositiveButton("OK") { _, _ -> }
-            val edit = preferences.edit()
-            edit.putBoolean(getString(R.string.watchlist_dialog_needed), false)
-            edit.apply()
-
-            builder.create().show()
-        }
     }
 }
