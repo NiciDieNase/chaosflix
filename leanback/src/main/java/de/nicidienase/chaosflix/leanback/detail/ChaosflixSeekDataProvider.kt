@@ -64,7 +64,11 @@ class ChaosflixSeekDataProvider(
             canceled = false
             Log.d(TAG, "Retriever was canceled before, reinitializing")
             mediaMetadataRetriever = MediaMetadataRetriever()
-            mediaMetadataRetriever.setDataSource(url, mapOf("User-Agent" to ApiFactory.buildUserAgent()))
+            try {
+                mediaMetadataRetriever.setDataSource(url, mapOf("User-Agent" to ApiFactory.buildUserAgent()))
+            } catch (ex: Exception) {
+                Log.e(TAG, "Error: ${ex.message}", ex)
+            }
             generateThumbs()
         }
     }
@@ -139,17 +143,21 @@ class ChaosflixSeekDataProvider(
         }
         val startTime = System.currentTimeMillis()
         val pos = positions[index] * 1000
-        val thumb: Bitmap =
+        val thumb: Bitmap = try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
                 mediaMetadataRetriever.getScaledFrameAtTime(pos, MediaMetadataRetriever.OPTION_CLOSEST_SYNC,
-                    THUMB_WIDTH, THUMB_HEIGHT)
+                        THUMB_WIDTH, THUMB_HEIGHT)
             } else {
                 mediaMetadataRetriever.getFrameAtTime(pos, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
             } ?: Bitmap.createBitmap(THUMB_WIDTH, THUMB_HEIGHT, Bitmap.Config.ARGB_8888)
+        } catch (ex: Exception) {
+            Log.e(TAG, "Error: ${ex.message}", ex)
+            return Bitmap.createBitmap(10,10, Bitmap.Config.RGB_565)
+        }
         Log.d(TAG, "Thumb size: ${thumb.width}x${thumb.height}")
 
         val seconds = positions[index] / 1000
-        val time = String.format("%d:%02d", seconds / 60, seconds % 60)
+        val time = String.format("%d:%02d:%02d",(seconds / 3600) ,(seconds / 60) % 60, seconds % 60)
         drawStringToBitmap(thumb, time)
 
         val duration = System.currentTimeMillis() - startTime
@@ -196,7 +204,11 @@ class ChaosflixSeekDataProvider(
         canceled = true
         GlobalScope.launch {
             generateThumbsJob?.cancelAndJoin()
-            mediaMetadataRetriever.release()
+            try {
+                mediaMetadataRetriever.release()
+            } catch (ex: Exception) {
+                Log.e(TAG, "Error: ${ex.message}", ex)
+            }
         }
         AnalyticsWrapperImpl.addAnalyticsEvent(AnalyticsWrapper.thumbnailsStatEvent,
                 mapOf(
