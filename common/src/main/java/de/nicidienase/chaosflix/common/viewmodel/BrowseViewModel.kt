@@ -2,7 +2,6 @@ package de.nicidienase.chaosflix.common.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -96,16 +95,6 @@ class BrowseViewModel(
     }
 
     fun getPromotedEvents(): LiveData<List<Event>> = database.eventDao().findPromotedEvents()
-
-    private fun updateAndGetEventsForGuids(guidProvider: () -> List<String>): LiveData<List<Event>> {
-        val result = MutableLiveData<List<Event>>()
-        viewModelScope.launch(Dispatchers.IO) {
-            val guids = guidProvider.invoke()
-            val events = guids.map { mediaRepository.updateSingleEvent(it) }.filterNotNull()
-            result.postValue(events)
-        }
-        return result
-    }
 
     fun getLivestreams(): LiveData<List<LiveConference>> = streamingRepository.streamingConferences
 
