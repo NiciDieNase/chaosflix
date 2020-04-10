@@ -157,13 +157,24 @@ class ChaosflixSeekDataProvider(
         Log.d(TAG, "Thumb size: ${thumb.width}x${thumb.height}")
 
         val seconds = positions[index] / 1000
-        val time = String.format("%d:%02d:%02d",(seconds / 3600) ,(seconds / 60) % 60, seconds % 60)
+        val time = formatTime(seconds)
         drawStringToBitmap(thumb, time)
 
         val duration = System.currentTimeMillis() - startTime
         calcTimes.add(duration)
         Log.d(TAG, "Adding Thumbnail ($index/${positions.size}) (took ${duration}ms)")
         return thumb
+    }
+
+    private fun formatTime(seconds: Long): String {
+        val s = seconds % 60
+        val m = (seconds / 60) % 60
+        val h = seconds / 3600
+        return if(h > 0){
+            String.format("%d:%02d:%02d", h, m, s)
+        } else {
+            String.format("%d:%02d", m, s)
+        }
     }
 
     private fun drawStringToBitmap(thumb: Bitmap, time: String) {
@@ -192,7 +203,7 @@ class ChaosflixSeekDataProvider(
 
     private fun createDummyThumbnail(index: Int): Bitmap {
         val seconds = positions[index] / 1000
-        val time = String.format("%d:%02d", seconds / 60, seconds % 60)
+        val time = formatTime(seconds)
         val bitmap = Bitmap.createBitmap(THUMB_WIDTH, THUMB_HEIGHT, Bitmap.Config.ARGB_8888)
 
         drawStringToBitmap(bitmap, time)
