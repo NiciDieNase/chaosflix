@@ -88,9 +88,9 @@ class BrowseViewModel(
             return@map if (filterFinished) {
                     val result = list.partition { it.progress.progress / 1000 > (it.event.length - 10) }
                     Log.d(TAG, "Filtered ${result.first.size} finished items: ${result.first.map { "${it.progress.progress / 1000}-${it.event.length}|"}}")
-                    result.second.map { it.event }
+                    result.second.map { it.event.apply { it.event.progress = it.progress.progress } }
                 } else {
-                    list.map { it.event }
+                    list.map { it.event.apply { it.event.progress = it.progress.progress } }
                 }
             }
     }

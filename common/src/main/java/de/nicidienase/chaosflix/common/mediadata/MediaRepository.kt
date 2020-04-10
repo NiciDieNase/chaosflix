@@ -50,12 +50,17 @@ class MediaRepository(
             coroutineScope.launch(Dispatchers.IO) {
                 updateState.postValue(LiveEvent(state = State.RUNNING))
                 try {
-                    val conferencesWrapper = recordingApi.getConferencesWrapperSuspending()
-                    if (conferencesWrapper != null) {
-                        val saveConferences = saveConferences(conferencesWrapper)
-                        updateState.postValue(LiveEvent(State.DONE, data = saveConferences))
+                    val response = recordingApi.getConferencesWrapperSuspending()
+                    if (response.isSuccessful) {
+                        val conferencesWrapper = response.body()
+                        if (conferencesWrapper != null) {
+                            val saveConferences = saveConferences(conferencesWrapper)
+                            updateState.postValue(LiveEvent(State.DONE, data = saveConferences))
+                        } else {
+                            updateState.postValue(LiveEvent(State.DONE, error = "Error updating conferences."))
+                        }
                     } else {
-                        updateState.postValue(LiveEvent(State.DONE, error = "Error updating conferences."))
+                        Log.e(TAG, "Error: ${response.message()} ${response.errorBody()}")
                     }
                 } catch (e: IOException) {
                     updateState.postValue(LiveEvent(State.DONE, error = e.message))
@@ -102,12 +107,18 @@ class MediaRepository(
 
     suspend fun updateRecordingsForEvent(event: Event): List<Recording>? {
         return try {
-            val eventDto = recordingApi.getEventByGUIDSuspending(event.guid)
-            eventDto?.let { saveEvent(it) }
-            val recordingDtos = eventDto?.recordings
-            if (recordingDtos != null) {
-                saveRecordings(event, recordingDtos)
+            val response = recordingApi.getEventByGUIDSuspending(event.guid)
+            return if (response.isSuccessful) {
+                val eventDto = response.body()
+                eventDto?.let { saveEvent(it) }
+                val recordingDtos = eventDto?.recordings
+                if (recordingDtos != null) {
+                    saveRecordings(event, recordingDtos)
+                } else {
+                    null
+                }
             } else {
+                Log.e(TAG, "Error: ${response.message()} ${response.errorBody()}")
                 null
             }
         } catch (e: Exception) {
@@ -117,7 +128,12 @@ class MediaRepository(
     }
 
     suspend fun updateSingleEvent(guid: String): Event? = withContext(Dispatchers.IO) {
-        val event = recordingApi.getEventByGUIDSuspending(guid)
+        val response = recordingApi.getEventByGUIDSuspending(guid)
+        if (!response.isSuccessful) {
+            Log.e(TAG, "Error: ${response.message()} ${response.errorBody()}")
+            return@withContext null
+        }
+        val event = response.body()
         return@withContext if (event != null) {
             try {
                 saveEvent(event)
@@ -233,16 +249,17 @@ class MediaRepository(
     }
 
     suspend fun findEventByTitle(title: String): Event? {
-        var event: Event? = eventDao.findEventByTitleSuspend(title)
-        if (event == null) {
-            event = searchEvent(title, true)
-        }
-        return event
+        return eventDao.findEventByTitleSuspend(title) ?: searchEvent(title, true)
     }
 
     private suspend fun searchEvent(queryString: String, updateConference: Boolean = false): Event? {
-        val searchEvents = recordingApi.searchEvents(queryString)
-        if (searchEvents.events.isNotEmpty()) {
+        val response = recordingApi.searchEvents(queryString)
+        if (!response.isSuccessful) {
+            Log.e(TAG, "Error: ${response.message()} ${response.errorBody()}")
+            return null
+        }
+        val searchEvents = response.body()
+        if (searchEvents != null && searchEvents.events.isNotEmpty()) {
             val eventDto = searchEvents.events[0]
             try {
                 val conference = updateConferencesAndGet(eventDto.conferenceUrl.split("/").last())
@@ -250,7 +267,7 @@ class MediaRepository(
                     updateEventsForConference(conference)
                 }
                 if (conference?.id != null) {
-                    var event = Event(eventDto, conference.id)
+                    val event = Event(eventDto, conference.id)
                     eventDao.updateOrInsert(event)
                     return event
                 }
