@@ -1,17 +1,9 @@
 package de.nicidienase.chaosflix.touch.eventdetails
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -19,18 +11,25 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import de.nicidienase.chaosflix.touch.R
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
-import de.nicidienase.chaosflix.touch.databinding.FragmentEventDetailsBinding
-import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import de.nicidienase.chaosflix.touch.OnEventSelectedListener
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
+import de.nicidienase.chaosflix.touch.databinding.FragmentEventDetailsBinding
 
-class EventDetailsFragment : Fragment() {
+class EventDetailsFragment : androidx.fragment.app.Fragment() {
 
     private var listener: OnEventDetailsFragmentInteractionListener? = null
 
@@ -69,13 +68,7 @@ class EventDetailsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        layout = inflater.inflate(R.layout.fragment_event_details, container, false)
-        return layout
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentEventDetailsBinding.bind(view)
+        val binding = FragmentEventDetailsBinding.inflate(inflater, container, false)
         binding.event = event
         binding.playFab.setOnClickListener { play() }
         if (listener != null) {
@@ -87,11 +80,14 @@ class EventDetailsFragment : Fragment() {
             relatedEventsAdapter = EventRecyclerViewAdapter {
                 viewModel.relatedEventSelected(it)
             }
+            relatedEventsAdapter.showConferenceName = true
             adapter = relatedEventsAdapter
-            val orientation = LinearLayoutManager.VERTICAL
-            layoutManager = LinearLayoutManager(context, orientation, false)
-            val itemDecoration = DividerItemDecoration(binding.relatedItemsList.context, orientation)
-            addItemDecoration(itemDecoration)
+            val columns: Int = resources.getInteger(R.integer.num_columns)
+            layoutManager = if (columns == 1) {
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            } else {
+                StaggeredGridLayoutManager(columns, StaggeredGridLayoutManager.VERTICAL)
+            }
         }
 
         binding.appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
@@ -105,11 +101,11 @@ class EventDetailsFragment : Fragment() {
 
         viewModel = ViewModelProviders.of(
                 requireActivity(),
-                ViewModelFactory(requireContext()))
+                ViewModelFactory.getInstance(requireContext()))
                 .get(DetailsViewModel::class.java)
 
         viewModel.setEvent(event)
-                .observe(this, Observer {
+                .observe(viewLifecycleOwner, Observer {
                     Log.d(TAG, "Loading Event ${event.title}, ${event.guid}")
                     updateBookmark(event.guid)
                     binding.thumbImage.transitionName = getString(R.string.thumbnail) + event.guid
@@ -119,16 +115,23 @@ class EventDetailsFragment : Fragment() {
                             .apply(RequestOptions().fitCenter())
                             .into(binding.thumbImage)
                 })
-        viewModel.getRelatedEvents(event).observe(this, Observer {
+        viewModel.getRelatedEvents(event).observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 relatedEventsAdapter.items = it
             }
+            if (it?.isNotEmpty() == true) {
+                binding.relatedItemsText.visibility = View.VISIBLE
+            } else {
+                binding.relatedItemsText.visibility = View.GONE
+            }
         })
+
+        return binding.root
     }
 
     private fun updateBookmark(guid: String) {
         viewModel.getBookmarkForEvent(guid)
-                .observe(this, Observer { watchlistItem: WatchlistItem? ->
+                .observe(viewLifecycleOwner, Observer { watchlistItem: WatchlistItem? ->
                     this.watchlistItem = watchlistItem
                     listener?.invalidateOptionsMenu()
                 })
@@ -138,7 +141,7 @@ class EventDetailsFragment : Fragment() {
         viewModel.playEvent(event)
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnEventSelectedListener) {
             eventSelectedListener = context
@@ -146,7 +149,7 @@ class EventDetailsFragment : Fragment() {
         if (context is OnEventDetailsFragmentInteractionListener) {
             listener = context
         } else {
-            throw RuntimeException(context!!.toString() + " must implement OnFragmentInteractionListener")
+            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
         }
     }
 
@@ -161,7 +164,7 @@ class EventDetailsFragment : Fragment() {
         menu.findItem(R.id.action_bookmark).isVisible = watchlistItem == null
         menu.findItem(R.id.action_unbookmark).isVisible = watchlistItem != null
 // 		menu.findItem(R.id.action_download).isVisible = viewModel.writeExternalStorageAllowed
-// 		viewModel.offlineItemExists(event).observe(this, Observer { itemExists->
+// 		viewModel.offlineItemExists(event).observe(viewLifecycleOwner, Observer { itemExists->
 // 					itemExists?.let {exists ->
 // 						menu.findItem(R.id.action_download).isVisible =
 // 								viewModel.writeExternalStorageAllowed && !exists
@@ -173,14 +176,14 @@ class EventDetailsFragment : Fragment() {
         menu.findItem(R.id.action_play).isVisible = appBarExpanded
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         // 		if (appBarExpanded)
-        inflater?.inflate(R.menu.details_menu, menu)
+        inflater.inflate(R.menu.details_menu, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> {
                 activity?.finish()
                 return true
@@ -205,7 +208,7 @@ class EventDetailsFragment : Fragment() {
                 return true
             }
             R.id.action_delete_offline_item -> {
-                viewModel.deleteOfflineItem(event).observe(this, Observer { success ->
+                viewModel.deleteOfflineItem(event).observe(viewLifecycleOwner, Observer { success ->
                     if (success != null) {
                         view?.let { Snackbar.make(it, "Deleted Download", Snackbar.LENGTH_SHORT).show() }
                     }

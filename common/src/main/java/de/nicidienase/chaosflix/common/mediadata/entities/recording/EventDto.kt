@@ -1,8 +1,7 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording
 
-import android.support.annotation.Keep
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
-import java.lang.NumberFormatException
 
 @Keep
 data class EventDto(
@@ -17,7 +16,7 @@ data class EventDto(
     @SerializedName("original_language")
     var originalLanguage: String? = "",
     var persons: Array<String>?,
-    var tags: Array<String>?,
+    var tags: Array<String?>?,
     var date: String? = "",
     @SerializedName("release_date")
     var releaseDate: String? = "",

@@ -1,8 +1,6 @@
 package de.nicidienase.chaosflix.touch.eventdetails
 
 import android.Manifest
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -10,10 +8,12 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
@@ -24,7 +24,7 @@ import de.nicidienase.chaosflix.touch.OnEventSelectedListener
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.cast.CastService
 import de.nicidienase.chaosflix.touch.playback.PlayerActivity
-import kotlinx.android.synthetic.main.activity_eventdetails.*
+import kotlinx.android.synthetic.main.activity_eventdetails.fragment_container
 
 class EventDetailsActivity : AppCompatActivity(),
         EventDetailsFragment.OnEventDetailsFragmentInteractionListener,
@@ -42,7 +42,7 @@ class EventDetailsActivity : AppCompatActivity(),
 
         castService = CastService(this)
 
-        viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(DetailsViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(this)).get(DetailsViewModel::class.java)
 
         viewModel.state.observe(this, Observer { liveEvent ->
             if (liveEvent == null) {
@@ -51,7 +51,7 @@ class EventDetailsActivity : AppCompatActivity(),
             val event = liveEvent.data?.getParcelable<Event>(DetailsViewModel.EVENT)
             val recording = liveEvent.data?.getParcelable<Recording>(DetailsViewModel.RECORDING)
             val localFile = liveEvent.data?.getString(DetailsViewModel.KEY_LOCAL_PATH)
-            val selectItems: Array<Recording>? = liveEvent.data?.getParcelableArray(DetailsViewModel.KEY_SELECT_RECORDINGS) as Array<Recording>?
+            val selectItems: List<Recording>? = liveEvent.data?.getParcelableArrayList(DetailsViewModel.KEY_SELECT_RECORDINGS)
             when (liveEvent.state) {
                 DetailsViewModel.State.DisplayEvent -> {
                     if (event != null) {
@@ -70,14 +70,14 @@ class EventDetailsActivity : AppCompatActivity(),
                 }
                 DetailsViewModel.State.SelectRecording -> {
                     if (event != null && selectItems != null) {
-                            selectRecording(event, selectItems.asList()) { e, r ->
-                                viewModel.playRecording(e, r)
+                            selectRecording(event, selectItems) { e, r ->
+                                viewModel.recordingSelected(e, r)
                             }
                     }
                 }
                 DetailsViewModel.State.DownloadRecording -> {
                     if (event != null && selectItems != null) {
-                        selectRecording(event, selectItems.asList()) { e, r ->
+                        selectRecording(event, selectItems) { e, r ->
                             viewModel.download(e, r).observe(this, Observer {
                                 when (it?.state) {
                                     OfflineItemManager.State.Downloading -> {
@@ -99,7 +99,7 @@ class EventDetailsActivity : AppCompatActivity(),
                 DetailsViewModel.State.PlayExternal -> {
                     if (event != null) {
                         if (selectItems != null) {
-                            selectRecording(event, selectItems.asList()) { _, r ->
+                            selectRecording(event, selectItems) { _, r ->
                                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(r.recordingUrl)))
                             }
                         } else if (recording != null) {
@@ -140,29 +140,21 @@ class EventDetailsActivity : AppCompatActivity(),
     }
 
     private fun selectRecording(event: Event, recordings: List<Recording>, action: (Event, Recording) -> Unit) {
-        if (viewModel.autoselectRecording) {
-            val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
-            action.invoke(event, optimalRecording)
-        } else {
-            val items: List<String> = recordings.map { getStringForRecording(it) }
-            selectRecordingFromList(items, DialogInterface.OnClickListener { _, i ->
-                action.invoke(event, recordings[i])
-            })
+        val items: List<String> = recordings.map { ChaosflixUtil.getStringForRecording(it) }
+        selectRecordingFromList(items) { i ->
+            action.invoke(event, recordings[i])
         }
     }
 
-    private fun getStringForRecording(recording: Recording): String {
-        return "${if (recording.isHighQuality) "HD" else "SD"}  ${recording.folder}  [${recording.language}]"
-    }
-
-    private fun selectRecordingFromList(items: List<String>, resultHandler: DialogInterface.OnClickListener) {
-            if (selectDialog != null) {
-                selectDialog?.dismiss()
-            }
-            val builder = AlertDialog.Builder(this)
-            builder.setItems(items.toTypedArray(), resultHandler)
-            selectDialog = builder.create()
-            selectDialog?.show()
+    private fun selectRecordingFromList(items: List<String>, resultHandler: (Int) -> Unit) {
+        val onClickListener = DialogInterface.OnClickListener { _, which -> resultHandler.invoke(which) }
+        if (selectDialog != null) {
+            selectDialog?.dismiss()
+        }
+        val builder = AlertDialog.Builder(this)
+        builder.setItems(items.toTypedArray(), onClickListener)
+        selectDialog = builder.create()
+        selectDialog?.show()
     }
 
     private fun showFragmentForEvent(event: Event, addToBackStack: Boolean = false) {

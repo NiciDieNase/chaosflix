@@ -1,43 +1,45 @@
 package de.nicidienase.chaosflix.common.viewmodel
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.common.AnalyticsWrapper
-import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
+import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
+import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 import de.nicidienase.chaosflix.common.util.LiveEvent
-import de.nicidienase.chaosflix.common.util.ThreadHandler
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
-import java.lang.Exception
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class PreferencesViewModel(
-    val downloader: Downloader,
-    val watchlistItemDao: WatchlistItemDao,
-    val exportDir: File
+    private val mediaRepository: MediaRepository,
+    private val watchlistItemDao: WatchlistItemDao,
+    private val exportDir: File
 ) : ViewModel() {
-    val gson = Gson()
+    private val gson = Gson()
 
-    private val threadHandler = ThreadHandler()
+    private val analyticsWrapper: AnalyticsWrapper = AnalyticsWrapperImpl
 
     fun cleanNonUserData() {
-        threadHandler.runOnBackgroundThread {
-            downloader.deleteNonUserData()
+        viewModelScope.launch(Dispatchers.IO) {
+            mediaRepository.deleteNonUserData()
         }
     }
 
-    fun startAnalytics() = AnalyticsWrapper.startAnalytics()
+    fun startAnalytics() = analyticsWrapper.startAnalytics()
 
-    fun stopAnalytics() = AnalyticsWrapper.stopAnalytics()
+    fun stopAnalytics() = analyticsWrapper.stopAnalytics()
 
     fun exportFavorites() {
-        threadHandler.runOnBackgroundThread {
+        viewModelScope.launch(Dispatchers.IO) {
             val favorites = watchlistItemDao.getAllSync()
             val json = gson.toJson(favorites)
             Log.d(TAG, json)
@@ -64,7 +66,7 @@ class PreferencesViewModel(
     fun importFavorites(): MutableLiveData<LiveEvent<State, List<WatchlistItem>, Exception>> {
         val mutableLiveData = MutableLiveData<LiveEvent<State, List<WatchlistItem>, Exception>>()
         mutableLiveData.postValue(LiveEvent(State.Loading, null, null))
-        threadHandler.runOnBackgroundThread {
+        viewModelScope.launch(Dispatchers.IO) {
             val file = File("${exportDir.path}${File.separator}$FAVORITES_FILENAME")
             try {
                 if (file.exists()) {
@@ -89,7 +91,7 @@ class PreferencesViewModel(
     }
 
     companion object {
-        val TAG = PreferencesViewModel::class.java.simpleName
-        val FAVORITES_FILENAME = "chaosflix_favorites.json"
+        private val TAG = PreferencesViewModel::class.java.simpleName
+        private const val FAVORITES_FILENAME = "chaosflix_favorites.json"
     }
 }

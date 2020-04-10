@@ -1,7 +1,6 @@
 <resources>
-    <string name="api_media_ccc_url">https://api.media.ccc.de</string>
-    <string name="streaming_media_ccc_url">https://streaming.media.ccc.de</string>
-    <!--<string name="streaming_media_ccc_url">http://192.168.178.98:8000</string>-->
+    <string name="api_media_ccc_url" translatable="false">https://api.media.ccc.de</string>
+    <string name="streaming_media_ccc_url" translatable="false">https://streaming.media.ccc.de</string>
 
     <string name="app_name">Chaosflix</string>
     <string name="related_movies">Related Videos</string>
@@ -47,7 +46,8 @@
     <string name="setting_metered_networks">Allow downloads over metered networks</string>
     <string name="settings_choose_recording">Automatically choose recording</string>
     <string name="export_favorites">Export Favorites</string>
-    <string name="import_favorites">Import Favorites</string>
+    <string name="import_favorites">Import to Favorites</string>
     <string name="error_event_not_found">Event not found</string>
     <string name="privacy_policy">Chaosflix does not collect or transmit any personalized data.</string>
+    <string name="no_recording_found_for">No Recording found for</string>
 </resources>

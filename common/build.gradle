@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: "de.mannodermaus.android-junit5"
 
 String versionString = new File("versionfile").text.trim()
 
@@ -20,7 +21,7 @@ android {
             }
         }
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "STREAMING_API_BASE_URL", "\"https://streaming.media.ccc.de\""
         buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/streams/v2.json\""
@@ -38,12 +39,10 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-            useProguard false
         }
 
         release {
             minifyEnabled true
-            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'),'proguard-rules.pro'
         }
     }
@@ -53,65 +52,97 @@ android {
     productFlavors {
         prod {
             dimension "stage"
-            buildConfigField "String", "APPCENTER_ID", "$appcenterId"
         }
 
         dev {
             dimension "stage"
-            buildConfigField "String", "APPCENTER_ID", "$appcenterDevId"
         }
 
         mock {
             dimension "stage"
-            buildConfigField "String", "APPCENTER_ID", "$appcenterDevId"
             buildConfigField "String", "STREAMING_API_BASE_URL", "\"https://gist.githubusercontent.com\""
             buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/NiciDieNase/1ca017f180242f0ee683a1f592efc4ed/raw/0104592b57f4b29863fd0684a510462af276f30e/example_streams_v2.json\""
         }
 
         free {
             dimension "libs"
+
+            ext {
+                prod = null
+                dev = null
+                mock = null
+            }
         }
         noFree{
             dimension "libs"
+            ext {
+                if(project.hasProperty("appcenterId")){
+                    prod = appcenterId
+                } else {
+                    prod = null
+                    println "AppcenterId not set"
+                }
+                if(project.hasProperty("appcenterDevId")){
+                    dev = appcenterDevId
+                    mock = appcenterDevId
+                } else {
+                    dev = null
+                    mock = null
+                    println "AppcenterId not set"
+                }
+
+            }
         }
     }
+
+    libraryVariants.all { variant ->
+        def flavors = variant.productFlavors
+        // flavorDimensions "stage" -> 0, "libs" -> 1
+        def stage = flavors[0]
+        def libs = flavors[1]
+
+        variant.buildConfigField "String", "APPCENTER_ID", "${libs[stage.name]}"
+    }
+
     variantFilter { variant ->
-        def names = variant.flavors*.name
         if (name.contains("prod") && name.contains("Debug")){
             setIgnore(true)
         }
     }
 
-    dataBinding {
-        enabled = true
-    }
-
-    testOptions {
-        unitTests {
-            includeAndroidResources = true
-        }
-    }
+    lintOptions.abortOnError = false
+    dataBinding.enabled = true
+    testOptions.unitTests.includeAndroidResources = true
 }
 
 dependencies {
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M2'
-    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0-M2'
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0'
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0'
 
-    api "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
+    api 'androidx.appcompat:appcompat:1.1.0'
 
-    api "android.arch.lifecycle:extensions:${rootProject.ext.archCompVersion}"
-    kapt "android.arch.lifecycle:compiler:${rootProject.ext.archCompVersion}"
-    api "android.arch.lifecycle:common-java8:${rootProject.ext.archCompVersion}"
+    def lifecycle_version = "2.2.0"
+    api "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    api "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    api "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
 
-    api "android.arch.persistence.room:runtime:${rootProject.ext.archCompVersion}"
-    kapt "android.arch.persistence.room:compiler:${rootProject.ext.archCompVersion}"
+    api "androidx.core:core-ktx:1.2.0"
 
-    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
+    api 'androidx.recyclerview:recyclerview:1.1.0'
 
+    def roomVersion = "2.2.5"
+    api "androidx.room:room-runtime:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    api "androidx.room:room-ktx:$roomVersion"
+
+    implementation 'com.squareup.retrofit2:retrofit:2.6.4'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
+
+    api "com.google.code.gson:gson:2.8.6"
     api 'com.google.android.exoplayer:exoplayer:2.9.6'
 
     api 'com.github.bumptech.glide:glide:4.9.0'
@@ -121,21 +152,26 @@ dependencies {
 
     api 'commons-io:commons-io:2.4'
 
-    def appCenterSdkVersion = '2.2.0'
+    def appCenterSdkVersion = '2.5.1'
     noFreeImplementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
     noFreeImplementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
     noFreeImplementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
 
-    debugImplementation 'com.facebook.stetho:stetho:1.5.0'
+    debugImplementation 'com.facebook.stetho:stetho:1.5.1'
     debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.4.2'
     debugImplementation 'com.facebook.stetho:stetho-okhttp:1.4.2'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
 
-    testImplementation "org.mockito:mockito-core:2.11.0"
-    testImplementation 'junit:junit:4.12'
+    testImplementation "io.mockk:mockk:1.9.3"
     testImplementation 'org.robolectric:robolectric:4.1'
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.0"
+
+    testImplementation "junit:junit:4.13"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.5.2"
 
 }

@@ -1,13 +1,13 @@
 package de.nicidienase.chaosflix.common.userdata.entities.progress
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.Index
-import android.arch.persistence.room.PrimaryKey
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import java.util.Date
 
 @Entity(tableName = "playback_progress",
-        indices = arrayOf(Index(value = ["event_guid"], unique = true)))
+        indices = [Index(value = ["event_guid"], unique = true)])
 data class PlaybackProgress(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,

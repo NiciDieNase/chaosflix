@@ -29,6 +29,19 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="https"
+                    android:host="media.ccc.de"
+                    android:pathPrefix="/v/"/>
+                <data
+                    android:scheme="https"
+                    android:host="media.ccc.de"
+                    android:pathPrefix="/c/"/>
+            </intent-filter>
         </activity>
         <activity android:name=".browse.BrowseActivity">
             <meta-data
@@ -59,10 +72,13 @@
             android:parentActivityName=".browse.BrowseActivity"/>
 
         <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
-
-        <service
-            android:name="de.nicidienase.chaosflix.common.mediadata.sync.DownloadJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <activity android:name=".favoritesimport.FavoritesImportActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/json" />
+            </intent-filter>
+        </activity>
 
     </application>
 

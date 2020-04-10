@@ -3,12 +3,12 @@ package de.nicidienase.chaosflix.touch.browse.eventslist
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
-import de.nicidienase.chaosflix.touch.R
+import androidx.appcompat.app.AppCompatActivity
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.touch.OnEventSelectedListener
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.cast.CastService
 import de.nicidienase.chaosflix.touch.eventdetails.EventDetailsActivity
 
@@ -28,7 +28,7 @@ class EventsListActivity : AppCompatActivity(), OnEventSelectedListener {
         val conference = intent.getParcelableExtra<Conference>(CONFERENCE_KEY)
 
         if (savedInstanceState == null) {
-            val eventsListFragment = EventsListFragment.newInstance(EventsListFragment.TYPE_EVENTS, conference, numColumns)
+            val eventsListFragment = EventsListFragment.newInstance(EventsListFragment.TYPE_EVENTS, conference)
 
             supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, eventsListFragment)

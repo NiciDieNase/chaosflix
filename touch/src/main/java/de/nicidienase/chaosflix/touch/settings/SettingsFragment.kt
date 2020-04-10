@@ -1,15 +1,15 @@
 package de.nicidienase.chaosflix.touch.settings
 
 import android.Manifest
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.design.widget.Snackbar
-import android.support.v7.preference.PreferenceFragmentCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.preference.PreferenceFragmentCompat
+import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.checkPermission
 import de.nicidienase.chaosflix.common.viewmodel.PreferencesViewModel
@@ -22,11 +22,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private lateinit var viewModel: PreferencesViewModel
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
-        context?.let { c ->
-            viewModel = ViewModelProviders.of(this, ViewModelFactory(c)).get(PreferencesViewModel::class.java)
-        }
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(context)).get(PreferencesViewModel::class.java)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -86,7 +84,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
-        disableAnalytics.setOnPreferenceChangeListener { preference, state ->
+        disableAnalytics.setOnPreferenceChangeListener { _, state ->
             when (state) {
                 true -> {
                     viewModel.stopAnalytics()
@@ -121,7 +119,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     importFavorites()
                 } else {
-                    Snackbar.make(listView, "Cannot import without Storage Permission.", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(listView, "Cannot importFavorites without Storage Permission.", Snackbar.LENGTH_SHORT).show()
                 }
             }
             PERMISSION_REQUEST_EXPORT_FAVORITES -> {
@@ -144,7 +142,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun importFavorites() {
         var snackbar: Snackbar? = null
-        viewModel.importFavorites().observe(this, Observer { event ->
+        viewModel.importFavorites().observe(viewLifecycleOwner, Observer { event ->
             when {
                 event?.state == PreferencesViewModel.State.Loading -> {
                     snackbar?.dismiss()

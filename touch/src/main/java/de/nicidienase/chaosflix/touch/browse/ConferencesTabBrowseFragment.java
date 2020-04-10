@@ -2,16 +2,17 @@ package de.nicidienase.chaosflix.touch.browse;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import de.nicidienase.chaosflix.R;
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference;
-import de.nicidienase.chaosflix.touch.databinding.FragmentTabPagerLayoutBinding;
 import de.nicidienase.chaosflix.touch.browse.adapters.ConferenceGroupsFragmentPager;
+import de.nicidienase.chaosflix.touch.databinding.FragmentTabPagerLayoutBinding;
 
 
 public class ConferencesTabBrowseFragment extends BrowseFragment {
@@ -61,7 +62,7 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 		setupToolbar(binding.incToolbar.toolbar, R.string.app_name);
 		setOverlay(binding.incOverlay.loadingOverlay);
 
-		getViewModel().getConferenceGroups().observe(this, conferenceGroups -> {
+		getViewModel().getConferenceGroups().observe(getViewLifecycleOwner(), conferenceGroups -> {
 			if(conferenceGroups.size() > 0){
 				this.setLoadingOverlayVisibility(false);
 			}
@@ -75,7 +76,7 @@ public class ConferencesTabBrowseFragment extends BrowseFragment {
 				setLoadingOverlayVisibility(false);
 			}
 		});
-		getViewModel().getUpdateState().observe(this, state -> {
+		getViewModel().getUpdateState().observe(getViewLifecycleOwner(), state -> {
 			if(state == null){
 				return;
 			}

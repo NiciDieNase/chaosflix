@@ -1,0 +1,11 @@
+Schaue Aufzeichnungen und Streams von media.ccc.de auf deinem Smartphone, Tablet oder AndroidTV-Gerät.
+
+Features:
+<ul>
+	<li>Livestreams</li>
+	<li>Talks als Lesezeichen Speichern</li>
+	<li>Talks zum offline Schauen herunterladen</li>
+	<li>Chromecast-Unterstützung</li>
+</ul>
+
+Bugreports, Verbesserungsvorschläge, etc. sind willkommen: https://github.com/NiciDieNase/chaosflix/issues

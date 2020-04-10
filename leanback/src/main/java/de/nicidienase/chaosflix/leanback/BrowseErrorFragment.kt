@@ -1,13 +1,11 @@
 package de.nicidienase.chaosflix.leanback
 
 import android.os.Bundle
-import android.support.v17.leanback.app.ErrorSupportFragment
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.leanback.app.ErrorSupportFragment
 
 class BrowseErrorFragment : ErrorSupportFragment() {
     private var spinnerFragment: SpinnerFragment? = null
@@ -20,7 +18,7 @@ class BrowseErrorFragment : ErrorSupportFragment() {
         }
         spinnerFragment = SpinnerFragment()
         spinnerFragment?.let {
-            fragmentManager?.beginTransaction()?.add(fragmentId, it)?.commit()
+            parentFragmentManager?.beginTransaction()?.add(fragmentId, it)?.commit()
         }
     }
 
@@ -28,19 +26,19 @@ class BrowseErrorFragment : ErrorSupportFragment() {
         setErrorContent(resources.getString(resourceId))
     }
 
-    fun setErrorContent(message: String, fragmentManager: FragmentManager? = activity?.supportFragmentManager) {
+    fun setErrorContent(message: String, parentFragmentManager: androidx.fragment.app.FragmentManager? = activity?.supportFragmentManager) {
         try {
             if (!isDetached) {
                 spinnerFragment?.let {
-                    fragmentManager?.beginTransaction()?.remove(it)?.commit()
+                    parentFragmentManager?.beginTransaction()?.remove(it)?.commit()
                 }
                 imageDrawable = resources.getDrawable(R.drawable.lb_ic_sad_cloud, null)
                 setMessage(message)
                 setDefaultBackground(TRANSLUCENT)
                 buttonText = resources.getString(R.string.dismiss_error)
 
-                if (fragmentManager != null) {
-                    setButtonClickListener { _ -> dismiss(fragmentManager) }
+                if (parentFragmentManager != null) {
+                    setButtonClickListener { _ -> dismiss(parentFragmentManager) }
                 } else {
                     setButtonClickListener { _ -> dismiss() }
                 }
@@ -53,29 +51,34 @@ class BrowseErrorFragment : ErrorSupportFragment() {
     override fun onPause() {
         super.onPause()
         spinnerFragment?.let {
-            fragmentManager?.beginTransaction()?.remove(it)?.commit()
+            parentFragmentManager?.beginTransaction()?.remove(it)?.commit()
         } ?: Log.e(TAG, "Could not remove spinnerFragment")
     }
 
-    fun dismiss(fragmentManager: FragmentManager? = activity?.supportFragmentManager) {
-        if (fragmentManager != null) {
-            with(fragmentManager.beginTransaction()) {
+    fun dismiss(parentFragmentManager: androidx.fragment.app.FragmentManager? = activity?.supportFragmentManager) {
+        if (parentFragmentManager != null) {
+            with(parentFragmentManager.beginTransaction()) {
                 spinnerFragment?.let {
                     remove(it)
                 }
                 remove(this@BrowseErrorFragment)
                 commit()
-                fragmentManager.popBackStack()
+                parentFragmentManager.popBackStack()
             }
         } else {
-            Log.e(TAG, "Cannot dismiss, fragmentManager is null")
+            Log.e(TAG, "Cannot dismiss, parentFragmentManager is null")
         }
     }
 
-    class SpinnerFragment : Fragment() {
+    class SpinnerFragment : androidx.fragment.app.Fragment() {
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
             return inflater.inflate(R.layout.loading_fragment, container, false)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        spinnerFragment = null
     }
 
     companion object {
@@ -84,7 +87,7 @@ class BrowseErrorFragment : ErrorSupportFragment() {
         val FRAGMENT = "fragmentId"
         val TAG = BrowseErrorFragment::class.java.simpleName
 
-        fun showErrorFragment(manager: FragmentManager, fragmentId: Int, addToBackstack: Boolean = false): BrowseErrorFragment {
+        fun showErrorFragment(manager: androidx.fragment.app.FragmentManager, fragmentId: Int, addToBackstack: Boolean = false): BrowseErrorFragment {
             val errorFragment = BrowseErrorFragment()
             val args = Bundle()
             args.putInt(BrowseErrorFragment.FRAGMENT, fragmentId)

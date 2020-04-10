@@ -1,6 +1,6 @@
 package de.nicidienase.chaosflix.common.mediadata.entities
 
-import android.arch.persistence.room.TypeConverter
+import androidx.room.TypeConverter
 
 class Converters {
 

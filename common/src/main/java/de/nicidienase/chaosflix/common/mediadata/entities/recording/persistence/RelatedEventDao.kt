@@ -1,8 +1,8 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Query
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Query
 
 @Dao
 abstract class RelatedEventDao : BaseDao<RelatedEvent>() {
@@ -10,19 +10,22 @@ abstract class RelatedEventDao : BaseDao<RelatedEvent>() {
     abstract fun getRelatedEventsForEvent(id: Long): LiveData<List<RelatedEvent>>
 
     @Query("SELECT * FROM related WHERE parentEventId = :id")
-    abstract fun getRelatedEventsForEventSync(id: Long): List<RelatedEvent>
+    abstract suspend fun getRelatedEventsForEventSuspend(id: Long): List<RelatedEvent>
+
+    @Query("""SELECT event.* FROM related JOIN event ON related.relatedEventGuid = event.guid WHERE related.parentEventId = :id""")
+    abstract fun newGetReletedEventsForEvent(id: Long): LiveData<List<Event>>
 
     @Query("SELECT * FROM related WHERE parentEventId = :parentId AND relatedEventGuid = :related")
-    abstract fun findSpecificRelatedEventSync(parentId: Long, related: String): RelatedEvent?
+    abstract suspend fun findSpecificRelatedEvent(parentId: Long, related: String): RelatedEvent?
 
     @Query("DElETE FROM related")
     abstract fun delete()
 
-    override fun updateOrInsertInternal(item: RelatedEvent) {
+    override suspend fun updateOrInsertInternal(item: RelatedEvent): Long {
         if (item.id != 0L) {
             update(item)
         } else {
-            val existingItem = findSpecificRelatedEventSync(item.parentEventId, item.relatedEventGuid)
+            val existingItem = findSpecificRelatedEvent(item.parentEventId, item.relatedEventGuid)
             if (existingItem != null) {
                 item.id = existingItem.id
                 update(item)
@@ -30,5 +33,6 @@ abstract class RelatedEventDao : BaseDao<RelatedEvent>() {
                 item.id = insert(item)
             }
         }
+        return item.id
     }
 }

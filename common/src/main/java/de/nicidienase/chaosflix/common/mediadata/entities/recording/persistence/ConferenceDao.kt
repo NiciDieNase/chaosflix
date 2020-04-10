@@ -1,8 +1,8 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Query
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Query
 
 @Dao
 abstract class ConferenceDao : BaseDao<Conference>() {
@@ -17,7 +17,10 @@ abstract class ConferenceDao : BaseDao<Conference>() {
     abstract fun findConferenceById(id: Long): LiveData<Conference>
 
     @Query("SELECT * FROM conference WHERE acronym = :acronym LIMIT 1")
-    abstract fun findConferenceByAcronymSync(acronym: String): Conference?
+    abstract suspend fun findConferenceByAcronym(acronym: String): Conference?
+
+    @Query("SELECT * FROM conference WHERE acronym = :acronym LIMIT 1")
+    abstract suspend fun findConferenceByAcronymSuspend(acronym: String): Conference?
 
     @Query("SELECT * FROM conference WHERE conferenceGroupId = :id ORDER BY acronym DESC")
     abstract fun findConferenceByGroup(id: Long): LiveData<List<Conference>>
@@ -25,11 +28,11 @@ abstract class ConferenceDao : BaseDao<Conference>() {
     @Query("DELETE FROM conference")
     abstract fun delete()
 
-    override fun updateOrInsertInternal(item: Conference) {
+    override suspend fun updateOrInsertInternal(item: Conference): Long {
         if (item.id != 0L) {
             update(item)
         } else {
-            val existingEvent = findConferenceByAcronymSync(item.acronym)
+            val existingEvent = findConferenceByAcronym(item.acronym)
             if (existingEvent != null) {
                 item.id = existingEvent.id
                 update(item)
@@ -37,5 +40,6 @@ abstract class ConferenceDao : BaseDao<Conference>() {
                 item.id = insert(item)
             }
         }
+        return item.id
     }
 }

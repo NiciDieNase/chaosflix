@@ -1,20 +1,18 @@
 package de.nicidienase.chaosflix.touch.browse.download
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.os.Handler
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment
 import de.nicidienase.chaosflix.touch.databinding.FragmentDownloadsBinding
 
 class DownloadsListFragment : BrowseFragment() {
-
-// 	private lateinit var binding: FragmentDownloadsBinding
 
     private val handler = Handler()
 
@@ -36,9 +34,10 @@ class DownloadsListFragment : BrowseFragment() {
             if (columnCount <= 1) {
                 list.layoutManager = LinearLayoutManager(context)
             } else {
-                list.layoutManager = GridLayoutManager(context, columnCount - 1)
+                list.layoutManager =
+                    StaggeredGridLayoutManager(columnCount - 1, StaggeredGridLayoutManager.VERTICAL)
             }
-            viewModel.getOfflineDisplayEvents().observe(this@DownloadsListFragment, Observer {
+            viewModel.getOfflineDisplayEvents().observe(viewLifecycleOwner, Observer {
                 if (it != null) {
                     offlineEventAdapter.items = it
                 }

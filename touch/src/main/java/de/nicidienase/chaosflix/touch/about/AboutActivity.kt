@@ -1,10 +1,10 @@
 package de.nicidienase.chaosflix.touch.about
 
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.view.View
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.databinding.ActivityAboutBinding
 import mehdi.sakout.aboutpage.AboutPage
@@ -57,7 +57,8 @@ class AboutActivity : AppCompatActivity() {
             .addGroup("Connect with us")
             .addGitHub("nicidienase/chaosflix", getString(R.string.about_github))
             .addWebsite(getString(R.string.about_beta_url), getString(R.string.about_beta))
-            .addTwitter("nicidienase", getString(R.string.about_twitter))
+//            .addTwitter("nicidienase", getString(R.string.about_twitter))
+                .addTwitter("chaosflix_app")
             .addPlayStore("de.nicidienase.chaosflix", getString(R.string.about_playstore))
             .create()
 

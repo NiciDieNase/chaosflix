@@ -1,15 +1,13 @@
 package de.nicidienase.chaosflix.touch.browse.streaming
 
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.BrowseFragment
 import de.nicidienase.chaosflix.touch.databinding.FragmentLivestreamsBinding
@@ -30,13 +28,13 @@ class LivestreamListFragment : BrowseFragment() {
         }
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is InteractionListener) {
             listener = context
             adapter = LivestreamAdapter(listener)
         } else {
-            throw RuntimeException(context.toString() + " must implement LivestreamListFragment.InteractionListener")
+            throw RuntimeException("$context must implement LivestreamListFragment.InteractionListener")
         }
     }
 
@@ -44,16 +42,30 @@ class LivestreamListFragment : BrowseFragment() {
         binding = FragmentLivestreamsBinding.inflate(inflater, container, false)
         setupToolbar(binding.incToolbar.toolbar, R.string.livestreams)
         if (columnCount <= 1) {
-            binding.list.layoutManager = LinearLayoutManager(context)
+            binding.list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         } else {
-            binding.list.layoutManager = GridLayoutManager(context, columnCount)
+            binding.list.layoutManager =
+                androidx.recyclerview.widget.GridLayoutManager(context, columnCount)
         }
         binding.list.adapter = adapter
         binding.swipeRefreshLayout.setOnRefreshListener {
             updateList()
         }
+        viewModel.getLivestreams().observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                adapter.setContent(it)
+                if (it.isEmpty() && !snackbar.isShown) {
+                    snackbar.show()
+                } else {
+                    snackbar.dismiss()
+                }
+            }
+            binding.swipeRefreshLayout.isRefreshing = false
+        })
+        viewModel.updateLiveStreams()
+
         snackbar = Snackbar.make(binding.root, R.string.no_livestreams, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.reload, View.OnClickListener { this.updateList() })
+                .setAction(R.string.reload) { this.updateList() }
         return binding.root
     }
 
@@ -62,24 +74,10 @@ class LivestreamListFragment : BrowseFragment() {
         updateList()
     }
 
-    private val TAG = LivestreamListFragment::class.simpleName
-
     private fun updateList() {
-// 		binding.swipeRefreshLayout.postDelayed( Runnable {
-// 			binding.swipeRefreshLayout.isRefreshing = true
-// 		}, 500)
         binding.swipeRefreshLayout.isRefreshing = true
         Log.d(TAG, "Refresh starting")
-        viewModel.getLivestreams().observe(this, Observer {
-            it?.let { adapter.setContent(it) }
-            binding.swipeRefreshLayout.isRefreshing = false
-            if (it?.size == 0 && !snackbar.isShown) {
-                snackbar.show()
-            } else {
-                snackbar.dismiss()
-            }
-            Log.d(TAG, "Refresh done")
-        })
+        viewModel.updateLiveStreams()
     }
 
     interface InteractionListener {
@@ -88,6 +86,8 @@ class LivestreamListFragment : BrowseFragment() {
 
     companion object {
         private val ARG_COLUMN_COUNT = "column-count"
+
+        private val TAG = LivestreamListFragment::class.simpleName
 
         fun newInstance(columnCount: Int): LivestreamListFragment {
             val fragment = LivestreamListFragment()

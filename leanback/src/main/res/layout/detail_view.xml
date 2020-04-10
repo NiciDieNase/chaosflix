@@ -4,7 +4,7 @@
     <data>
         <variable
             name="item"
-            type="de.nicidienase.chaosflix.leanback.EventDetailsDescriptionPresenter.DetailDataHolder"/>
+            type="de.nicidienase.chaosflix.leanback.detail.EventDetailsDescriptionPresenter.DetailDataHolder"/>
     </data>
 
     <LinearLayout
@@ -28,7 +28,7 @@
             style="@style/Widget.Leanback.DetailsDescriptionSubtitleStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
             android:fontFamily="sans-serif-condensed"/>
 
         <TextView
@@ -37,7 +37,7 @@
             style="@style/Widget.Leanback.DetailsDescriptionSubtitleStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
             android:fontFamily="sans-serif-condensed"/>
 
         <TextView

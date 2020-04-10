@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="recording_url">https://api.media.ccc.de</string>
-    <string name="streaming_url">https://streaming.media.ccc.de</string>
+    <string name="streaming_url" translatable="false">https://streaming.media.ccc.de</string>
 </resources>

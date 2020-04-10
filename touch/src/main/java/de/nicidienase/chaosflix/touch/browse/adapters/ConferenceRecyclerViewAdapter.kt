@@ -1,8 +1,8 @@
 package de.nicidienase.chaosflix.touch.browse.adapters
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.touch.browse.ConferencesTabBrowseFragment
 import de.nicidienase.chaosflix.touch.databinding.ItemConferenceCardviewBinding

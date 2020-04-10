@@ -1,7 +1,10 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-android-extensions'
+    id 'com.github.triplet.play' version '2.6.2'
+}
 
 String appName = "Chaosflix"
 String versionString = new File("versionfile").text.trim()
@@ -16,9 +19,8 @@ android {
         minSdkVersion rootProject.ext.minSDK
         targetSdkVersion rootProject.ext.targetSDK
         // odd for touch, even for leanback
-        versionCode rootProject.ext.leanbackVersionCode
+        versionCode 1
         versionName versionString
-//        multiDexEnabled true
         if(project.hasProperty("versionCode")){
             versionCode = project.property("versionCode") as int
             println "Setting VersionCode from property: $versionCode"
@@ -43,10 +45,8 @@ android {
             applicationIdSuffix ".debug"
             manifestPlaceholders = [label: appName + "-debug"]
             minifyEnabled false
-            useProguard false
         }
         release {
-            useProguard true
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'),'proguard-rules.pro'
@@ -100,19 +100,15 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    defaultConfig {
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-
-    lintOptions {
-        abortOnError false
-    }
-
-    dataBinding {
-        enabled = true
-    }
-
+    defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    lintOptions.abortOnError = false
+    dataBinding.enabled = true
     buildToolsVersion rootProject.ext.buildToolsVersion
+    playConfigs {
+        prodNoFree {
+            enabled = true
+        }
+    }
 }
 
 configurations {
@@ -124,19 +120,30 @@ configurations {
 
 dependencies {
     implementation project(':common')
-    implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
-    implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
-    implementation "com.android.support:leanback-v17:${rootProject.ext.supportLibraryVersion}"
-    implementation "com.android.support:preference-leanback-v17:${rootProject.ext.supportLibraryVersion}"
-    implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
+
+    implementation 'androidx.leanback:leanback:1.0.0'
+    implementation 'androidx.leanback:leanback-preference:1.0.0'
+
+    implementation "androidx.legacy:legacy-preference-v14:1.0.0"
+    implementation "androidx.tvprovider:tvprovider:1.0.0"
+
     implementation 'com.google.android.exoplayer:extension-leanback:2.9.6'
-    androidTestImplementation('com.android.support.test:rules:0.5') {
+    androidTestImplementation('androidx.test:rules:1.1.1') {
         exclude module: 'support-annotations'
     }
-    androidTestImplementation('com.android.support.test:runner:0.5') {
+    androidTestImplementation('androidx.test.ext:junit:1.1.1') {
         exclude module: 'support-annotations'
     }
-    androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.3'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
     androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
     androidTestImplementation 'com.squareup.okhttp3:mockwebserver:3.6.0'
 }
+
+play {
+    serviceAccountCredentials = file("../chaosflix-d1d09f33cbb2.json")
+    track = "Alpha"
+    enabled = false
+}
+

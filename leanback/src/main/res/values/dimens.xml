@@ -8,4 +8,5 @@
 
 	<dimen name="spinner_width">120dp</dimen>
 	<dimen name="spinner_height">120dp</dimen>
+    <dimen name="settings_icon_size">96dp</dimen>
 </resources>

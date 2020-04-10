@@ -1,22 +1,22 @@
 package de.nicidienase.chaosflix.leanback.events
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
 import android.util.Log
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import de.nicidienase.chaosflix.common.ChaosflixUtil
+import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
-import de.nicidienase.chaosflix.common.mediadata.sync.Downloader
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.BrowseErrorFragment
 import de.nicidienase.chaosflix.leanback.R
 
-class EventsActivity : FragmentActivity() {
+class EventsActivity : androidx.fragment.app.FragmentActivity() {
 
     lateinit var viewModel: BrowseViewModel
 
@@ -24,37 +24,36 @@ class EventsActivity : FragmentActivity() {
 
     private var fragment: EventsFragment? = null
 
-    var errorFragment: BrowseErrorFragment? = null
+    private var errorFragment: BrowseErrorFragment? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        conference = intent.getParcelableExtra<Conference>(CONFERENCE)
+        conference = intent.getParcelableExtra(CONFERENCE)
         setContentView(R.layout.activity_events_browse)
-        viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(BrowseViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(this)).get(BrowseViewModel::class.java)
     }
 
     override fun onStart() {
         super.onStart()
         viewModel.updateEventsForConference(conference).observe(this, Observer { event ->
             when (event?.state) {
-                Downloader.DownloaderState.RUNNING -> {
+                MediaRepository.State.RUNNING -> {
                     Log.i(TAG, "Refresh running")
-                    supportFragmentManager?.let {
-                        if (errorFragment == null) {
-                            errorFragment = BrowseErrorFragment.showErrorFragment(it, R.id.browse_fragment)
-                        }
+                    if (errorFragment == null) {
+                        errorFragment = BrowseErrorFragment.showErrorFragment(supportFragmentManager, R.id.browse_fragment)
                     }
                 }
-                Downloader.DownloaderState.DONE -> {
+                MediaRepository.State.DONE -> {
                     Log.i(TAG, "Refresh done")
                     if (event.error != null) {
                         val errorMessage = event.error ?: "Error refreshing events"
                         errorFragment?.setErrorContent(errorMessage, supportFragmentManager)
                     } else {
-                        if (event.data?.isEmpty() ?: false) {
+                        if (event.data?.isEmpty() == true) {
                             errorFragment?.setErrorContent("No Events found for this conference", supportFragmentManager)
                         } else {
                             errorFragment?.dismiss(supportFragmentManager)
+                            errorFragment = null
                         }
                     }
                 }
@@ -62,10 +61,8 @@ class EventsActivity : FragmentActivity() {
         })
         viewModel.getEventsforConference(conference).observe(this, Observer { events ->
             events?.let {
-                if (it.size > 0) {
-                    val tagList = events.map { it.tags ?: emptyArray() }.toTypedArray().flatten()
-                    val filteredTags = tagList.filterNot { it.matches("\\d+".toRegex()) }.filterNot { it == conference.acronym }.toSet()
-                    updateFragment(filteredTags.size > 1)
+                if (it.isNotEmpty()) {
+                    updateFragment(ChaosflixUtil.areTagsUsefull(events, conference.acronym))
                     (fragment as EventsFragment).updateEvents(conference, it)
                 }
             }
@@ -87,6 +84,7 @@ class EventsActivity : FragmentActivity() {
                     EventsGridBrowseFragment.create(conference)
                 }
         errorFragment?.dismiss(supportFragmentManager) ?: Log.e(TAG, "Cannot dismiss, errorFragment is null")
+        errorFragment = null
         supportFragmentManager.beginTransaction().replace(R.id.browse_fragment, newFragment).commit()
 
         fragment = newFragment as EventsFragment
@@ -101,7 +99,7 @@ class EventsActivity : FragmentActivity() {
         val CONFERENCE = "conference"
         @JvmStatic
         val SHARED_ELEMENT_NAME = "shared_element"
-        val TAG = EventsActivity::class.java.simpleName
+        private val TAG = EventsActivity::class.java.simpleName
 
         @JvmStatic
         @JvmOverloads

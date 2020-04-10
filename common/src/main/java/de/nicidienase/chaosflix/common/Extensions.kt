@@ -2,11 +2,11 @@ package de.nicidienase.chaosflix.common
 
 import android.content.pm.PackageManager
 import android.os.Build
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 
-fun Fragment.checkPermission(permission: String, requestCode: Int, action: () -> Unit) {
+fun androidx.fragment.app.Fragment.checkPermission(permission: String, requestCode: Int, action: () -> Unit) {
     if (ContextCompat.checkSelfPermission(requireContext(), permission)
             != PackageManager.PERMISSION_GRANTED) {
         requestPermissions(arrayOf(permission),

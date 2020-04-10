@@ -1,17 +1,17 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence
 
-import android.arch.persistence.room.Delete
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Transaction
-import android.arch.persistence.room.Update
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Transaction
+import androidx.room.Update
 
 abstract class BaseDao<in T> {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     abstract fun insert(item: T): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     abstract fun insert(vararg items: T): LongArray
 
     @Update
@@ -27,14 +27,14 @@ abstract class BaseDao<in T> {
     abstract fun delete(vararg items: T)
 
     @Transaction
-    open fun updateOrInsert(item: T) {
-        updateOrInsertInternal(item)
+    open suspend fun updateOrInsert(item: T): Long {
+        return updateOrInsertInternal(item)
     }
 
     @Transaction
-    open fun updateOrInsert(vararg events: T) {
+    open suspend fun updateOrInsert(vararg events: T) {
         events.map { updateOrInsertInternal(it) }
     }
 
-    protected abstract fun updateOrInsertInternal(item: T)
+    protected abstract suspend fun updateOrInsertInternal(item: T): Long
 }

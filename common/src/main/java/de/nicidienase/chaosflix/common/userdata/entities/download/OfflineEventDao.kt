@@ -1,9 +1,9 @@
 package de.nicidienase.chaosflix.common.userdata.entities.download
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.Query
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
 
 @Dao
 interface OfflineEventDao {
@@ -15,7 +15,7 @@ interface OfflineEventDao {
     fun getByEventGuid(guid: String): LiveData<OfflineEvent?>
 
     @Query("SELECT * FROM offline_event WHERE event_guid = :guid LIMIT 1")
-    fun getByEventGuidSync(guid: String): OfflineEvent?
+    suspend fun getByEventGuidSuspend(guid: String): OfflineEvent?
 
     @Query("SELECT * FROM offline_event WHERE download_reference = :ref LIMIT 1")
     fun getByDownloadReference(ref: Long): LiveData<OfflineEvent?>
@@ -23,11 +23,17 @@ interface OfflineEventDao {
     @Query("SELECT * FROM offline_event WHERE download_reference = :ref LIMIT 1")
     fun getByDownloadReferenceSync(ref: Long): OfflineEvent?
 
+    @Query("DELETE FROM offline_event WHERE download_reference = :ref")
+    suspend fun deleteByDownloadReference(ref: Long)
+
     @Query("SELECT * FROM offline_event")
     fun getAll(): LiveData<List<OfflineEvent>>
 
     @Query("SELECT * FROM offline_event")
     fun getAllSync(): List<OfflineEvent>
+
+    @Query("SELECT download_reference FROM offline_event")
+    suspend fun getAllDownloadReferences(): List<Long>
 
     @Query("DELETE FROM offline_event WHERE id=:id")
     fun deleteById(id: Long)

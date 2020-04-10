@@ -61,7 +61,7 @@ echo ${response_json}
 if [ -n "$mapping_path"  ]; then
 	#step 1 get upload id and url
 	request_url="https://api.appcenter.ms/v0.1/apps/${owner_name}/${app_name}/symbol_uploads"
-	data="{\"symbol_type\": \"AndroidProguard\",\"file_name\": \"mapping.txt\",\"build\": \"$versionName\",\"version\": \"$versionCode\"}"
+	data="{\"symbol_type\": \"AndroidProguard\",\"file_name\": \"mapping.txt\",\"build\": \"$versionCode\",\"version\": \"$versionName\"}"
 	mapping_json=$(curl -X POST \
 		-d "$data" \
 		--header "Content-Type: application/json" \

@@ -3,13 +3,13 @@ package de.nicidienase.chaosflix.touch.playback
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import de.nicidienase.chaosflix.touch.R
+import androidx.appcompat.app.AppCompatActivity
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
+import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.cast.CastService
 
 class PlayerActivity : AppCompatActivity() {
@@ -77,7 +77,7 @@ class PlayerActivity : AppCompatActivity() {
         const val ROOM = "room"
         const val STREAM = "stream"
 
-        val OFFLINE_URI = "recording_uri"
+        const val OFFLINE_URI = "recording_uri"
 
         fun launch(context: Context, event: Event, uri: String) {
             val i = Intent(context, PlayerActivity::class.java)

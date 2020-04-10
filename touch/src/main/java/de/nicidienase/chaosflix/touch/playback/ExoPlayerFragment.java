@@ -1,19 +1,8 @@
 package de.nicidienase.chaosflix.touch.playback;
 
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,11 +11,19 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -45,11 +42,12 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.material.snackbar.Snackbar;
 
-import de.nicidienase.chaosflix.touch.R;
 import de.nicidienase.chaosflix.common.viewmodel.PlayerViewModel;
-import de.nicidienase.chaosflix.touch.databinding.FragmentExoPlayerBinding;
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory;
+import de.nicidienase.chaosflix.touch.R;
+import de.nicidienase.chaosflix.touch.databinding.FragmentExoPlayerBinding;
 
 public class ExoPlayerFragment extends Fragment implements PlayerEventListener.PlayerStateChangeListener {
 	private static final String TAG = ExoPlayerFragment.class.getSimpleName();
@@ -65,7 +63,7 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 	private PlayerViewModel viewModel;
 	private PlaybackItem item;
 
-	FragmentExoPlayerBinding binding;
+	private FragmentExoPlayerBinding binding;
 
 	public ExoPlayerFragment() {
 	}
@@ -88,12 +86,12 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 			playbackState = savedInstanceState.getBoolean(PLAYBACK_STATE, true);
 		}
 
-		viewModel = ViewModelProviders.of(this, new ViewModelFactory(requireContext())).get(PlayerViewModel.class);
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		binding = DataBindingUtil.inflate(inflater, R.layout.fragment_exo_player, container, false);
+		viewModel = ViewModelProviders.of(this, ViewModelFactory.Companion.getInstance(requireContext())).get(PlayerViewModel.class);
 
 		Toolbar toolbar = binding.getRoot().findViewById(R.id.toolbar);
 		toolbar.setTitle(item.getTitle());
@@ -145,7 +143,8 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 		}
 		if (exoPlayer != null) {
 			exoPlayer.setPlayWhenReady(playbackState);
-			viewModel.getPlaybackProgress(item.getEventGuid()).observe(this, playbackProgress -> {
+
+			viewModel.getPlaybackProgressLiveData(item.getEventGuid()).observe(getViewLifecycleOwner(), playbackProgress -> {
 				if (playbackProgress != null) {
 					exoPlayer.seekTo(playbackProgress.getProgress());
 				}
@@ -170,8 +169,11 @@ public class ExoPlayerFragment extends Fragment implements PlayerEventListener.P
 
 		AdaptiveTrackSelection.Factory trackSelectorFactory = new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
 		DefaultTrackSelector trackSelector = new DefaultTrackSelector(trackSelectorFactory);
-		LoadControl loadControl = new DefaultLoadControl();
-		DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(getContext(), null, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+		DefaultRenderersFactory renderersFactory
+				= new DefaultRenderersFactory(
+						getContext(),
+				null,
+				DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
 
 
 		exoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector);

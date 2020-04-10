@@ -1,9 +1,16 @@
-version: 2
-jobs:
-  build:
-    working_directory: ~/code
+version: 2.1
+
+references:
+
+  workspace_root: &workspace_root
+      ~/code
+
+  container_config: &container_config
     docker:
       - image: circleci/android:api-28
+
+    working_directory: *workspace_root
+
     environment:
       JVM_OPTS: -XX\:MaxHeapSize\=2048m -Xmx1536m
       LIBS: NoFree
@@ -11,88 +18,213 @@ jobs:
       APPCENTER_OWNER: nicidienase
       APPCENTER_GROUP: "Collaborators"
       RELEASENOTES_FILE: "release_notes.txt"
-    branches:
-      only:
-        - master
-        - develop
-        - /feature\/.*/
-    steps:
-      - checkout
-      - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum "touch/build.gradle" }}-{{ checksum "leanback/build.gradle" }}-{{ checksum "common/build.gradle" }}
-      - run:
-          name: Setup env
+
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: *workspace_root
+
+  setup_env: &setup_env
+          name: Setup environment
           command: |
             .circleci/setup_env.sh >> $BASH_ENV
             echo "VERSION_CODE_TOUCH=$(.circleci/getVersionCode.sh -t)" >> $BASH_ENV
             echo "VERSION_CODE_LEANBACK=$(.circleci/getVersionCode.sh -l)" >> $BASH_ENV
-#            . $BASH_ENV
-#            echo "STAGE=${STAGE}"
-#            echo "VERSION_NAME=${VERSION_NAME}"
-#            echo "VersionCode: $(.circleci/getVersionCode.sh -t)"
-#            echo "BUILD_TYPE_LOWER=${BUILD_TYPE_LOWER}"
-#            echo "STAGE_LOWER=${STAGE_LOWER}"
-#            echo "LIBS_LOWER=${LIBS_LOWER}"
+
+  general_cache_key: &general_cache_key
+      key: app-{{ checksum ".circleci/config.yml" }}-{{ checksum "gradle.properties" }}-{{ checksum "build.gradle" }}-{{ checksum "touch/build.gradle" }}-{{ checksum "leanback/build.gradle" }}-{{ checksum "common/build.gradle" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+
+jobs:
+
+  setup:
+    <<: *container_config
+    steps:
+      - checkout
+
+      - restore_cache:
+          <<: *general_cache_key
+
+      - run:
+          <<: *setup_env
+
       - run:
           name: Download Dependencies
-          command: ./gradlew $SIGN_CONFIG androidDependencies
-      - run:
-          name: ktlint
           command: |
-            ./gradlew $SIGN_CONFIG --continue \
-              common:ktlint${STAGE}${LIBS}${BUILD_TYPE}Check \
-              touch:ktlint${STAGE}${LIBS}${BUILD_TYPE}Check \
-              leanback:ktlint${STAGE}${LIBS}${BUILD_TYPE}Check
+            ./gradlew $KEY_CONFIG $SIGN_CONFIG \
+              -PversionCode=$VERSION_CODE_TOUCH \
+              -PversionName=${VERSION_NAME} \
+              androidDependencies
+
+      - save_cache:
+          <<: *general_cache_key
+          paths:
+            - "~/.gradle"
+            - "~/.m2"
+            - "/opt/android-sdk-linux/licenses/"
+
+      - persist_to_workspace:
+          root: *workspace_root
+          paths:
+            - .
+
+  build:
+    <<: *container_config
+    steps:
+      - checkout
+
+      - restore_cache:
+          <<: *general_cache_key
+
+      - run:
+          <<: *setup_env
+
+      - run:
+          name: Download Dependencies
+          command: |
+            ./gradlew $KEY_CONFIG $SIGN_CONFIG \
+              -PversionCode=$VERSION_CODE_TOUCH \
+              -PversionName=${VERSION_NAME} \
+              androidDependencies
+
       - run:
           name: Build Touch
           command: |
-            ./gradlew $SIGN_CONFIG \
+            ./gradlew $SIGN_CONFIG $KEY_CONFIG \
               -PversionCode=$VERSION_CODE_TOUCH \
               -PversionName=${VERSION_NAME} \
               touch:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
-      - run:
-          name: Build Leanback
-          command: |
-            ./gradlew $SIGN_CONFIG \
-              -PversionCode=$VERSION_CODE_LEANBACK \
-              -PversionName=${VERSION_NAME} \
-            leanback:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
-      - run:
-          name: Test
-          command: |
-            ./gradlew $SIGN_CONFIG --continue \
-              common:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest \
-              common:lint${STAGE}${LIBS}${BUILD_TYPE} \
-              touch:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest \
-              touch:lint${STAGE}${LIBS}${BUILD_TYPE} \
-              leanback:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest \
-              leanback:lint${STAGE}${LIBS}${BUILD_TYPE}
-      - store_artifacts:
-          path: common/build/outputs
-          destination: common-reports
       - store_artifacts:
           path: touch/build/outputs
           destination: touch
-      - store_artifacts:
-          path: touch/build/outputs
-          destination: touch-reports
+
+      - run:
+          name: Build Leanback
+          command: |
+            ./gradlew $KEY_CONFIG $SIGN_CONFIG \
+              -PversionCode=$VERSION_CODE_LEANBACK \
+              -PversionName=${VERSION_NAME} \
+            leanback:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
       - store_artifacts:
           path: leanback/build/outputs
           destination: leanback
+
+      - save_cache:
+          <<: *general_cache_key
+          paths:
+            - "~/.gradle"
+            - "~/.m2"
+            - "/opt/android-sdk-linux/licenses/"
+
+      - persist_to_workspace:
+          root: *workspace_root
+          paths:
+            - .
+
+  check:
+    <<: *container_config
+    parallelism: 1 #4
+    steps:
+      - *attach_workspace
+
+      - restore_cache:
+          <<: *general_cache_key
+
+      - run:
+          <<: *setup_env
+
+      - run:
+          name: Lint Common
+          command: |
+            ./gradlew $KEY_CONFIG \
+              -PversionCode=$VERSION_CODE_LEANBACK \
+              -PversionName=${VERSION_NAME} \
+              common:lint${STAGE}${LIBS}${BUILD_TYPE}
+
+      - run:
+          name: Lint Touch
+          command: |
+            ./gradlew $KEY_CONFIG \
+              -PversionCode=$VERSION_CODE_LEANBACK \
+              -PversionName=${VERSION_NAME} \
+              touch:lint${STAGE}${LIBS}${BUILD_TYPE}
+
+      - run:
+          name: Lint Leanback
+          command: |
+            ./gradlew $KEY_CONFIG \
+              -PversionCode=$VERSION_CODE_LEANBACK \
+              -PversionName=${VERSION_NAME} \
+              leanback:lint${STAGE}${LIBS}${BUILD_TYPE} \
+
+      - run:
+          name: Ktlint
+          command: |
+            ./gradlew $KEY_CONFIG \
+              -PversionCode=$VERSION_CODE_LEANBACK \
+              -PversionName=${VERSION_NAME} \
+              ktlintCheck
+
       - store_artifacts:
-          path: leanback/build/reports
-          destination: leanback-reports
+          path: common/build/reports/
+          destination: lint_reports/common/
       - store_artifacts:
-          path: common/build/reports/ktlint/
-          destination: ktlint-reports
+          path: touch/build/reports/
+          destination: lint_reports/touch/
+      - store_artifacts:
+          path: leanback/build/reports/
+          destination: lint_reports/leanback/
+
+  test:
+    <<: *container_config
+    steps:
+      - *attach_workspace
+
+      - restore_cache:
+          <<: *general_cache_key
+
+      - run:
+          <<: *setup_env
+
+      - run:
+          name: Test Common
+          command: |
+            ./gradlew $KEY_CONFIG common:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest
+
+      - run:
+          name: Test Touch
+          command: |
+            ./gradlew $KEY_CONFIG \
+              -PversionCode=$VERSION_CODE_TOUCH \
+              -PversionName=${VERSION_NAME} \
+              touch:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest
+
+      - run:
+          name: Test Leanback
+          command: |
+            ./gradlew $KEY_CONFIG \
+              -PversionCode=$VERSION_CODE_LEANBACK \
+              -PversionName=${VERSION_NAME} \
+              leanback:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest \
+
       - store_test_results:
           path: common/build/test-results
       - store_test_results:
           path: touch/build/test-results
       - store_test_results:
           path: leanback/build/test-results
+
+  publish-appcenter:
+    <<: *container_config
+    steps:
+      - *attach_workspace
+
+      - restore_cache:
+          <<: *general_cache_key
+
       - run:
-          name: Appcenter Upload
+          <<: *setup_env
+
+      - run:
+          name: Touch Appcenter Upload
           command: |
             git log --format="%h %s" master..HEAD > $RELEASENOTES_FILE
             .circleci/appCenterUpload.sh \
@@ -104,7 +236,73 @@ jobs:
               "touch/build/outputs/mapping/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/mapping.txt" \
               "$VERSION_CODE_TOUCH" \
               "$VERSION_NAME"
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum "touch/build.gradle" }}-{{ checksum "leanback/build.gradle" }}-{{ checksum "common/build.gradle" }}
+
+      - run:
+          name: Leanback Appcenter Upload
+          command: |
+            git log --format="%h %s" master..HEAD > $RELEASENOTES_FILE
+            .circleci/appCenterUpload.sh \
+              $APPCENTER_OWNER \
+              $APPCENTER_TOKEN \
+              "leanback/build/outputs/apk/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/touch-${STAGE_LOWER}-${LIBS_LOWER}-${BUILD_TYPE_LOWER}.apk" \
+              $RELEASENOTES_FILE \
+              $APPCENTER_GROUP \
+              "leanback/build/outputs/mapping/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/mapping.txt" \
+              "$VERSION_CODE_LEANBACK" \
+              "$VERSION_NAME"
+
+  publish-play:
+    <<: *container_config
+    steps:
+      - *attach_workspace
+
+      - restore_cache:
+          <<: *general_cache_key
+
+      - run:
+          <<: *setup_env
+
+      - run:
+          name: Setup environment
+          command: .circleci/setup_env.sh >> $BASH_ENV
+      - run:
+          name: Touch Playstore Upload
+          command: |
+            echo "$ENCODED_PLAY_CREDENTIALS" | base64 --decode > ./chaosflix-d1d09f33cbb2.json
+            ./gradlew $KEY_CONFIG \
+              -PversionCode=$VERSION_CODE_TOUCH \
+              -PversionName=${VERSION_NAME} \
+              touch:publishApk
+
+
+workflows:
+  version: 2
+
+  test_build_publish:
+    jobs:
+      - setup
+      - check:
+          requires:
+            - setup
+      - test:
+          requires:
+            - setup
+      - build:
+          requires:
+            - check
+            - test
+      - publish-appcenter:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
+                - develop
+      - publish-play:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master

@@ -1,8 +1,8 @@
 package de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Query
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Query
 
 @Dao
 abstract class RecordingDao : BaseDao<Recording>() {
@@ -20,10 +20,10 @@ abstract class RecordingDao : BaseDao<Recording>() {
     abstract fun findRecordingByEvent(id: Long): LiveData<List<Recording>>
 
     @Query("SELECT * FROM recording WHERE eventId = :id")
-    abstract fun findRecordingByEventSync(id: Long): List<Recording>
+    abstract suspend fun findRecordingByEventSync(id: Long): List<Recording>
 
     @Query("SELECT * FROM recording WHERE backendId = :backendId")
-    abstract fun findRecordingByBackendIdSync(backendId: Long): Recording?
+    abstract fun findRecordingByBackendId(backendId: Long): Recording?
 
     @Query("DELETE FROM recording WHERE eventId = :eventId")
     abstract fun deleteRecordingsForEvent(eventId: Long)
@@ -31,11 +31,11 @@ abstract class RecordingDao : BaseDao<Recording>() {
     @Query("DElETE FROM recording")
     abstract fun delete()
 
-    override fun updateOrInsertInternal(item: Recording) {
+    override suspend fun updateOrInsertInternal(item: Recording): Long {
         if (item.id != 0L) {
             update(item)
         } else {
-            val existingRecording = findRecordingByBackendIdSync(item.backendId)
+            val existingRecording = findRecordingByBackendId(item.backendId)
             if (existingRecording != null) {
                 item.id = existingRecording.id
                 update(item)
@@ -43,5 +43,6 @@ abstract class RecordingDao : BaseDao<Recording>() {
                 item.id = insert(item)
             }
         }
+        return item.id
     }
 }
