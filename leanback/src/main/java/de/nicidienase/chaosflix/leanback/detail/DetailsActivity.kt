@@ -20,9 +20,9 @@ class DetailsActivity : androidx.fragment.app.FragmentActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event_details)
-        val fragment = when(intent.getIntExtra(TYPE, 0)) {
+        val fragment = when (intent.getIntExtra(TYPE, 0)) {
             TYPE_RECORDING -> EventDetailsFragment().apply {
-                arguments = bundleOf(EVENT to intent.getParcelableExtra<Event>(EVENT)                )
+                arguments = bundleOf(EVENT to intent.getParcelableExtra<Event>(EVENT))
             }
             TYPE_STREAM -> StreamDetailsFragment().apply {
                 arguments = bundleOf(ROOM to intent.getParcelableExtra<Room>(ROOM))

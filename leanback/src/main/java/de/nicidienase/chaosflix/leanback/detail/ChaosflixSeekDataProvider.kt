@@ -152,7 +152,7 @@ class ChaosflixSeekDataProvider(
             } ?: Bitmap.createBitmap(THUMB_WIDTH, THUMB_HEIGHT, Bitmap.Config.ARGB_8888)
         } catch (ex: Exception) {
             Log.e(TAG, "Error: ${ex.message}", ex)
-            return Bitmap.createBitmap(10,10, Bitmap.Config.RGB_565)
+            return Bitmap.createBitmap(10, 10, Bitmap.Config.RGB_565)
         }
         Log.d(TAG, "Thumb size: ${thumb.width}x${thumb.height}")
 
@@ -170,7 +170,7 @@ class ChaosflixSeekDataProvider(
         val s = seconds % 60
         val m = (seconds / 60) % 60
         val h = seconds / 3600
-        return if(h > 0){
+        return if (h > 0) {
             String.format("%d:%02d:%02d", h, m, s)
         } else {
             String.format("%d:%02d", m, s)

@@ -55,8 +55,6 @@ import de.nicidienase.chaosflix.common.viewmodel.PlayerViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
 import de.nicidienase.chaosflix.leanback.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 class StreamDetailsFragment : DetailsSupportFragment() {
 
@@ -298,6 +296,5 @@ class StreamDetailsFragment : DetailsSupportFragment() {
                 }
             }
         }
-
     }
 }
