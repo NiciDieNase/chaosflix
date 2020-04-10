@@ -19,7 +19,7 @@
 				android:id="@+id/sliding_tabs"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				style="@style/ColoredTabLayout"
+				style="@style/TabsStyle"
 				app:layout_anchor="@id/toolbar"
 				app:layout_anchorGravity="bottom"
 				app:tabMode="auto"/>

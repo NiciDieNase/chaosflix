@@ -17,9 +17,9 @@
 
 		<androidx.cardview.widget.CardView
 			android:id="@+id/card"
-			app:cardElevation="0dp"
-			app:cardCornerRadius="2dp"
-			android:layout_margin="2dp"
+			app:cardElevation="2dp"
+			app:cardCornerRadius="4dp"
+			android:layout_margin="4dp"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
@@ -35,6 +35,7 @@
 					imageUrl="@{event.thumbUrl}"
 					android:layout_width="0dp"
 					android:layout_height="100dp"
+					android:maxWidth="200dp"
 					android:adjustViewBounds="true"
 					android:contentDescription="@string/titleimage"
 					android:scaleType="centerCrop"
@@ -44,7 +45,6 @@
 					app:layout_constraintHorizontal_bias="0.0"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toTopOf="parent"
-					app:layout_constraintVertical_bias="0.1"
 					app:srcCompat="@drawable/unknown"
 					tools:srcCompat="@drawable/unknown"/>
 
@@ -52,47 +52,57 @@
 					android:id="@+id/title_text"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
+					android:maxHeight="100dp"
 					android:layout_marginStart="8dp"
 					android:layout_marginTop="8dp"
 					android:layout_marginEnd="8dp"
+					android:layout_marginBottom="8dp"
 					android:text="@{event.title}"
 					android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+					app:autoSizeMaxTextSize="20sp"
+					app:autoSizeTextType="uniform"
+					app:layout_constraintBottom_toTopOf="@+id/subtitle_text"
 					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintHorizontal_bias="1.0"
 					app:layout_constraintStart_toEndOf="@+id/imageView"
-					app:layout_constraintTop_toTopOf="parent"
-					tools:text="This is a very long title text that propably won't fit in one line, maybe even need three."/>
+					app:layout_constraintTop_toBottomOf="@+id/conference_name_text"
+					tools:text="This is a very long title text that propably won't fit in one line, maybe even need three." />
 
 				<androidx.appcompat.widget.AppCompatTextView
 					android:id="@+id/subtitle_text"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:layout_marginStart="8dp"
-					android:layout_marginTop="8dp"
 					android:layout_marginEnd="8dp"
 					android:layout_marginBottom="8dp"
 					android:text="@{event.subtitle}"
 					android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
 					android:visibility="@{event.subtitle.length() == 0 ? View.GONE : View.VISIBLE}"
-					app:layout_constraintBottom_toBottomOf="parent"
-					app:layout_constraintEnd_toStartOf="@+id/tag_text"
-					app:layout_constraintStart_toEndOf="@+id/imageView"
-					app:layout_constraintTop_toBottomOf="@+id/title_text"
-					app:layout_constraintVertical_bias="0.0"
-					tools:text="subtitle"/>
-
-				<androidx.appcompat.widget.AppCompatTextView
-					android:id="@+id/tag_text"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginTop="8dp"
-					android:layout_marginEnd="8dp"
-					android:layout_marginBottom="8dp"
-					android:gravity="bottom|end"
-					android:visibility="gone"
+					android:maxHeight="50dp"
+					android:textStyle="italic"
+					app:autoSizeMaxTextSize="15sp"
+					app:autoSizeTextType="uniform"
 					app:layout_constraintBottom_toBottomOf="parent"
 					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/subtitle_text"
-					tools:text="TAGS"/>
+					app:layout_constraintStart_toEndOf="@+id/imageView"
+					tools:text="subtitle" />
+
+				<androidx.appcompat.widget.AppCompatTextView
+					android:id="@+id/conference_name_text"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="8dp"
+					android:text="@{event.conference}"
+					android:visibility="gone"
+					android:maxHeight="50dp"
+					android:textStyle="bold"
+					app:autoSizeMaxTextSize="15sp"
+					app:autoSizeTextType="uniform"
+					app:layout_constraintEnd_toEndOf="@+id/title_text"
+					app:layout_constraintStart_toStartOf="@+id/title_text"
+					app:layout_constraintTop_toTopOf="parent"
+					tools:text="42c3: Don't panic"
+					tools:visibility="visible" />
 
 				<androidx.appcompat.widget.AppCompatTextView
 					android:id="@+id/duration"
@@ -107,6 +117,17 @@
 					app:layout_constraintEnd_toEndOf="@+id/imageView"
 					time="@{event.length}"
 					tools:text="1:23:45"/>
+
+				<ProgressBar
+					android:id="@+id/progressBar3"
+					style="?android:attr/progressBarStyleHorizontal"
+					progress="@{event}"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					app:layout_constraintBottom_toBottomOf="@+id/imageView"
+					app:layout_constraintEnd_toEndOf="@+id/imageView"
+					app:layout_constraintStart_toStartOf="@+id/imageView"
+					app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
 			</androidx.constraintlayout.widget.ConstraintLayout>
 		</androidx.cardview.widget.CardView>

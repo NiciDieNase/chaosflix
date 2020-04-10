@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="recomended">Recomended</string>
+	<string name="recommended">Recommended</string>
 	<string name="continue_watching">Continue Watching</string>
+	<string name="pref_external_player">Use external player</string>
 </resources>

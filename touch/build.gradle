@@ -141,6 +141,7 @@ configurations {
 
 dependencies {
     implementation project(':common')
+
     implementation('com.mikepenz:aboutlibraries:6.1.1@aar') {
         transitive = true
     }
@@ -149,6 +150,7 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     implementation 'com.github.medyo:android-about-page:1.2.2'
+
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'

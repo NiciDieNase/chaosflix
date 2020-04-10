@@ -131,21 +131,20 @@ dependencies {
     api "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     api "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
 
+    api "androidx.core:core-ktx:1.2.0"
 
     def paging_version = "2.1.2"
     api "androidx.paging:paging-runtime:$paging_version"
 
-
-
     api 'androidx.recyclerview:recyclerview:1.1.0'
 
-    def roomVersion = "2.2.4"
+    def roomVersion = "2.2.5"
     api "androidx.room:room-runtime:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
     api "androidx.room:room-ktx:$roomVersion"
 
-    implementation 'com.squareup.retrofit2:retrofit:2.6.3'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.4'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
 
     api "com.google.code.gson:gson:2.8.6"
     api 'com.google.android.exoplayer:exoplayer:2.9.6'
@@ -165,7 +164,7 @@ dependencies {
     debugImplementation 'com.facebook.stetho:stetho:1.5.1'
     debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.4.2'
     debugImplementation 'com.facebook.stetho:stetho-okhttp:1.4.2'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
 
 //    testImplementation "org.mockito:mockito-core:2.11.0"
 //    testImplementation 'junit:junit:4.12'
@@ -176,17 +175,17 @@ dependencies {
     testImplementation "junit:junit:4.13"
     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.6.0"
 
-    testImplementation "io.mockk:mockk:1.9"
+    testImplementation "io.mockk:mockk:1.9.3"
 
     testImplementation 'org.robolectric:robolectric:4.1'
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.5.2"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.0"
 
-    testImplementation "junit:junit:4.12"
+    testImplementation "junit:junit:4.13"
     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.5.2"
 
 }

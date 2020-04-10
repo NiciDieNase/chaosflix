@@ -8,10 +8,10 @@ import androidx.room.Update
 
 abstract class BaseDao<in T> {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     abstract fun insert(item: T): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     abstract fun insert(vararg items: T): LongArray
 
     @Update
@@ -27,8 +27,8 @@ abstract class BaseDao<in T> {
     abstract fun delete(vararg items: T)
 
     @Transaction
-    open suspend fun updateOrInsert(item: T) {
-        updateOrInsertInternal(item)
+    open suspend fun updateOrInsert(item: T): Long {
+        return updateOrInsertInternal(item)
     }
 
     @Transaction
@@ -36,5 +36,5 @@ abstract class BaseDao<in T> {
         events.map { updateOrInsertInternal(it) }
     }
 
-    protected abstract suspend fun updateOrInsertInternal(item: T)
+    protected abstract suspend fun updateOrInsertInternal(item: T): Long
 }

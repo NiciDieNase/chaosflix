@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.browse.mediathek.MediathekFragmentDirections
@@ -19,8 +19,6 @@ import de.nicidienase.chaosflix.touch.databinding.FragmentDownloadsBinding
 class DownloadsListFragment : Fragment() {
 
     private val viewModel: BrowseViewModel by viewModels { ViewModelFactory.getInstance(requireContext()) }
-
-// 	private lateinit var binding: FragmentDownloadsBinding
 
     private val handler = Handler()
 
@@ -41,7 +39,7 @@ class DownloadsListFragment : Fragment() {
                 list.layoutManager = LinearLayoutManager(context)
             } else {
                 list.layoutManager =
-                    GridLayoutManager(context, columnCount - 1)
+                    StaggeredGridLayoutManager(columnCount - 1, StaggeredGridLayoutManager.VERTICAL)
             }
             viewModel.getOfflineDisplayEvents().observe(viewLifecycleOwner, Observer {
                 if (it != null) {

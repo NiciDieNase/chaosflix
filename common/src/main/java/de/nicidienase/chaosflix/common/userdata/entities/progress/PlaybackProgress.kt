@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import java.util.Date
 
 @Entity(tableName = "playback_progress",
-        indices = arrayOf(Index(value = ["event_guid"], unique = true)))
+        indices = [Index(value = ["event_guid"], unique = true)])
 data class PlaybackProgress(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,

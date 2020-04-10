@@ -17,15 +17,13 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.appbar.AppBarLayout
@@ -104,20 +102,15 @@ class EventDetailsFragment : Fragment() {
         val eventGuid = args.eventGuid
         val eventName = args.eventName
         lifecycleScope.launch {
-            val liveData = when {
-                eventGuid != null -> {
-                    viewModel.setEvent(eventGuid)
-                }
-                eventName != null -> {
-                    viewModel.setEventFromLink(eventName)
-                }
-                else -> {
-                    error("neither guid nor event-name set")
-                }
+            val eventLivedata = when {
+                eventGuid != null -> viewModel.setEventByGuid(eventGuid)
+                eventName != null -> viewModel.setEventFromLink(eventName)
+                else -> error("neither guid nor event-name set")
             }
-            liveData.observe(viewLifecycleOwner, Observer { event ->
+            eventLivedata.observe(viewLifecycleOwner, Observer { event ->
                 if (event != null) {
                     binding.event = event
+                    binding.lifecycleOwner = viewLifecycleOwner
                     Log.d(TAG, "Loading Event ${event.title}, ${event.guid}")
                     updateBookmark()
                     binding.thumbImage.transitionName = getString(R.string.thumbnail) + event.guid
@@ -127,7 +120,7 @@ class EventDetailsFragment : Fragment() {
                             .apply(RequestOptions().fitCenter())
                             .into(binding.thumbImage)
 
-                    viewModel.getRelatedEvents(event).observe(viewLifecycleOwner, Observer {
+                    viewModel.getRelatedEvents().observe(viewLifecycleOwner, Observer {
                         if (it != null) {
                             relatedEventsAdapter.items = it
                         }
@@ -140,15 +133,14 @@ class EventDetailsFragment : Fragment() {
             relatedEventsAdapter = EventRecyclerViewAdapter {
                 viewModel.relatedEventSelected(it)
             }
+            relatedEventsAdapter.showConferenceName = true
             adapter = relatedEventsAdapter
-            val orientation = RecyclerView.VERTICAL
-            layoutManager =
-                    LinearLayoutManager(context, orientation, false)
-            val itemDecoration = DividerItemDecoration(
-                    binding.relatedItemsList.context,
-                    orientation
-            )
-            addItemDecoration(itemDecoration)
+            val columns: Int = resources.getInteger(R.integer.num_columns)
+            layoutManager = if (columns == 1) {
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            } else {
+                StaggeredGridLayoutManager(columns, StaggeredGridLayoutManager.VERTICAL)
+            }
         }
 
         binding.appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
@@ -167,7 +159,7 @@ class EventDetailsFragment : Fragment() {
             val event = liveEvent.data?.getParcelable<Event>(DetailsViewModel.EVENT)
             val recording = liveEvent.data?.getParcelable<Recording>(DetailsViewModel.RECORDING)
             val localFile = liveEvent.data?.getString(DetailsViewModel.KEY_LOCAL_PATH)
-            val selectItems: Array<Recording>? = liveEvent.data?.getParcelableArray(DetailsViewModel.KEY_SELECT_RECORDINGS) as Array<Recording>?
+            val selectItems: List<Recording>? = liveEvent.data?.getParcelableArrayList<Recording>(DetailsViewModel.KEY_SELECT_RECORDINGS)
             when (liveEvent.state) {
                 DetailsViewModel.State.PlayOfflineItem -> {
                     if (event != null && recording != null) {
@@ -181,14 +173,14 @@ class EventDetailsFragment : Fragment() {
                 }
                 DetailsViewModel.State.SelectRecording -> {
                     if (event != null && selectItems != null) {
-                        selectRecording(event, selectItems.asList()) { e, r ->
-                            viewModel.playRecording(e, r)
+                        selectRecording(event, selectItems) { e, r ->
+                            viewModel.recordingSelected(e, r)
                         }
                     }
                 }
                 DetailsViewModel.State.DownloadRecording -> {
                     if (event != null && selectItems != null) {
-                        selectRecording(event, selectItems.asList()) { e, r ->
+                        selectRecording(event, selectItems) { e, r ->
                             viewModel.download(e, r).observe(viewLifecycleOwner, Observer {
                                 when (it?.state) {
                                     OfflineItemManager.State.Downloading -> {
@@ -213,21 +205,41 @@ class EventDetailsFragment : Fragment() {
                     }
                 }
                 DetailsViewModel.State.PlayExternal -> {
-                    if (event != null) {
-                        if (selectItems != null) {
-                            selectRecording(event, selectItems.asList()) { _, r ->
-                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(r.recordingUrl)))
-                            }
-                        } else if (recording != null) {
-                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(recording.recordingUrl)))
-                        }
+                    recording?.recordingUrl?.let {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
                     }
                 }
                 DetailsViewModel.State.Error -> {
                     Snackbar.make(binding.root, liveEvent.error ?: "An Error occured", Snackbar.LENGTH_LONG)
                 }
+                DetailsViewModel.State.LoadingRecordings -> {
+                    // TODO: show loading indicator
+                }
             }
         })
+
+        viewModel.getRelatedEvents().observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                relatedEventsAdapter.items = it
+            }
+            if (it?.isNotEmpty() == true) {
+                binding.relatedItemsText.visibility = View.VISIBLE
+            } else {
+                binding.relatedItemsText.visibility = View.GONE
+            }
+        })
+    }
+
+    private fun updateBookmark() {
+        viewModel.getBookmarkForEvent()
+                .observe(viewLifecycleOwner, Observer { watchlistItem: WatchlistItem? ->
+                    this.watchlistItem = watchlistItem
+                    activity?.invalidateOptionsMenu()
+                })
+    }
+
+    private fun play() {
+        viewModel.playEvent()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -247,24 +259,20 @@ class EventDetailsFragment : Fragment() {
         }
     }
 
-    private fun getLiveDataForEvent(): LiveData<Event?> {
-        return viewModel.event
-    }
-
     private fun playItem(event: Event, recording: Recording, localFile: String? = null) {
 //        if (castService.connected) {
 //            castService.loadMediaAndPlay(recording, event)
 //        } else {
-            if (localFile != null) {
-                findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentToExoPlayerFragment(PlaybackItem.fromEvent(event,
-                        recordingUri = localFile)))
+        if (localFile != null) {
+            findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentToExoPlayerFragment(PlaybackItem.fromEvent(event,
+                    recordingUri = localFile)))
 //                PlayerActivity.launch(requireContext(), event, localFile)
-            } else {
+        } else {
 //                PlayerActivity.launch(requireContext(), event, recording)
 
-                findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentToExoPlayerFragment(PlaybackItem.fromEvent(event,
-                        recording.recordingUrl)))
-            }
+            findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentToExoPlayerFragment(PlaybackItem.fromEvent(event,
+                    recording.recordingUrl)))
+        }
 //        }
     }
 
@@ -281,29 +289,17 @@ class EventDetailsFragment : Fragment() {
     }
 
     private fun selectRecordingFromList(items: List<String>, resultHandler: DialogInterface.OnClickListener) {
-            if (selectDialog != null) {
-                selectDialog?.dismiss()
-            }
-            val builder = AlertDialog.Builder(requireContext())
-            builder.setItems(items.toTypedArray(), resultHandler)
-            selectDialog = builder.create()
-            selectDialog?.show()
+        if (selectDialog != null) {
+            selectDialog?.dismiss()
+        }
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setItems(items.toTypedArray(), resultHandler)
+        selectDialog = builder.create()
+        selectDialog?.show()
     }
 
     private fun getStringForRecording(recording: Recording): String {
         return "${if (recording.isHighQuality) "HD" else "SD"}  ${recording.folder}  [${recording.language}]"
-    }
-
-    private fun updateBookmark() {
-        viewModel.getBookmarkForEvent()
-                .observe(viewLifecycleOwner, Observer { watchlistItem: WatchlistItem? ->
-                    this.watchlistItem = watchlistItem
-                    activity?.invalidateOptionsMenu()
-                })
-    }
-
-    private fun play() {
-        viewModel.playEvent()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {

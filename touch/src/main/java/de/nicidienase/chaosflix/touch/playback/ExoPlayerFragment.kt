@@ -12,7 +12,7 @@ import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.DefaultRenderersFactory
@@ -64,8 +64,8 @@ class ExoPlayerFragment : Fragment(), PlayerStateChangeListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding: FragmentExoPlayerBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_exo_player, container, false)
-        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(requireContext())).get(PlayerViewModel::class.java)
-
+        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(requireContext())).get(PlayerViewModel::class.java)
+        viewModel.setEvent(args.playbackItem.eventGuid)
 // 		val toolbar: Toolbar = binding.getRoot().findViewById(R.id.toolbar)
 // 		toolbar.title = args.playbackItem.title
 // 		toolbar.subtitle = args.playbackItem.subtitle
@@ -88,9 +88,9 @@ class ExoPlayerFragment : Fragment(), PlayerStateChangeListener {
 
     override fun onStop() {
         super.onStop()
-        if (exoPlayer != null) {
-            exoPlayer?.currentPosition?.let { viewModel?.setPlaybackProgress(args.playbackItem.eventGuid, it) }
-            exoPlayer?.playWhenReady = false
+        exoPlayer?.apply {
+            viewModel.setPlaybackProgress(currentPosition)
+            playWhenReady = false
         }
         val activity = activity
         if (activity != null) {
@@ -110,12 +110,12 @@ class ExoPlayerFragment : Fragment(), PlayerStateChangeListener {
         }
         if (exoPlayer != null) {
             exoPlayer?.playWhenReady = playbackState
-            viewModel.getPlaybackProgressLiveData(args.playbackItem.eventGuid)?.observe(this, Observer { playbackProgress: PlaybackProgress? ->
+            viewModel.getPlaybackProgressLiveData().observe(this, Observer { playbackProgress: PlaybackProgress? ->
                 if (playbackProgress != null) {
                     exoPlayer?.seekTo(playbackProgress.progress)
                 }
             })
-            binding?.videoView?.setPlayer(exoPlayer)
+            binding?.videoView?.player = exoPlayer
         }
     }
 
@@ -162,7 +162,7 @@ class ExoPlayerFragment : Fragment(), PlayerStateChangeListener {
     }
 
     override fun notifyEnd() {
-        viewModel.deletePlaybackProgress(args.playbackItem.eventGuid)
+        viewModel.deletePlaybackProgress()
     }
 
     private fun buildMediaSource(uri: Uri, overrideExtension: String): MediaSource {

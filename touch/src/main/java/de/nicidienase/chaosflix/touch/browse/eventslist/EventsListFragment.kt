@@ -116,7 +116,6 @@ abstract class EventsListFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     companion object {
-        private const val ARG_COLUMN_COUNT = "column-count"
         private const val ARG_TYPE = "type"
         private const val ARG_CONFERENCE = "conference"
         private const val LAYOUTMANAGER_STATE = "layoutmanager-state"
@@ -124,11 +123,10 @@ abstract class EventsListFragment : Fragment(), SearchView.OnQueryTextListener {
         const val TYPE_EVENTS = 0
         const val TYPE_BOOKMARKS = 1
         const val TYPE_IN_PROGRESS = 2
-        fun newInstance(type: Int, conference: Conference?, columnCount: Int): EventsListFragment {
+        fun newInstance(type: Int, conference: Conference?): EventsListFragment {
             val fragment = ConferenceEventListFragment()
             val args = Bundle()
             args.putInt(ARG_TYPE, type)
-            args.putInt(ARG_COLUMN_COUNT, columnCount)
             args.putParcelable(ARG_CONFERENCE, conference)
             fragment.arguments = args
             return fragment

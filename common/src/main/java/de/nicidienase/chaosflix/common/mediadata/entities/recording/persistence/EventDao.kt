@@ -25,7 +25,9 @@ abstract class EventDao : BaseDao<Event>() {
     @Query("SELECT * FROM event WHERE guid = :guid LIMIT 1")
     abstract fun findEventByGuid(guid: String): LiveData<Event?>
 
-    @Query("SELECT * FROM event WHERE guid = :guid LIMIT 1")
+    @Query("""SELECT event.*, conference.acronym as conference FROM event 
+        JOIN conference ON event.conferenceId = conference.id 
+        WHERE guid = :guid LIMIT 1""")
     abstract suspend fun findEventByGuidSync(guid: String): Event?
 
     @Query("SELECT * FROM event WHERE id in (:ids)")
@@ -46,10 +48,10 @@ abstract class EventDao : BaseDao<Event>() {
     @Query("SELECT * FROM event WHERE conferenceId = :id ORDER BY title ASC")
     abstract fun findEventsByConferenceSync(id: Long): List<Event>
 
-    @Query("SELECT * FROM event INNER JOIN watchlist_item WHERE event.guid = watchlist_item.event_guid")
+    @Query("SELECT event.* FROM event INNER JOIN watchlist_item WHERE event.guid = watchlist_item.event_guid")
     abstract fun findBookmarkedEvents(): LiveData<List<Event>>
 
-    @Query("SELECT * FROM event INNER JOIN playback_progress WHERE event.guid = playback_progress.event_guid")
+    @Query("SELECT event.* FROM event INNER JOIN playback_progress WHERE event.guid = playback_progress.event_guid")
     abstract fun findInProgressEvents(): LiveData<List<Event>>
 
     @Query("SELECT * FROM event WHERE frontendLink LIKE :url ")
@@ -70,7 +72,19 @@ abstract class EventDao : BaseDao<Event>() {
     @Query("SELECT * FROM event WHERE title LIKE :title LIMIT 1")
     abstract fun findSingleEventByTitle(title: String): LiveData<Event?>
 
-    override suspend fun updateOrInsertInternal(item: Event) {
+// 	@Query("SELECT * FROM event JOIN conference ON event.conferenceId=conference.id")
+// 	abstract suspend fun getEventWithConference(eventId: Long): List<EventWithConference>
+//
+// 	@Query("SELECT * FROM event JOIN conference ON event.conferenceId=conference.id WHERE event.id = :eventId")
+// 	abstract suspend fun getAllEventsWithConference(eventId: Long): List<EventWithConference>
+
+    @Query("""SELECT event.*, conference.acronym as conference
+    FROM event JOIN conference ON event.conferenceId=conference.id 
+    WHERE conference.id = :confernceId
+    ORDER BY event.title""")
+    abstract fun getEventsWithConferenceForConfernce(confernceId: Long): LiveData<List<Event>>
+
+    override suspend fun updateOrInsertInternal(item: Event): Long {
         if (item.id != 0L) {
             update(item)
         } else {
@@ -82,5 +96,6 @@ abstract class EventDao : BaseDao<Event>() {
                 item.id = insert(item)
             }
         }
+        return item.id
     }
 }

@@ -5,7 +5,6 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesW
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventDto
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventsResponse
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.RecordingDto
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -14,35 +13,35 @@ import retrofit2.http.Query
 interface RecordingService {
 
     @GET("public/conferences")
-    fun getConferencesWrapper(): Call<ConferencesWrapper>
+    suspend fun getConferencesWrapper(): Response<ConferencesWrapper>
 
     @GET("public/conferences/{id}")
-    fun getConference(@Path("id") id: Long): Call<ConferenceDto>
+    suspend fun getConference(@Path("id") id: Long): Response<ConferenceDto>
 
     @GET("public/conferences/{name}")
-    fun getConferenceByName(@Path("name") name: String): Call<ConferenceDto>
+    suspend fun getConferenceByName(@Path("name") name: String): Response<ConferenceDto>
 
     @GET("public/events/{id}")
-    fun getEvent(@Path("id") id: Long): Call<EventDto>
+    suspend fun getEvent(@Path("id") id: Long): Response<EventDto>
 
     @GET("public/events/{guid}")
     suspend fun getEventByGUID(@Path("guid") guid: String): EventDto?
 
     @GET("public/events/search")
-    suspend fun searchEvents(@Query("q") query: String, @Query("page") page: Int = 0): EventsResponse
+    suspend fun searchEvents(@Query("q") query: String, @Query("page") page: Int = 0): Response<EventsResponse>
 
     @GET("public/events/search")
-    suspend fun searchEventsCall(@Query("q") query: String, @Query("page") page: Int = 0): Response<EventsResponse>
+    suspend fun searchEvents(@Query("q") query: String): Response<EventsResponse>
 
     @GET("public/recordings/{id}")
-    fun getRecording(@Path("id") id: Long): Call<RecordingDto>
+    suspend fun getRecording(@Path("id") id: Long): Response<RecordingDto>
 
     @GET("public/conferences")
-    suspend fun getConferencesWrapperSuspending(): ConferencesWrapper?
+    suspend fun getConferencesWrapperSuspending(): Response<ConferencesWrapper?>
 
     @GET("public/conferences/{acronym}")
-    suspend fun getConferenceByNameSuspending(@Path("acronym")acronym: String): ConferenceDto?
+    suspend fun getConferenceByNameSuspending(@Path("acronym")acronym: String): Response<ConferenceDto?>
 
     @GET("public/events/{guid}")
-    suspend fun getEventByGUIDSuspending(@Path("guid") guid: String): EventDto?
+    suspend fun getEventByGUIDSuspending(@Path("guid") guid: String): Response<EventDto?>
 }

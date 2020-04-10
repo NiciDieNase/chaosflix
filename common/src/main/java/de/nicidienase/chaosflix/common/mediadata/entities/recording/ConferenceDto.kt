@@ -40,7 +40,8 @@ data class ConferenceDto(
         if (events != null) {
             for (event in events) {
                 if (event.tags?.isNotEmpty() == true) {
-                    for (tag in event.tags!!) {
+                    val tags = event.tags
+                    for (tag: String in tags?.filterNotNull() ?: emptyList()) {
 
                         val list: MutableList<EventDto>
                         if (map.keys.contains(tag)) {

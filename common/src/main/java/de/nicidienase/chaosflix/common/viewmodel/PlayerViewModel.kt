@@ -5,19 +5,31 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
-import java.util.Date
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Date
 
 class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
 
-    fun getPlaybackProgressLiveData(guid: String): LiveData<PlaybackProgress?> =
-            database.playbackProgressDao().getProgressForEvent(guid)
+    private lateinit var eventGuid: String
 
-    suspend fun getPlaybackProgress(guid: String) = database.playbackProgressDao().getProgressForEventSync(guid)
+    fun setEvent(guid: String) {
+        eventGuid = guid
+    }
 
-    fun setPlaybackProgress(eventGuid: String, progress: Long) {
-        if (progress < 5_000) {
+    fun getPlaybackProgressLiveData(): LiveData<PlaybackProgress?> =
+            database.playbackProgressDao().getProgressForEvent(eventGuid)
+
+    suspend fun getPlaybackProgress(): PlaybackProgress? {
+        return if(eventGuid.isNotBlank()){
+            database.playbackProgressDao().getProgressForEventSync(eventGuid)
+        } else {
+            null
+        }
+    }
+
+    fun setPlaybackProgress(progress: Long) {
+        if (progress < 5_000 || eventGuid.isBlank()) {
             return
         }
         viewModelScope.launch(Dispatchers.IO) {
@@ -29,9 +41,11 @@ class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
         }
     }
 
-    fun deletePlaybackProgress(eventId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            database.playbackProgressDao().deleteItem(eventId)
+    fun deletePlaybackProgress() {
+        if(eventGuid.isNotBlank()) {
+            viewModelScope.launch(Dispatchers.IO) {
+                database.playbackProgressDao().deleteItem(eventGuid)
+            }
         }
     }
 }

@@ -10,6 +10,8 @@ import android.os.Build
 import android.util.Log
 import androidx.leanback.media.PlaybackGlue
 import androidx.leanback.widget.PlaybackSeekDataProvider
+import de.nicidienase.chaosflix.common.AnalyticsWrapper
+import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +38,8 @@ class ChaosflixSeekDataProvider(
     private val thumbnails: MutableMap<Long, Bitmap> = mutableMapOf()
     private val dummyThumbnails: MutableMap<Long, Bitmap> = mutableMapOf()
 
+    private val calcTimes: MutableList<Long> = mutableListOf()
+
     private val positions: LongArray by lazy {
         val list = mutableListOf<Long>()
         for (i in 0..(length * 1000) step calculateInterval(length)) {
@@ -49,19 +53,28 @@ class ChaosflixSeekDataProvider(
     private fun calculateInterval(length: Long): Long {
         return 1000L * when (length) {
             in 0..60 -> 1 // 0..1min
-            in 60..(1800) -> 30 // 1..30min
-            in (30 * 60)..(90 * 60) -> 60 // 30..90min
-            else -> 90
+            in 60..(30 * 60) -> 10 // 1..30min
+            in (30 * 60)..(90 * 60) -> 15 // 30..90min
+            else -> 30
+        }
+    }
+
+    fun initialize() {
+        if (canceled) {
+            canceled = false
+            Log.d(TAG, "Retriever was canceled before, reinitializing")
+            mediaMetadataRetriever = MediaMetadataRetriever()
+            try {
+                mediaMetadataRetriever.setDataSource(url, mapOf("User-Agent" to ApiFactory.buildUserAgent()))
+            } catch (ex: Exception) {
+                Log.e(TAG, "Error: ${ex.message}", ex)
+            }
+            generateThumbs()
         }
     }
 
     override fun getSeekPositions(): LongArray {
-        if (canceled) {
-            Log.d(TAG, "Retriever was canceled before, reinitializing")
-            mediaMetadataRetriever = MediaMetadataRetriever()
-            mediaMetadataRetriever.setDataSource(url, mapOf("User-Agent" to ApiFactory.buildUserAgent()))
-            generateThumbs()
-        }
+        initialize()
         return positions
     }
 
@@ -78,7 +91,9 @@ class ChaosflixSeekDataProvider(
             for (i in positions.indices) {
                 if (!thumbnails.containsKey(positions[i])) {
                     val bitmap = createBitmapForIndex(i)
-                    thumbnails[positions[i]] = bitmap
+                    if (bitmap != null) {
+                        thumbnails[positions[i]] = bitmap
+                    }
                     yield()
                 }
             }
@@ -95,9 +110,11 @@ class ChaosflixSeekDataProvider(
                 callback?.onThumbnailLoaded(dummyThumbnails[positions[index]], index)
                 scope.launch {
                     val thumb = createBitmapForIndex(index)
-                    thumbnails[positions[index]] = thumb
-                    withContext(Dispatchers.Main) {
-                        callback?.onThumbnailLoaded(thumb, index)
+                    if (thumb != null) {
+                        thumbnails[positions[index]] = thumb
+                        withContext(Dispatchers.Main) {
+                            callback?.onThumbnailLoaded(thumb, index)
+                        }
                     }
                 }
             }
@@ -109,33 +126,55 @@ class ChaosflixSeekDataProvider(
                 }
                 scope.launch {
                     val thumb = createBitmapForIndex(index)
-                    thumbnails[positions[index]] = thumb
-                    withContext(Dispatchers.Main) {
-                        callback?.onThumbnailLoaded(thumb, index)
+                    if (thumb != null) {
+                        thumbnails[positions[index]] = thumb
+                        withContext(Dispatchers.Main) {
+                            callback?.onThumbnailLoaded(thumb, index)
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun createBitmapForIndex(index: Int): Bitmap {
+    private fun createBitmapForIndex(index: Int): Bitmap? {
+        if (canceled) {
+            return null
+        }
         val startTime = System.currentTimeMillis()
         val pos = positions[index] * 1000
-        val thumb: Bitmap =
+        val thumb: Bitmap = try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
                 mediaMetadataRetriever.getScaledFrameAtTime(pos, MediaMetadataRetriever.OPTION_CLOSEST_SYNC,
-                    THUMB_WIDTH, THUMB_HEIGHT)
+                        THUMB_WIDTH, THUMB_HEIGHT)
             } else {
                 mediaMetadataRetriever.getFrameAtTime(pos, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
             } ?: Bitmap.createBitmap(THUMB_WIDTH, THUMB_HEIGHT, Bitmap.Config.ARGB_8888)
+        } catch (ex: Exception) {
+            Log.e(TAG, "Error: ${ex.message}", ex)
+            return Bitmap.createBitmap(10, 10, Bitmap.Config.RGB_565)
+        }
         Log.d(TAG, "Thumb size: ${thumb.width}x${thumb.height}")
 
         val seconds = positions[index] / 1000
-        val time = String.format("%d:%02d", seconds / 60, seconds % 60)
+        val time = formatTime(seconds)
         drawStringToBitmap(thumb, time)
 
-        Log.d(TAG, "Adding Thumbnail ($index/${positions.size}) (took ${System.currentTimeMillis() - startTime}ms)")
+        val duration = System.currentTimeMillis() - startTime
+        calcTimes.add(duration)
+        Log.d(TAG, "Adding Thumbnail ($index/${positions.size}) (took ${duration}ms)")
         return thumb
+    }
+
+    private fun formatTime(seconds: Long): String {
+        val s = seconds % 60
+        val m = (seconds / 60) % 60
+        val h = seconds / 3600
+        return if (h > 0) {
+            String.format("%d:%02d:%02d", h, m, s)
+        } else {
+            String.format("%d:%02d", m, s)
+        }
     }
 
     private fun drawStringToBitmap(thumb: Bitmap, time: String) {
@@ -164,7 +203,7 @@ class ChaosflixSeekDataProvider(
 
     private fun createDummyThumbnail(index: Int): Bitmap {
         val seconds = positions[index] / 1000
-        val time = String.format("%d:%02d", seconds / 60, seconds % 60)
+        val time = formatTime(seconds)
         val bitmap = Bitmap.createBitmap(THUMB_WIDTH, THUMB_HEIGHT, Bitmap.Config.ARGB_8888)
 
         drawStringToBitmap(bitmap, time)
@@ -176,8 +215,22 @@ class ChaosflixSeekDataProvider(
         canceled = true
         GlobalScope.launch {
             generateThumbsJob?.cancelAndJoin()
-            mediaMetadataRetriever.release()
+            try {
+                mediaMetadataRetriever.release()
+            } catch (ex: Exception) {
+                Log.e(TAG, "Error: ${ex.message}", ex)
+            }
         }
+        AnalyticsWrapperImpl.addAnalyticsEvent(AnalyticsWrapper.thumbnailsStatEvent,
+                mapOf(
+                        "avg" to calcTimes.toLongArray().average().toLong().toString(),
+                        "positions_count" to positions.size.toString(),
+                        "calculated_count" to calcTimes.size.toString()
+                )
+        )
+        calcTimes.clear()
+        thumbnails.clear()
+        dummyThumbnails.clear()
         Log.d(TAG, "SeekData reset Done")
         super.reset()
     }
@@ -198,6 +251,7 @@ class ChaosflixSeekDataProvider(
             if (glue.isPrepared) {
                 glue.seekProvider = chaosflixSeekDataProvider
                 glue.isSeekEnabled = true
+                chaosflixSeekDataProvider.initialize()
             } else {
                 glue.addPlayerCallback(object : PlaybackGlue.PlayerCallback() {
                     override fun onPreparedStateChanged(glue: PlaybackGlue?) {
@@ -206,6 +260,7 @@ class ChaosflixSeekDataProvider(
                             (glue as ChaosMediaPlayerGlue).seekProvider =
                                 chaosflixSeekDataProvider
                             glue.isSeekEnabled = true
+                            chaosflixSeekDataProvider.initialize()
                         }
                     }
                 })

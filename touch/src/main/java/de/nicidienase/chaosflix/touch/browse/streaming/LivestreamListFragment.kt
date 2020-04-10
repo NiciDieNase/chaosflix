@@ -60,8 +60,21 @@ class LivestreamListFragment : Fragment() {
         binding.swipeRefreshLayout.setOnRefreshListener {
             updateList()
         }
+        viewModel.getLivestreams().observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                adapter.setContent(it)
+                if (it.isEmpty() && !snackbar.isShown) {
+                    snackbar.show()
+                } else {
+                    snackbar.dismiss()
+                }
+            }
+            binding.swipeRefreshLayout.isRefreshing = false
+        })
+        viewModel.updateLiveStreams()
+
         snackbar = Snackbar.make(binding.root, R.string.no_livestreams, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.reload, View.OnClickListener { this.updateList() })
+                .setAction(R.string.reload) { this.updateList() }
         return binding.root
     }
 
@@ -139,28 +152,16 @@ class LivestreamListFragment : Fragment() {
         updateList()
     }
 
-    private val TAG = LivestreamListFragment::class.simpleName
-
     private fun updateList() {
-// 		binding.swipeRefreshLayout.postDelayed( Runnable {
-// 			binding.swipeRefreshLayout.isRefreshing = true
-// 		}, 500)
         binding.swipeRefreshLayout.isRefreshing = true
         Log.d(TAG, "Refresh starting")
-        viewModel.getLivestreams().observe(viewLifecycleOwner, Observer {
-            it?.let { adapter.setContent(it) }
-            binding.swipeRefreshLayout.isRefreshing = false
-            if (it?.size == 0 && !snackbar.isShown) {
-                snackbar.show()
-            } else {
-                snackbar.dismiss()
-            }
-            Log.d(TAG, "Refresh done")
-        })
+        viewModel.updateLiveStreams()
     }
 
     companion object {
         private val ARG_COLUMN_COUNT = "column-count"
+
+        private val TAG = LivestreamListFragment::class.simpleName
 
         fun newInstance(columnCount: Int): LivestreamListFragment {
             val fragment = LivestreamListFragment()

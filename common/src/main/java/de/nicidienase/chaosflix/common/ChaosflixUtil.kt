@@ -1,7 +1,8 @@
 package de.nicidienase.chaosflix.common
 
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
-import kotlin.collections.ArrayList
+import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Stream
 
 object ChaosflixUtil {
     fun getOptimalRecording(recordings: List<Recording>, originalLanguage: String): Recording {
@@ -26,6 +27,14 @@ object ChaosflixUtil {
             lqRecordings.isNotEmpty() -> lqRecordings[0]
             else -> null
         }
+    }
+
+    fun getStringForRecording(recording: Recording): String {
+        return "${if (recording.isHighQuality) "HD" else "SD"}  ${recording.folder}  [${recording.language}]"
+    }
+
+    fun getStringForStream(stream: Stream): String {
+        return "${stream.display}"
     }
 
     private fun getRecordingForGroup(group: List<Recording>?, language: String): Recording {
@@ -66,6 +75,23 @@ object ChaosflixUtil {
         result.addAll(hqMp4Recordings)
         result.addAll(lqMp4Recordings)
         return result
+    }
+
+    fun areTagsUsefull(events: List<Event>, acronym: String): Boolean {
+        val tagList = events.map { it.tags ?: emptyArray() }
+                .toTypedArray()
+                .flatten()
+                .filterNot { it.matches("\\d+".toRegex()) }
+                .filterNot { it.toLowerCase() == acronym.toLowerCase() }
+        val tagCount: MutableMap<String, Int> = mutableMapOf()
+        for (tag in tagList.filterNotNull()) {
+            tagCount[tag] = tagCount[tag]?.plus(1) ?: 1
+        }
+        val usefulTags = tagCount.keys
+                .filter { tagCount[it]!! < events.size - 1 }
+                .filter { tagCount[it]!! > 1 }
+                .filter { it.length >= 3 }
+        return usefulTags.size > 2
     }
 
     fun getStringForTag(tag: String): String {

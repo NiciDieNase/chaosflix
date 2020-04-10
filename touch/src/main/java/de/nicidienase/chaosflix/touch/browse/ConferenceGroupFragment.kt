@@ -9,31 +9,24 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.ConferenceRecyclerViewAdapter
-
 class ConferenceGroupFragment : Fragment() {
 
     private val viewModel: BrowseViewModel by viewModels { ViewModelFactory.getInstance(requireContext()) }
 
-    private var columnCount = 1
-    private lateinit var conferenceGroup: ConferenceGroup
     private var layoutManager: RecyclerView.LayoutManager? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            columnCount = arguments?.getInt(ARG_COLUMN_COUNT) ?: 1
-            conferenceGroup = arguments?.getParcelable(ARG_GROUP)!!
-        }
-    }
+    private val columnCount: Int by lazy { resources.getInteger(R.integer.num_columns) }
+    private val conferenceGroup: ConferenceGroup by lazy { arguments?.getParcelable<ConferenceGroup>(ARG_GROUP)!! }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_conferences_page, container, false)
@@ -42,7 +35,7 @@ class ConferenceGroupFragment : Fragment() {
             layoutManager = if (columnCount <= 1) {
                 LinearLayoutManager(context)
             } else {
-                GridLayoutManager(context, columnCount)
+                StaggeredGridLayoutManager(columnCount, StaggeredGridLayoutManager.VERTICAL)
             }
             view.layoutManager = layoutManager
             val conferencesAdapter = ConferenceRecyclerViewAdapter {
@@ -55,9 +48,8 @@ class ConferenceGroupFragment : Fragment() {
             viewModel.getConferencesByGroup(conferenceGroup.id).observe(viewLifecycleOwner, Observer<List<Conference>> { conferenceList: List<Conference>? ->
                 if (conferenceList != null) {
                     conferencesAdapter.conferences = conferenceList
-                    val layoutState = arguments!!.getParcelable<Parcelable>(LAYOUTMANAGER_STATE)
-                    if (layoutState != null) {
-                        layoutManager?.onRestoreInstanceState(layoutState)
+                    arguments?.getParcelable<Parcelable>(LAYOUTMANAGER_STATE)?.let {
+                        layoutManager?.onRestoreInstanceState(it)
                     }
                 }
             })
@@ -100,3 +92,4 @@ class ConferenceGroupFragment : Fragment() {
         }
     }
 }
+

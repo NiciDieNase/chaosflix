@@ -1,7 +1,8 @@
 package de.nicidienase.chaosflix.common.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
@@ -52,8 +53,8 @@ class BrowseViewModel(
     fun getConferencesByGroup(groupId: Long) =
             database.conferenceDao().findConferenceByGroup(groupId)
 
-    fun getEventsforConference(conference: Conference) =
-            database.eventDao().findEventsByConference(conference.id)
+    fun getEventsforConference(conference: Conference): LiveData<List<Event>> =
+            database.eventDao().getEventsWithConferenceForConfernce(conference.id)
 
     fun getUpdateState() =
             mediaRepository.updateConferencesAndGroups()
@@ -67,30 +68,42 @@ class BrowseViewModel(
                     return@merge LiveEvent(liveEvent?.state ?: MediaRepository.State.DONE, list ?: liveEvent?.data, liveEvent?.error)
                 }
 
-    fun getBookmarkedEvents(): LiveData<List<Event>> = updateAndGetEventsForGuids {
-        database
-                .watchlistItemDao()
-                .getAllSync().map { it.eventGuid } }
+    fun getBookmarkedEvents(): LiveData<List<Event>> {
+        val itemDao = database.watchlistItemDao()
+        viewModelScope.launch(Dispatchers.IO) {
+            itemDao.getAllSync().forEach {
+                mediaRepository.updateSingleEvent(it.eventGuid)
+            }
+        }
+        return itemDao.getWatchlistEvents()
+    }
 
-    fun getInProgressEvents(): LiveData<List<Event>> = updateAndGetEventsForGuids {
-        database
-                .playbackProgressDao()
-                .getAllSync()
-                .map { it.eventGuid } }
+    @JvmOverloads
+    fun getInProgressEvents(filterFinished: Boolean = false): LiveData<List<Event>> {
+        val dao = database.playbackProgressDao()
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.getAllSync().forEach {
+                mediaRepository.updateSingleEvent(it.eventGuid)
+            }
+        }
+        return Transformations.map(dao.getAllWithEvent()) { list ->
+            return@map if (filterFinished) {
+                    val result = list.partition { it.progress.progress / 1000 > (it.event.length - 10) }
+                    Log.d(TAG, "Filtered ${result.first.size} finished items: ${result.first.map { "${it.progress.progress / 1000}-${it.event.length}|"}}")
+                    result.second.map { it.event.apply { it.event.progress = it.progress.progress } }
+                } else {
+                    list.map { it.event.apply { it.event.progress = it.progress.progress } }
+                }
+            }
+    }
 
     fun getPromotedEvents(): LiveData<List<Event>> = database.eventDao().findPromotedEvents()
 
-    private fun updateAndGetEventsForGuids(guidProvider: () -> List<String>): LiveData<List<Event>> {
-        val result = MutableLiveData<List<Event>>()
-        viewModelScope.launch(Dispatchers.IO) {
-            val guids = guidProvider.invoke()
-            val events = guids.map { mediaRepository.updateSingleEvent(it) }.filterNotNull()
-            result.postValue(events)
-        }
-        return result
-    }
+    fun getLivestreams(): LiveData<List<LiveConference>> = streamingRepository.streamingConferences
 
-    fun getLivestreams(): LiveData<List<LiveConference>> = streamingRepository.update(viewModelScope)
+    fun updateLiveStreams() = viewModelScope.launch {
+        streamingRepository.update()
+    }
 
     fun getOfflineDisplayEvents() = database.offlineEventDao().getOfflineEventsDisplay()
 
@@ -112,7 +125,7 @@ class BrowseViewModel(
             offlineItemManager.deleteOfflineItem(guid)
         }
     }
-    fun getAutoselectStream() = preferencesManager.getAutoselectStream()
+    fun getAutoselectStream() = preferencesManager.autoselectStream
 
     fun searchEventsPaged(query: String): LiveData<PagedList<Event>> {
         val config = PagedList.Config.Builder()
