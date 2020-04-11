@@ -13,6 +13,7 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.net.ssl.SSLHandshakeException
 
 class ApiFactory private constructor(private val recordingUrl: String, cache: File? = null) {
 
@@ -51,8 +52,10 @@ class ApiFactory private constructor(private val recordingUrl: String, cache: Fi
         try {
             return@Interceptor chain.proceed(requestWithUseragent)
         } catch (ex: SocketTimeoutException) {
-            Log.e("UserAgentIntercepor", ex.message, ex)
-
+            Log.e("UserAgentIntercepor", requestWithUseragent.url().toString(), ex)
+            return@Interceptor null
+        } catch (ex: SSLHandshakeException) {
+            Log.e("UserAgentIntercepor", requestWithUseragent.url().toString(), ex)
             return@Interceptor null
         }
     }
