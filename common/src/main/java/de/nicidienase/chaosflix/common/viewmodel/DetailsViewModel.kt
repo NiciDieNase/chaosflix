@@ -15,10 +15,10 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.io.File
 import java.util.ArrayList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class DetailsViewModel(
     private val database: ChaosflixDatabase,
@@ -70,14 +70,14 @@ class DetailsViewModel(
     }
 
     fun getBookmarkForEvent(guid: String): LiveData<WatchlistItem?> =
-            database.watchlistItemDao().getItemForEvent(guid)
+        mediaRepository.getBookmark(guid)
 
     fun createBookmark(guid: String) = viewModelScope.launch(Dispatchers.IO) {
-        database.watchlistItemDao().saveItem(WatchlistItem(eventGuid = guid))
+        mediaRepository.addBookmark(guid)
     }
 
     fun removeBookmark(guid: String) = viewModelScope.launch(Dispatchers.IO) {
-        database.watchlistItemDao().deleteItem(guid)
+        mediaRepository.deleteBookmark(guid)
     }
 
     fun download(event: Event, recording: Recording) =
@@ -95,7 +95,6 @@ class DetailsViewModel(
     }
     fun getRelatedEvents(event: Event): LiveData<List<Event>> = mediaRepository.getReleatedEvents(event)
 
-
     fun relatedEventSelected(event: Event) {
         val bundle = Bundle()
         bundle.putParcelable(EVENT, event)
@@ -106,7 +105,6 @@ class DetailsViewModel(
             postStateWithEventAndRecordings(State.DownloadRecording, event)
 
     fun playInExternalPlayer(event: Event) = postStateWithEventAndRecordings(State.PlayExternal, event)
-
 
     fun recordingSelected(e: Event, r: Recording) {
         viewModelScope.launch(Dispatchers.IO) {
