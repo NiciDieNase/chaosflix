@@ -72,14 +72,14 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
         watchListAdapter = ChaosflixEventAdapter(eventPresenter)
         inProgressAdapter = ChaosflixEventAdapter(eventPresenter)
         promotedAdapter = ChaosflixEventAdapter(eventPresenter)
-        promotedRow = ListRow(HeaderItem(getString(R.string.recommended)), promotedAdapter)
+        promotedRow = ListRow(HeaderItem(getString(R.string.recommendations)), promotedAdapter)
         watchlistRow = ListRow(HeaderItem(getString(R.string.watchlist)), watchListAdapter)
         inProgressRow = ListRow(HeaderItem(getString(R.string.continue_watching)), inProgressAdapter)
 
         // Sections and Divider
         streamingSection = SectionRow(HeaderItem(getString(R.string.livestreams)))
         streamsDivider = DividerRow()
-        recomendationsSections = SectionRow(HeaderItem(getString(R.string.recomendations)))
+        recomendationsSections = SectionRow(HeaderItem(getString(R.string.recommendations)))
         recomendationsDivider = DividerRow()
         conferencesSection = SectionRow(HeaderItem(getString(R.string.conferences)))
 

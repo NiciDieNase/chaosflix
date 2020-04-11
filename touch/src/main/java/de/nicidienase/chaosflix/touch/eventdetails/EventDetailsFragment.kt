@@ -367,7 +367,7 @@ class EventDetailsFragment : Fragment() {
                     val event = viewModel.event.value
                     if (event != null) {
                         val shareIntent = Intent(Intent.ACTION_SEND, Uri.parse(event.frontendLink))
-                        shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.watch_this))
+                        shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_description))
                         shareIntent.putExtra(Intent.EXTRA_TEXT, event.frontendLink)
                         shareIntent.type = "text/plain"
                         startActivity(shareIntent)

@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:backgroundTint="@color/primary"
-                android:text="@string/import_label"
+                android:text="@string/bookmark"
                 android:visibility="invisible"
                 android:onClick="@{()->viewModel.importFavorites()}"
                 app:icon="@drawable/ic_bookmark"
