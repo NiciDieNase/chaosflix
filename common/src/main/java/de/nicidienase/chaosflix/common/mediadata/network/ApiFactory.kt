@@ -1,19 +1,16 @@
 package de.nicidienase.chaosflix.common.mediadata.network
 
 import android.os.Build
-import android.util.Log
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.BuildConfig
 import de.nicidienase.chaosflix.common.SingletonHolder2
-import java.io.File
-import java.net.SocketTimeoutException
-import java.util.concurrent.TimeUnit
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import javax.net.ssl.SSLHandshakeException
+import java.io.File
+import java.util.concurrent.TimeUnit
 
 class ApiFactory private constructor(private val recordingUrl: String, cache: File? = null) {
 
@@ -29,13 +26,13 @@ class ApiFactory private constructor(private val recordingUrl: String, cache: Fi
             .build()
     }
 
-    val recordingApi: RecordingService by lazy {
+    val recordingApi: RecordingApi by lazy {
         Retrofit.Builder()
             .baseUrl(recordingUrl)
             .client(client)
             .addConverterFactory(gsonConverterFactory)
             .build()
-            .create(RecordingService::class.java)
+            .create(RecordingApi::class.java)
     }
 
     val streamingApi: StreamingApi by lazy { Retrofit.Builder()
@@ -49,15 +46,7 @@ class ApiFactory private constructor(private val recordingUrl: String, cache: Fi
         val requestWithUseragent = chain.request().newBuilder()
             .header("User-Agent", chaosflixUserAgent)
             .build()
-        try {
             return@Interceptor chain.proceed(requestWithUseragent)
-        } catch (ex: SocketTimeoutException) {
-            Log.e("UserAgentIntercepor", requestWithUseragent.url().toString(), ex)
-            return@Interceptor null
-        } catch (ex: SSLHandshakeException) {
-            Log.e("UserAgentIntercepor", requestWithUseragent.url().toString(), ex)
-            return@Interceptor null
-        }
     }
 
     companion object : SingletonHolder2<ApiFactory, String, File?>(::ApiFactory) {

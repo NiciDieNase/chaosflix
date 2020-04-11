@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
+import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.EventDto
@@ -16,23 +17,23 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RecordingDao
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RelatedEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RelatedEventDao
-import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
+import de.nicidienase.chaosflix.common.mediadata.network.RecordingApi
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import java.io.IOException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
+import java.io.IOException
 
 class MediaRepository(
-    private val recordingApi: RecordingService,
-    private val database: ChaosflixDatabase
+        private val recordingApi: RecordingApi,
+        private val database: ChaosflixDatabase
 ) {
 
     private val supervisorJob = SupervisorJob()
@@ -63,6 +64,8 @@ class MediaRepository(
                         Log.e(TAG, "Error: ${response.message()} ${response.errorBody()}")
                     }
                 } catch (e: IOException) {
+                    Log.e(TAG,e.message, e)
+                    AnalyticsWrapperImpl.trackException(e)
                     updateState.postValue(LiveEvent(State.DONE, error = e.message))
                 } catch (e: Exception) {
                     updateState.postValue(LiveEvent(State.DONE, error = "Error updating Conferences (${e.cause})"))
@@ -128,20 +131,26 @@ class MediaRepository(
     }
 
     suspend fun updateSingleEvent(guid: String): Event? = withContext(Dispatchers.IO) {
-        val response = recordingApi.getEventByGUIDSuspending(guid)
-        if (!response.isSuccessful) {
-            Log.e(TAG, "Error: ${response.message()} ${response.errorBody()}")
-            return@withContext null
-        }
-        val event = response.body()
-        return@withContext if (event != null) {
-            try {
-                saveEvent(event)
-            } catch (ex: IllegalArgumentException) {
-                Log.e(TAG, "could not save event", ex)
+        return@withContext try {
+            val response = recordingApi.getEventByGUIDSuspending(guid)
+            if (!response.isSuccessful) {
+                Log.e(TAG, "Error: ${response.message()} ${response.errorBody()}")
+                return@withContext null
+            }
+            val event = response.body()
+            return@withContext if (event != null) {
+                try {
+                    saveEvent(event)
+                } catch (ex: IllegalArgumentException) {
+                    Log.e(TAG, "could not save event", ex)
+                    null
+                }
+            } else {
                 null
             }
-        } else {
+        } catch (e: IOException){
+            Log.e(TAG,e.message, e)
+            AnalyticsWrapperImpl.trackException(e)
             null
         }
     }

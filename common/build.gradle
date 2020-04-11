@@ -33,7 +33,7 @@ android {
     }
 
     lintOptions {
-          abortOnError false
+        abortOnError false
     }
 
     buildTypes {
@@ -43,7 +43,7 @@ android {
 
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -73,16 +73,16 @@ android {
                 mock = null
             }
         }
-        noFree{
+        noFree {
             dimension "libs"
             ext {
-                if(project.hasProperty("appcenterId")){
+                if (project.hasProperty("appcenterId")) {
                     prod = appcenterId
                 } else {
                     prod = null
                     println "AppcenterId not set"
                 }
-                if(project.hasProperty("appcenterDevId")){
+                if (project.hasProperty("appcenterDevId")) {
                     dev = appcenterDevId
                     mock = appcenterDevId
                 } else {
@@ -105,14 +105,20 @@ android {
     }
 
     variantFilter { variant ->
-        if (name.contains("prod") && name.contains("Debug")){
+        if (name.contains("prod") && name.contains("Debug")) {
             setIgnore(true)
         }
     }
 
     lintOptions.abortOnError = false
     dataBinding.enabled = true
-    testOptions.unitTests.includeAndroidResources = true
+
+    testOptions {
+        unitTests {
+            returnDefaultValues = true
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
