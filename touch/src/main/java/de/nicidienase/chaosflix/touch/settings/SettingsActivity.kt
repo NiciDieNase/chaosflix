@@ -13,6 +13,6 @@ class SettingsActivity : AppCompatActivity() {
                 .setContentView<ActivitySettingsBinding>(this, R.layout.activity_settings)
         setSupportActionBar(binding.toolbarInc.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setTitle(R.string.settings)
+        supportActionBar?.setTitle(R.string.preferences)
     }
 }
