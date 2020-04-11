@@ -96,7 +96,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
         if (BuildConfig.DEBUG) {
             listRowAdapter.add(SelectableContentItem.LeakCanary)
         }
-        settingsRow = ListRow(HeaderItem("Chaosflix"), listRowAdapter)
+        settingsRow = ListRow(HeaderItem(resources.getString(R.string.app_name)), listRowAdapter)
         rowsAdapter.add(0, settingsRow)
 
         viewModel.getConferenceGroups().observe(viewLifecycleOwner, Observer { conferenceGroups ->

@@ -138,7 +138,7 @@ class EventDetailsFragment : androidx.fragment.app.Fragment() {
     }
 
     private fun play() {
-        viewModel.playEvent(event)
+        viewModel.play(event)
     }
 
     override fun onAttach(context: Context) {

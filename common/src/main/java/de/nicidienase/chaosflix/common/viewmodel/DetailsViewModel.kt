@@ -15,10 +15,10 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import java.io.File
-import java.util.ArrayList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
+import java.util.ArrayList
 
 class DetailsViewModel(
     private val database: ChaosflixDatabase,
@@ -58,11 +58,15 @@ class DetailsViewModel(
         return database.eventDao().findEventByGuid(event.guid)
     }
 
-    fun getRecordingForEvent(event: Event): LiveData<List<Recording>> {
-        viewModelScope.launch {
-            mediaRepository.updateRecordingsForEvent(event)
+    fun play(event: Event, autoselect: Boolean = autoselectRecording) = viewModelScope.launch(Dispatchers.IO) {
+        if (autoselect) {
+            val recordings = database.recordingDao().findRecordingByEventSync(event.id)
+            val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
+            val recordingUrl = ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl
+            playRecording(event, optimalRecording, recordingUrl)
+        } else {
+            playEvent(event)
         }
-        return database.recordingDao().findRecordingByEvent(event.id)
     }
 
     fun getBookmarkForEvent(guid: String): LiveData<WatchlistItem?> =
@@ -79,11 +83,6 @@ class DetailsViewModel(
     fun download(event: Event, recording: Recording) =
             offlineItemManager.download(event, recording)
 
-    private suspend fun fileExists(guid: String): Boolean {
-        val offlineItem = database.offlineEventDao().getByEventGuidSuspend(guid)
-        return offlineItem != null && File(offlineItem.localPath).exists()
-    }
-
     fun deleteOfflineItem(event: Event): LiveData<Boolean> {
         val result = MutableLiveData<Boolean>()
         viewModelScope.launch(Dispatchers.IO) {
@@ -94,8 +93,8 @@ class DetailsViewModel(
         }
         return result
     }
-
     fun getRelatedEvents(event: Event): LiveData<List<Event>> = mediaRepository.getReleatedEvents(event)
+
 
     fun relatedEventSelected(event: Event) {
         val bundle = Bundle()
@@ -103,7 +102,21 @@ class DetailsViewModel(
         state.postValue(LiveEvent(State.DisplayEvent, data = bundle))
     }
 
-    fun playEvent(event: Event) {
+    fun downloadRecordingForEvent(event: Event) =
+            postStateWithEventAndRecordings(State.DownloadRecording, event)
+
+    fun playInExternalPlayer(event: Event) = postStateWithEventAndRecordings(State.PlayExternal, event)
+
+
+    fun recordingSelected(e: Event, r: Recording) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val recordings: List<Recording> = database.recordingDao().findRecordingByEventSync(e.id)
+            val url = ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl
+            playRecording(e, r, url)
+        }
+    }
+
+    private fun playEvent(event: Event) {
         viewModelScope.launch(Dispatchers.IO) {
             val offlineEvent = database.offlineEventDao().getByEventGuidSuspend(event.guid)
             if (offlineEvent != null) {
@@ -125,7 +138,7 @@ class DetailsViewModel(
             } else {
                 // select quality then playEvent
                 val items: List<Recording> = database.recordingDao().findRecordingByEventSync(event.id)
-                if (items.isNotEmpty()) {
+                if (preferencesManager.autoselectStream && items.isNotEmpty()) {
                     val bundle = Bundle()
                     bundle.putParcelable(EVENT, event)
                     bundle.putParcelableArrayList(KEY_SELECT_RECORDINGS, ArrayList(items))
@@ -136,6 +149,11 @@ class DetailsViewModel(
                 }
             }
         }
+    }
+
+    private suspend fun fileExists(guid: String): Boolean {
+        val offlineItem = database.offlineEventDao().getByEventGuidSuspend(guid)
+        return offlineItem != null && File(offlineItem.localPath).exists()
     }
 
     private fun playRecording(event: Event, recording: Recording, urlForThumbs: String? = null) = viewModelScope.launch(Dispatchers.IO) {
@@ -155,11 +173,6 @@ class DetailsViewModel(
         }
     }
 
-    fun downloadRecordingForEvent(event: Event) =
-            postStateWithEventAndRecordings(State.DownloadRecording, event)
-
-    fun playInExternalPlayer(event: Event) = postStateWithEventAndRecordings(State.PlayExternal, event)
-
     private fun postStateWithEventAndRecordings(s: State, e: Event) {
         viewModelScope.launch(Dispatchers.IO) {
             val items = database.recordingDao().findRecordingByEventSync(e.id)
@@ -167,25 +180,6 @@ class DetailsViewModel(
             bundle.putParcelable(EVENT, e)
             bundle.putParcelableArrayList(KEY_SELECT_RECORDINGS, ArrayList(items))
             state.postValue(LiveEvent(s, bundle))
-        }
-    }
-
-    fun play(event: Event, autoselect: Boolean = autoselectRecording) = viewModelScope.launch(Dispatchers.IO) {
-        if (autoselect) {
-            val recordings = database.recordingDao().findRecordingByEventSync(event.id)
-            val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
-            val recordingUrl = ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl
-            playRecording(event, optimalRecording, recordingUrl)
-        } else {
-            playEvent(event)
-        }
-    }
-
-    fun recordingSelected(e: Event, r: Recording) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val recordings: List<Recording> = database.recordingDao().findRecordingByEventSync(e.id)
-            val url = ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl
-            playRecording(e, r, url)
         }
     }
 
