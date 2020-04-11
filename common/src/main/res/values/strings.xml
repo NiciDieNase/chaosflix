@@ -1,53 +1,118 @@
 <resources>
     <string name="api_media_ccc_url" translatable="false">https://api.media.ccc.de</string>
     <string name="streaming_media_ccc_url" translatable="false">https://streaming.media.ccc.de</string>
+    <string name="app_name" translatable="false">Chaosflix</string>
 
-    <string name="app_name">Chaosflix</string>
-    <string name="related_movies">Related Videos</string>
+    <!--Actions-->
     <string name="error">Error</string>
     <string name="ok">OK</string>
     <string name="pause">Pause</string>
     <string name="play">Play</string>
     <string name="stop">Stop</string>
+    <string name="dismiss_error">Dismiss</string>
+    <string name="start_again">Start again</string>
+    <string name="resume">Resume</string>
+    <string name="resume_question">Resume previous position or start from beginning</string>
+    <string name="return_to_homescreen">Return to Homescreen</string>
+    <string name="bookmark">Bookmark</string>
 
+    <!--Content-->
+    <string name="related_movies">Related Videos</string>
+    <string name="random_talks_on_this_track">Random Talks in the same Track</string>
+    <string name="random_talks">Other random Talks at this Conference</string>
+    <string name="related_talks">Related Talks</string>
+    <string name="recordings">Recordings</string>
+    <string name="conferences">Conferences</string>
+    <string name="recommendations">Recommendations</string>
+    <string name="bookmarks">Bookmarks</string>
 
+    <!--Watchlist-->
+    <string name="watchlist_dialog_needed">new-watchlist</string>
+    <string name="watchlist_message">You can find you watchlist on the Homescreen of Chaosflix</string>
+    <string name="watchlist">Watchlist</string>
+    <string name="remove_from_watchlist">Remove from Watchlist</string>
+    <string name="add_to_watchlist">Add to Watchlist</string>
+
+    <!--Error Messages-->
+    <string name="oops">Oops</string>
+    <string name="error_event_not_found">Event not found</string>
+    <string name="no_recording_found_for">No Recording found for</string>
     <string name="video_error_media_load_timeout">Media loading timed out</string>
     <string name="video_error_server_inaccessible">Media server was not reachable</string>
     <string name="video_error_unknown_error">Failed to load video</string>
     <string name="error_fragment_message">An error occurred</string>
-    <string name="dismiss_error">Dismiss</string>
-    <string name="oops">Oops</string>
-    <string name="random_talks_on_this_track">Random Talks in the same Track</string>
-    <string name="random_talks">Other random Talks at this Conference</string>
-    <string name="resume_question">Resume previous position or start from beginning</string>
-    <string name="start_again">Start again</string>
-    <string name="resume">Resume</string>
-    <string name="related_talks">Related Talks</string>
-    <string name="recomendations">Recomendations</string>
-    <string name="watchlist">Watchlist</string>
-    <string name="recordings">Recordings</string>
+
+    <!--Livestreams-->
     <string name="streaming_prefix">[streaming]</string>
-    <string name="conferences">Conferences</string>
-    <string name="remove_from_watchlist">Remove from Watchlist</string>
-    <string name="add_to_watchlist">Add to Watchlist</string>
     <string name="streams">Streams</string>
     <string name="livestreams">Livestreams</string>
-    <string name="watchlist_message">You can find you watchlist on the Homescreen of Chaosflix</string>
+
+    <!--About-->
+    <string name="about">About</string>
+    <string name="privacy_policy">Chaosflix does not collect or transmit any personalized data.</string>
+    <string name="about_description">Chaosflix was developed, because the developer was annoyed
+	that there was an app for Apple-TV but not Android- and Fire-TV. So now, after the
+	TV-app there is also one for (android) phones and tablets. Enjoy!</string>
+    <string name="related_events">Related Events</string>
+    <string name="about_github">Find the source on Github</string>
+    <string name="about_beta">Become a Beta-Tester</string>
+    <string name="about_twitter">Follow the developer on Twitter</string>
+    <string name="about_playstore">Rate us on Google Play</string>
+    <string name="about_title">Chaosflix</string>
+    <string name="about_voctocat"> The Vocotocat-Logo was designed by Sebastian Morr and is released under CC BY-NC-SA 4.0</string>
+
+    <!--Preferences-->
     <string name="watchlist_preferences_key">watchlist</string>
-    <string name="watchlist_dialog_needed">new-watchlist</string>
-    <string name="return_to_homescreen">Return to Homescreen</string>
-	<string name="clean_cache">Clean Cache</string>
+    <string name="clean_cache">Clean Cache</string>
     <string name="download_folder">Download folder</string>
     <string name="pref_autoselect_recording">Don\'t show selection dialog, just use HD-mp4</string>
     <string name="pref_autoselect_stream">Don\'t show selection dialog, just use DASH</string>
     <string name="pref_mobile_downloads">Enable downloads over mobile or payed networks</string>
+    <string name="export_favorites">Export Favorites</string>
+    <string name="import_favorites">Import to Favorites</string>
     <string name="pref_external_player">Always use external player</string>
     <string name="setting_choose_stream">Automatically choose stream</string>
     <string name="setting_metered_networks">Allow downloads over metered networks</string>
     <string name="settings_choose_recording">Automatically choose recording</string>
-    <string name="export_favorites">Export Favorites</string>
-    <string name="import_favorites">Import to Favorites</string>
-    <string name="error_event_not_found">Event not found</string>
-    <string name="privacy_policy">Chaosflix does not collect or transmit any personalized data.</string>
-    <string name="no_recording_found_for">No Recording found for</string>
+
+
+    <!--Moved from touch-->
+    <string name="title">title</string>
+    <string name="subtitle">subtitle</string>
+    <string name="thumbnail">thumbnail</string>
+    <string name="card">card</string>
+    <string name="select_option">Select Media Option</string>
+    <string name="search_title">Search</string>
+
+    <string name="download">Download</string>
+
+    <string name="delete">Delete</string>
+    <string name="titleimage">TitleImage</string>
+    <string name="search_events">Search Events</string>
+    <string name="search_talks">Search Talks</string>
+    <string name="event_details_image_thumbnail_description">Thumbnail-picture for this event</string>
+
+    <string name="continue_watching">Continue Watching</string>
+    <string name="downloads">Downloads</string>
+
+    <string name="preferences">Preferences</string>
+    <string name="drawer_open">Drawer open</string>
+    <string name="drawer_close">Drawer closed</string>
+    <string name="remove_bookmark">Remove Bookmark</string>
+    <string name="delete_local_file">Delete local File</string>
+    <string name="showLibs">Libraries we use</string>
+    <string name="about_chaosflix">About Chaosflix</string>
+    <string name="chaosflix_licence">Chaosflix is released under MIT-License.</string>
+
+    <string name="settings">Settings</string>
+    <string name="reload">Reload</string>
+    <string name="no_livestreams">Currently no livestreams</string>
+    <string name="share_description">Watch this video from media.ccc.de</string>
+    <string name="select_stream">Select Stream</string>
+    <string name="play_button">Play-Button</string>
+    <string name="list_of_events">List of Events</string>
+    <string name="delete_item">Delete Item</string>
+    <string name="import_activity_label">Fahrplan-Import</string>
+    <string name="select_all">Select all</string>
+    <string name="import_label">Bookmark</string>
 </resources>
