@@ -10,5 +10,5 @@ class ProgressEventView(
     @Embedded
     val progress: PlaybackProgress,
     @Relation(entityColumn = "guid", parentColumn = "event_guid")
-    var event: Event
+    var event: Event?
 )

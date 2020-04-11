@@ -57,13 +57,14 @@ class BrowseViewModel(
             mediaRepository.updateConferencesAndGroups()
 
     fun updateEventsForConference(conference: Conference): LiveData<LiveEvent<MediaRepository.State, List<Event>, String>> =
-        LiveDataMerger<List<Event>, LiveEvent<MediaRepository.State, List<Event>, String>, LiveEvent<MediaRepository.State, List<Event>, String>>()
-                .merge(
-                    getEventsforConference(conference),
-                    mediaRepository.updateEventsForConference(conference)
-                ) { list: List<Event>?, liveEvent: LiveEvent<MediaRepository.State, List<Event>, String>? ->
-                    return@merge LiveEvent(liveEvent?.state ?: MediaRepository.State.DONE, list ?: liveEvent?.data, liveEvent?.error)
-                }
+            LiveDataMerger<List<Event>, LiveEvent<MediaRepository.State, List<Event>, String>, LiveEvent<MediaRepository.State, List<Event>, String>>()
+                    .merge(
+                            getEventsforConference(conference),
+                            mediaRepository.updateEventsForConference(conference)
+                    ) { list: List<Event>?, liveEvent: LiveEvent<MediaRepository.State, List<Event>, String>? ->
+                        return@merge LiveEvent(liveEvent?.state ?: MediaRepository.State.DONE, list
+                                ?: liveEvent?.data, liveEvent?.error)
+                    }
 
     fun getBookmarkedEvents(): LiveData<List<Event>> {
         val itemDao = database.watchlistItemDao()
@@ -85,13 +86,14 @@ class BrowseViewModel(
         }
         return Transformations.map(dao.getAllWithEvent()) { list ->
             return@map if (filterFinished) {
-                    val result = list.partition { it.progress.progress / 1000 > (it.event.length - 10) }
-                    Log.d(TAG, "Filtered ${result.first.size} finished items: ${result.first.map { "${it.progress.progress / 1000}-${it.event.length}|"}}")
-                    result.second.map { it.event.apply { it.event.progress = it.progress.progress } }
-                } else {
-                    list.map { it.event.apply { it.event.progress = it.progress.progress } }
-                }
+                val result = list.partition { it.progress.progress / 1000 + 10 < it.event?.length ?: 0 }
+                Log.i(TAG, "Could not load events for ${list.filter { it.event == null }.map{it.progress.eventGuid}}")
+                Log.i(TAG, "Filtered ${result.first.size} finished items: ${result.first.map { "${it.progress.progress / 1000}-${it.event?.length}|" }}")
+                result.second.mapNotNull { it.event.apply { it.event?.progress = it.progress.progress } }
+            } else {
+                list.mapNotNull { it.event?.apply { it.event?.progress = it.progress.progress } }
             }
+        }
     }
 
     fun getPromotedEvents(): LiveData<List<Event>> = database.eventDao().findPromotedEvents()
@@ -122,6 +124,7 @@ class BrowseViewModel(
             offlineItemManager.deleteOfflineItem(guid)
         }
     }
+
     fun getAutoselectStream() = preferencesManager.autoselectStream
 
     companion object {
