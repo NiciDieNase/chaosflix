@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.OfflineItemManager
-import de.nicidienase.chaosflix.common.PreferencesManager
+import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.ResourcesFacade
 import de.nicidienase.chaosflix.common.SingletonHolder
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
@@ -22,7 +22,7 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
     private val database by lazy { ChaosflixDatabase.getInstance(context) }
     private val streamingRepository by lazy { StreamingRepository(apiFactory.streamingApi) }
     private val preferencesManager =
-        PreferencesManager(PreferenceManager.getDefaultSharedPreferences(context.applicationContext))
+        ChaosflixPreferenceManager(PreferenceManager.getDefaultSharedPreferences(context.applicationContext))
     private val offlineItemManager =
         OfflineItemManager(
             context.applicationContext,

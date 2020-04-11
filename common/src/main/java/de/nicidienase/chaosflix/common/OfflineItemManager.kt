@@ -22,18 +22,18 @@ import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventDao
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
-import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 
 class OfflineItemManager(
     context: Context,
     private val offlineEventDao: OfflineEventDao,
-    private val preferencesManager: PreferencesManager
+    private val preferencesManager: ChaosflixPreferenceManager
 ) {
 
     val downloadStatus: MutableMap<Long, DownloadStatus> = HashMap()
@@ -171,7 +171,7 @@ class OfflineItemManager(
         val context: Context,
         val id: Long,
         private val offlineEventDao: OfflineEventDao,
-        private val preferencesManager: PreferencesManager
+        private val preferencesManager: ChaosflixPreferenceManager
     ) : BroadcastReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
             val downloadId = p1?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0)
@@ -198,7 +198,11 @@ class OfflineItemManager(
 
     private fun getMovieDir(): String {
         val dir = preferencesManager.downloadFolder
-        return dir ?: Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).path
+        return if(dir.isNullOrBlank()){
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).path
+        } else {
+            dir
+        }
     }
 
     private fun getDownloadDir(): String {

@@ -9,7 +9,7 @@ import androidx.tvprovider.media.tv.Channel
 import androidx.tvprovider.media.tv.ChannelLogoUtils
 import androidx.tvprovider.media.tv.PreviewProgram
 import androidx.tvprovider.media.tv.TvContractCompat
-import de.nicidienase.chaosflix.common.PreferencesManager
+import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,7 +21,7 @@ object ChannelManager {
         
     }
 
-    suspend fun setupChannels(context: Context, viewmodel: BrowseViewModel, prefs: PreferencesManager) {
+    suspend fun setupChannels(context: Context, viewmodel: BrowseViewModel, prefs: ChaosflixPreferenceManager) {
         withContext(Dispatchers.IO) {
             if (prefs.channelId == 0L) {
                 val builder = Channel.Builder()

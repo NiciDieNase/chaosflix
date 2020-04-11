@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import de.nicidienase.chaosflix.common.PreferencesManager
+import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.ChannelManager
@@ -23,7 +23,7 @@ class ConferencesActivity : androidx.fragment.app.FragmentActivity() {
     override fun onStart() {
         super.onStart()
 
-        val prefs = PreferencesManager(PreferenceManager.getDefaultSharedPreferences(applicationContext))
+        val prefs = ChaosflixPreferenceManager(PreferenceManager.getDefaultSharedPreferences(applicationContext))
 
         val viewmodel = ViewModelProvider(
                 this,ViewModelFactory.getInstance(this)).get(BrowseViewModel::class.java)

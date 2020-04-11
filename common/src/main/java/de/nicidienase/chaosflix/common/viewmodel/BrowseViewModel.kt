@@ -10,7 +10,7 @@ import androidx.paging.PagedList
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.OfflineItemManager
-import de.nicidienase.chaosflix.common.PreferencesManager
+import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.ResourcesFacade
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.SearchResultDataSourceFactory
@@ -26,12 +26,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class BrowseViewModel(
-    val offlineItemManager: OfflineItemManager,
-    private val mediaRepository: MediaRepository,
-    private val database: ChaosflixDatabase,
-    private val streamingRepository: StreamingRepository,
-    private val preferencesManager: PreferencesManager,
-    private val resources: ResourcesFacade
+        val offlineItemManager: OfflineItemManager,
+        private val mediaRepository: MediaRepository,
+        private val database: ChaosflixDatabase,
+        private val streamingRepository: StreamingRepository,
+        private val preferencesManager: ChaosflixPreferenceManager,
+        private val resources: ResourcesFacade
 ) : ViewModel() {
 
     val state: SingleLiveEvent<LiveEvent<State, Event, String>> = SingleLiveEvent()

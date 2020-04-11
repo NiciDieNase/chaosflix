@@ -7,8 +7,10 @@ import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
+import android.preference.PreferenceManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.conferences.ConferencesActivity
@@ -27,6 +29,12 @@ class ChaosRecommendationsService : IntentService("ChaosRecommendationService") 
         Log.d(TAG, "Updating Recommendation")
 
         val mediaRepository = ViewModelFactory.getInstance(this).mediaRepository
+        val preferenceManager = ChaosflixPreferenceManager(PreferenceManager.getDefaultSharedPreferences(applicationContext))
+
+        if(preferenceManager.recommendationsGenerated){
+            Log.d(TAG, "already generated, returning")
+            return
+        }
 
         ioScope.launch {
             val recommendations = mediaRepository.getRecommendations()
@@ -59,6 +67,7 @@ class ChaosRecommendationsService : IntentService("ChaosRecommendationService") 
             } catch (e: IOException) {
                 Log.e(TAG, "Unable to update recommendation", e)
             }
+            preferenceManager.recommendationsGenerated = true
         }
     }
 

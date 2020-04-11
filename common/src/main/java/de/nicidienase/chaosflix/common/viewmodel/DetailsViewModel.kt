@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.OfflineItemManager
-import de.nicidienase.chaosflix.common.PreferencesManager
+import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
@@ -23,10 +23,10 @@ import java.io.File
 import java.util.ArrayList
 
 class DetailsViewModel(
-    private val database: ChaosflixDatabase,
-    private val offlineItemManager: OfflineItemManager,
-    private val preferencesManager: PreferencesManager,
-    private val mediaRepository: MediaRepository
+        private val database: ChaosflixDatabase,
+        private val offlineItemManager: OfflineItemManager,
+        private val preferencesManager: ChaosflixPreferenceManager,
+        private val mediaRepository: MediaRepository
 ) : ViewModel() {
 
     private var eventId: Long = 0
