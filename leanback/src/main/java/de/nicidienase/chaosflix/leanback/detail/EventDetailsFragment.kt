@@ -27,6 +27,7 @@ import androidx.leanback.widget.HeaderItem
 import androidx.leanback.widget.ListRow
 import androidx.leanback.widget.ListRowPresenter
 import androidx.leanback.widget.OnActionClickedListener
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -97,20 +98,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
         detailsViewModel = ViewModelProvider(this, viewModelFactory).get(DetailsViewModel::class.java)
         playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
 
-        val event: Event = arguments?.getParcelable(DetailsActivity.EVENT)
-                ?: error("Missing Argument Event")
-        playerViewModel.setEvent(event.guid)
-        detailsViewModel.setEventId(event.id).observe(viewLifecycleOwner, Observer {
-            title = event.title
 
-            initializeBackgroundWithImage(event.posterUrl)
-
-            playerGlue.title = event.title
-            playerGlue.subtitle = event.subtitle ?: ""
-            detailsBackgroundController.setupVideoPlayback(playerGlue)
-        })
-
-        val selector = ClassPresenterSelector()
         val detailsPresenter = FullWidthDetailsOverviewRowPresenter(
                 EventDetailsDescriptionPresenter(requireContext()))
 
@@ -122,19 +110,81 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
         detailsPresenter.onActionClickedListener = DetailActionClickedListener()
 
+        val selector = ClassPresenterSelector()
+        val rowsAdapter = ArrayObjectAdapter(selector)
         selector.addClassPresenter(DetailsOverviewRow::class.java, detailsPresenter)
         selector.addClassPresenter(ListRow::class.java, ListRowPresenter())
-        val rowsAdapter = ArrayObjectAdapter(selector)
-
-        detailsBackgroundController.enableParallax()
-
-        onItemViewClickedListener = ItemViewClickedListener(this)
-
-        onCreateRecording(event, rowsAdapter)
         adapter = rowsAdapter
 
-        startEntranceTransition()
-        setupObserver(detailsViewModel)
+        val guid = arguments?.getString(ARG_EVENT_GUID)
+                ?: arguments?.getParcelable<Event>(ARG_EVENT)?.guid
+                ?: error("Missing Argument Event")
+        playerViewModel.setEvent(guid)
+        val eventLiveData = detailsViewModel.setEventByGuid(guid)
+        eventLiveData.observe(viewLifecycleOwner, Observer { event ->
+            if(event != null){
+                title = event.title
+
+                initializeBackgroundWithImage(event.posterUrl)
+
+                playerGlue.title = event.title
+                playerGlue.subtitle = event.subtitle ?: ""
+                detailsBackgroundController.setupVideoPlayback(playerGlue)
+            }
+        })
+        lifecycleScope.launch {
+            val event = detailsViewModel.getEvent(guid)
+            event?.let { onCreateRecording(it, eventLiveData, rowsAdapter) }
+            detailsBackgroundController.enableParallax()
+
+            onItemViewClickedListener = ItemViewClickedListener(this@EventDetailsFragment)
+
+
+            startEntranceTransition()
+            setupObserver(detailsViewModel)
+        }
+    }
+
+    private fun onCreateRecording(event: Event, liveData: LiveData<Event?>, rowsAdapter: ArrayObjectAdapter) {
+        val actionAdapter = ArrayObjectAdapter()
+        actionAdapter.add(Action(ACTION_PLAY, "Play"))
+        val watchlistAction = Action(ACTION_ADD_WATCHLIST, getString(R.string.add_to_watchlist))
+        actionAdapter.add(watchlistAction)
+
+        loadPlaybackProgress()
+        detailsViewModel.getBookmarkForEvent(event.guid).observe(viewLifecycleOwner, Observer { watchlistItem ->
+            if (watchlistItem != null) {
+                watchlistAction.id = ACTION_REMOVE_WATCHLIST
+                watchlistAction.label1 = getString(R.string.remove_from_watchlist)
+                actionAdapter.notifyItemRangeChanged(actionAdapter.indexOf(watchlistAction), 1)
+            } else {
+                watchlistAction.id = ACTION_ADD_WATCHLIST
+                watchlistAction.label1 = getString(R.string.add_to_watchlist)
+                actionAdapter.notifyItemRangeChanged(actionAdapter.indexOf(watchlistAction), 1)
+            }
+        })
+        actionAdapter.add(Action(ACTION_RELATED, getString(R.string.related_talks)))
+
+        val detailsOverview = DetailsOverviewRow(event)
+        detailsOverview.actionsAdapter = actionAdapter
+        event.thumbUrl.let { setThumb(it, detailsOverview) }
+        liveData.observe(viewLifecycleOwner, Observer {
+            if(it != null){
+                detailsOverview.item = it
+            }
+        })
+
+        rowsAdapter.add(detailsOverview)
+
+        var relatedEventsAdapter: ArrayObjectAdapter? = null
+        detailsViewModel.getRelatedEvents().observe(viewLifecycleOwner, Observer { events ->
+            if (relatedEventsAdapter == null) {
+                relatedEventsAdapter = ArrayObjectAdapter(CardPresenter(R.style.EventCardStyle))
+                val header = HeaderItem(getString(R.string.related_talks))
+                rowsAdapter.add(ListRow(header, relatedEventsAdapter))
+            }
+            relatedEventsAdapter?.setItems(events, DiffCallbacks.eventDiffCallback)
+        })
     }
 
     private fun setupObserver(detailsViewModel: DetailsViewModel) {
@@ -229,45 +279,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
                 .create()
 
         selectDialog?.show()
-    }
-
-    private fun onCreateRecording(event: Event, rowsAdapter: ArrayObjectAdapter) {
-        val detailsOverview = DetailsOverviewRow(event)
-        val actionAdapter = ArrayObjectAdapter()
-        actionAdapter.add(Action(ACTION_PLAY, "Play"))
-        val watchlistAction = Action(ACTION_ADD_WATCHLIST, getString(R.string.add_to_watchlist))
-        actionAdapter.add(watchlistAction)
-
-        lifecycleScope.launch {
-            loadPlaybackProgress()
-            detailsViewModel.getBookmarkForEvent().observe(viewLifecycleOwner, Observer { watchlistItem ->
-                if (watchlistItem != null) {
-                    watchlistAction.id = ACTION_REMOVE_WATCHLIST
-                    watchlistAction.label1 = getString(R.string.remove_from_watchlist)
-                    actionAdapter.notifyItemRangeChanged(actionAdapter.indexOf(watchlistAction), 1)
-                } else {
-                    watchlistAction.id = ACTION_ADD_WATCHLIST
-                    watchlistAction.label1 = getString(R.string.add_to_watchlist)
-                    actionAdapter.notifyItemRangeChanged(actionAdapter.indexOf(watchlistAction), 1)
-                }
-            })
-        }
-
-        actionAdapter.add(Action(ACTION_RELATED, getString(R.string.related_talks)))
-        detailsOverview.actionsAdapter = actionAdapter
-
-        rowsAdapter.add(detailsOverview)
-        setThumb(event.thumbUrl, detailsOverview)
-
-        var relatedEventsAdapter: ArrayObjectAdapter? = null
-        detailsViewModel.getRelatedEvents().observe(viewLifecycleOwner, Observer { events ->
-            if (relatedEventsAdapter == null) {
-                relatedEventsAdapter = ArrayObjectAdapter(CardPresenter(R.style.EventCardStyle))
-                val header = HeaderItem(getString(R.string.related_talks))
-                rowsAdapter.add(ListRow(header, relatedEventsAdapter))
-            }
-            relatedEventsAdapter?.setItems(events, DiffCallbacks.eventDiffCallback)
-        })
     }
 
     private fun prepareSeekProvider(length: Long, url: String) {
@@ -376,24 +387,19 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
     companion object {
         private val BANDWIDTH_METER = DefaultBandwidthMeter()
-        @JvmStatic
-        val TAG = EventDetailsFragment::class.java.simpleName
+        private val TAG = EventDetailsFragment::class.java.simpleName
 
-        @JvmStatic
-        private val DETAIL_THUMB_WIDTH = 254
-        @JvmStatic
-        private val DETAIL_THUMB_HEIGHT = 143
-        @JvmStatic
-        val DEFAULT_DRAWABLE = R.drawable.default_background
+        private const val DETAIL_THUMB_WIDTH = 254
+        private const val DETAIL_THUMB_HEIGHT = 143
+        const val DEFAULT_DRAWABLE = R.drawable.default_background
 
-        @JvmStatic
-        private val ACTION_PLAY: Long = 0L
-        @JvmStatic
-        private val ACTION_ADD_WATCHLIST = 1L
-        @JvmStatic
-        private val ACTION_REMOVE_WATCHLIST = 2L
-        @JvmStatic
-        private val ACTION_RELATED = 3L
+        private const val ACTION_PLAY: Long = 0L
+        private const val ACTION_ADD_WATCHLIST = 1L
+        private const val ACTION_REMOVE_WATCHLIST = 2L
+        private const val ACTION_RELATED = 3L
+
+        const val ARG_EVENT = "event"
+        const val ARG_EVENT_GUID = "event_guid"
     }
 
     private inner class DetailActionClickedListener : OnActionClickedListener {

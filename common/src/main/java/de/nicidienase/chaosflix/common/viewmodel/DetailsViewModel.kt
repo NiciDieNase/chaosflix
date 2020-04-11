@@ -17,10 +17,10 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import java.io.File
-import java.util.ArrayList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
+import java.util.ArrayList
 
 class DetailsViewModel(
     private val database: ChaosflixDatabase,
@@ -77,6 +77,10 @@ class DetailsViewModel(
         return mediaRepository.getEvent(eventId)
     }
 
+    suspend fun getEvent(guid: String): Event? {
+        return mediaRepository.findEventForGuid(guid)
+    }
+
     private fun loadEvent(eventProvider: suspend () -> Event?): LiveData<Event?> = liveData {
         val event = eventProvider.invoke()
         if (event != null) {
@@ -105,6 +109,10 @@ class DetailsViewModel(
                     database.watchlistItemDao().getItemForEvent(it.guid)
             )
         }
+    }
+
+    fun getBookmarkForEvent(guid: String): LiveData<WatchlistItem?> {
+        return database.watchlistItemDao().getItemForEvent(guid)
     }
 
     fun createBookmark() = viewModelScope.launch(Dispatchers.IO) {

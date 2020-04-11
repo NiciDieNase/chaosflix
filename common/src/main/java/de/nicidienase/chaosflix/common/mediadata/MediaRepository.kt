@@ -22,13 +22,13 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import java.io.IOException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
+import java.io.IOException
 
 class MediaRepository(
     private val recordingApi: RecordingService,
@@ -317,6 +317,13 @@ class MediaRepository(
     }
     fun findRecordingsForEvent(eventId: Long): LiveData<List<Recording>> {
         return recordingDao.findRecordingByEvent(eventId)
+    }
+
+    suspend fun getRecommendations(): MutableList<Event> {
+        return mutableListOf<Event>().apply {
+            this.addAll(database.eventDao().findBookmarkedEventsSync())
+            this.addAll(database.eventDao().findPromotedEventsSync())
+        }
     }
 
     data class SearchResponse(val events: List<Event>, val total: Int, val links: Map<String, String>) {

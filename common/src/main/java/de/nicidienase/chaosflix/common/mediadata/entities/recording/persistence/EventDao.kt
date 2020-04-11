@@ -42,6 +42,9 @@ abstract class EventDao : BaseDao<Event>() {
     @Query("SELECT * FROM event WHERE isPromoted IS 1")
     abstract fun findPromotedEvents(): LiveData<List<Event>>
 
+    @Query("SELECT * FROM event WHERE isPromoted IS 1")
+    abstract suspend fun findPromotedEventsSync(): List<Event>
+
     @Query("SELECT * FROM event WHERE conferenceId = :id ORDER BY title ASC")
     abstract fun findEventsByConference(id: Long): LiveData<List<Event>>
 
@@ -50,6 +53,9 @@ abstract class EventDao : BaseDao<Event>() {
 
     @Query("SELECT event.* FROM event INNER JOIN watchlist_item WHERE event.guid = watchlist_item.event_guid")
     abstract fun findBookmarkedEvents(): LiveData<List<Event>>
+
+    @Query("SELECT event.* FROM event INNER JOIN watchlist_item WHERE event.guid = watchlist_item.event_guid")
+    abstract suspend fun findBookmarkedEventsSync(): List<Event>
 
     @Query("SELECT event.* FROM event INNER JOIN playback_progress WHERE event.guid = playback_progress.event_guid")
     abstract fun findInProgressEvents(): LiveData<List<Event>>

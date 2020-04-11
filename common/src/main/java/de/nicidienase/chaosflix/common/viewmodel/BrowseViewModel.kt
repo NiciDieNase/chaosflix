@@ -78,6 +78,9 @@ class BrowseViewModel(
         return itemDao.getWatchlistEvents()
     }
 
+    suspend fun getBookmarks() = database.eventDao().findBookmarkedEventsSync()
+    suspend fun getPromoted() = database.eventDao().findPromotedEventsSync()
+
     @JvmOverloads
     fun getInProgressEvents(filterFinished: Boolean = false): LiveData<List<Event>> {
         val dao = database.playbackProgressDao()

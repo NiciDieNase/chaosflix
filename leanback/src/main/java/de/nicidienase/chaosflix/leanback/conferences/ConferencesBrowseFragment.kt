@@ -45,6 +45,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
     private lateinit var inProgressAdapter: ChaosflixEventAdapter
 
     private var errorFragment: BrowseErrorFragment? = null
+
     private lateinit var viewModel: BrowseViewModel
 
     private val conferencePresenter = CardPresenter(R.style.ConferenceCardStyle)

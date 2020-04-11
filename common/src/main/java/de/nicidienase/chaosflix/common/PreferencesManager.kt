@@ -4,6 +4,11 @@ import android.content.SharedPreferences
 
 class PreferencesManager(private val sharedPref: SharedPreferences) {
 
+
+    var channelId: Long
+        get() = sharedPref.getLong(CHANNEL_ID, 0)
+        set(value) { sharedPref.edit().putLong(CHANNEL_ID, value).apply() }
+
     val externalPlayer: Boolean
         get() = sharedPref.getBoolean(keyAlwaysUseExternalPlayer, false)
 
@@ -24,11 +29,12 @@ class PreferencesManager(private val sharedPref: SharedPreferences) {
     fun getMetered() = sharedPref.getBoolean(keyMetered, false)
 
     companion object {
-        private val keyMetered = "allow_metered_networks"
-        private val keyAutoselectStream = "auto_select_stream"
-        private val keyAutoselectRecording = "auto_select_recording"
-        private val keyAlwaysUseExternalPlayer = "auto_external_player"
-        private val keyAnalyticsDisabled = "disable_analytics"
-        private val keyDownloadFolder = "download_folder"
+        private const val keyMetered = "allow_metered_networks"
+        private const val keyAutoselectStream = "auto_select_stream"
+        private const val keyAutoselectRecording = "auto_select_recording"
+        private const val keyAlwaysUseExternalPlayer = "auto_external_player"
+        private const val keyAnalyticsDisabled = "disable_analytics"
+        private const val keyDownloadFolder = "download_folder"
+        private const val CHANNEL_ID = "channelId"
     }
 }

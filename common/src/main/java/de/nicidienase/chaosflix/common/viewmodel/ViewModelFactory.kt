@@ -31,7 +31,7 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
         )
     private val externalFilesDir = Environment.getExternalStorageDirectory()
     private val resourcesFacade by lazy { ResourcesFacade(context) }
-    private val mediaRepository by lazy { MediaRepository(apiFactory.recordingApi, database) }
+    val mediaRepository by lazy { MediaRepository(apiFactory.recordingApi, database) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

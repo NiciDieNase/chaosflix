@@ -5,14 +5,14 @@ import android.util.Log
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.BuildConfig
 import de.nicidienase.chaosflix.common.SingletonHolder2
-import java.io.File
-import java.net.SocketTimeoutException
-import java.util.concurrent.TimeUnit
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
+import java.net.SocketTimeoutException
+import java.util.concurrent.TimeUnit
 
 class ApiFactory private constructor(apiUrl: String, cache: File? = null) {
 
@@ -55,7 +55,7 @@ class ApiFactory private constructor(apiUrl: String, cache: File? = null) {
         try {
             return@Interceptor chain.proceed(requestWithUseragent)
         } catch (ex: SocketTimeoutException) {
-            Log.e("UserAgentIntercepor", ex.message, ex)
+            Log.e("UserAgentIntercepor", requestWithUseragent.url().toString(), ex)
 
             return@Interceptor null
         }

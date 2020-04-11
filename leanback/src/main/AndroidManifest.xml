@@ -22,15 +22,38 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:scheme="de.nicidienase.chaosflix"
+                    android:host="main"/>
+            </intent-filter>
         </activity>
 
         <activity
-            android:name=".events.EventsActivity"/>
+            android:name=".events.EventsActivity"
+            android:parentActivityName=".conferences.ConferencesActivity"/>
         <activity
-            android:name=".detail.DetailsActivity" />
+            android:name=".detail.DetailsActivity"
+            android:exported="true"
+            android:parentActivityName=".conferences.ConferencesActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:scheme="de.nicidienase.chaosflix"
+                    android:host="event"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".settings.ChaosflixSettingsActivity"
             android:theme="@style/ChaosflixLeanbackPreferences" />
+
+        <service android:name=".ChaosRecommendationsService"
+            android:enabled="true"/>
 
     </application>
 
@@ -42,5 +65,7 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" />
+
 
 </manifest>
