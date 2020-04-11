@@ -36,12 +36,12 @@ android {
     signingConfigs {
         //noinspection GroovyMissingReturnStatement, GroovyAssignabilityCheck
         release {
-            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore).exists() && file(chaosflixKeystore).isFile()) {
+            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore.trim()).exists() && file(chaosflixKeystore.trim()).isFile()) {
                 println "Release app signing is configured: will sign APK"
-                storeFile file(chaosflixKeystore)
-                storePassword chaosflixStorePassword
-                keyAlias chaosflixKeyName
-                keyPassword chaosflixKeyPassword
+                storeFile file(chaosflixKeystore.trim())
+                storePassword chaosflixStorePassword.trim()
+                keyAlias chaosflixKeyName.trim()
+                keyPassword chaosflixKeyPassword.trim()
             } else {
                 println "App signing data not found. Will not sign."
             }
@@ -59,8 +59,7 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'proguard-rules.pro'
-            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore).exists() && file(chaosflixKeystore).isFile()) {
-
+            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore.trim()).exists() && file(chaosflixKeystore.trim()).isFile()) {
                 signingConfig signingConfigs.release
             }
         }
