@@ -8,6 +8,8 @@ import com.google.gson.Gson
 import de.nicidienase.chaosflix.common.AnalyticsWrapper
 import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
+import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
+import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgressDao
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 import de.nicidienase.chaosflix.common.util.LiveEvent
@@ -22,6 +24,7 @@ import kotlinx.coroutines.launch
 class PreferencesViewModel(
     private val mediaRepository: MediaRepository,
     private val watchlistItemDao: WatchlistItemDao,
+    private val progressItemDao: PlaybackProgressDao,
     private val exportDir: File
 ) : ViewModel() {
     private val gson = Gson()
@@ -43,23 +46,48 @@ class PreferencesViewModel(
             val favorites = watchlistItemDao.getAllSync()
             val json = gson.toJson(favorites)
             Log.d(TAG, json)
-            if (exportDir.isDirectory) {
-                val file = File("${exportDir.path}${File.separator}$FAVORITES_FILENAME")
-                if (file.exists()) {
-                    file.delete()
-                    file.createNewFile()
-                }
-                try {
-                    val fileWriter = FileWriter(file)
-                    val bufferedWriter = BufferedWriter(fileWriter)
-                    bufferedWriter.write(json)
-                    bufferedWriter.close()
-                    fileWriter.close()
-                    Log.d(TAG, file.path)
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
+            writeJsonToFile(json, exportDir, FAVORITES_FILENAME)
+
+            val progress = progressItemDao.getAllSync()
+            val progressJson = gson.toJson(progress)
+            Log.d(TAG, progressJson)
+            writeJsonToFile(progressJson, exportDir, PROGRESS_FILENAME)
+        }
+    }
+
+    private fun writeJsonToFile(json: String, exportDir: File, fileName: String) {
+        if (exportDir.isDirectory) {
+            val file = File("${exportDir.path}${File.separator}$fileName")
+            if (file.exists()) {
+                file.delete()
+                file.createNewFile()
             }
+            try {
+                val fileWriter = FileWriter(file)
+                val bufferedWriter = BufferedWriter(fileWriter)
+                bufferedWriter.write(json)
+                bufferedWriter.close()
+                fileWriter.close()
+                Log.d(TAG, file.path)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    private fun readJsonFromFile(exportDir: File, fileName: String): String? {
+        return try {
+            val file = File("${exportDir.path}${File.separator}$fileName")
+            if (file.exists()) {
+                val fileReader = FileReader(file)
+                val bufferedReader = BufferedReader(fileReader)
+                bufferedReader.readText()
+            } else {
+                null
+            }
+        } catch (ex: Exception) {
+            Log.d(TAG, ex.message, ex)
+            null
         }
     }
 
@@ -67,20 +95,20 @@ class PreferencesViewModel(
         val mutableLiveData = MutableLiveData<LiveEvent<State, List<WatchlistItem>, Exception>>()
         mutableLiveData.postValue(LiveEvent(State.Loading, null, null))
         viewModelScope.launch(Dispatchers.IO) {
-            val file = File("${exportDir.path}${File.separator}$FAVORITES_FILENAME")
-            try {
-                if (file.exists()) {
-                    val fileReader = FileReader(file)
-                    val bufferedReader = BufferedReader(fileReader)
-                    val json: String = bufferedReader.readText()
-                    val fromJson = gson.fromJson(json, Array<WatchlistItem>::class.java)
-                    fromJson.map { watchlistItemDao.saveItem(WatchlistItem(eventGuid = it.eventGuid)) }
-                    mutableLiveData.postValue(LiveEvent(State.Done, fromJson.asList(), null))
-                } else {
-                    mutableLiveData.postValue(LiveEvent(State.Done, null, null))
+            val favoritesJson = readJsonFromFile(exportDir, FAVORITES_FILENAME)
+            val progressJson = readJsonFromFile(exportDir, PROGRESS_FILENAME)
+            if (favoritesJson == null && progressJson == null) {
+                mutableLiveData.postValue(LiveEvent(State.Done, null, null))
+            } else {
+                favoritesJson?.let {
+                    val fromJson = gson.fromJson(it, Array<WatchlistItem>::class.java)
+                    fromJson.map { watchlistItemDao.saveItem(it) }
                 }
-            } catch (ex: Exception) {
-                mutableLiveData.postValue(LiveEvent(State.Done, null, ex))
+                progressJson?.let {
+                    val fromJson = gson.fromJson(it, Array<PlaybackProgress>::class.java)
+                    fromJson.map { progressItemDao.saveProgress(it) }
+                }
+                mutableLiveData.postValue(LiveEvent(State.Done, error = null))
             }
         }
         return mutableLiveData
@@ -93,5 +121,6 @@ class PreferencesViewModel(
     companion object {
         private val TAG = PreferencesViewModel::class.java.simpleName
         private const val FAVORITES_FILENAME = "chaosflix_favorites.json"
+        private const val PROGRESS_FILENAME = "chaosflix_progress.json"
     }
 }

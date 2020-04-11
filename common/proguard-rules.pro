@@ -22,6 +22,7 @@
 -ignorewarnings
 
 -keep @interface androidx.support.annotation.Keep
+-keep @interface androidx.room.Entity
 
 ## Start Retrofit-Rules
 # Retrofit does reflection on generic parameters. InnerClasses is required to use Signature and

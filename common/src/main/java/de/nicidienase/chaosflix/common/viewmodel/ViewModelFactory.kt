@@ -53,6 +53,7 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
             PreferencesViewModel::class.java -> PreferencesViewModel(
                 mediaRepository,
                 database.watchlistItemDao(),
+                database.playbackProgressDao(),
                 externalFilesDir
             ) as T
             FavoritesImportViewModel::class.java -> FavoritesImportViewModel(
