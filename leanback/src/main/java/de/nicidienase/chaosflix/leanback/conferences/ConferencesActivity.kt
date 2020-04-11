@@ -1,6 +1,5 @@
 package de.nicidienase.chaosflix.leanback.conferences
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -9,7 +8,6 @@ import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.ChannelManager
-import de.nicidienase.chaosflix.leanback.ChaosRecommendationsService
 import de.nicidienase.chaosflix.leanback.R
 import kotlinx.coroutines.launch
 
@@ -32,12 +30,12 @@ class ConferencesActivity : androidx.fragment.app.FragmentActivity() {
                 ChannelManager.setupChannels(this@ConferencesActivity, viewmodel, prefs)
             }
         } else {
-            setupRecommendationsRow()
+            setupRecommendations()
         }
     }
 
-    private fun setupRecommendationsRow() {
-        startService(Intent(this, ChaosRecommendationsService::class.java))
+    private fun setupRecommendations() {
+//        startService(Intent(this, ChaosRecommendationsService::class.java))
     }
 
 

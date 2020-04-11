@@ -95,6 +95,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
         listRowAdapter.add(SelectableContentItem.Settings)
 //        listRowAdapter.add(SelectableContentItem.About)
         if (BuildConfig.DEBUG) {
+            listRowAdapter.add(SelectableContentItem.AddRecommendations)
             listRowAdapter.add(SelectableContentItem.LeakCanary)
         }
         settingsRow = ListRow(HeaderItem("Chaosflix"), listRowAdapter)

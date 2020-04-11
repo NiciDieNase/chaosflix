@@ -1,6 +1,8 @@
 package de.nicidienase.chaosflix.leanback
 
+import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.leanback.widget.ImageCardView
@@ -56,6 +58,10 @@ class ItemViewClickedListener(private val fragment: Fragment, private val stream
                     }
                     SelectableContentItem.UpdateStreams -> {
                         streamUpdater?.invoke()
+                    }
+                    SelectableContentItem.AddRecommendations -> {
+                        activity.startService(Intent(activity, ChaosRecommendationsService::class.java))
+                        Toast.makeText(activity, "creating Recommendations", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

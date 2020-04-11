@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.preference.PreferenceManager
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
@@ -30,17 +31,14 @@ class ChaosRecommendationsService : IntentService("ChaosRecommendationService") 
 
         val mediaRepository = ViewModelFactory.getInstance(this).mediaRepository
         val preferenceManager = ChaosflixPreferenceManager(PreferenceManager.getDefaultSharedPreferences(applicationContext))
-
-        if(preferenceManager.recommendationsGenerated){
-            Log.d(TAG, "already generated, returning")
-            return
-        }
-
+//        if(preferenceManager.recommendationsGenerated){
+//            Log.d(TAG, "already generated, returning")
+//            Toast.makeText(this, "already generated, returning", Toast.LENGTH_SHORT).show()
+//            return
+//        }
         ioScope.launch {
             val recommendations = mediaRepository.getRecommendations()
-
             var count = 0
-
             try {
                 val builder = RecommendationBuilder()
                         .setContext(applicationContext)
@@ -67,7 +65,8 @@ class ChaosRecommendationsService : IntentService("ChaosRecommendationService") 
             } catch (e: IOException) {
                 Log.e(TAG, "Unable to update recommendation", e)
             }
-            preferenceManager.recommendationsGenerated = true
+            Toast.makeText(this@ChaosRecommendationsService, "done generating recommendations", Toast.LENGTH_SHORT).show()
+            preferenceManager.recommendationsGenerated = false
         }
     }
 
@@ -78,20 +77,16 @@ class ChaosRecommendationsService : IntentService("ChaosRecommendationService") 
         val builder = TaskStackBuilder.create(this)
                 .addParentStack(ConferencesActivity::class.java)
                 .addNextIntent(detailsIntent)
-
-        detailsIntent.setAction(event.guid)
-
+        detailsIntent.action = event.guid
         return builder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     companion object {
         private val TAG = ChaosRecommendationsService::class.java.simpleName
-
         private const val MAX_RECOMMENDATIONS = 5
     }
 
     class RecommendationBuilder {
-
         private var id: Int = 0
         private var icon: Int = 0
         private lateinit var intent: PendingIntent
@@ -132,6 +127,16 @@ class ChaosRecommendationsService : IntentService("ChaosRecommendationService") 
             return this
         }
 
+        fun setSmallIcon(icon: Int): RecommendationBuilder {
+            this.icon = icon
+            return this
+        }
+
+        fun setId(id: Int): RecommendationBuilder {
+            this.id = id
+            return this
+        }
+
         @Throws(IOException::class)
         fun build(): Notification {
             return NotificationCompat.BigPictureStyle(
@@ -147,16 +152,5 @@ class ChaosRecommendationsService : IntentService("ChaosRecommendationService") 
                             .setContentIntent(intent)
             ).build()
         }
-
-        fun setSmallIcon(icon: Int): RecommendationBuilder {
-            this.icon = icon
-            return this
-        }
-
-        fun setId(id: Int): RecommendationBuilder {
-            this.id = id
-            return this
-        }
-
     }
 }
