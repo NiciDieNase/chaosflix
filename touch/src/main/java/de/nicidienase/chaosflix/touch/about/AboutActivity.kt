@@ -42,7 +42,7 @@ class AboutActivity : AppCompatActivity() {
         val version = pInfo.versionName
         val aboutView = AboutPage(this)
             .setImage(R.drawable.icon_primary_background)
-            .setDescription(resources.getString(R.string.description))
+            .setDescription(resources.getString(R.string.about_description))
             .addItem(Element().setTitle("Version $version"))
             .addWebsite(
                 getString(R.string.about_licence_url),
