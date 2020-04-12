@@ -98,7 +98,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
         detailsViewModel = ViewModelProvider(this, viewModelFactory).get(DetailsViewModel::class.java)
         playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
 
-
         val detailsPresenter = FullWidthDetailsOverviewRowPresenter(
                 EventDetailsDescriptionPresenter(requireContext()))
 
@@ -122,7 +121,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
         playerViewModel.setEvent(guid)
         val eventLiveData = detailsViewModel.setEventByGuid(guid)
         eventLiveData.observe(viewLifecycleOwner, Observer { event ->
-            if(event != null){
+            if (event != null) {
                 title = event.title
 
                 initializeBackgroundWithImage(event.posterUrl)
@@ -138,7 +137,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
             detailsBackgroundController.enableParallax()
 
             onItemViewClickedListener = ItemViewClickedListener(this@EventDetailsFragment)
-
 
             startEntranceTransition()
             setupObserver(detailsViewModel)
@@ -169,7 +167,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
         detailsOverview.actionsAdapter = actionAdapter
         event.thumbUrl.let { setThumb(it, detailsOverview) }
         liveData.observe(viewLifecycleOwner, Observer {
-            if(it != null){
+            if (it != null) {
                 detailsOverview.item = it
             }
         })

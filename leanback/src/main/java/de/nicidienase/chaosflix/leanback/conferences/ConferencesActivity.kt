@@ -24,8 +24,8 @@ class ConferencesActivity : androidx.fragment.app.FragmentActivity() {
         val prefs = ChaosflixPreferenceManager(PreferenceManager.getDefaultSharedPreferences(applicationContext))
 
         val viewmodel = ViewModelProvider(
-                this,ViewModelFactory.getInstance(this)).get(BrowseViewModel::class.java)
-        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                this, ViewModelFactory.getInstance(this)).get(BrowseViewModel::class.java)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             lifecycleScope.launch {
                 ChannelManager.setupChannels(this@ConferencesActivity, viewmodel, prefs)
             }
@@ -37,7 +37,6 @@ class ConferencesActivity : androidx.fragment.app.FragmentActivity() {
     private fun setupRecommendations() {
 //        startService(Intent(this, ChaosRecommendationsService::class.java))
     }
-
 
     companion object {
         private val TAG = ConferencesActivity::class.java.simpleName

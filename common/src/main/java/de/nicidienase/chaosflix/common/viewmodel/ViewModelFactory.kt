@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
-import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
+import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.ResourcesFacade
 import de.nicidienase.chaosflix.common.SingletonHolder
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository

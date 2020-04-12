@@ -22,13 +22,13 @@ import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventDao
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
+import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 
 class OfflineItemManager(
     context: Context,
@@ -198,7 +198,7 @@ class OfflineItemManager(
 
     private fun getMovieDir(): String {
         val dir = preferencesManager.downloadFolder
-        return if(dir.isNullOrBlank()){
+        return if (dir.isNullOrBlank()) {
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).path
         } else {
             dir

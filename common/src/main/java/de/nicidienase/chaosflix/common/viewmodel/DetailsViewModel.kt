@@ -8,25 +8,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
+import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.OfflineItemManager
-import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.io.File
 import java.util.ArrayList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class DetailsViewModel(
-        private val database: ChaosflixDatabase,
-        private val offlineItemManager: OfflineItemManager,
-        private val preferencesManager: ChaosflixPreferenceManager,
-        private val mediaRepository: MediaRepository
+    private val database: ChaosflixDatabase,
+    private val offlineItemManager: OfflineItemManager,
+    private val preferencesManager: ChaosflixPreferenceManager,
+    private val mediaRepository: MediaRepository
 ) : ViewModel() {
 
     private var eventId: Long = 0

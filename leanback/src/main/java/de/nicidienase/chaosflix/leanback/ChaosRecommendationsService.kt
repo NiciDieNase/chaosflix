@@ -51,21 +51,21 @@ class ChaosRecommendationsService : IntentService("ChaosRecommendationService") 
                             .asBitmap()
                             .load(event.thumbUrl)
                             .submit(cardWidth, cardHeight) // Only use for synchronous .get()
-                            .get();
+                            .get()
 
                     val id = event.id.toInt()
                     val contentRecommendation = builder.setIdTag("Event-$id")
                             .setTitle(event.title)
                             .setText(event.subtitle)
                             .setContentImage(bitmap)
-                            .setContentIntentData(ContentRecommendation.INTENT_TYPE_ACTIVITY,buildPendingIntent(event),0,null)
+                            .setContentIntentData(ContentRecommendation.INTENT_TYPE_ACTIVITY, buildPendingIntent(event), 0, null)
                             .build()
                     val notification = contentRecommendation.getNotificationObject(applicationContext)
                     notificationManager?.notify(id, notification)
 
                     Log.d(TAG, "Added notification for ${event.title}")
 
-                    if(++ count >= MAX_RECOMMENDATIONS){
+                    if (++ count >= MAX_RECOMMENDATIONS) {
                         break
                     }
                 }
@@ -93,5 +93,4 @@ class ChaosRecommendationsService : IntentService("ChaosRecommendationService") 
         private val TAG = ChaosRecommendationsService::class.java.simpleName
         private const val MAX_RECOMMENDATIONS = 6
     }
-
 }

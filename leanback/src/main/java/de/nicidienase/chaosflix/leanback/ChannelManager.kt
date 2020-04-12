@@ -18,7 +18,6 @@ object ChannelManager {
 
     enum class Channels {
         PROMOTED,
-        
     }
 
     suspend fun setupChannels(context: Context, viewmodel: BrowseViewModel, prefs: ChaosflixPreferenceManager) {
@@ -59,7 +58,7 @@ object ChannelManager {
                 val programUri = context.contentResolver.insert(TvContractCompat.PreviewPrograms.CONTENT_URI, toContentValues)
                 ContentUris.parseId(programUri)
             }
-            Log.d(TAG,"Added $programmIds")
+            Log.d(TAG, "Added $programmIds")
         }
     }
 

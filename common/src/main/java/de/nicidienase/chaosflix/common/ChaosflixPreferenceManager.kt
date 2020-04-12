@@ -21,20 +21,20 @@ class ChaosflixPreferenceManager(private val sharedPref: SharedPreferences) {
     var recommendationsGenerated: Boolean by BooleanPreferencesDelegate(RECOMMENDATIONS_GENERATED, false)
 
     private inner class BooleanPreferencesDelegate(key: String, default: Boolean) :
-            PreferencesDelegate<Boolean>(key,default, SharedPreferences::getBoolean, SharedPreferences.Editor::putBoolean)
+            PreferencesDelegate<Boolean>(key, default, SharedPreferences::getBoolean, SharedPreferences.Editor::putBoolean)
 
-    private inner class StringPreferenceDelegate(key: String, default: String):
-            PreferencesDelegate<String>(key,default, SharedPreferences::getString, SharedPreferences.Editor::putString)
+    private inner class StringPreferenceDelegate(key: String, default: String) :
+            PreferencesDelegate<String>(key, default, SharedPreferences::getString, SharedPreferences.Editor::putString)
 
-    private inner class LongPreferenceDelegate(key: String, default: Long):
-            PreferencesDelegate<Long>(key,default, SharedPreferences::getLong, SharedPreferences.Editor::putLong)
+    private inner class LongPreferenceDelegate(key: String, default: Long) :
+            PreferencesDelegate<Long>(key, default, SharedPreferences::getLong, SharedPreferences.Editor::putLong)
 
     abstract inner class PreferencesDelegate<T>(
-            private val key: String,
-            private val default: T,
-            private val getter: SharedPreferences.(String, T) -> T?,
-            private val setter: SharedPreferences.Editor.(String, T) -> SharedPreferences.Editor
-            ) : ReadWriteProperty<ChaosflixPreferenceManager, T> {
+        private val key: String,
+        private val default: T,
+        private val getter: SharedPreferences.(String, T) -> T?,
+        private val setter: SharedPreferences.Editor.(String, T) -> SharedPreferences.Editor
+    ) : ReadWriteProperty<ChaosflixPreferenceManager, T> {
 
         override fun getValue(thisRef: ChaosflixPreferenceManager, property: KProperty<*>): T {
             return sharedPref.getter(key, default) ?: default
