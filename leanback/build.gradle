@@ -128,6 +128,7 @@ dependencies {
 
     implementation "androidx.legacy:legacy-preference-v14:1.0.0"
     implementation "androidx.tvprovider:tvprovider:1.0.0"
+    implementation 'androidx.recommendation:recommendation:1.0.0'
 
     implementation 'com.google.android.exoplayer:extension-leanback:2.9.6'
     androidTestImplementation('androidx.test:rules:1.1.1') {
