@@ -35,7 +35,11 @@ data class EventDto(
     var recordings: List<RecordingDto>?,
     var related: List<RelatedEventDto>?,
     @SerializedName("promoted")
-    var isPromoted: Boolean = false
+    var isPromoted: Boolean = false,
+    @SerializedName("timeline_url")
+    var timelineUrl: String,
+    @SerializedName("thumbnails_url")
+    var thumbnailsUrl: String
 ) : Comparable<EventDto> {
 
     var eventID: Long
