@@ -13,6 +13,11 @@
             android:title="@string/settings_choose_recording"/>
 
         <SwitchPreference
+                android:defaultValue="true"
+                android:key="recommendation_enabled"
+                android:title="Homescreen recommendations"/>
+
+        <SwitchPreference
             android:defaultValue="false"
             android:key="auto_external_player"
             android:title="@string/pref_external_player"

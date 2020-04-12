@@ -18,7 +18,7 @@ class ChaosflixPreferenceManager(private val sharedPref: SharedPreferences) {
 
     var autoselectStream: Boolean by BooleanPreferencesDelegate(keyAutoselectStream, false)
 
-    var recommendationsGenerated: Boolean by BooleanPreferencesDelegate(RECOMMENDATIONS_GENERATED, false)
+    var recommendationsEnabled: Boolean by BooleanPreferencesDelegate(RECOMMENDATIONS_ENABLED, true)
 
     private inner class BooleanPreferencesDelegate(key: String, default: Boolean) :
             PreferencesDelegate<Boolean>(key, default, SharedPreferences::getBoolean, SharedPreferences.Editor::putBoolean)
@@ -55,6 +55,6 @@ class ChaosflixPreferenceManager(private val sharedPref: SharedPreferences) {
         private const val keyAnalyticsDisabled = "disable_analytics"
         private const val keyDownloadFolder = "download_folder"
         private const val CHANNEL_ID = "channelId"
-        private const val RECOMMENDATIONS_GENERATED = "recommendation_generated"
+        private const val RECOMMENDATIONS_ENABLED = "recommendation_enabled"
     }
 }

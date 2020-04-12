@@ -22,6 +22,9 @@ interface PlaybackProgressDao {
     @Query("SELECT * FROM playback_progress ORDER BY watch_date DESC")
     fun getAllWithEvent(): LiveData<List<ProgressEventView>>
 
+    @Query("SELECT * FROM playback_progress ORDER BY watch_date DESC")
+    suspend fun getAllWithEventSync(): List<ProgressEventView>
+
     @Query("SELECT * FROM playback_progress")
     fun getAllSync(): List<PlaybackProgress>
 

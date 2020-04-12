@@ -18,6 +18,7 @@ import de.nicidienase.chaosflix.leanback.detail.DetailsActivity
 import de.nicidienase.chaosflix.leanback.detail.DetailsActivity.Companion.start
 import de.nicidienase.chaosflix.leanback.events.EventsActivity
 import de.nicidienase.chaosflix.leanback.events.EventsActivity.Companion.start
+import de.nicidienase.chaosflix.leanback.recommendations.ChaosRecommendationsService
 import de.nicidienase.chaosflix.leanback.settings.ChaosflixSettingsActivity
 
 class ItemViewClickedListener(private val fragment: Fragment, private val streamUpdater: (() -> Unit)? = null) : OnItemViewClickedListener {

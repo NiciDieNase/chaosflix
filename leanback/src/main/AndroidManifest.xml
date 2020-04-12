@@ -52,8 +52,17 @@
             android:name=".settings.ChaosflixSettingsActivity"
             android:theme="@style/ChaosflixLeanbackPreferences" />
 
-        <service android:name=".ChaosRecommendationsService"
+        <service android:name=".recommendations.ChaosRecommendationsService"
             android:enabled="true"/>
+
+        <receiver
+            android:name=".recommendations.RecommendationBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

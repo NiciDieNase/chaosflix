@@ -1,4 +1,4 @@
-package de.nicidienase.chaosflix.leanback
+package de.nicidienase.chaosflix.leanback.recommendations
 
 import android.content.ContentUris
 import android.content.Context
@@ -10,7 +10,8 @@ import androidx.tvprovider.media.tv.ChannelLogoUtils
 import androidx.tvprovider.media.tv.PreviewProgram
 import androidx.tvprovider.media.tv.TvContractCompat
 import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
-import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
+import de.nicidienase.chaosflix.common.mediadata.MediaRepository
+import de.nicidienase.chaosflix.leanback.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -20,7 +21,7 @@ object ChannelManager {
         PROMOTED,
     }
 
-    suspend fun setupChannels(context: Context, viewmodel: BrowseViewModel, prefs: ChaosflixPreferenceManager) {
+    suspend fun setupChannels(context: Context, mediaRepository: MediaRepository, prefs: ChaosflixPreferenceManager) {
         withContext(Dispatchers.IO) {
             if (prefs.channelId == 0L) {
                 val builder = Channel.Builder()
@@ -42,10 +43,9 @@ object ChannelManager {
                 }
             }
 
-            val promotedEvents = viewmodel.getPromoted()
-            val bookmarkedEvents = viewmodel.getBookmarks()
+            val recommendations = mediaRepository.getHomescreenRecommendations()
 
-            val programmIds = promotedEvents.toMutableList().apply { addAll(bookmarkedEvents) }.map {
+            val programmIds = recommendations.map {
                 val toContentValues = PreviewProgram.Builder()
                         .setChannelId(prefs.channelId)
                         .setType(TvContractCompat.PreviewPrograms.TYPE_EVENT)

@@ -9,4 +9,7 @@
 	<dimen name="spinner_width">120dp</dimen>
 	<dimen name="spinner_height">120dp</dimen>
     <dimen name="settings_icon_size">96dp</dimen>
+
+	<dimen name="recommendation_thumb_width">240dp</dimen>
+	<dimen name="recommendation_thumb_height">135dp</dimen>
 </resources>

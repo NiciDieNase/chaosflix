@@ -17,18 +17,20 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RelatedEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RelatedEventDao
 import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
+import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgressDao
+import de.nicidienase.chaosflix.common.userdata.entities.progress.ProgressEventView
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import java.io.IOException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
+import java.io.IOException
 
 class MediaRepository(
     private val recordingApi: RecordingService,
@@ -44,6 +46,7 @@ class MediaRepository(
     private val recordingDao: RecordingDao by lazy { database.recordingDao() }
     private val relatedEventDao: RelatedEventDao by lazy { database.relatedEventDao() }
     private val watchlistItemDao: WatchlistItemDao by lazy { database.watchlistItemDao() }
+    private val playbackProgressDao: PlaybackProgressDao by lazy { database.playbackProgressDao() }
 
     suspend fun getEventSync(eventId: Long) = eventDao.findEventByIdSync(eventId)
 
@@ -319,11 +322,18 @@ class MediaRepository(
         return recordingDao.findRecordingByEvent(eventId)
     }
 
-    suspend fun getRecommendations(): MutableList<Event> {
-        return mutableListOf<Event>().apply {
-            this.addAll(database.eventDao().findBookmarkedEventsSync())
-            this.addAll(database.eventDao().findPromotedEventsSync())
-        }
+    suspend fun getEventsInProgress(): List<ProgressEventView> {
+        val progress = playbackProgressDao.getAllWithEventSync()
+        progress.forEach { it.event?.progress = it.progress.progress }
+        return progress
+    }
+
+    suspend fun getBookmarkedEvents(): List<Event> = eventDao.findBookmarkedEventsSync()
+
+    suspend fun getHomescreenRecommendations(): List<Event> {
+        val bookmarks = eventDao.findBookmarkedEventsSync()
+        val promoted = eventDao.findPromotedEventsSync()
+        return listOf(bookmarks, promoted).flatten()
     }
 
     data class SearchResponse(val events: List<Event>, val total: Int, val links: Map<String, String>) {
