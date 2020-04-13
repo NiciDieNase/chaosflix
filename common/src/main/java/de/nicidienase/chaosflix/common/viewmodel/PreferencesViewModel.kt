@@ -100,13 +100,21 @@ class PreferencesViewModel(
             if (favoritesJson == null && progressJson == null) {
                 mutableLiveData.postValue(LiveEvent(State.Done, null, null))
             } else {
-                favoritesJson?.let {
-                    val fromJson = gson.fromJson(it, Array<WatchlistItem>::class.java)
-                    fromJson.map { watchlistItemDao.saveItem(it) }
+                try {
+                    favoritesJson?.let {
+                        val fromJson = gson.fromJson(it, Array<WatchlistItem>::class.java)
+                        fromJson.map { watchlistItemDao.saveItem(it) }
+                    }
+                } catch (ex: Exception) {
+                    Log.e(TAG, "bookmark import failed", ex)
                 }
-                progressJson?.let {
-                    val fromJson = gson.fromJson(it, Array<PlaybackProgress>::class.java)
-                    fromJson.map { progressItemDao.saveProgress(it) }
+                try {
+                    progressJson?.let {
+                        val fromJson = gson.fromJson(it, Array<PlaybackProgress>::class.java)
+                        fromJson.map { progressItemDao.saveProgress(it) }
+                    }
+                } catch (ex: Exception) {
+                    Log.e(TAG, "progress import failed", ex)
                 }
                 mutableLiveData.postValue(LiveEvent(State.Done, error = null))
             }

@@ -1,4 +1,5 @@
 # 0.7.0
+	- [debug] im/export also for progess (not only bookmarks)
 
 # 0.6.0
 	- Fahrplan-Import
