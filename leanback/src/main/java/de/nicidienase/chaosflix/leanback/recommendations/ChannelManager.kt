@@ -1,9 +1,11 @@
 package de.nicidienase.chaosflix.leanback.recommendations
 
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.core.graphics.drawable.toBitmap
 import androidx.tvprovider.media.tv.Channel
 import androidx.tvprovider.media.tv.ChannelLogoUtils
@@ -11,54 +13,116 @@ import androidx.tvprovider.media.tv.PreviewProgram
 import androidx.tvprovider.media.tv.TvContractCompat
 import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
+import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.leanback.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-object ChannelManager {
+class ChannelManager(
+    private val context: Context,
+    private val mediaRepository: MediaRepository,
+    private val prefs: ChaosflixPreferenceManager
+) {
 
-    enum class Channels {
-        PROMOTED,
+    enum class Channels(val channelId: String, @StringRes val title: Int) {
+        MAIN("main", R.string.popular),
+        IN_PROGRESS("in_progress", R.string.continue_watching),
+        WATCHLIST("watchlist", R.string.bookmarks)
     }
 
-    suspend fun setupChannels(context: Context, mediaRepository: MediaRepository, prefs: ChaosflixPreferenceManager) {
+    suspend fun updateRecommendations() {
+        setupChannels(context, prefs)
+
+        listOf(
+                Channels.MAIN to mediaRepository.getTopEvents(5),
+                Channels.WATCHLIST to mediaRepository.getBookmarkedEvents(),
+                Channels.IN_PROGRESS to mediaRepository.getEventsInProgress().mapNotNull { it.event }
+        ).forEach {
+            publishEvents(
+                    context.contentResolver,
+                    mediaRepository,
+                    it.second,
+                    it.first
+            )
+            cleanupChannel(context.contentResolver, it.second, it.first)
+        }
+    }
+
+    private suspend fun setupChannels(context: Context, prefs: ChaosflixPreferenceManager) {
         withContext(Dispatchers.IO) {
-            if (prefs.channelId == 0L) {
-                val builder = Channel.Builder()
-                builder.setType(TvContractCompat.Channels.TYPE_PREVIEW)
-                        .setDisplayName("Chaosflix")
-                        .setAppLinkIntentUri(Uri.parse("de.nicidienase.chaosflix://main"))
-
-                val channelUri: Uri? = context.contentResolver.insert(
-                        TvContractCompat.Channels.CONTENT_URI,
-                        builder.build().toContentValues()
-                )
-                channelUri?.let {
-                    val channelId = ContentUris.parseId(channelUri)
-                    prefs.channelId = channelId
-                    val icon = context.resources.getDrawable(R.mipmap.ic_launcher).toBitmap(80, 80)
-
-                    ChannelLogoUtils.storeChannelLogo(context, channelId, icon)
-                    TvContractCompat.requestChannelBrowsable(context, channelId)
+            for (channel: Channels in Channels.values()) {
+                if (prefs.getIdForChannelId(channel.channelId) == 0L) {
+                    setupChannel(context, channel.title)?.let { prefs.setIdForChannelId(channel.channelId, it) }
+                    Log.d(TAG, "Created Channel: $channel")
                 }
             }
+        }
+    }
 
-            val recommendations = mediaRepository.getHomescreenRecommendations()
+    private suspend fun publishEvents(contentResolver: ContentResolver, mediaRepository: MediaRepository, events: List<Event>, channel: Channels): List<Long> {
+        val channelId = prefs.getIdForChannelId(channel.channelId)
+        val activeRecommendation = mediaRepository.getActiveRecommendation(channel.name)
+        val activeOrDismissedRecommendations = activeRecommendation.map { it.recommendation.eventGuid }
 
-            val programmIds = recommendations.map {
-                val toContentValues = PreviewProgram.Builder()
-                        .setChannelId(prefs.channelId)
-                        .setType(TvContractCompat.PreviewPrograms.TYPE_EVENT)
-                        .setTitle(it.title)
-                        .setPosterArtUri(Uri.parse(it.thumbUrl))
-                        .setDescription(it.description)
-                        .setInternalProviderId(it.guid)
-                        .setIntentUri(Uri.parse("de.nicidienase.chaosflix://event/${it.guid}"))
-                        .build().toContentValues()
-                val programUri = context.contentResolver.insert(TvContractCompat.PreviewPrograms.CONTENT_URI, toContentValues)
-                ContentUris.parseId(programUri)
+        return events.filterNot { activeOrDismissedRecommendations.contains(it.guid) }.map {
+            publishEvent(channelId, it, contentResolver).apply {
+                mediaRepository.setRecommendationIdForEvent(this.first, this.second, channel.name)
             }
-            Log.d(TAG, "Added $programmIds")
+        }.map { it.second }
+    }
+
+    private suspend fun cleanupChannel(contentResolver: ContentResolver, activeEvents: List<Event>, channel: Channels) {
+        val activeRecommendation = mediaRepository.getActiveRecommendation(channel.name)
+        val activeGuids = activeEvents.map { it.guid }
+        activeRecommendation.filter { !activeGuids.contains(it.recommendation.eventGuid) }.forEach {
+            context.contentResolver.delete(TvContractCompat.buildPreviewProgramUri(it.recommendation.programmId), null, null)
+        }
+    }
+
+    private fun publishEvent(channelId: Long, event: Event, contentResolver: ContentResolver): Pair<Event, Long> {
+        val toContentValues = eventToBuilder(channelId, event)
+                .build().toContentValues()
+        val programUri: Uri? = contentResolver.insert(TvContractCompat.PreviewPrograms.CONTENT_URI, toContentValues)
+        return event to ContentUris.parseId(programUri)
+    }
+
+    private fun eventToBuilder(channelId: Long, event: Event): PreviewProgram.Builder {
+        return PreviewProgram.Builder()
+                .setChannelId(channelId)
+                .setContentId(event.guid)
+                .setType(TvContractCompat.PreviewPrograms.TYPE_EVENT)
+                .setTitle(event.title)
+                .setPosterArtUri(Uri.parse(event.thumbUrl))
+                .setDescription(event.getExtendedDescription().toString())
+                .setInternalProviderId(event.guid)
+                .setDurationMillis(event.length.toInt() * 1000)
+                .setInteractionCount(event.viewCount.toLong())
+                .setInteractionType(TvContractCompat.PreviewProgramColumns.INTERACTION_TYPE_VIEWS)
+                .setLive(false)
+                .setLastPlaybackPositionMillis(event.progress.toInt())
+                .setReleaseDate(event.releaseDate)
+                .setIntentUri(Uri.parse("de.nicidienase.chaosflix://event/${event.guid}"))
+    }
+
+    private fun setupChannel(context: Context, @StringRes titleRes: Int): Long? {
+        val builder = Channel.Builder()
+        builder.setType(TvContractCompat.Channels.TYPE_PREVIEW)
+                .setDisplayName(context.resources.getString(titleRes))
+                .setAppLinkIntentUri(Uri.parse("de.nicidienase.chaosflix://main"))
+
+        val channelUri: Uri? = context.contentResolver.insert(
+                TvContractCompat.Channels.CONTENT_URI,
+                builder.build().toContentValues()
+        )
+        return if (channelUri != null) {
+            val channelId = ContentUris.parseId(channelUri)
+            val icon = context.resources.getDrawable(R.mipmap.ic_launcher).toBitmap(80, 80)
+
+            ChannelLogoUtils.storeChannelLogo(context, channelId, icon)
+            TvContractCompat.requestChannelBrowsable(context, channelId)
+            channelId
+        } else {
+            null
         }
     }
 

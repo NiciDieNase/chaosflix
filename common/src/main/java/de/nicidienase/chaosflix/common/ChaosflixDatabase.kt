@@ -22,23 +22,26 @@ import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventDao
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgressDao
+import de.nicidienase.chaosflix.common.userdata.entities.recommendations.Recommendation
+import de.nicidienase.chaosflix.common.userdata.entities.recommendations.RecommendationDao
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 
 @Database(
-    entities = [
-        Conference::class,
-        Event::class,
-        Recording::class,
-        RelatedEvent::class,
-        ConferenceGroup::class,
+        entities = [
+            Conference::class,
+            Event::class,
+            Recording::class,
+            RelatedEvent::class,
+            ConferenceGroup::class,
 
-        PlaybackProgress::class,
-        WatchlistItem::class,
-        OfflineEvent::class
-    ],
-    version = 6,
-    exportSchema = true)
+            PlaybackProgress::class,
+            WatchlistItem::class,
+            OfflineEvent::class,
+            Recommendation::class
+        ],
+        version = 7,
+        exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class ChaosflixDatabase : RoomDatabase() {
 
@@ -51,18 +54,21 @@ abstract class ChaosflixDatabase : RoomDatabase() {
     abstract fun playbackProgressDao(): PlaybackProgressDao
     abstract fun watchlistItemDao(): WatchlistItemDao
     abstract fun offlineEventDao(): OfflineEventDao
+    abstract fun recommendationDao(): RecommendationDao
 
     companion object : SingletonHolder<ChaosflixDatabase, Context>({
         Room.databaseBuilder(
-            it.applicationContext,
-            ChaosflixDatabase::class.java, "mediaccc.de")
-            .addMigrations(
-                ChaosflixDatabase.migration_5_6)
-            .fallbackToDestructiveMigrationFrom(1, 2, 3, 4)
-            .build()
+                it.applicationContext,
+                ChaosflixDatabase::class.java, "mediaccc.de")
+                .addMigrations(
+                        ChaosflixDatabase.migration_5_6,
+                        ChaosflixDatabase.migration_6_7
+                )
+                .fallbackToDestructiveMigrationFrom(1, 2, 3, 4)
+                .build()
     }) {
 
-        val migration_2_3 = object : Migration(2, 3) {
+        private val migration_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE `offline_event` (" +
                         "´id´ INTEGER, " +
@@ -74,7 +80,7 @@ abstract class ChaosflixDatabase : RoomDatabase() {
             }
         }
 
-        val migration_3_4 = object : Migration(3, 4) {
+        private val migration_3_4 = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE INDEX IF NOT EXISTS index_recording_eventdId ON recording (eventId)")
                 database.execSQL("CREATE INDEX IF NOT EXISTS index_event_eventId ON event (eventId)")
@@ -83,7 +89,7 @@ abstract class ChaosflixDatabase : RoomDatabase() {
             }
         }
 
-        val migration_5_6 = object : Migration(5, 6) {
+        private val migration_5_6 = object : Migration(5, 6) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE playback_progress RENAME TO old_playback_progress")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `playback_progress` " +
@@ -98,6 +104,18 @@ abstract class ChaosflixDatabase : RoomDatabase() {
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_recording_backendId ON recording (backendId)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_related_parentEventId_relatedEventGuid ON related (parentEventId, relatedEventGuid)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_playback_progress_event_guid ON playback_progress (event_guid)")
+            }
+        }
+
+        private val migration_6_7 = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""CREATE TABLE `recommendation` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                    `event_guid` TEXT NOT NULL, 
+                    `channel` TEXT NOT NULL,
+                    `programm_id` INTEGER NOT NULL, 
+                    `dismissed` INTEGER NOT NULL)""")
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_recommendation_event_guid_channel ON recommendation (event_guid, channel)")
             }
         }
     }

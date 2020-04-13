@@ -19,18 +19,21 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.network.RecordingService
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgressDao
 import de.nicidienase.chaosflix.common.userdata.entities.progress.ProgressEventView
+import de.nicidienase.chaosflix.common.userdata.entities.recommendations.Recommendation
+import de.nicidienase.chaosflix.common.userdata.entities.recommendations.RecommendationDao
+import de.nicidienase.chaosflix.common.userdata.entities.recommendations.RecommendationEventView
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItemDao
 import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
+import java.io.IOException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
-import java.io.IOException
 
 class MediaRepository(
     private val recordingApi: RecordingService,
@@ -47,6 +50,7 @@ class MediaRepository(
     private val relatedEventDao: RelatedEventDao by lazy { database.relatedEventDao() }
     private val watchlistItemDao: WatchlistItemDao by lazy { database.watchlistItemDao() }
     private val playbackProgressDao: PlaybackProgressDao by lazy { database.playbackProgressDao() }
+    private val recommendationDao: RecommendationDao by lazy { database.recommendationDao() }
 
     suspend fun getEventSync(eventId: Long) = eventDao.findEventByIdSync(eventId)
 
@@ -328,12 +332,30 @@ class MediaRepository(
         return progress
     }
 
+    suspend fun getTopEvents(count: Int): List<Event> {
+        return eventDao.getTopViewedEvents(count)
+    }
+
+    suspend fun getNewestConferences(count: Int): List<Conference> {
+        return conferenceDao.getLatestConferences(count)
+    }
+
     suspend fun getBookmarkedEvents(): List<Event> = eventDao.findBookmarkedEventsSync()
 
     suspend fun getHomescreenRecommendations(): List<Event> {
-        val bookmarks = eventDao.findBookmarkedEventsSync()
-        val promoted = eventDao.findPromotedEventsSync()
-        return listOf(bookmarks, promoted).flatten()
+        return getTopEvents(10)
+    }
+
+    suspend fun getActiveRecommendation(channel: String): List<RecommendationEventView> {
+        return recommendationDao.getAllForChannel(channel)
+    }
+
+    fun setRecommendationIdForEvent(event: Event, id: Long, channel: String) {
+        recommendationDao.insert(Recommendation(eventGuid = event.guid, channel = channel, programmId = id))
+    }
+
+    fun resetRecommendationId(programmId: Long) {
+        recommendationDao.markDismissed(programmId)
     }
 
     data class SearchResponse(val events: List<Event>, val total: Int, val links: Map<String, String>) {

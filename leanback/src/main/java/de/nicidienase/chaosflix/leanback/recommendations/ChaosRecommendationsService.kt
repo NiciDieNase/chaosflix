@@ -15,11 +15,11 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.R
 import de.nicidienase.chaosflix.leanback.detail.DetailsActivity
+import java.io.IOException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.io.IOException
 
 class ChaosRecommendationsService : IntentService("ChaosRecommendationService") {
 
@@ -29,7 +29,7 @@ class ChaosRecommendationsService : IntentService("ChaosRecommendationService") 
         val preferenceManager = ChaosflixPreferenceManager(PreferenceManager.getDefaultSharedPreferences(applicationContext))
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
         val mediaRepository = ViewModelFactory.getInstance(this).mediaRepository
-        if(!preferenceManager.recommendationsEnabled){
+        if (!preferenceManager.recommendationsEnabled) {
             Log.i(TAG, "recommendations are disabled, returning")
             notificationManager?.cancelAll()
             return
@@ -37,7 +37,7 @@ class ChaosRecommendationsService : IntentService("ChaosRecommendationService") 
         ioScope.launch {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 Log.i(TAG, "updating recommendation channels")
-                ChannelManager.setupChannels(this@ChaosRecommendationsService, mediaRepository, preferenceManager)
+                ChannelManager(this@ChaosRecommendationsService, mediaRepository, preferenceManager).updateRecommendations()
             } else {
                 Log.i(TAG, "updating recommendation notifications")
                 notificationManager?.let { setupRecommendationNotifications(mediaRepository, it) }
@@ -46,6 +46,7 @@ class ChaosRecommendationsService : IntentService("ChaosRecommendationService") 
     }
 
     private suspend fun setupRecommendationNotifications(mediaRepository: MediaRepository, notificationManager: NotificationManager) {
+        notificationManager.cancelAll()
         val recommendations = mediaRepository.getHomescreenRecommendations()
 
         val cardWidth: Int = resources.getDimensionPixelSize(R.dimen.recommendation_thumb_width)

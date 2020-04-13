@@ -20,6 +20,14 @@ class ChaosflixPreferenceManager(private val sharedPref: SharedPreferences) {
 
     var recommendationsEnabled: Boolean by BooleanPreferencesDelegate(RECOMMENDATIONS_ENABLED, true)
 
+    fun getIdForChannelId(key: String): Long {
+        return sharedPref.getLong("channel_id_$key", 0)
+    }
+
+    fun setIdForChannelId(key: String, id: Long) {
+        sharedPref.edit().putLong("channel_id_$key", id).apply()
+    }
+
     private inner class BooleanPreferencesDelegate(key: String, default: Boolean) :
             PreferencesDelegate<Boolean>(key, default, SharedPreferences::getBoolean, SharedPreferences.Editor::putBoolean)
 
