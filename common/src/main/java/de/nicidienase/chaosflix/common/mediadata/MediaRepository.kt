@@ -147,7 +147,7 @@ class MediaRepository(
     }
 
     @WorkerThread
-    fun deleteNonUserData() {
+    suspend fun deleteNonUserData() = withContext(Dispatchers.IO) {
         with(database) {
             conferenceGroupDao().delete()
             conferenceDao().delete()
@@ -155,6 +155,16 @@ class MediaRepository(
             recordingDao().delete()
             relatedEventDao().delete()
         }
+    }
+
+    fun getBookmark(guid: String): LiveData<WatchlistItem?> = database.watchlistItemDao().getItemForEvent(guid)
+
+    suspend fun addBookmark(guid: String) = withContext(Dispatchers.IO) {
+        database.watchlistItemDao().saveItem(WatchlistItem(eventGuid = guid))
+    }
+
+    suspend fun deleteBookmark(guid: String) = withContext(Dispatchers.IO) {
+        database.watchlistItemDao().deleteItem(guid)
     }
 
     @WorkerThread
