@@ -13,6 +13,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockkObject
 import io.mockk.unmockkAll
 import io.mockk.verify
+import javax.net.ssl.SSLHandshakeException
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType
 import okhttp3.ResponseBody
@@ -23,7 +24,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import retrofit2.Response
-import javax.net.ssl.SSLHandshakeException
 
 @ExtendWith(MockKExtension::class, InstantExecutorExtension::class)
 internal class StreamingRepositoryTest {
@@ -38,12 +38,12 @@ internal class StreamingRepositoryTest {
     private lateinit var streamingRepository: StreamingRepository
 
     @BeforeEach
-    fun setup(){
+    fun setup() {
         mockkObject(AnalyticsWrapperImpl)
     }
 
     @AfterEach
-    fun cleanup(){
+    fun cleanup() {
         unmockkAll()
     }
 
@@ -52,7 +52,7 @@ internal class StreamingRepositoryTest {
         val testConferences = listOf(LiveConference("divoc", "test"))
         coEvery { streamingApi.getStreamingConferences() } returns Response.success(200, testConferences)
         streamingRepository.update()
-        assertThat(testConferences,equalTo(streamingRepository.streamingConferences.value))
+        assertThat(testConferences, equalTo(streamingRepository.streamingConferences.value))
     }
 
     @Test

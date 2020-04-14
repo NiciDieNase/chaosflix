@@ -19,6 +19,7 @@ import io.mockk.mockkObject
 import io.mockk.slot
 import io.mockk.unmockkAll
 import io.mockk.verify
+import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType
 import okhttp3.ResponseBody
@@ -31,7 +32,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import retrofit2.Response
-import java.io.IOException
 
 @ExtendWith(MockKExtension::class, InstantExecutorExtension::class)
 internal class MediaRepositoryTest {
@@ -88,7 +88,7 @@ internal class MediaRepositoryTest {
     fun testUpdateConferencesAndGroupsSuccess() = runBlocking {
         coEvery { recordingApi.getConferencesWrapperSuspending() } returns Response.success(ConferencesWrapper(listOf(ConferenceDto(slug = "congress/2023"))))
         val slot = slot<LiveEvent<MediaRepository.State, List<Conference>, String>>()
-        every { updateState.postValue(capture(slot)) } answers {println(slot.captured)}
+        every { updateState.postValue(capture(slot)) } answers { println(slot.captured) }
         mediaRepository.apiOperations.updateConferencesAndGroupsInternal(updateState)
         val params = mutableListOf<LiveEvent<MediaRepository.State, List<Conference>, String>>()
         verify(exactly = 2) {
@@ -99,7 +99,6 @@ internal class MediaRepositoryTest {
         assertThat(params[1].state, equalTo(MediaRepository.State.DONE))
         assertThat(params[1].error, nullValue())
     }
-
 
     @Test
     fun testUpdateConferencesAndGroups500() = runBlocking {
@@ -117,7 +116,6 @@ internal class MediaRepositoryTest {
         assertThat(params[1].data, nullValue())
         assertThat(params[1].error, notNullValue())
     }
-
 
     companion object {
         private val mediaTypeJson = MediaType.get("application/json")

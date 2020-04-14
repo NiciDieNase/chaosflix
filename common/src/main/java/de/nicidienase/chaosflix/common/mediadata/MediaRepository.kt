@@ -26,18 +26,18 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
+import java.io.IOException
+import javax.net.ssl.SSLHandshakeException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
-import java.io.IOException
-import javax.net.ssl.SSLHandshakeException
 
 class MediaRepository(
-        recordingApi: RecordingApi,
-        database: ChaosflixDatabase
+    recordingApi: RecordingApi,
+    database: ChaosflixDatabase
 ) {
 
     private val supervisorJob = SupervisorJob()
@@ -45,7 +45,6 @@ class MediaRepository(
 
     internal val apiOperations = ApiOperations(recordingApi, coroutineScope)
     internal val databaseOperations = DatabaseOperations(database)
-
 
     internal inner class ApiOperations(private val recordingApi: RecordingApi, private val coroutineScope: CoroutineScope) {
 
@@ -203,7 +202,6 @@ class MediaRepository(
     fun updateEventsForConference(conference: Conference) = apiOperations.updateEventsForConference(conference)
     suspend fun updateRecordingsForEvent(event: Event) = apiOperations.updateRecordingsForEvent(event)
     suspend fun updateSingleEvent(guid: String): Event? = apiOperations.updateSingleEvent(guid)
-
 
     internal inner class DatabaseOperations(database: ChaosflixDatabase) {
 

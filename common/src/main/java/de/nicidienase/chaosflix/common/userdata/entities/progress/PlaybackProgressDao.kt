@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 
 @Dao
 interface PlaybackProgressDao {
@@ -19,6 +20,7 @@ interface PlaybackProgressDao {
     @Query("SELECT * FROM playback_progress")
     fun getAll(): LiveData<List<PlaybackProgress>>
 
+    @Transaction
     @Query("SELECT * FROM playback_progress ORDER BY watch_date DESC")
     fun getAllWithEvent(): LiveData<List<ProgressEventView>>
 
