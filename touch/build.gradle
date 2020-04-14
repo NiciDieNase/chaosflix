@@ -21,7 +21,7 @@ android {
         targetSdkVersion rootProject.ext.targetSDK
         manifestPlaceholders = [label: appName]
         // odd for touch, even for leanback
-        versionCode 298
+        versionCode 1
         versionName versionString
 
         if(project.hasProperty("versionCode")){
