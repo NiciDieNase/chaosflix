@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="recording_url">https://api.media.ccc.de</string>
+    <string name="recording_url" translatable="false">https://api.media.ccc.de</string>
     <string name="streaming_url" translatable="false">https://streaming.media.ccc.de</string>
+
+    <string name="about_beta_url" translatable="false">https://play.google.com/apps/testing/de.nicidienase.chaosflix</string>
+    <string name="about_voctocat_url" translatable="false">https://morr.cc/voctocat/</string>
+    <string name="about_licence_url" translatable="false">https://github.com/NiciDieNase/chaosflix/blob/master/LICENSE</string>
 </resources>
