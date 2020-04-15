@@ -12,7 +12,7 @@ abstract class RelatedEventDao : BaseDao<RelatedEvent>() {
     @Query("SELECT * FROM related WHERE parentEventId = :id")
     abstract suspend fun getRelatedEventsForEventSuspend(id: Long): List<RelatedEvent>
 
-    @Query("""SELECT event.* FROM related JOIN event ON related.relatedEventGuid = event.guid WHERE related.parentEventId = :id""")
+    @Query("""SELECT event.* FROM related JOIN event ON related.relatedEventGuid = event.guid WHERE related.parentEventId = :id ORDER BY related.weight DESC""")
     abstract fun newGetReletedEventsForEvent(id: Long): LiveData<List<Event>>
 
     @Query("SELECT * FROM related WHERE parentEventId = :parentId AND relatedEventGuid = :related")

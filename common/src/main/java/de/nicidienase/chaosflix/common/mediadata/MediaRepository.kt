@@ -273,6 +273,8 @@ class MediaRepository(
             checkNotNull(conferenceId) { "Could not find Conference for event" }
 
             val persistentEvent = Event(event, conferenceId)
+            val existingEvent = eventDao.findEventByGuidSync(event.guid)
+            persistentEvent.id = existingEvent?.id ?: 0
             val id = eventDao.updateOrInsert(persistentEvent)
             persistentEvent.id = id
             return persistentEvent
@@ -345,6 +347,10 @@ class MediaRepository(
             }
             return relatedEventDao.newGetReletedEventsForEvent(event.id)
         }
+
+        suspend fun getEventsForGuids(guids: List<String>): List<Event> {
+            return eventDao.findEventsByGUIDsSuspend(guids)
+        }
     }
 
     suspend fun deleteNonUserData() = databaseOperations.deleteNonUserData()
@@ -374,13 +380,20 @@ class MediaRepository(
     suspend fun findConferenceForUri(data: Uri): Conference? = databaseOperations.findConferenceForUri(data)
 
     fun getReleatedEvents(eventId: Long): LiveData<List<Event>> {
-        coroutineScope.launch {
+        coroutineScope.launch(Dispatchers.IO) {
             val relatedEvents = relatedEventDao.getRelatedEventsForEventSuspend(eventId)
-            relatedEvents.forEach {
-                updateSingleEvent(it.relatedEventGuid)
-            }
+            val guids = relatedEvents.map { it.relatedEventGuid }
+            updateNonExistingEvents(guids)
         }
         return relatedEventDao.newGetReletedEventsForEvent(eventId)
+    }
+
+    private suspend fun updateNonExistingEvents(guids: List<String>) = withContext(Dispatchers.IO) {
+        val existingEvents = databaseOperations.getEventsForGuids(guids).map { it.guid }
+        val nonExistingEvents = guids.filter { existingEvents.contains(it) }
+        nonExistingEvents.forEach {
+            apiOperations.updateSingleEvent(it)
+        }
     }
 
     suspend fun findEventForGuid(guid: String): Event? {
