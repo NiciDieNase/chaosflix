@@ -25,13 +25,15 @@ fun setDuration(textView: TextView, duration: Long) {
 }
 
 @BindingAdapter("progress")
-fun ProgressBar.eventProgress(event: Event) {
-    val progress = event.progress
-    if (progress > 0) {
-        this.visibility = View.VISIBLE
-        this.max = event.length.toInt()
-        this.progress = (progress / 1000).toInt()
-    } else {
-        this.visibility = View.GONE
+fun ProgressBar.eventProgress(event: Event?) {
+    if(event != null){
+        val progress = event.progress
+        if (progress > 0) {
+            this.visibility = View.VISIBLE
+            this.max = event.length.toInt()
+            this.progress = (progress / 1000).toInt()
+        } else {
+            this.visibility = View.GONE
+        }
     }
 }

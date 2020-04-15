@@ -89,7 +89,7 @@
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
-        android:name="de.nicidienase.chaosflix.touch.browse.SearchFragment"
+        android:name="de.nicidienase.chaosflix.touch.search.SearchFragment"
         android:label="{query}"
         tools:layout="@layout/fragment_events_list">
         <action
