@@ -1,8 +1,10 @@
 package de.nicidienase.chaosflix.leanback.conferences
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.DividerRow
@@ -13,6 +15,7 @@ import androidx.leanback.widget.Row
 import androidx.leanback.widget.SectionRow
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import de.nicidienase.chaosflix.LeakCanaryLauncher
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
@@ -28,6 +31,8 @@ import de.nicidienase.chaosflix.leanback.DiffCallbacks
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
 import de.nicidienase.chaosflix.leanback.R
 import de.nicidienase.chaosflix.leanback.SelectableContentItem
+import de.nicidienase.chaosflix.leanback.recommendations.ChaosRecommendationsService
+import de.nicidienase.chaosflix.leanback.settings.ChaosflixSettingsActivity
 
 class ConferencesBrowseFragment : BrowseSupportFragment() {
     private val rowsAdapter = ArrayObjectAdapter(ListRowPresenter())
@@ -86,7 +91,28 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
         rowsAdapter.add(conferencesSection)
 
         onItemViewClickedListener = ItemViewClickedListener(this) {
-            viewModel.updateLiveStreams()
+            when (it) {
+                SelectableContentItem.Settings -> {
+                    ChaosflixSettingsActivity.launch(requireContext())
+                }
+                SelectableContentItem.About -> {
+                }
+                SelectableContentItem.LeakCanary -> {
+                    if (BuildConfig.DEBUG) {
+                        LeakCanaryLauncher.launch(requireContext())
+                    }
+                }
+                SelectableContentItem.UpdateStreams -> {
+                    viewModel.updateLiveStreams()
+                }
+                SelectableContentItem.AddRecommendations -> {
+                    requireContext().startService(Intent(activity, ChaosRecommendationsService::class.java))
+                    Toast.makeText(activity, "creating Recommendations", Toast.LENGTH_SHORT).show()
+                }
+                SelectableContentItem.ClearCache -> {
+                    viewModel.clearCache()
+                }
+            }
         }
         adapter = rowsAdapter
 
@@ -95,6 +121,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
         listRowAdapter.add(SelectableContentItem.Settings)
 //        listRowAdapter.add(SelectableContentItem.About)
         if (BuildConfig.DEBUG) {
+            listRowAdapter.add(SelectableContentItem.ClearCache)
             listRowAdapter.add(SelectableContentItem.AddRecommendations)
             listRowAdapter.add(SelectableContentItem.LeakCanary)
         }

@@ -27,13 +27,13 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import java.io.IOException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
+import java.io.IOException
 
 class MediaRepository(
     private val recordingApi: RecordingService,
@@ -194,17 +194,18 @@ class MediaRepository(
     private suspend fun getOrCreateConferenceGroup(name: String): ConferenceGroup {
         val conferenceGroup: ConferenceGroup? =
             conferenceGroupDao.getConferenceGroupByName(name)
-        if (conferenceGroup != null) {
-            return conferenceGroup
+        return if (conferenceGroup != null) {
+            conferenceGroup
+        } else {
+            val group = ConferenceGroup(name)
+            val index = ConferenceUtil.orderedConferencesList.indexOf(group.name)
+            if (index != -1)
+                group.index = index
+            else if (group.name == "other conferences")
+                group.index = 1_000_001
+            group.id = conferenceGroupDao.insert(group)
+            group
         }
-        val group = ConferenceGroup(name)
-        val index = ConferenceUtil.orderedConferencesList.indexOf(group.name)
-        if (index != -1)
-            group.index = index
-        else if (group.name == "other conferences")
-            group.index = 1_000_001
-        group.id = conferenceGroupDao.insert(group)
-        return group
     }
 
     private suspend fun saveEvents(persistentConference: Conference, events: List<EventDto>): List<Event> {
@@ -222,8 +223,9 @@ class MediaRepository(
                 ?: updateConferencesAndGet(acronym)?.id
 
         checkNotNull(conferenceId) { "Could not find Conference for event" }
-
+        val existingEvent = eventDao.findEventByGuidSync(event.guid)
         val persistentEvent = Event(event, conferenceId)
+        persistentEvent.id = existingEvent?.id ?: 0
         val id = eventDao.updateOrInsert(persistentEvent)
         persistentEvent.id = id
         return@withContext persistentEvent

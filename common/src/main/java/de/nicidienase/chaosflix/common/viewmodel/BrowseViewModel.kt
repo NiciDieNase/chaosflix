@@ -146,6 +146,10 @@ class BrowseViewModel(
         ).build()
     }
 
+    fun clearCache() = viewModelScope.launch (Dispatchers.IO){
+        mediaRepository.deleteNonUserData()
+    }
+
     companion object {
         private val TAG = BrowseViewModel::class.simpleName
     }

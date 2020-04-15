@@ -8,4 +8,5 @@ enum class SelectableContentItem(val title: String, @DrawableRes val icon: Int, 
     LeakCanary("Leak Canary", R.drawable.ic_warning),
     UpdateStreams("Update Streams", R.drawable.ic_refresh),
     AddRecommendations("Update Recommendations", R.drawable.ic_bookmark),
+    ClearCache("Clear Cache", R.drawable.ic_delete)
 }

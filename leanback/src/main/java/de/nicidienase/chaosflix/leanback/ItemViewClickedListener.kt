@@ -1,8 +1,6 @@
 package de.nicidienase.chaosflix.leanback
 
-import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.leanback.widget.ImageCardView
@@ -10,7 +8,6 @@ import androidx.leanback.widget.OnItemViewClickedListener
 import androidx.leanback.widget.Presenter
 import androidx.leanback.widget.Row
 import androidx.leanback.widget.RowPresenter
-import de.nicidienase.chaosflix.LeakCanaryLauncher
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
@@ -18,10 +15,8 @@ import de.nicidienase.chaosflix.leanback.detail.DetailsActivity
 import de.nicidienase.chaosflix.leanback.detail.DetailsActivity.Companion.start
 import de.nicidienase.chaosflix.leanback.events.EventsActivity
 import de.nicidienase.chaosflix.leanback.events.EventsActivity.Companion.start
-import de.nicidienase.chaosflix.leanback.recommendations.ChaosRecommendationsService
-import de.nicidienase.chaosflix.leanback.settings.ChaosflixSettingsActivity
 
-class ItemViewClickedListener(private val fragment: Fragment, private val streamUpdater: (() -> Unit)? = null) : OnItemViewClickedListener {
+class ItemViewClickedListener(private val fragment: Fragment, private val seletableItemHandler: ((SelectableContentItem) -> Unit)? = null) : OnItemViewClickedListener {
     override fun onItemClicked(itemViewHolder: Presenter.ViewHolder, item: Any, rowViewHolder: RowPresenter.ViewHolder?, row: Row?) {
         Log.d(TAG, "onItemClicked")
         val activity = fragment.requireActivity()
@@ -46,25 +41,7 @@ class ItemViewClickedListener(private val fragment: Fragment, private val stream
                 start(fragment.requireContext(), item, transition)
             }
             is SelectableContentItem -> {
-                when (item) {
-                    SelectableContentItem.Settings -> {
-                        ChaosflixSettingsActivity.launch(fragment.requireContext())
-                    }
-                    SelectableContentItem.About -> {
-                    }
-                    SelectableContentItem.LeakCanary -> {
-                        if (BuildConfig.DEBUG) {
-                            LeakCanaryLauncher.launch(fragment.requireContext())
-                        }
-                    }
-                    SelectableContentItem.UpdateStreams -> {
-                        streamUpdater?.invoke()
-                    }
-                    SelectableContentItem.AddRecommendations -> {
-                        activity.startService(Intent(activity, ChaosRecommendationsService::class.java))
-                        Toast.makeText(activity, "creating Recommendations", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                seletableItemHandler?.invoke(item)
             }
         }
     }

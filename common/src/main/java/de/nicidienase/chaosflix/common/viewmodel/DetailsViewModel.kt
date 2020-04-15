@@ -4,8 +4,8 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
@@ -14,22 +14,26 @@ import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
+import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import java.io.File
-import java.util.ArrayList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.util.ArrayList
 
 class DetailsViewModel(
-    private val database: ChaosflixDatabase,
-    private val offlineItemManager: OfflineItemManager,
-    private val preferencesManager: ChaosflixPreferenceManager,
-    private val mediaRepository: MediaRepository
+        private val database: ChaosflixDatabase,
+        private val offlineItemManager: OfflineItemManager,
+        private val preferencesManager: ChaosflixPreferenceManager,
+        private val mediaRepository: MediaRepository
 ) : ViewModel() {
 
-    private var eventId: Long = 0
+    private var eventId = MutableLiveData<Long>(0)
+
+    private lateinit var currentEvent: Event
 
     val state: SingleLiveEvent<LiveEvent<State, Bundle, String>> =
             SingleLiveEvent()
@@ -49,65 +53,63 @@ class DetailsViewModel(
         }
 
     val event: LiveData<Event?>
-        get() {
-            if (eventId == 0L) {
-                error("event not set")
-            }
-            return database.eventDao().findEventById(eventId)
+        get() = Transformations.switchMap(eventId) {
+            mediaRepository.getEvent(it)
         }
 
-    fun setEventId(eventId: Long): LiveData<Event?> {
-        this.eventId = eventId
-        viewModelScope.launch {
-            database.eventDao().findEventByIdSync(eventId)?.let {
-                val recordings = mediaRepository.updateRecordingsForEvent(it)
-                if (waitingForRecordings) {
-                    if (recordings != null) {
-                        waitingForRecordings = false
-                        val bundle = Bundle()
-                        bundle.putParcelable(EVENT, it)
-                        bundle.putParcelableArrayList(KEY_SELECT_RECORDINGS, ArrayList(recordings))
-                        state.postValue(LiveEvent(State.SelectRecording, data = bundle))
-                    } else {
-                        state.postValue(LiveEvent(State.Error, error = "Could not load recordings."))
+    private fun setEventId(eventId: Long?): LiveData<Event?> {
+        if(eventId != null){
+            this.eventId.postValue(eventId)
+            viewModelScope.launch {
+                val findEventByIdSync = database.eventDao().findEventByIdSync(eventId)
+                findEventByIdSync?.let {
+                    currentEvent = it
+                    val recordings = mediaRepository.updateRecordingsForEvent(it)
+                    if (waitingForRecordings) {
+                        if (recordings != null) {
+                            waitingForRecordings = false
+                            playEvent()
+                        } else {
+                            state.postValue(LiveEvent(State.Error, error = "Could not load recordings."))
+                        }
                     }
                 }
             }
         }
-        return mediaRepository.getEvent(eventId)
+        return event
     }
 
     suspend fun getEvent(guid: String): Event? {
         return mediaRepository.findEventForGuid(guid)
     }
 
-    private fun loadEvent(eventProvider: suspend () -> Event?): LiveData<Event?> = liveData {
-        val event = eventProvider.invoke()
-        if (event != null) {
-            emit(event)
-            emitSource(setEventId(event.id))
-        } else {
-            throw IllegalArgumentException("Event not found")
+    fun setEventFromLink(link: String): LiveData<Event?> {
+        viewModelScope.launch(Dispatchers.IO) {
+            setEventId(mediaRepository.findEventForUri(Uri.parse(link))?.id)
         }
+        return event
     }
 
-    fun setEventFromLink(link: String): LiveData<Event?> = loadEvent {
-        mediaRepository.findEventForUri(Uri.parse(link))
-    }
-
-    fun setEventByGuid(guid: String): LiveData<Event?> = loadEvent {
-        mediaRepository.findEventForGuid(guid)
+    fun setEventByGuid(guid: String): LiveData<Event?> {
+        viewModelScope.launch(Dispatchers.IO) {
+            setEventId(mediaRepository.findEventForGuid(guid)?.id)
+        }
+        return event
     }
 
     fun getRecordingForEvent(): LiveData<List<Recording>> {
-        return mediaRepository.findRecordingsForEvent(eventId)
+        return Transformations.switchMap(eventId) {
+            mediaRepository.findRecordingsForEvent(it)
+        }
     }
 
-    fun getBookmarkForEvent(): LiveData<WatchlistItem?> = liveData {
-        mediaRepository.getEventSync(eventId)?.let {
-            emitSource(
-                    database.watchlistItemDao().getItemForEvent(it.guid)
-            )
+    fun getBookmarkForEvent(): LiveData<WatchlistItem?> {
+        return Transformations.switchMap(event) {
+            if (it != null) {
+                database.watchlistItemDao().getItemForEvent(it.guid)
+            } else {
+                MutableLiveData()
+            }
         }
     }
 
@@ -116,39 +118,24 @@ class DetailsViewModel(
     }
 
     fun createBookmark() = viewModelScope.launch(Dispatchers.IO) {
-        database.eventDao().findEventByIdSync(eventId)?.guid?.let {
+        database.eventDao().findEventByIdSync(eventId.value!!)?.guid?.let {
             database.watchlistItemDao().saveItem(WatchlistItem(eventGuid = it))
         } ?: state.postValue(LiveEvent(State.Error, error = "Could not create bookmark."))
     }
 
     fun removeBookmark() = viewModelScope.launch(Dispatchers.IO) {
-        database.eventDao().findEventByIdSync(eventId)?.guid?.let { guid ->
+        database.eventDao().findEventByIdSync(eventId.value!!)?.guid?.let { guid ->
             database.watchlistItemDao().deleteItem(guid)
         }
     }
 
-    fun download(event: Event, recording: Recording) =
-            offlineItemManager.download(event, recording)
-
-    private suspend fun fileExists(guid: String): Boolean {
-        val offlineItem = database.offlineEventDao().getByEventGuidSuspend(guid)
-        return offlineItem != null && File(offlineItem.localPath).exists()
-    }
-
-    fun deleteOfflineItem(): LiveData<Boolean> {
-        val result = MutableLiveData<Boolean>()
-        viewModelScope.launch(Dispatchers.IO) {
-            database.eventDao().findEventByIdSync(eventId)?.guid?.let { guid ->
-                database.offlineEventDao().getByEventGuidSuspend(guid)?.let {
-                    offlineItemManager.deleteOfflineItem(it)
-                }
-            }
-            result.postValue(true)
+    fun getRelatedEvents(): LiveData<List<Event>> = Transformations.switchMap(eventId) {
+        if (it != null) {
+            mediaRepository.getReleatedEvents(it)
+        } else {
+            MutableLiveData()
         }
-        return result
     }
-
-    fun getRelatedEvents(): LiveData<List<Event>> = mediaRepository.getReleatedEvents(eventId)
 
     fun relatedEventSelected(event: Event) {
         val bundle = Bundle()
@@ -156,45 +143,74 @@ class DetailsViewModel(
         state.postValue(LiveEvent(State.DisplayEvent, data = bundle))
     }
 
-    fun playEvent() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val event = database.eventDao().findEventByIdSync(eventId) ?: error("No Event found")
-            val offlineEvent = database.offlineEventDao().getByEventGuidSuspend(event.guid)
-            if (offlineEvent != null) {
-                // Play offlineEvent
-                val recording = database.recordingDao().findRecordingByIdSync(offlineEvent.recordingId)
-                if (!fileExists(event.guid)) {
-                    state.postValue(LiveEvent(State.Error, error = "File is gone"))
-                } else {
-                    val bundle = Bundle()
-                    bundle.putString(KEY_LOCAL_PATH, offlineEvent.localPath)
-                    bundle.putParcelable(RECORDING, recording)
-                    bundle.putParcelable(EVENT, event)
-                    if (preferencesManager.externalPlayer) {
-                        state.postValue(LiveEvent(State.PlayExternal, bundle))
-                    } else {
-                        state.postValue(LiveEvent(State.PlayOfflineItem, data = bundle))
-                    }
-                }
+
+    fun playEvent(autoselect: Boolean = autoselectRecording) = viewModelScope.launch(Dispatchers.IO) {
+            val offlineItem = getOfflineItem()
+            when {
+                offlineItem != null -> playOfflineItem(currentEvent, offlineItem)
+                autoselect -> autoSelectRecording()
+                else -> letUserSelectRecording()
+            }
+    }
+
+    private suspend fun autoSelectRecording() = withContext(Dispatchers.IO) {
+        val e = mediaRepository.getEventSync(eventId.value!!)
+        e?.let { event ->
+            val recordings = database.recordingDao().findRecordingByEventSync(event.id)
+            if (recordings.isNotEmpty()) {
+                val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
+                val recordingUrl = ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl
+                playRecording(event, optimalRecording, recordingUrl)
             } else {
-                // select quality then playEvent
-                val recordingList = database.recordingDao().findRecordingByEventSync(event.id)
-                        .partition { it.mimeType.startsWith("audio") || it.mimeType.startsWith("video") }
-                val items: List<Recording> = recordingList.first
-                // TODO: handle subtitles, mimetype application/x-subrip
-                if (items.isNotEmpty()) {
-                    val bundle = Bundle()
-                    bundle.putParcelable(EVENT, event)
-                    bundle.putParcelableArrayList(KEY_SELECT_RECORDINGS, ArrayList(items))
-                    state.postValue(LiveEvent(State.SelectRecording, data = bundle))
-                } else {
-                    state.postValue(LiveEvent(State.LoadingRecordings))
-                    waitingForRecordings = true
-                }
+                waitingForRecordings = true
             }
         }
     }
 
+    private suspend fun letUserSelectRecording() = withContext(Dispatchers.IO){
+        // select quality then playEvent
+        val recordingList = database.recordingDao().findRecordingByEventSync(eventId.value!!)
+                .partition { it.mimeType.startsWith("audio") || it.mimeType.startsWith("video") }
+        val items: List<Recording> = recordingList.first
+        // TODO: handle subtitles, mimetype application/x-subrip
+        if (items.isNotEmpty()) {
+            val bundle = Bundle()
+            bundle.putParcelable(EVENT, currentEvent)
+            bundle.putParcelableArrayList(KEY_SELECT_RECORDINGS, ArrayList(items))
+            state.postValue(LiveEvent(State.SelectRecording, data = bundle))
+        } else {
+            waitingForRecordings = true
+            state.postValue(LiveEvent(State.LoadingRecordings))
+        }
+    }
+
+    private suspend fun getOfflineItem(): Pair<Recording, OfflineEvent>? = withContext(Dispatchers.IO) {
+        val event = database.eventDao().findEventByIdSync(eventId.value!!)
+                ?: error("No Event found")
+        val offlineEvent = database.offlineEventDao().getByEventGuidSuspend(event.guid)
+        return@withContext if (offlineEvent != null && fileExists(event.guid)) {
+            val recording = database.recordingDao().findRecordingByIdSync(offlineEvent.recordingId)
+            recording to offlineEvent
+        } else {
+            null
+        }
+    }
+
+    private suspend fun playOfflineItem(event: Event, offlineItem: Pair<Recording, OfflineEvent>) {
+        val bundle = Bundle()
+        bundle.putString(KEY_LOCAL_PATH, offlineItem.second.localPath)
+        bundle.putParcelable(RECORDING, offlineItem.first)
+        bundle.putParcelable(EVENT, event)
+        if (preferencesManager.externalPlayer) {
+            state.postValue(LiveEvent(State.PlayExternal, bundle))
+        } else {
+            state.postValue(LiveEvent(State.PlayOfflineItem, data = bundle))
+        }
+    }
+
+    /*
+        Post state to play a recoding
+     */
     fun playRecording(event: Event, recording: Recording, urlForThumbs: String? = null) = viewModelScope.launch(Dispatchers.IO) {
         val progress = database.playbackProgressDao().getProgressForEventSync(event.guid)
         val bundle = Bundle().apply {
@@ -212,8 +228,22 @@ class DetailsViewModel(
         }
     }
 
+    fun recordingSelected(e: Event, r: Recording) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val recordings: List<Recording> = database.recordingDao().findRecordingByEventSync(e.id)
+            val url = ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl
+            playRecording(e, r, url)
+        }
+    }
+
+    fun playInExternalPlayer() = viewModelScope.launch {
+        database.eventDao().findEventByIdSync(eventId.value!!)?.let {
+            postStateWithEventAndRecordings(State.PlayExternal, it)
+        }
+    }
+
     fun downloadRecordingForEvent() = viewModelScope.launch {
-        database.eventDao().findEventByIdSync(eventId)?.let {
+        database.eventDao().findEventByIdSync(eventId.value!!)?.let {
             downloadRecordingForEvent(it)
         }
     }
@@ -221,43 +251,25 @@ class DetailsViewModel(
     fun downloadRecordingForEvent(event: Event) =
             postStateWithEventAndRecordings(State.DownloadRecording, event)
 
-    fun playInExternalPlayer() = viewModelScope.launch {
-        database.eventDao().findEventByIdSync(eventId)?.let {
-            playInExternalPlayer(it)
-        }
-    }
-
-    fun playInExternalPlayer(event: Event) = postStateWithEventAndRecordings(State.PlayExternal, event)
-
-    private fun postStateWithEventAndRecordings(s: State, e: Event) {
+    fun deleteOfflineItem(): LiveData<Boolean> {
+        val result = MutableLiveData<Boolean>()
         viewModelScope.launch(Dispatchers.IO) {
-            val items = database.recordingDao().findRecordingByEventSync(e.id)
-            val bundle = Bundle()
-            bundle.putParcelable(EVENT, e)
-            bundle.putParcelableArrayList(KEY_SELECT_RECORDINGS, ArrayList(items))
-            state.postValue(LiveEvent(s, bundle))
-        }
-    }
-
-    fun play(autoselect: Boolean = autoselectRecording) = viewModelScope.launch(Dispatchers.IO) {
-        if (autoselect) {
-            mediaRepository.getEventSync(eventId)?.let { event ->
-                val recordings = database.recordingDao().findRecordingByEventSync(eventId)
-                val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
-                val recordingUrl = ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl
-                playRecording(event, optimalRecording, recordingUrl)
+            database.eventDao().findEventByIdSync(eventId.value!!)?.guid?.let { guid ->
+                database.offlineEventDao().getByEventGuidSuspend(guid)?.let {
+                    offlineItemManager.deleteOfflineItem(it)
+                }
             }
-        } else {
-            playEvent()
+            result.postValue(true)
         }
+        return result
     }
 
-    fun recordingSelected(e: Event, r: Recording) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val recordings: List<Recording> = database.recordingDao().findRecordingByEventSync(e.id)
-            val url = ChaosflixUtil.getRecordingForThumbs(recordings)?.recordingUrl
-            playRecording(e, r, url)
-        }
+    fun download(event: Event, recording: Recording) =
+            offlineItemManager.download(event, recording)
+
+    private suspend fun fileExists(guid: String): Boolean {
+        val offlineItem = database.offlineEventDao().getByEventGuidSuspend(guid)
+        return offlineItem != null && File(offlineItem.localPath).exists()
     }
 
     enum class State {
@@ -271,6 +283,16 @@ class DetailsViewModel(
         LoadingRecordings
     }
 
+    private fun postStateWithEventAndRecordings(s: State, e: Event) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val items = database.recordingDao().findRecordingByEventSync(e.id)
+            val bundle = Bundle()
+            bundle.putParcelable(EVENT, e)
+            bundle.putParcelableArrayList(KEY_SELECT_RECORDINGS, ArrayList(items))
+            state.postValue(LiveEvent(s, bundle))
+        }
+    }
+
     companion object {
         val TAG = DetailsViewModel::class.simpleName
         const val KEY_LOCAL_PATH = "local_path"
@@ -281,3 +303,4 @@ class DetailsViewModel(
         const val PROGRESS = "progress"
     }
 }
+

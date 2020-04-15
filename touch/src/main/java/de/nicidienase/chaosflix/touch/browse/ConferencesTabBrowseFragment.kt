@@ -107,14 +107,14 @@ class ConferencesTabBrowseFragment : Fragment(), SearchView.OnQueryTextListener 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.conferences_menu, menu)
-        val searchMenuItem = menu.findItem(R.id.search)
-        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        (searchMenuItem.actionView as SearchView).apply {
-            setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
-            isSubmitButtonEnabled = true
-            isIconified = false
-            setOnQueryTextListener(this@ConferencesTabBrowseFragment)
-        }
+//        val searchMenuItem = menu.findItem(R.id.search)
+//        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+//        (searchMenuItem.actionView as SearchView).apply {
+//            setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
+//            isSubmitButtonEnabled = true
+//            isIconified = false
+//            setOnQueryTextListener(this@ConferencesTabBrowseFragment)
+//        }
     }
 
     override fun onPause() {

@@ -189,6 +189,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
         detailsViewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (state.state) {
                 DetailsViewModel.State.PlayOnlineItem -> {
+                    detailsBackgroundController.switchToVideo()
                     val recording: Recording? = state.data?.getParcelable(DetailsViewModel.RECORDING)
                     val parcelable: Event? = state.data?.getParcelable(DetailsViewModel.EVENT)
                     val url = state.data?.getString(DetailsViewModel.THUMBS_URL)
@@ -198,7 +199,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
                             prepareSeekProvider(parcelable.length, url ?: recording.recordingUrl)
                         }
                         preparePlayer(recording.recordingUrl)
-                        detailsBackgroundController.switchToVideo()
                         playerAdapter.play()
                         if (progress != null && progress > 10_000L) {
                             playerAdapter.seekTo(progress - 5_000)
@@ -268,11 +268,11 @@ class EventDetailsFragment : DetailsSupportFragment() {
         selectDialog = AlertDialog.Builder(requireContext())
                 .setItems(strings, onClickListener)
                 .setNegativeButton("Autoselect") { _, _ ->
-                    detailsViewModel.play(true)
+                    detailsViewModel.playEvent(true)
                 }
                 .setPositiveButton("Always select automatically") { _, _ ->
                     detailsViewModel.autoselectRecording = true
-                    detailsViewModel.play(true)
+                    detailsViewModel.playEvent(true)
                 }
                 .create()
 
@@ -416,7 +416,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
                 }
                 ACTION_PLAY -> {
                     if (player.playbackState == Player.STATE_IDLE) {
-                        detailsViewModel.play()
+                        detailsViewModel.playEvent()
                     } else {
                         detailsBackgroundController.switchToVideo()
                     }

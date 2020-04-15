@@ -112,7 +112,6 @@ class EventDetailsFragment : Fragment() {
                     binding.event = event
                     binding.lifecycleOwner = viewLifecycleOwner
                     Log.d(TAG, "Loading Event ${event.title}, ${event.guid}")
-                    updateBookmark()
                     binding.thumbImage.transitionName = getString(R.string.thumbnail) + event.guid
 
                     Glide.with(binding.thumbImage)
@@ -120,13 +119,22 @@ class EventDetailsFragment : Fragment() {
                             .apply(RequestOptions().fitCenter())
                             .into(binding.thumbImage)
 
-                    viewModel.getRelatedEvents().observe(viewLifecycleOwner, Observer {
-                        if (it != null) {
-                            relatedEventsAdapter.items = it
-                        }
-                    })
+
                 }
             })
+            viewModel.getRelatedEvents().observe(viewLifecycleOwner, Observer {
+                if (it != null) {
+                    relatedEventsAdapter.items = it
+                }
+            })
+            viewModel.getBookmarkForEvent()
+                    .observe(viewLifecycleOwner, Observer { watchlistItem: WatchlistItem? ->
+                        val shouldInvalidate = this@EventDetailsFragment.watchlistItem == null || watchlistItem == null
+                        this@EventDetailsFragment.watchlistItem = watchlistItem
+                        if(shouldInvalidate){
+                            activity?.invalidateOptionsMenu()
+                        }
+                    })
         }
 
         binding.relatedItemsList.apply {
@@ -231,11 +239,6 @@ class EventDetailsFragment : Fragment() {
     }
 
     private fun updateBookmark() {
-        viewModel.getBookmarkForEvent()
-                .observe(viewLifecycleOwner, Observer { watchlistItem: WatchlistItem? ->
-                    this.watchlistItem = watchlistItem
-                    activity?.invalidateOptionsMenu()
-                })
     }
 
     private fun play() {
@@ -341,13 +344,11 @@ class EventDetailsFragment : Fragment() {
             }
             R.id.action_bookmark -> {
                 viewModel.createBookmark()
-                updateBookmark()
                 return true
             }
             R.id.action_unbookmark -> {
                 viewModel.removeBookmark()
-                watchlistItem = null
-                activity?.invalidateOptionsMenu()
+//                activity?.invalidateOptionsMenu()
                 return true
             }
             R.id.action_download -> {

@@ -102,6 +102,7 @@ data class Event(
             updatedAt = event.updatedAt ?: "",
             length = event.length,
             thumbUrl = event.thumbUrl ?: "",
+            posterUrl = event.posterUrl,
             frontendLink = event.frontendLink,
             url = event.url,
             conferenceUrl = event.conferenceUrl,

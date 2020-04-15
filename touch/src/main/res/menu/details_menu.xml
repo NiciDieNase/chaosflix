@@ -16,7 +16,7 @@
 		android:id="@+id/action_unbookmark"
 		android:icon="@drawable/ic_bookmark"
 		android:title="@string/remove_bookmark"
-		app:showAsAction="ifRoom"/>
+		app:showAsAction="always"/>
 	<item
 		android:id="@+id/action_share"
 		android:icon="@drawable/ic_share"

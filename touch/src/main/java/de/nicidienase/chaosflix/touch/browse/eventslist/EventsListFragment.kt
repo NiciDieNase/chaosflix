@@ -1,7 +1,5 @@
 package de.nicidienase.chaosflix.touch.browse.eventslist
 
-import android.app.SearchManager
-import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
@@ -96,14 +94,14 @@ abstract class EventsListFragment : Fragment(), SearchView.OnQueryTextListener {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.events_menu, menu)
-        val searchMenuItem = menu.findItem(R.id.search)
-        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        (searchMenuItem.actionView as SearchView).apply {
-            setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
-            isSubmitButtonEnabled = true
-            isIconified = false
-            setOnQueryTextListener(this@EventsListFragment)
-        }
+//        val searchMenuItem = menu.findItem(R.id.search)
+//        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+//        (searchMenuItem.actionView as SearchView).apply {
+//            setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
+//            isSubmitButtonEnabled = true
+//            isIconified = false
+//            setOnQueryTextListener(this@EventsListFragment)
+//        }
     }
 
     override fun onQueryTextSubmit(query: String): Boolean {
