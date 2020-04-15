@@ -9,6 +9,8 @@ import android.content.IntentFilter
 import android.util.Log
 import androidx.tvprovider.media.tv.TvContractCompat
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class RecommendationBroadcastReceiver : BroadcastReceiver() {
 
@@ -34,8 +36,10 @@ class RecommendationBroadcastReceiver : BroadcastReceiver() {
     private fun handleRemove(intent: Intent, context: Context) {
         val id = intent.getLongExtra(TvContractCompat.EXTRA_PREVIEW_PROGRAM_ID, 0)
         Log.d(TAG, "Id: $id")
-        val mediaRepository = ViewModelFactory.getInstance(context).mediaRepository
-        mediaRepository.resetRecommendationId(id)
+        GlobalScope.launch {
+            val mediaRepository = ViewModelFactory.getInstance(context).mediaRepository
+            mediaRepository.resetRecommendationId(id)
+        }
     }
 
     companion object {

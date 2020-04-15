@@ -22,7 +22,7 @@ abstract class RecommendationDao : BaseDao<Recommendation>() {
     }
 
     @Query("UPDATE recommendation SET dismissed = 1 WHERE programm_id = :programmId")
-    abstract fun markDismissed(programmId: Long)
+    abstract suspend fun markDismissed(programmId: Long)
 
     @Query("SELECT * FROM recommendation WHERE channel = :channel AND event_guid = :guid")
     abstract suspend fun getForChannelAndEvent(channel: String, guid: String): List<Recommendation>

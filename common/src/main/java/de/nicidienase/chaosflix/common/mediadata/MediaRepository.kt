@@ -158,7 +158,7 @@ class MediaRepository(
     }
 
     @WorkerThread
-    fun deleteNonUserData() {
+    suspend fun deleteNonUserData() = withContext(Dispatchers.IO) {
         with(database) {
             conferenceGroupDao().delete()
             conferenceDao().delete()
@@ -166,6 +166,16 @@ class MediaRepository(
             recordingDao().delete()
             relatedEventDao().delete()
         }
+    }
+
+    fun getBookmark(guid: String): LiveData<WatchlistItem?> = database.watchlistItemDao().getItemForEvent(guid)
+
+    suspend fun addBookmark(guid: String) = withContext(Dispatchers.IO) {
+        database.watchlistItemDao().saveItem(WatchlistItem(eventGuid = guid))
+    }
+
+    suspend fun deleteBookmark(guid: String) = withContext(Dispatchers.IO) {
+        database.watchlistItemDao().deleteItem(guid)
     }
 
     @WorkerThread
@@ -350,11 +360,11 @@ class MediaRepository(
         return recommendationDao.getAllForChannel(channel)
     }
 
-    fun setRecommendationIdForEvent(event: Event, id: Long, channel: String) {
+    suspend fun setRecommendationIdForEvent(event: Event, id: Long, channel: String) = withContext(Dispatchers.IO) {
         recommendationDao.insert(Recommendation(eventGuid = event.guid, channel = channel, programmId = id))
     }
 
-    fun resetRecommendationId(programmId: Long) {
+    suspend fun resetRecommendationId(programmId: Long) = withContext(Dispatchers.IO) {
         recommendationDao.markDismissed(programmId)
     }
 
