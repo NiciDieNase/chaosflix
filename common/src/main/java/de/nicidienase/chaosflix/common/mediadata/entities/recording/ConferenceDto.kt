@@ -10,7 +10,7 @@ data class ConferenceDto(
     @SerializedName("aspect_ratio") var aspectRatio: String = "",
     @SerializedName("updated_at") var updatedAt: String? = "",
     @SerializedName("title") var title: String = "",
-    @SerializedName("schedule_url") var scheduleUrl: String?,
+    @SerializedName("schedule_url") var scheduleUrl: String? = null,
     @SerializedName("slug") var slug: String = "",
     @SerializedName("event_last_released_at") var lastReleaseAt: String? = "",
     @SerializedName("webgen_location") var webgenLocation: String? = "",
@@ -18,7 +18,7 @@ data class ConferenceDto(
     @SerializedName("images_url") var imagesUrl: String = "",
     @SerializedName("recordings_url") var recordingsUrl: String = "",
     @SerializedName("url") var url: String = "",
-    @SerializedName("events") var events: List<EventDto>?
+    @SerializedName("events") var events: List<EventDto>? = emptyList()
 
 ) : Comparable<ConferenceDto> {
 

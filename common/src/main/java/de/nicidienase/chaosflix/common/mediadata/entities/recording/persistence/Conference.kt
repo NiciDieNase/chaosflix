@@ -49,7 +49,7 @@ data class Conference(
     }
 
     @Ignore
-    constructor(con: ConferenceDto) : this(
+    constructor(con: ConferenceDto, conferenceGroupId: Long = 0) : this(
             acronym = con.acronym,
             aspectRatio = con.aspectRatio,
             title = con.title,
@@ -62,7 +62,9 @@ data class Conference(
             url = con.url,
             updatedAt = con.updatedAt ?: "",
             tagsUsefull = con.tagsUsefull,
-            lastReleasedAt = con.lastReleaseAt ?: "")
+            lastReleasedAt = con.lastReleaseAt ?: "",
+            conferenceGroupId = conferenceGroupId
+    )
 
     override fun compareTo(other: Conference) = lastReleasedAt.compareTo(other.lastReleasedAt) * -1
 
