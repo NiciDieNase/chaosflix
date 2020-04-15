@@ -34,12 +34,13 @@
 
 		<com.google.android.material.floatingactionbutton.FloatingActionButton
 			android:id="@+id/search"
-
+			style="@style/Widget.MaterialComponents.FloatingActionButton"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom|end"
 			android:layout_margin="8dp"
-			android:backgroundTint="@color/primary"
+			app:borderWidth="0dp"
+			android:backgroundTint="@color/accent"
 			android:src="@drawable/ic_search" />
 
 		<include

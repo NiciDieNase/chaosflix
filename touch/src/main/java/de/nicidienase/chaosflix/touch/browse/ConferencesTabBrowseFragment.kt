@@ -51,8 +51,17 @@ class ConferencesTabBrowseFragment : Fragment(), SearchView.OnQueryTextListener 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = FragmentTabPagerLayoutBinding.inflate(inflater, container, false)
+        val searchService = requireContext().getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        searchService.setOnCancelListener {
+            binding.search.show()
+        }
+        searchService.setOnDismissListener {
+            binding.search.show()
+        }
         binding.search.setOnClickListener {
             requireActivity().onSearchRequested()
+            binding.search.hide()
+
         }
         viewModel.getConferenceGroups().observe(viewLifecycleOwner, Observer<List<ConferenceGroup>> { conferenceGroups ->
             val fragmentPager = ConferenceGroupsFragmentPager(requireContext(), childFragmentManager)
