@@ -18,17 +18,17 @@ import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
+import java.io.File
+import java.util.ArrayList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.util.ArrayList
 
 class DetailsViewModel(
-        private val database: ChaosflixDatabase,
-        private val offlineItemManager: OfflineItemManager,
-        private val preferencesManager: ChaosflixPreferenceManager,
-        private val mediaRepository: MediaRepository
+    private val database: ChaosflixDatabase,
+    private val offlineItemManager: OfflineItemManager,
+    private val preferencesManager: ChaosflixPreferenceManager,
+    private val mediaRepository: MediaRepository
 ) : ViewModel() {
 
     private var eventId = MutableLiveData<Long>(0)
@@ -58,7 +58,7 @@ class DetailsViewModel(
         }
 
     private fun setEventId(eventId: Long?): LiveData<Event?> {
-        if(eventId != null){
+        if (eventId != null) {
             this.eventId.postValue(eventId)
             viewModelScope.launch {
                 val findEventByIdSync = database.eventDao().findEventByIdSync(eventId)
@@ -143,7 +143,6 @@ class DetailsViewModel(
         state.postValue(LiveEvent(State.DisplayEvent, data = bundle))
     }
 
-
     fun playEvent(autoselect: Boolean = autoselectRecording) = viewModelScope.launch(Dispatchers.IO) {
             val offlineItem = getOfflineItem()
             when {
@@ -167,7 +166,7 @@ class DetailsViewModel(
         }
     }
 
-    private suspend fun letUserSelectRecording() = withContext(Dispatchers.IO){
+    private suspend fun letUserSelectRecording() = withContext(Dispatchers.IO) {
         // select quality then playEvent
         val recordingList = database.recordingDao().findRecordingByEventSync(eventId.value!!)
                 .partition { it.mimeType.startsWith("audio") || it.mimeType.startsWith("video") }
@@ -303,4 +302,3 @@ class DetailsViewModel(
         const val PROGRESS = "progress"
     }
 }
-

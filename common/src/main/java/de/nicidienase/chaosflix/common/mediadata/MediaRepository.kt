@@ -30,14 +30,14 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.ConferenceUtil
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
+import java.io.IOException
+import javax.net.ssl.SSLHandshakeException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Response
-import java.io.IOException
-import javax.net.ssl.SSLHandshakeException
 
 class MediaRepository(
     private val recordingApi: RecordingApi,
@@ -440,7 +440,7 @@ class MediaRepository(
         return@withContext if (eventsResponse.isSuccessful) {
             val total = eventsResponse.headers()["total"]?.toInt() ?: 0
             val links = parseLink(eventsResponse.headers()["link"])
-            val events = eventsResponse.body()?.events?.map {databaseOperations.saveEvent(it) } ?: emptyList()
+            val events = eventsResponse.body()?.events?.map { databaseOperations.saveEvent(it) } ?: emptyList()
 
             SearchResponse(events, total, links)
         } else {

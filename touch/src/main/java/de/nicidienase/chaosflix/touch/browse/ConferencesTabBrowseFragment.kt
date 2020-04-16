@@ -61,7 +61,6 @@ class ConferencesTabBrowseFragment : Fragment(), SearchView.OnQueryTextListener 
         binding.search.setOnClickListener {
             requireActivity().onSearchRequested()
             binding.search.hide()
-
         }
         viewModel.getConferenceGroups().observe(viewLifecycleOwner, Observer<List<ConferenceGroup>> { conferenceGroups ->
             val fragmentPager = ConferenceGroupsFragmentPager(requireContext(), childFragmentManager)

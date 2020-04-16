@@ -146,7 +146,7 @@ class BrowseViewModel(
         ).build()
     }
 
-    fun clearCache() = viewModelScope.launch (Dispatchers.IO){
+    fun clearCache() = viewModelScope.launch(Dispatchers.IO) {
         mediaRepository.deleteNonUserData()
     }
 

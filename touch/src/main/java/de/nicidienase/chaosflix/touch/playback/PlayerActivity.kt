@@ -28,7 +28,6 @@ class PlayerActivity : AppCompatActivity() {
         val extras = intent.extras
         if (savedInstanceState == null && extras != null) {
 
-
             val ft = supportFragmentManager.beginTransaction()
             val playerFragment = ExoPlayerFragment.newInstance(args.playbackItem)
             ft.replace(R.id.fragment_container, playerFragment)

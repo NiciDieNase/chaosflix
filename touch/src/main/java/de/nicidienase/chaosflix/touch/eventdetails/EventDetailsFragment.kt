@@ -119,8 +119,6 @@ class EventDetailsFragment : Fragment() {
                             .load(event.thumbUrl)
                             .apply(RequestOptions().fitCenter())
                             .into(binding.thumbImage)
-
-
                 }
             })
             viewModel.getRelatedEvents().observe(viewLifecycleOwner, Observer {
@@ -139,7 +137,7 @@ class EventDetailsFragment : Fragment() {
                         Log.d(TAG, "Update bookmark")
                         val shouldInvalidate = this@EventDetailsFragment.watchlistItem == null || watchlistItem == null
                         this@EventDetailsFragment.watchlistItem = watchlistItem
-                        if(shouldInvalidate){
+                        if (shouldInvalidate) {
                             activity?.invalidateOptionsMenu()
                         }
                     })

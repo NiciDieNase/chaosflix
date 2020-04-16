@@ -10,14 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.touch.databinding.ItemEventCardviewBinding
 
-open class EventRecyclerViewAdapter(val listener: (Event) -> Unit): ListAdapter<Event, EventRecyclerViewAdapter.ViewHolder>(EventDiffUtil) {
-    object EventDiffUtil: DiffUtil.ItemCallback<Event>() {
+open class EventRecyclerViewAdapter(val listener: (Event) -> Unit) : ListAdapter<Event, EventRecyclerViewAdapter.ViewHolder>(EventDiffUtil) {
+    object EventDiffUtil : DiffUtil.ItemCallback<Event>() {
         override fun areItemsTheSame(oldItem: Event, newItem: Event): Boolean = oldItem.guid == newItem.guid
         override fun areContentsTheSame(oldItem: Event, newItem: Event): Boolean = oldItem == newItem
     }
 
     var showConferenceName: Boolean = false
-
 
     override fun getItemId(position: Int): Long {
         return getItem(position).id
