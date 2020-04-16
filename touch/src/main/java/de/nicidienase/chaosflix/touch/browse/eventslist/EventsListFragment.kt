@@ -42,7 +42,6 @@ abstract class EventsListFragment : Fragment() {
         val binding = FragmentEventsListBinding.inflate(inflater, container, false)
         val activity = requireActivity() as AppCompatActivity
         activity.setSupportActionBar(binding.incToolbar.toolbar)
-//        overlay = binding.incOverlay.loadingOverlay
         layoutManager = if (columnCount <= 1) {
             LinearLayoutManager(context)
         } else {
@@ -93,14 +92,6 @@ abstract class EventsListFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.events_menu, menu)
-//        val searchMenuItem = menu.findItem(R.id.search)
-//        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
-//        (searchMenuItem.actionView as SearchView).apply {
-//            setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
-//            isSubmitButtonEnabled = true
-//            isIconified = false
-//            setOnQueryTextListener(this@EventsListFragment)
-//        }
     }
 
     companion object {

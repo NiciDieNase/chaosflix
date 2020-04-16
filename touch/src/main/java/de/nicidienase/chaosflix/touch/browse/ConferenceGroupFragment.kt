@@ -39,7 +39,10 @@ class ConferenceGroupFragment : Fragment() {
             view.layoutManager = layoutManager
             val conferencesAdapter = ConferenceRecyclerViewAdapter {
                 findNavController().navigate(
-                        ConferencesTabBrowseFragmentDirections.actionConferencesTabBrowseFragmentToEventsListFragment(conference = it)
+                        ConferencesTabBrowseFragmentDirections
+                                .actionConferencesTabBrowseFragmentToEventsListFragment(
+                                        conference = it, conferenceName = it.acronym
+                                )
                 )
             }
             conferencesAdapter.setHasStableIds(true)

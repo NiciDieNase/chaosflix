@@ -53,6 +53,7 @@
     <fragment
         android:id="@+id/eventsListFragment"
         android:name="de.nicidienase.chaosflix.touch.browse.eventslist.ConferenceEventListFragment"
+        android:label="{conferenceName}"
         tools:layout="@layout/fragment_events_list">
         <action
             android:id="@+id/action_eventsListFragment_to_eventDetailsFragment"
@@ -60,14 +61,14 @@
         <argument
             android:name="conference"
             app:argType="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference" />
-        <deepLink
-            android:id="@+id/deepLink"
-            app:uri="media.ccc.de/c/{conferenceName}" />
         <argument
             android:name="conferenceName"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="media.ccc.de/c/{conferenceName}" />
     </fragment>
     <fragment
         android:id="@+id/exoPlayerFragment"
@@ -90,7 +91,7 @@
     <fragment
         android:id="@+id/searchFragment"
         android:name="de.nicidienase.chaosflix.touch.search.SearchFragment"
-        android:label="{query}"
+        android:label="Search: {query}"
         tools:layout="@layout/fragment_events_list">
         <action
             android:id="@+id/action_searchFragment_to_eventDetailsFragment"

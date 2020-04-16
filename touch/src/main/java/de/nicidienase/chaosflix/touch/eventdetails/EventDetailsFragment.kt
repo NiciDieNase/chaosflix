@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.OfflineItemManager
@@ -44,7 +45,6 @@ import kotlinx.coroutines.launch
 class EventDetailsFragment : Fragment() {
 
     private var appBarExpanded: Boolean = false
-//    private lateinit var event: Event
     private var watchlistItem: WatchlistItem? = null
 
     private var layout: View? = null
@@ -57,27 +57,14 @@ class EventDetailsFragment : Fragment() {
 
     private val args: EventDetailsFragmentArgs by navArgs()
 
-//    private val eventGuid: String
-//        get() = args.eventGuid
-//                ?: error("Event Missing")
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 //        postponeEnterTransition()
 //        val transition = TransitionInflater.from(context)
 //                .inflateTransition(android.R.transition.move)
-//        //		transition.setDuration(getResources().getInteger(R.integer.anim_duration));
+//        		transition.setDuration(getResources().getInteger(R.integer.anim_duration));
 //        sharedElementEnterTransition = transition
-
-//        if (arguments != null) {
-//            val parcelable = arguments?.getParcelable<Event>(EVENT_PARAM)
-//            if (parcelable != null) {
-//                event = parcelable
-//            } else {
-//                throw IllegalStateException("Event Missing")
-//            }
-//        }
     }
 
     override fun onCreateView(
@@ -114,6 +101,17 @@ class EventDetailsFragment : Fragment() {
                     binding.lifecycleOwner = viewLifecycleOwner
                     Log.d(TAG, "Loading Event ${event.title}, ${event.guid}")
                     binding.thumbImage.transitionName = getString(R.string.thumbnail) + event.guid
+
+                    binding.tagChipGroup.removeAllViews()
+                    val chips = event.tags?.map {
+                        Chip(requireContext()).apply {
+                            text = it
+                            isClickable = false
+                        }
+                    }
+                    chips?.forEach {
+                        binding.tagChipGroup.addView(it)
+                    }
 
                     Glide.with(binding.thumbImage)
                             .load(event.thumbUrl)

@@ -37,7 +37,7 @@ class ConferenceEventListFragment : EventsListFragment() {
         }
         binding.swipeRefreshLayout.isEnabled = true
         binding.swipeRefreshLayout.setOnRefreshListener {
-            args.conference?.let { viewModel.updateEventsForConference(it) }
+            viewModel.updateEventsForConference(args.conference)
         }
     }
 }
