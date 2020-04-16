@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.navArgs
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
@@ -16,6 +17,8 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var casty: CastService
 
+    private val args: PlayerActivityArgs by navArgs()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
@@ -24,27 +27,10 @@ class PlayerActivity : AppCompatActivity() {
 
         val extras = intent.extras
         if (savedInstanceState == null && extras != null) {
-            val contentType = intent.getStringExtra(CONTENT_TYPE)
-            var playbackItem = PlaybackItem("Empty", "Empty", "", "")
-            if (contentType == CONTENT_RECORDING) {
-                val event = extras.getParcelable<Event>(EVENT_KEY)
-                val recording = extras.getParcelable<Recording>(RECORDING_KEY)
-                val recordingUri = extras.getString(OFFLINE_URI)
-                playbackItem = PlaybackItem(
-                        event?.title ?: "",
-                        event?.subtitle ?: "",
-                        event?.guid ?: "",
-                        recordingUri ?: recording?.recordingUrl ?: "")
-            } else if (contentType.equals(CONTENT_STREAM)) {
-                // TODO implement Player for Stream
-                val conference = extras.getString(CONFERENCE, "")
-                val room = extras.getString(ROOM, "")
-                val stream = extras.getString(STREAM, "")
-                playbackItem = PlaybackItem(conference, room, "", stream)
-            }
+
 
             val ft = supportFragmentManager.beginTransaction()
-            val playerFragment = ExoPlayerFragment.newInstance(playbackItem)
+            val playerFragment = ExoPlayerFragment.newInstance(args.playbackItem)
             ft.replace(R.id.fragment_container, playerFragment)
             ft.commit()
         }

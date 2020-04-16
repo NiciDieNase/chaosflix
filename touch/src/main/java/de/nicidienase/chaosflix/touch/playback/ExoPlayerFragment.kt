@@ -199,12 +199,10 @@ class ExoPlayerFragment : Fragment(), PlayerStateChangeListener {
         private val TAG = ExoPlayerFragment::class.java.simpleName
         private const val PLAYBACK_STATE = "playback_state"
         private const val ARG_item = "item"
-        fun newInstance(item: PlaybackItem?): ExoPlayerFragment {
-            val fragment = ExoPlayerFragment()
-            val args = Bundle()
-            args.putParcelable(ARG_item, item)
-            fragment.arguments = args
-            return fragment
+        fun newInstance(item: PlaybackItem): ExoPlayerFragment {
+            return ExoPlayerFragment().apply {
+               arguments = ExoPlayerFragmentArgs(item).toBundle()
+           }
         }
     }
 }

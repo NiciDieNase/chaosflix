@@ -267,13 +267,13 @@ class EventDetailsFragment : Fragment() {
 //            castService.loadMediaAndPlay(recording, event)
 //        } else {
         if (localFile != null) {
-            findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentToExoPlayerFragment(PlaybackItem.fromEvent(event,
+            findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentToPlayerActivity(PlaybackItem.fromEvent(event,
                     recordingUri = localFile)))
 //                PlayerActivity.launch(requireContext(), event, localFile)
         } else {
 //                PlayerActivity.launch(requireContext(), event, recording)
 
-            findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentToExoPlayerFragment(PlaybackItem.fromEvent(event,
+            findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentToPlayerActivity(PlaybackItem.fromEvent(event,
                     recording.recordingUrl)))
         }
 //        }

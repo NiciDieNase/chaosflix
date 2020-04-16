@@ -24,9 +24,6 @@
         <action
             android:id="@+id/action_eventDetailsFragment_self"
             app:destination="@id/eventDetailsFragment" />
-        <action
-            android:id="@+id/action_eventDetailsFragment_to_exoPlayerFragment"
-            app:destination="@id/exoPlayerFragment" />
         <deepLink
             android:id="@+id/deepLink2"
             app:uri="media.ccc.de/v/{eventName}" />
@@ -40,6 +37,9 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_eventDetailsFragment_to_playerActivity"
+            app:destination="@id/playerActivity" />
     </fragment>
     <fragment
         android:id="@+id/livestreamListFragment"
@@ -107,4 +107,12 @@
         android:id="@+id/aboutFragment"
         android:name="de.nicidienase.chaosflix.touch.about.AboutFragment"
         android:label="AboutFragment" />
+    <activity
+        android:id="@+id/playerActivity"
+        android:name="de.nicidienase.chaosflix.touch.playback.PlayerActivity"
+        android:label="PlayerActivity" >
+        <argument
+            android:name="playbackItem"
+            app:argType="de.nicidienase.chaosflix.touch.playback.PlaybackItem"/>
+    </activity>
 </navigation>
