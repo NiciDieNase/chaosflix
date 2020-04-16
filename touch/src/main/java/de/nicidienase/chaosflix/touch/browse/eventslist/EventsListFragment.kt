@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -23,7 +22,7 @@ import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventsListBinding
 
-abstract class EventsListFragment : Fragment(), SearchView.OnQueryTextListener {
+abstract class EventsListFragment : Fragment() {
 
     protected val viewModel: BrowseViewModel by viewModels { ViewModelFactory.getInstance(requireContext()) }
 
@@ -79,7 +78,7 @@ abstract class EventsListFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     protected fun setEvents(events: List<Event>) {
-        eventAdapter?.items = events
+        eventAdapter?.submitList(events)
         val layoutState = arguments?.getParcelable<Parcelable>(LAYOUTMANAGER_STATE)
         if (layoutState != null) {
             layoutManager?.onRestoreInstanceState(layoutState)
@@ -102,15 +101,6 @@ abstract class EventsListFragment : Fragment(), SearchView.OnQueryTextListener {
 //            isIconified = false
 //            setOnQueryTextListener(this@EventsListFragment)
 //        }
-    }
-
-    override fun onQueryTextSubmit(query: String): Boolean {
-        return false
-    }
-
-    override fun onQueryTextChange(newText: String): Boolean {
-        eventAdapter?.filter?.filter(newText)
-        return true
     }
 
     companion object {

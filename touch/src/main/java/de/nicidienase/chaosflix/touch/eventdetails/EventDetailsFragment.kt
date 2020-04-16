@@ -109,6 +109,7 @@ class EventDetailsFragment : Fragment() {
             }
             eventLivedata.observe(viewLifecycleOwner, Observer { event ->
                 if (event != null) {
+                    Log.d(TAG, "Update Event")
                     binding.event = event
                     binding.lifecycleOwner = viewLifecycleOwner
                     Log.d(TAG, "Loading Event ${event.title}, ${event.guid}")
@@ -124,11 +125,18 @@ class EventDetailsFragment : Fragment() {
             })
             viewModel.getRelatedEvents().observe(viewLifecycleOwner, Observer {
                 if (it != null) {
-                    relatedEventsAdapter.items = it
+                    Log.d(TAG, "update related events")
+                    relatedEventsAdapter.submitList(it)
+                }
+                if (it?.isNotEmpty() == true) {
+                    binding.relatedItemsText.visibility = View.VISIBLE
+                } else {
+                    binding.relatedItemsText.visibility = View.GONE
                 }
             })
             viewModel.getBookmarkForEvent()
                     .observe(viewLifecycleOwner, Observer { watchlistItem: WatchlistItem? ->
+                        Log.d(TAG, "Update bookmark")
                         val shouldInvalidate = this@EventDetailsFragment.watchlistItem == null || watchlistItem == null
                         this@EventDetailsFragment.watchlistItem = watchlistItem
                         if(shouldInvalidate){
@@ -223,17 +231,6 @@ class EventDetailsFragment : Fragment() {
                 DetailsViewModel.State.LoadingRecordings -> {
                     // TODO: show loading indicator
                 }
-            }
-        })
-
-        viewModel.getRelatedEvents().observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                relatedEventsAdapter.items = it
-            }
-            if (it?.isNotEmpty() == true) {
-                binding.relatedItemsText.visibility = View.VISIBLE
-            } else {
-                binding.relatedItemsText.visibility = View.GONE
             }
         })
     }

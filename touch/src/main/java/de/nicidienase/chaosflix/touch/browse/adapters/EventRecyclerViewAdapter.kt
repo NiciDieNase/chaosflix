@@ -4,29 +4,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.touch.databinding.ItemEventCardviewBinding
 
-open class EventRecyclerViewAdapter(val listener: (Event) -> Unit) :
-        ItemRecyclerViewAdapter<Event, EventRecyclerViewAdapter.ViewHolder>() {
+open class EventRecyclerViewAdapter(val listener: (Event) -> Unit): ListAdapter<Event, EventRecyclerViewAdapter.ViewHolder>(EventDiffUtil) {
+    object EventDiffUtil: DiffUtil.ItemCallback<Event>() {
+        override fun areItemsTheSame(oldItem: Event, newItem: Event): Boolean = oldItem.guid == newItem.guid
+        override fun areContentsTheSame(oldItem: Event, newItem: Event): Boolean = oldItem == newItem
+    }
 
     var showConferenceName: Boolean = false
 
-    override fun getComparator(): Comparator<in Event>? {
-        return Comparator { o1, o2 -> o1.title.compareTo(o2.title) }
-    }
 
     override fun getItemId(position: Int): Long {
-        return items[position].id
-    }
-
-    override fun getFilteredProperties(item: Event): List<String> {
-        return listOfNotNull(item.title,
-                item.subtitle,
-                item.description,
-                item.getSpeakerString()
-        )
+        return getItem(position).id
     }
 
     override fun onCreateViewHolder(p0: ViewGroup, pItemConferenceCardviewBinding1: Int): ViewHolder {
@@ -35,7 +29,7 @@ open class EventRecyclerViewAdapter(val listener: (Event) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val event = items[position]
+        val event = getItem(position)
         holder.binding.event = event
         holder.binding.root.setOnClickListener {
             listener(event)
@@ -49,5 +43,5 @@ open class EventRecyclerViewAdapter(val listener: (Event) -> Unit) :
         ViewCompat.setTransitionName(holder.binding.imageView, "thumb_${event.guid}")
     }
 
-    inner class ViewHolder(val binding: ItemEventCardviewBinding) : androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val binding: ItemEventCardviewBinding) : RecyclerView.ViewHolder(binding.root)
 }
