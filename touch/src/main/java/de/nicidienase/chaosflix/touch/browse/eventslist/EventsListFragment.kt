@@ -56,6 +56,9 @@ abstract class EventsListFragment : Fragment() {
             binding.list.addItemDecoration(itemDecoration)
         }
         binding.swipeRefreshLayout.isEnabled = false
+        binding.filterFab.setOnClickListener {
+            FilterBottomSheet().show(childFragmentManager, null)
+        }
         setupEvents(binding)
         return binding.root
     }

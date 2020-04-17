@@ -46,5 +46,17 @@
 
 		</FrameLayout>
 
+		<com.google.android.material.floatingactionbutton.FloatingActionButton
+			android:id="@+id/filter_fab"
+			style="@style/Widget.MaterialComponents.FloatingActionButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="bottom|end"
+			android:layout_margin="8dp"
+			android:src="@drawable/ic_filter"
+			app:borderWidth="0dp"
+			android:backgroundTint="@color/accent"
+			app:fabSize="normal" />
+
 	</androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
