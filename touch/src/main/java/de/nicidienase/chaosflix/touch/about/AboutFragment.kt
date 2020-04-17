@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
+import de.nicidienase.chaosflix.touch.BuildConfig
 import de.nicidienase.chaosflix.touch.R
 import mehdi.sakout.aboutpage.AboutPage
 import mehdi.sakout.aboutpage.Element
@@ -42,11 +43,11 @@ class AboutFragment : Fragment() {
             }
         }
 
-        val pInfo = requireActivity().packageManager.getPackageInfo(requireActivity().packageName, 0)
-        val version = pInfo.versionName
+
+        val version = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
         val versionElement = Element()
         var clickCounter = 0
-        versionElement.setTitle("Version $version")
+        versionElement.title = "Version $version"
         versionElement.setOnClickListener {
             when(clickCounter++){
                 10 -> {
