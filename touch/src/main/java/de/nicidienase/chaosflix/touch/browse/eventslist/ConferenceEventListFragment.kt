@@ -26,6 +26,7 @@ class ConferenceEventListFragment : EventsListFragment() {
     }
 
     override fun setupEvents(binding: FragmentEventsListBinding) {
+        binding.filterFab.show()
         args.conference.let { conference ->
             activity?.actionBar?.title = conference.acronym
 //            setupToolbar(binding.incToolbar.toolbar, conference.title, false)

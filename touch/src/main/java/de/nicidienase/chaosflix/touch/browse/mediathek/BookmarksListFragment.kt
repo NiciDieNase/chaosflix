@@ -11,7 +11,6 @@ class BookmarksListFragment : EventsListFragment() {
 
     override fun setupEvents(binding: FragmentEventsListBinding) {
         binding.incToolbar.toolbar.visibility = View.GONE
-        binding.filterFab.hide()
         eventAdapter.showConferenceName = true
         viewModel.getBookmarkedEvents().observe(viewLifecycleOwner, Observer { persistentEvents: List<Event>? ->
             persistentEvents?.let { setEvents(it) }

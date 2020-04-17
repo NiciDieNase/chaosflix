@@ -10,7 +10,6 @@ class InProgressListFragment : EventsListFragment() {
 
     override fun setupEvents(binding: FragmentEventsListBinding) {
         eventAdapter.showConferenceName = true
-        binding.filterFab.hide()
         viewModel.getInProgressEvents().observe(viewLifecycleOwner, Observer { persistentEvents: List<Event>? ->
             persistentEvents?.let { setEvents(it) }
         })

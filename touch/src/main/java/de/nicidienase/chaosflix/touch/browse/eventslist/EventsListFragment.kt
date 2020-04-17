@@ -49,7 +49,7 @@ abstract class EventsListFragment : Fragment() {
         }
         binding.list.layoutManager = layoutManager
         eventAdapter = EventRecyclerViewAdapter { navigateToDetails(it) }
-        eventAdapter?.setHasStableIds(true)
+        eventAdapter.setHasStableIds(true)
         binding.list.adapter = eventAdapter
         layoutManager?.let {
             val itemDecoration = DividerItemDecoration(binding.list.context, it.orientation)
@@ -59,6 +59,7 @@ abstract class EventsListFragment : Fragment() {
         binding.filterFab.setOnClickListener {
             FilterBottomSheet().show(childFragmentManager, null)
         }
+        binding.filterFab.hide()
         setupEvents(binding)
         return binding.root
     }
