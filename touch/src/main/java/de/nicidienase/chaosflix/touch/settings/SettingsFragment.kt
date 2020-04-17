@@ -3,6 +3,7 @@ package de.nicidienase.chaosflix.touch.settings
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -10,21 +11,41 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.snackbar.Snackbar
+import de.nicidienase.chaosflix.BuildConfig
 import de.nicidienase.chaosflix.R
+import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
+import de.nicidienase.chaosflix.common.DarkmodeUtil
 import de.nicidienase.chaosflix.common.checkPermission
 import de.nicidienase.chaosflix.common.viewmodel.PreferencesViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import net.rdrei.android.dirchooser.DirectoryChooserActivity
 import net.rdrei.android.dirchooser.DirectoryChooserConfig
 
-class SettingsFragment : PreferenceFragmentCompat() {
-    private val REQUEST_DIRECTORY: Int = 0
+class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var viewModel: PreferencesViewModel
+
+    private val chaosflixPreferenceManager: ChaosflixPreferenceManager by lazy { ChaosflixPreferenceManager(preferenceManager.sharedPreferences) }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(context)).get(PreferencesViewModel::class.java)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        if(key == getString(R.string.preference_key_darkmode_setting)){
+            DarkmodeUtil.init(requireContext())
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -165,16 +186,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     companion object {
-
+        const val REQUEST_DIRECTORY: Int = 0
         const val PERMISSION_REQUEST_EXPORT_FAVORITES = 23
         const val PERMISSION_REQUEST_IMPORT_FAVORITES = 24
-        const val PERMISSION_REQUEST_CHOOSE_DOWNLOAD_FOLDER = 25
 
+        const val PERMISSION_REQUEST_CHOOSE_DOWNLOAD_FOLDER = 25
         fun getInstance(): SettingsFragment {
             val fragment = SettingsFragment()
             val args = Bundle()
             fragment.arguments = args
             return fragment
         }
+
     }
 }

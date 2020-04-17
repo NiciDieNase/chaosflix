@@ -35,22 +35,17 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Debug">
+        android:title="Style">
 
-        <Preference
-            android:id="@+id/deleteData"
-            android:key="delete_data"
-            android:title="@string/clean_cache"/>
-        <Preference
-            android:id="@+id/export_favorites"
-            android:key="export_favorites"
-            android:title="@string/export_favorites"/>
-        <Preference
-            android:id="@+id/import_favorites"
-            android:key="import_favorites"
-            android:title="@string/import_favorites"/>
+        <ListPreference
+            android:defaultValue="@string/system_default"
+            android:entries="@array/darkmode_settings"
+            android:entryValues="@array/darkmode_settings"
+            android:key="@string/preference_key_darkmode_setting"
+            android:title="Darkmode"/>
 
     </PreferenceCategory>
+
 
     <PreferenceCategory
         android:title="Privacy">

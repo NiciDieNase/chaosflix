@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix
 
 import android.app.Application
+import de.nicidienase.chaosflix.common.DarkmodeUtil
 
 class ChaosflixApplication : Application() {
 
@@ -9,5 +10,6 @@ class ChaosflixApplication : Application() {
         StageInit.init(this)
         LibsInit.init(this)
         BuildTypeInit.init(this)
+        DarkmodeUtil.init(this)
     }
 }

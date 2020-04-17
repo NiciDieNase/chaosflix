@@ -77,6 +77,12 @@
     <string name="setting_metered_networks">Allow downloads over metered networks</string>
     <string name="settings_choose_recording">Automatically choose recording</string>
 
+    <string name="preference_key_darkmode_setting" translatable="false">preference_darkmode_setting</string>
+    <string name="always_dark">Always use darkmode</string>
+    <string name="always_light">Always use light mode</string>
+    <string name="system_default">Use system default</string>
+
+
     <!--Moved from touch-->
     <string name="thumbnail">thumbnail</string>
     <string name="search_title">Search</string>
