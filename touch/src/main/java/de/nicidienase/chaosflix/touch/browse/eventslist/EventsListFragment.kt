@@ -27,7 +27,7 @@ abstract class EventsListFragment : Fragment() {
     protected val viewModel: BrowseViewModel by viewModels { ViewModelFactory.getInstance(requireContext()) }
 
     private var columnCount = 1
-    private var eventAdapter: EventRecyclerViewAdapter? = null
+    protected lateinit var eventAdapter: EventRecyclerViewAdapter
     private var layoutManager: LinearLayoutManager? = null
     private var snackbar: Snackbar? = null
     private var type = 0

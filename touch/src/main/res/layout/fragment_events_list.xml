@@ -1,62 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-	<data>
-		<variable
-			name="viewModel"
-			type="de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel" />
-	</data>
-
-	<androidx.coordinatorlayout.widget.CoordinatorLayout
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/coordinatorLayout"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
+
+		<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+			android:id="@+id/swipeRefreshLayout"
+			android:layout_width="0dp"
+			android:layout_height="0dp"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/filter_chip_group"
+			app:layout_constraintBottom_toBottomOf="parent">
+
+			<androidx.recyclerview.widget.RecyclerView
+				android:id="@+id/list"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:contentDescription="@string/list_of_events"
+				app:layout_anchor="@id/app_bar_layout"
+				tools:listitem="@layout/item_conference_cardview" />
+
+		</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+		<com.google.android.material.chip.ChipGroup
+			android:id="@+id/filter_chip_group"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent">
+
+		</com.google.android.material.chip.ChipGroup>
+
 		<com.google.android.material.appbar.AppBarLayout
 			android:id="@+id/app_bar_layout"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content">
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintTop_toTopOf="parent">
 
 			<include
 				android:id="@+id/inc_toolbar"
-				layout="@layout/toolbar"/>
+				layout="@layout/toolbar"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" />
 
 		</com.google.android.material.appbar.AppBarLayout>
-
-		<FrameLayout
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-			<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-				android:id="@+id/swipeRefreshLayout"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent">
-
-				<androidx.recyclerview.widget.RecyclerView
-					android:id="@+id/list"
-					android:contentDescription="@string/list_of_events"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					app:layout_anchor="@id/app_bar_layout"
-					tools:listitem="@layout/item_conference_cardview"/>
-
-			</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-		</FrameLayout>
 
 		<com.google.android.material.floatingactionbutton.FloatingActionButton
 			android:id="@+id/filter_fab"
 			style="@style/Widget.MaterialComponents.FloatingActionButton"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_gravity="bottom|end"
 			android:layout_margin="8dp"
+			android:backgroundTint="@color/accent"
 			android:src="@drawable/ic_filter"
 			app:borderWidth="0dp"
-			android:backgroundTint="@color/accent"
-			app:fabSize="normal" />
+			app:fabSize="normal"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"/>
 
-	</androidx.coordinatorlayout.widget.CoordinatorLayout>
+	</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel" />
+    </data>
 </layout>

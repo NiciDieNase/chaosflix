@@ -13,6 +13,10 @@ abstract class EventDao : BaseDao<Event>() {
     @Query("SELECT * FROM event")
     abstract fun getAllEventsSync(): List<Event>
 
+    @Query("""SELECT * FROM EVENT WHERE conferenceId = :id 
+        AND (title like :query OR description like :query OR persons like :query) ORDER BY title ASC""")
+    abstract fun findEventByTerm(id: Long, query: String): LiveData<List<Event>>
+
     @Query("SELECT * FROM event WHERE title LIKE :search ORDER BY title ASC")
     abstract fun findEventByTitle(search: String): LiveData<Event?>
 

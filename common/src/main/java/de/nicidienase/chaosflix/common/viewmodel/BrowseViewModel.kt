@@ -2,6 +2,8 @@ package de.nicidienase.chaosflix.common.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,6 +37,7 @@ class BrowseViewModel(
 ) : ViewModel() {
 
     val state: SingleLiveEvent<LiveEvent<State, Event, String>> = SingleLiveEvent()
+    val filterText: MutableLiveData<String> = MutableLiveData("")
 
     enum class State {
         ShowEventDetails
@@ -69,6 +72,33 @@ class BrowseViewModel(
                                 ?: liveEvent?.data, liveEvent?.error)
                     }
 
+    fun getFilteredEvents(conference: Conference): LiveData<List<Event>> {
+        val events = getEventsforConference(conference)
+        val mediator = MediatorLiveData<List<Event>>()
+        mediator.addSource(filterText) { filterText ->
+            val eventList = events.value
+            if(!eventList.isNullOrEmpty()){
+                val filteredEvents: List<Event> = eventList.filter { it.getFilteredProperties().any { it.contains(filterText, true) } }
+                mediator.postValue(filteredEvents)
+            }
+        }
+        mediator.addSource(events) {
+            val filter = filterText.value
+            if(filter?.isNotBlank() == true) {
+                val filteredEvents: List<Event> = it.filter { it.getFilteredProperties().any { it.contains(filter) } }
+                mediator.postValue(filteredEvents)
+            } else {
+                mediator.postValue(it)
+            }
+        }
+        return mediator
+    }
+
+
+
+    suspend fun getBookmarks() = database.eventDao().findBookmarkedEventsSync()
+    suspend fun getPromoted() = database.eventDao().findPromotedEventsSync()
+
     fun getBookmarkedEvents(): LiveData<List<Event>> {
         val itemDao = database.watchlistItemDao()
         viewModelScope.launch(Dispatchers.IO) {
@@ -78,9 +108,6 @@ class BrowseViewModel(
         }
         return itemDao.getWatchlistEvents()
     }
-
-    suspend fun getBookmarks() = database.eventDao().findBookmarkedEventsSync()
-    suspend fun getPromoted() = database.eventDao().findPromotedEventsSync()
 
     @JvmOverloads
     fun getInProgressEvents(filterFinished: Boolean = false): LiveData<List<Event>> {
@@ -93,11 +120,19 @@ class BrowseViewModel(
         return Transformations.map(dao.getAllWithEvent()) { list ->
             return@map if (filterFinished) {
                 val result = list.partition { it.progress.progress / 1000 + 10 < it.event?.length ?: 0 }
-                Log.i(TAG, "Could not load events for ${list.filter { it.event == null }.map{it.progress.eventGuid}}")
+                Log.i(TAG, "Could not load events for ${list.filter { it.event == null }.map {it.progress.eventGuid}}")
                 Log.i(TAG, "Filtered ${result.first.size} finished items: ${result.first.map { "${it.progress.progress / 1000}-${it.event?.length}|" }}")
-                result.second.mapNotNull { it.event.apply { it.event?.progress = it.progress.progress } }
+                result.second.mapNotNull {
+                    it.event.apply {
+                        it.event?.progress = it.progress.progress
+                    }
+                }
             } else {
-                list.mapNotNull { it.event?.apply { it.event?.progress = it.progress.progress } }
+                list.mapNotNull {
+                    it.event?.apply {
+                        it.event?.progress = it.progress.progress
+                    }
+                }
             }
         }
     }

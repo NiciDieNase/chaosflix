@@ -60,6 +60,10 @@ data class Event(
 
     override fun compareTo(other: Event): Int = title.compareTo(other.title)
 
+    fun getFilteredProperties(): List<String> {
+        return listOfNotNull(title, subtitle, description, getSpeakerString() )
+    }
+
     constructor(parcel: Parcel) : this(
             parcel.readLong(),
             parcel.readLong(),
