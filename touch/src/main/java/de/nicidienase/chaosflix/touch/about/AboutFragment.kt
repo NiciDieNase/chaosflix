@@ -43,13 +43,12 @@ class AboutFragment : Fragment() {
             }
         }
 
-
         val version = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
         val versionElement = Element()
         var clickCounter = 0
         versionElement.title = "Version $version"
         versionElement.setOnClickListener {
-            when(clickCounter++){
+            when (clickCounter++) {
                 10 -> {
                     chaosflixPreferenceManager.debugEnabled = true
                     showToast(R.string.debug_enabled)
@@ -58,7 +57,6 @@ class AboutFragment : Fragment() {
                 8 -> showToast(R.string.debug_soon)
             }
         }
-
 
         return AboutPage(requireContext())
             .setImage(R.drawable.icon_primary_background)

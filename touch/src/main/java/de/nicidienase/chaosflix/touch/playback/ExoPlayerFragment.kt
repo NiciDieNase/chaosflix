@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -66,15 +68,15 @@ class ExoPlayerFragment : Fragment(), PlayerStateChangeListener {
         val binding: FragmentExoPlayerBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_exo_player, container, false)
         viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(requireContext())).get(PlayerViewModel::class.java)
         viewModel.setEvent(args.playbackItem.eventGuid)
-// 		val toolbar: Toolbar = binding.getRoot().findViewById(R.id.toolbar)
-// 		toolbar.title = args.playbackItem.title
-// 		toolbar.subtitle = args.playbackItem.subtitle
-// 		val activity = activity as AppCompatActivity?
-// 		if (activity != null) {
-// 			activity.setSupportActionBar(toolbar)
-// 			val actionBar = activity.supportActionBar
-// 			actionBar?.setDisplayHomeAsUpEnabled(true)
-// 		}
+        val toolbar: Toolbar = binding.root.findViewById(R.id.toolbar)
+        toolbar.title = args.playbackItem.title
+        toolbar.subtitle = args.playbackItem.subtitle
+        val activity = activity as AppCompatActivity?
+        if (activity != null) {
+            activity.setSupportActionBar(toolbar)
+            val actionBar = activity.supportActionBar
+            actionBar?.setDisplayHomeAsUpEnabled(true)
+        }
         this.binding = binding
         return binding.root
     }
@@ -201,8 +203,8 @@ class ExoPlayerFragment : Fragment(), PlayerStateChangeListener {
         private const val ARG_item = "item"
         fun newInstance(item: PlaybackItem): ExoPlayerFragment {
             return ExoPlayerFragment().apply {
-               arguments = ExoPlayerFragmentArgs(item).toBundle()
-           }
+                arguments = ExoPlayerFragmentArgs(item).toBundle()
+            }
         }
     }
 }

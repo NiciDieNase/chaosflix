@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import de.nicidienase.chaosflix.touch.databinding.FragmentFilterSheetBinding
 
-class FilterBottomSheet: BottomSheetDialogFragment() {
+class FilterBottomSheet : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = FragmentFilterSheetBinding.inflate(inflater, container, false)

@@ -43,7 +43,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if(key == getString(R.string.preference_key_darkmode_setting)){
+        if (key == getString(R.string.preference_key_darkmode_setting)) {
             DarkmodeUtil.init(requireContext())
         }
     }
@@ -72,7 +72,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
-        if(BuildConfig.DEBUG || chaosflixPreferenceManager.debugEnabled){
+        if (BuildConfig.DEBUG || chaosflixPreferenceManager.debugEnabled) {
             addPreferencesFromResource(R.xml.debug_settings)
         }
 
@@ -201,6 +201,5 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             fragment.arguments = args
             return fragment
         }
-
     }
 }
