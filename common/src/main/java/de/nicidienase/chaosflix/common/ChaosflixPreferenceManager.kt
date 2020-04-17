@@ -20,6 +20,8 @@ class ChaosflixPreferenceManager(private val sharedPref: SharedPreferences) {
 
     var recommendationsEnabled: Boolean by BooleanPreferencesDelegate(RECOMMENDATIONS_ENABLED, true)
 
+    var debugEnabled: Boolean by BooleanPreferencesDelegate(DEBUG_ENABLED, false)
+
     fun getIdForChannelId(key: String): Long {
         return sharedPref.getLong("channel_id_$key", 0)
     }
@@ -64,5 +66,6 @@ class ChaosflixPreferenceManager(private val sharedPref: SharedPreferences) {
         private const val keyDownloadFolder = "download_folder"
         private const val CHANNEL_ID = "channelId"
         private const val RECOMMENDATIONS_ENABLED = "recommendation_enabled"
+        private const val DEBUG_ENABLED = "debug_enabled"
     }
 }

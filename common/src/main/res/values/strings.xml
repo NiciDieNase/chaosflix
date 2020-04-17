@@ -81,7 +81,11 @@
     <string name="always_dark">Always use darkmode</string>
     <string name="always_light">Always use light mode</string>
     <string name="system_default">Use system default</string>
+    <string name="setting_debug">Enable debug settings</string>
 
+    <string name="one_more_time">Just one more time …</string>
+    <string name="debug_enabled">Debug Mode enabled!</string>
+    <string name="debug_soon">Debug Mode will be enabled soon!</string>
 
     <!--Moved from touch-->
     <string name="thumbnail">thumbnail</string>

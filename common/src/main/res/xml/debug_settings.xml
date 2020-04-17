@@ -1,4 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <PreferenceCategory
+        android:id="@+id/preference_category_debug"
+        android:visible="false"
+        android:title="Debug">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="debug_enabled"
+            android:title="@string/setting_debug"/>
+
+        <Preference
+            android:id="@+id/deleteData"
+            android:key="delete_data"
+            android:title="@string/clean_cache"/>
+        <Preference
+            android:id="@+id/export_favorites"
+            android:key="export_favorites"
+            android:title="@string/export_favorites"/>
+        <Preference
+            android:id="@+id/import_favorites"
+            android:key="import_favorites"
+            android:title="@string/import_favorites"/>
+
+    </PreferenceCategory>
 </PreferenceScreen>

@@ -65,13 +65,17 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     private fun updateSummary() {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext().applicationContext)
-        val folder = sharedPref.getString("download_folder", "")
+        val folder = sharedPref.getString("download_folder", chaosflixPreferenceManager.downloadFolder)
         val pref = this.findPreference("download_folder")
-        pref.setSummary(folder)
+        pref.summary = folder
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
+        if(BuildConfig.DEBUG || chaosflixPreferenceManager.debugEnabled){
+            addPreferencesFromResource(R.xml.debug_settings)
+        }
+
         updateSummary()
         val downloadFolderPref = this.findPreference("download_folder")
         val cleanCachePref = this.findPreference("delete_data")
