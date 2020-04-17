@@ -1,5 +1,10 @@
 # 0.7.0
 	- [debug] im/export also for progess (not only bookmarks)
+	- [debug] debug menu disabled by default
+	- [leanback] homescreen recommendations
+	- [touch] navigation rework
+	- [touch] global search
+	- [touch] darkmode configurable
 
 # 0.6.0
 	- Fahrplan-Import
