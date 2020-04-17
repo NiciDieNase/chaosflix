@@ -51,7 +51,7 @@ class ConferenceEventListFragment : EventsListFragment() {
                     binding.filterChipGroup.removeView(chip)
                 } else {
                     chip.text = "Filter: $filterText"
-                    if(!binding.filterChipGroup.contains(filterTextChip)){
+                    if (!binding.filterChipGroup.contains(filterTextChip)) {
                         binding.filterChipGroup.addView(filterTextChip)
                     }
                 }

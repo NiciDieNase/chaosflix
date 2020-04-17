@@ -77,14 +77,14 @@ class BrowseViewModel(
         val mediator = MediatorLiveData<List<Event>>()
         mediator.addSource(filterText) { filterText ->
             val eventList = events.value
-            if(!eventList.isNullOrEmpty()){
+            if (!eventList.isNullOrEmpty()) {
                 val filteredEvents: List<Event> = eventList.filter { it.getFilteredProperties().any { it.contains(filterText, true) } }
                 mediator.postValue(filteredEvents)
             }
         }
         mediator.addSource(events) {
             val filter = filterText.value
-            if(filter?.isNotBlank() == true) {
+            if (filter?.isNotBlank() == true) {
                 val filteredEvents: List<Event> = it.filter { it.getFilteredProperties().any { it.contains(filter) } }
                 mediator.postValue(filteredEvents)
             } else {
@@ -93,8 +93,6 @@ class BrowseViewModel(
         }
         return mediator
     }
-
-
 
     suspend fun getBookmarks() = database.eventDao().findBookmarkedEventsSync()
     suspend fun getPromoted() = database.eventDao().findPromotedEventsSync()

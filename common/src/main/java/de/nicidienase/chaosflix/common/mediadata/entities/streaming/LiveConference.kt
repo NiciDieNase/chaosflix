@@ -9,16 +9,16 @@ import java.util.Locale
 @Keep
 @JsonIgnoreProperties(ignoreUnknown = true)
 class LiveConference(
-        var conference: String,
-        var slug: String,
-        var author: String = "",
-        var description: String = "",
-        var keywords: String = "",
-        var schedule: String = "",
-        var startsAt: String = "",
-        var endsAt: String = "",
-        var isCurrentlyStreaming: Boolean = false,
-        var groups: List<Group> = emptyList()
+    var conference: String,
+    var slug: String,
+    var author: String = "",
+    var description: String = "",
+    var keywords: String = "",
+    var schedule: String = "",
+    var startsAt: String = "",
+    var endsAt: String = "",
+    var isCurrentlyStreaming: Boolean = false,
+    var groups: List<Group> = emptyList()
 ) {
     companion object {
 
