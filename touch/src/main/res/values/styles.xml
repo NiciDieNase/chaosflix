@@ -1,52 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
-<!--	<style name="AppTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">-->
-	<style name="AppTheme" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
-		<item name="windowActionBar">false</item>
-		<item name="windowNoTitle">true</item>
-		<item name="android:windowContentTransitions">true</item>
-		<item name="android:colorPrimary">@color/primary</item>
-		<item name="android:colorPrimaryDark">@color/primary_dark</item>
-		<item name="android:colorAccent">@color/accent</item>
-		<item name="colorAccent">@color/accent</item>
-		<item name="colorPrimary">@color/primary</item>
-		<item name="colorPrimaryDark">@color/primary_dark</item>
-		<item name="preferenceTheme">@style/SettingsStyle</item>
-	</style>
+    <style name="AppTheme" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="preferenceTheme">@style/SettingsStyle</item>
+        <item name="actionBarStyle">@style/ToolbarStyle</item>
+<!--		<item name="toolbarStyle">@style/ToolbarStyle</item>-->
+    </style>
 
-
-	<style name="ToolbarStyle" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">
-		<item name="android:background">@color/primary</item>
+<!--    <style name="ToolbarStyle" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">-->
+    <style name="ToolbarStyle" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:background">@color/primary</item>
 		<item name="android:textColorPrimary">?android:attr/textColorPrimary</item>
-		<item name="android:textColorSecondary">?android:attr/textColorSecondary</item>
-	</style>
+        <item name="android:textColorSecondary">?android:attr/textColorSecondary</item>
+		<item name="background">@color/primary</item>
+    </style>
 
-	<style name="SettingsStyle" parent="@style/PreferenceThemeOverlay.v14.Material">
-		<item name="colorControlNormal">@android:color/darker_gray</item>
-	</style>
+    <style name="SettingsStyle" parent="@style/PreferenceThemeOverlay.v14.Material">
+        <item name="colorControlNormal">@android:color/darker_gray</item>
+    </style>
 
-	<style name="TabsStyle" parent="@style/ThemeOverlay.MaterialComponents">
-		<item name="tabSelectedTextColor">?android:attr/textColorPrimary</item>
-		<item name="tabIndicatorColor">?android:attr/textColorPrimary</item>
-		<item name="tabTextColor">?android:attr/textColorSecondary</item>
-	</style>
+    <style name="TabsStyle" parent="@style/ThemeOverlay.MaterialComponents">
+        <item name="tabSelectedTextColor">?android:attr/textColorPrimary</item>
+        <item name="tabIndicatorColor">?android:attr/textColorPrimary</item>
+        <item name="tabTextColor">?android:attr/textColorSecondary</item>
+    </style>
 
-	<style name="DetailsTitleStyleExpanded" parent="@style/TextAppearance.AppCompat.Display1">
-		<item name="android:textColor">?android:attr/textColorPrimary</item>
-		<item name="android:textColorPrimary">?android:attr/textColorPrimary</item>
-		<item name="android:textColorSecondary">?android:attr/textColorPrimary</item>
-	</style>
+    <style name="DetailsTitleStyleExpanded" parent="@style/TextAppearance.AppCompat.Display1">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textColorPrimary">?android:attr/textColorPrimary</item>
+        <item name="android:textColorSecondary">?android:attr/textColorPrimary</item>
+    </style>
 
-	<style name="DetailsTitleStyleCollapsed" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-		<item name="android:textColor">?android:attr/textColorPrimary</item>
-		<item name="android:textColorPrimary">?android:attr/textColorPrimary</item>
-		<item name="android:textColorSecondary">?android:attr/textColorPrimary</item>
-	</style>
+    <style name="DetailsTitleStyleCollapsed" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textColorPrimary">?android:attr/textColorPrimary</item>
+        <item name="android:textColorSecondary">?android:attr/textColorPrimary</item>
+    </style>
 
-	<style name="ColoredTabLayout" parent="@style/Widget.MaterialComponents.TabLayout.Colored"/>
+    <style name="ColoredTabLayout" parent="@style/Widget.MaterialComponents.TabLayout.Colored" >
 
-	<style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
-		<item name="android:windowBackground">@drawable/splash_screen</item>
-	</style>
+        <item name="tabIconTint">?android:attr/textColorPrimary</item>
+        <item name="tabIndicatorColor">?android:attr/textColorPrimary</item>
+        <item name="tabTextColor">?android:attr/textColorPrimary</item>
+        <item name="tabRippleColor">?android:attr/textColorPrimary</item>
+
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textColorPrimary">?android:attr/textColorPrimary</item>
+        <item name="android:textColorSecondary">?android:attr/textColorPrimary</item>
+
+    </style>
+
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+    </style>
 </resources>

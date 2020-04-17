@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ToolbarStyle" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:background">@color/primary</item>
+        <item name="android:textColorPrimary">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textColorSecondary">?android:attr/textColorSecondaryInverse</item>
+        <item name="background">@color/primary</item>
+    </style>
+
+
+<!--    <style name="ColoredTabLayout" parent="@style/Widget.MaterialComponents.TabLayout.Colored">-->
+<!--        <item name="android:textColor">?android:attr/textColorPrimary</item>-->
+<!--        <item name="android:textColorPrimary">?android:attr/textColorPrimary</item>-->
+<!--        <item name="android:textColorSecondary">?android:attr/textColorPrimary</item>-->
+
+<!--    </style>-->
+</resources>
