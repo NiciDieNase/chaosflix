@@ -30,7 +30,8 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".NavigationActivity">
+        <activity android:name=".NavigationActivity"
+            android:launchMode="singleInstance">
             <nav-graph android:value="@navigation/main_navigation"/>
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -46,10 +47,6 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:launchMode="singleTop"
             android:parentActivityName=".eventdetails.EventDetailsActivity"/>
-
-        <activity
-            android:name=".settings.SettingsActivity"
-            android:parentActivityName=".browse.BrowseActivity"/>
 
         <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
         <activity android:name=".favoritesimport.FavoritesImportActivity" >
