@@ -13,6 +13,6 @@
 			style="@style/ToolbarStyle"
 			app:layout_scrollFlags="scroll|enterAlways|snap"
 			tools:title="Title"
-			tools:showIn="@layout/activity_browse"/>
+			tools:showIn="@layout/activity_navigation"/>
 	</merge>
 </layout>
