@@ -13,11 +13,12 @@ import de.nicidienase.chaosflix.common.ResourcesFacade
 import de.nicidienase.chaosflix.common.SingletonHolder
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.StreamingRepository
+import de.nicidienase.chaosflix.common.mediadata.ThumbnailParser
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 
 class ViewModelFactory private constructor(context: Context) : ViewModelProvider.Factory {
 
-    private val apiFactory = ApiFactory.getInstance(context.resources.getString(R.string.recording_url), context.cacheDir)
+    val apiFactory = ApiFactory.getInstance(context.resources.getString(R.string.recording_url), context.cacheDir)
 
     private val database by lazy { ChaosflixDatabase.getInstance(context) }
     private val streamingRepository by lazy { StreamingRepository(apiFactory.streamingApi) }
@@ -31,6 +32,7 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
         )
     private val externalFilesDir = Environment.getExternalStorageDirectory()
     private val resourcesFacade by lazy { ResourcesFacade(context) }
+    private val thumbnailParser by lazy { ThumbnailParser(apiFactory.client) }
     val mediaRepository by lazy { MediaRepository(apiFactory.recordingApi, database) }
 
     @Suppress("UNCHECKED_CAST")
@@ -43,7 +45,7 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
                 streamingRepository,
                 preferencesManager,
                 resourcesFacade) as T
-            PlayerViewModel::class.java -> PlayerViewModel(database) as T
+            PlayerViewModel::class.java -> PlayerViewModel(database, thumbnailParser) as T
             DetailsViewModel::class.java -> DetailsViewModel(
                 database,
                 offlineItemManager,

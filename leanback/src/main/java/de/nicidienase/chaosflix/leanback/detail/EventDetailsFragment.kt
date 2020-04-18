@@ -196,7 +196,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
                     val progress: Long? = state.data?.getLong(DetailsViewModel.PROGRESS)
                     if (recording != null) {
                         if (parcelable != null) {
-                            prepareSeekProvider(parcelable.length, url ?: recording.recordingUrl)
+                            prepareSeekProvider(parcelable.length)
                         }
                         preparePlayer(recording.recordingUrl)
                         playerAdapter.play()
@@ -279,13 +279,17 @@ class EventDetailsFragment : DetailsSupportFragment() {
         selectDialog?.show()
     }
 
-    private fun prepareSeekProvider(length: Long, url: String) {
-        ChaosflixSeekDataProvider.setSeekProvider(
-                playerGlue,
-                requireContext(),
-                length,
-                url
-        )
+    private fun prepareSeekProvider(length: Long) {
+        lifecycleScope.launch {
+            playerViewModel.getThumbInfo()?.let {
+                ChaosflixSeekDataProvider.setSeekProvider(
+                        playerGlue,
+                        requireContext(),
+                        length,
+                        it
+                )
+            }
+        }
     }
 
     override fun onPause() {

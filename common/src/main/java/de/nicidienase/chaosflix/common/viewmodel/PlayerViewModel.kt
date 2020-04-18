@@ -4,12 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
+import de.nicidienase.chaosflix.common.mediadata.ThumbnailParser
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
 import java.util.Date
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
+class PlayerViewModel(private val database: ChaosflixDatabase, private val thumbnailParser: ThumbnailParser) : ViewModel() {
 
     private lateinit var eventGuid: String
 
@@ -46,6 +48,15 @@ class PlayerViewModel(val database: ChaosflixDatabase) : ViewModel() {
             viewModelScope.launch(Dispatchers.IO) {
                 database.playbackProgressDao().deleteItem(eventGuid)
             }
+        }
+    }
+
+    suspend fun getThumbInfo(): List<ThumbnailParser.ThumbnailInfo>? = withContext(Dispatchers.IO) {
+        val event = database.eventDao().findEventByGuidSync(eventGuid)
+        return@withContext if (event != null && event.thumbnailsUrl.isNotBlank()) {
+            thumbnailParser.parse(event.thumbnailsUrl)
+        } else {
+            null
         }
     }
 }

@@ -40,7 +40,7 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
             OfflineEvent::class,
             Recommendation::class
         ],
-        version = 7,
+        version = 8,
         exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class ChaosflixDatabase : RoomDatabase() {
@@ -62,7 +62,8 @@ abstract class ChaosflixDatabase : RoomDatabase() {
                 ChaosflixDatabase::class.java, "mediaccc.de")
                 .addMigrations(
                         ChaosflixDatabase.migration_5_6,
-                        ChaosflixDatabase.migration_6_7
+                        ChaosflixDatabase.migration_6_7,
+                        ChaosflixDatabase.migration_7_8
                 )
                 .fallbackToDestructiveMigrationFrom(1, 2, 3, 4)
                 .build()
@@ -116,6 +117,13 @@ abstract class ChaosflixDatabase : RoomDatabase() {
                     `programm_id` INTEGER NOT NULL, 
                     `dismissed` INTEGER NOT NULL)""")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_recommendation_event_guid_channel ON recommendation (event_guid, channel)")
+            }
+        }
+
+        private val migration_7_8 = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE event ADD COLUMN timelineUrl TEXT NOT NULL DEFAULT ''")
+                database.execSQL("ALTER TABLE event ADD COLUMN thumbnailsUrl TEXT NOT NULL DEFAULT ''")
             }
         }
     }

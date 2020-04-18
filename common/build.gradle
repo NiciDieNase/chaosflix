@@ -149,8 +149,8 @@ dependencies {
     kapt "androidx.room:room-compiler:$roomVersion"
     api "androidx.room:room-ktx:$roomVersion"
 
-    implementation 'com.squareup.retrofit2:retrofit:2.6.4'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
+    api 'com.squareup.retrofit2:retrofit:2.6.4'
+    api 'com.squareup.retrofit2:converter-gson:2.6.4'
 
     api "com.google.code.gson:gson:2.8.6"
     api 'com.google.android.exoplayer:exoplayer:2.9.6'

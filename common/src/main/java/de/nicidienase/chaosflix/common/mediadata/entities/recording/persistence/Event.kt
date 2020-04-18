@@ -44,25 +44,19 @@ data class Event(
     var url: String = "",
     var conferenceUrl: String = "",
     var isPromoted: Boolean = false,
-
     var viewCount: Int = 0,
     var persons: Array<String>? = null,
-
     var tags: Array<String>? = null,
     @Ignore
     var related: List<RelatedEvent>? = null,
     @Ignore
-    var recordings: List<Recording>? = null
-) : Parcelable, Comparable<Event> {
+    var recordings: List<Recording>? = null,
+    var timelineUrl: String = "",
+    var thumbnailsUrl: String = ""
+) : Comparable<Event>, Parcelable {
 
     @Ignore
     var progress: Long = 0
-
-    override fun compareTo(other: Event): Int = title.compareTo(other.title)
-
-    fun getFilteredProperties(): List<String> {
-        return listOfNotNull(title, subtitle, description, getSpeakerString())
-    }
 
     constructor(parcel: Parcel) : this(
             parcel.readLong(),
@@ -89,7 +83,17 @@ data class Event(
             parcel.createStringArray(),
             parcel.createStringArray(),
             parcel.createTypedArrayList(RelatedEvent),
-            parcel.createTypedArrayList(Recording))
+            parcel.createTypedArrayList(Recording),
+            parcel.readString() ?: "",
+            parcel.readString() ?: "") {
+        progress = parcel.readLong()
+    }
+
+    override fun compareTo(other: Event): Int = title.compareTo(other.title)
+
+    fun getFilteredProperties(): List<String> {
+        return listOfNotNull(title, subtitle, description, getSpeakerString())
+    }
 
     @Ignore
     constructor(event: EventDto, conferenceId: Long = 0) : this(
@@ -115,7 +119,9 @@ data class Event(
             persons = event.persons,
             tags = event.tags?.filterNotNull()?.toTypedArray(),
             related = event.related?.map { RelatedEvent(event.eventID, it) },
-            recordings = event.recordings?.map { Recording(it) }
+            recordings = event.recordings?.map { Recording(it) },
+            timelineUrl = event.timelineUrl,
+            thumbnailsUrl = event.thumbnailsUrl
     )
 
     fun getExtendedDescription(): Spanned {
@@ -157,6 +163,9 @@ data class Event(
         parcel.writeStringArray(tags)
         parcel.writeTypedList(related)
         parcel.writeTypedList(recordings)
+        parcel.writeString(timelineUrl)
+        parcel.writeString(thumbnailsUrl)
+        parcel.writeLong(progress)
     }
 
     override fun describeContents(): Int {

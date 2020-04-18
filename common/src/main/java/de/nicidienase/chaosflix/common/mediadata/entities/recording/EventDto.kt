@@ -27,6 +27,10 @@ data class EventDto(
     var thumbUrl: String? = "",
     @SerializedName("poster_url")
     var posterUrl: String = "",
+    @SerializedName("timeline_url")
+    var timelineUrl: String = "",
+    @SerializedName("thumbnails_url")
+    var thumbnailsUrl: String = "",
     @SerializedName("frontend_link")
     var frontendLink: String? = "",
     var url: String = "",
@@ -35,11 +39,7 @@ data class EventDto(
     var recordings: List<RecordingDto>?,
     var related: List<RelatedEventDto>?,
     @SerializedName("promoted")
-    var isPromoted: Boolean = false,
-    @SerializedName("timeline_url")
-    var timelineUrl: String,
-    @SerializedName("thumbnails_url")
-    var thumbnailsUrl: String
+    var isPromoted: Boolean = false
 ) : Comparable<EventDto> {
 
     var eventID: Long

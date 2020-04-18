@@ -17,7 +17,7 @@ class ApiFactory private constructor(apiUrl: String, cache: File? = null) {
     private val chaosflixUserAgent: String by lazy { buildUserAgent() }
     private val gsonConverterFactory: GsonConverterFactory by lazy { GsonConverterFactory.create(Gson()) }
 
-    private val client: OkHttpClient by lazy {
+    val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
             .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
