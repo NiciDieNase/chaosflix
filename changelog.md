@@ -5,6 +5,7 @@
 	- [touch] navigation rework
 	- [touch] global search
 	- [touch] darkmode configurable
+	- [leanback] seek thumbnails from backend
 
 # 0.6.0
 	- Fahrplan-Import
