@@ -20,7 +20,7 @@ internal class ThumbnailParserTest {
     @Disabled
     @Test
     fun test() {
-        val parse = ThumbnailParser("https://static.media.ccc.de/media/events/gpn/gpn19/67-hd.thumbnails.vtt", okHttpClient).parse()
+        val parse = ThumbnailParser(okHttpClient).parse("https://static.media.ccc.de/media/events/gpn/gpn19/67-hd.thumbnails.vtt")
         assertThat(parse.size, greaterThan(999))
     }
 
