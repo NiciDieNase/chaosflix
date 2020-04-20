@@ -28,16 +28,11 @@ class ConferencesTabBrowseFragment : Fragment(), SearchView.OnQueryTextListener 
 
     private val viewModel: BrowseViewModel by viewModels { ViewModelFactory.getInstance(requireContext()) }
 
-    private var mColumnCount = 1
-    private var binding: FragmentTabPagerLayoutBinding? = null
     private var snackbar: Snackbar? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         Log.d(TAG, "onCreate")
-        if (arguments != null) {
-            mColumnCount = arguments!!.getInt(ARG_COLUMN_COUNT)
-        }
     }
 
     override fun onQueryTextSubmit(query: String): Boolean {
@@ -67,7 +62,7 @@ class ConferencesTabBrowseFragment : Fragment(), SearchView.OnQueryTextListener 
             fragmentPager.setContent(conferenceGroups)
             binding.viewpager.adapter = fragmentPager
             val arguments = arguments
-            var viewpagerState: Parcelable? = null
+            val viewpagerState: Parcelable?
             if (arguments != null) {
                 viewpagerState = arguments.getParcelable(VIEWPAGER_STATE)
                 if (viewpagerState != null) {
@@ -82,8 +77,10 @@ class ConferencesTabBrowseFragment : Fragment(), SearchView.OnQueryTextListener 
             }
             when (state.state) {
                 // TODO use SwipeRefreshLayout
-                MediaRepository.State.RUNNING -> {}
-                MediaRepository.State.DONE -> {}
+                MediaRepository.State.RUNNING -> {
+                }
+                MediaRepository.State.DONE -> {
+                }
             }
             if (state.error != null) {
                 showSnackbar(state.error)
@@ -106,32 +103,15 @@ class ConferencesTabBrowseFragment : Fragment(), SearchView.OnQueryTextListener 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.conferences_menu, menu)
-//        val searchMenuItem = menu.findItem(R.id.search)
-//        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
-//        (searchMenuItem.actionView as SearchView).apply {
-//            setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
-//            isSubmitButtonEnabled = true
-//            isIconified = false
-//            setOnQueryTextListener(this@ConferencesTabBrowseFragment)
-//        }
     }
 
     override fun onPause() {
         super.onPause()
-        // 		getArguments().putParcelable(VIEWPAGER_STATE, binding.viewpager.onSaveInstanceState());
+//        arguments?.putParcelable(VIEWPAGER_STATE, binding.viewpager.onSaveInstanceState());
     }
 
     companion object {
         private val TAG = ConferencesTabBrowseFragment::class.java.simpleName
-        private const val ARG_COLUMN_COUNT = "column-count"
-        private const val CURRENTTAB_KEY = "current_tab"
         private const val VIEWPAGER_STATE = "viewpager_state"
-        fun newInstance(columnCount: Int): ConferencesTabBrowseFragment {
-            val fragment = ConferencesTabBrowseFragment()
-            val args = Bundle()
-            args.putInt(ARG_COLUMN_COUNT, columnCount)
-            fragment.arguments = args
-            return fragment
-        }
     }
 }

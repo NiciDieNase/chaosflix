@@ -41,11 +41,11 @@ class NavigationActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             if (noToolbarDestinations.contains(destination.id)) {
-//                supportActionBar?.hide()
-                binding.toolbar.visibility = View.GONE
+                supportActionBar?.hide()
+//                binding.toolbar.visibility = View.GONE
             } else {
-//                supportActionBar?.show()
-                binding.toolbar.visibility = View.VISIBLE
+                supportActionBar?.show()
+//                binding.toolbar.visibility = View.VISIBLE
             }
             if (noBottomNavDestinations.contains(destination.id)) {
                 binding.bottomNavigation.visibility = View.GONE
@@ -108,8 +108,8 @@ class NavigationActivity : AppCompatActivity() {
     companion object {
         private val TAG = NavigationActivity::class.java.simpleName
 
-        private val noToolbarDestinations = listOf(R.id.exoPlayerFragment, R.id.eventDetailsFragment)
-        private val noBottomNavDestinations = listOf(R.id.exoPlayerFragment)
+        private val noToolbarDestinations = listOf(R.id.eventDetailsFragment)
+        private val noBottomNavDestinations = listOf<Int>()
 
         fun launch(context: Context) {
             context.startActivity(Intent(context, NavigationActivity::class.java))

@@ -144,7 +144,7 @@ class LivestreamListFragment : Fragment() {
     }
 
     fun playLivestream(item: PlaybackItem) {
-        findNavController().navigate(LivestreamListFragmentDirections.actionLivestreamListFragmentToExoPlayerFragment(item))
+        findNavController().navigate(LivestreamListFragmentDirections.actionLivestreamListFragmentToPlayerActivity(item))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

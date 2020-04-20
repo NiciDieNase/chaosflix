@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -51,14 +50,11 @@ abstract class EventsListFragment : Fragment() {
         eventAdapter = EventRecyclerViewAdapter { navigateToDetails(it) }
         eventAdapter.setHasStableIds(true)
         binding.list.adapter = eventAdapter
-        layoutManager?.let {
-            val itemDecoration = DividerItemDecoration(binding.list.context, it.orientation)
-            binding.list.addItemDecoration(itemDecoration)
-        }
+//        layoutManager?.let {
+//            val itemDecoration = DividerItemDecoration(binding.list.context, it.orientation)
+//            binding.list.addItemDecoration(itemDecoration)
+//        }
         binding.swipeRefreshLayout.isEnabled = false
-        binding.filterFab.setOnClickListener {
-            FilterBottomSheet().show(childFragmentManager, null)
-        }
         binding.filterFab.hide()
         setupEvents(binding)
         return binding.root
