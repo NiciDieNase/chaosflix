@@ -11,10 +11,18 @@
         tools:layout="@layout/fragment_tab_pager_layout">
         <action
             android:id="@+id/action_conferencesTabBrowseFragment_to_eventsListFragment"
-            app:destination="@id/eventsListFragment" />
+            app:destination="@id/eventsListFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_conferencesTabBrowseFragment_to_searchFragment"
-            app:destination="@id/searchFragment" />
+            app:destination="@id/searchFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/eventDetailsFragment"
@@ -23,7 +31,11 @@
         tools:layout="@layout/fragment_event_details">
         <action
             android:id="@+id/action_eventDetailsFragment_self"
-            app:destination="@id/eventDetailsFragment" />
+            app:destination="@id/eventDetailsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <deepLink
             android:id="@+id/deepLink2"
             app:uri="media.ccc.de/v/{eventName}" />
@@ -39,7 +51,11 @@
             android:defaultValue="@null" />
         <action
             android:id="@+id/action_eventDetailsFragment_to_playerActivity"
-            app:destination="@id/playerActivity" />
+            app:destination="@id/playerActivity"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/livestreamListFragment"
@@ -47,8 +63,12 @@
         android:label="@string/livestreams"
         tools:layout="@layout/fragment_livestreams">
         <action
-            android:id="@+id/action_livestreamListFragment_to_exoPlayerFragment"
-            app:destination="@id/exoPlayerFragment" />
+            android:id="@+id/action_livestreamListFragment_to_playerActivity"
+            app:destination="@id/playerActivity"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/eventsListFragment"
@@ -57,7 +77,11 @@
         tools:layout="@layout/fragment_events_list">
         <action
             android:id="@+id/action_eventsListFragment_to_eventDetailsFragment"
-            app:destination="@id/eventDetailsFragment" />
+            app:destination="@id/eventDetailsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <argument
             android:name="conference"
             app:argType="de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference" />
@@ -77,7 +101,11 @@
         tools:layout="@layout/fragment_exo_player">
         <argument
             android:name="playbackItem"
-            app:argType="de.nicidienase.chaosflix.touch.playback.PlaybackItem" />
+            app:argType="de.nicidienase.chaosflix.touch.playback.PlaybackItem"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/mediathekFragment"
@@ -95,7 +123,11 @@
         tools:layout="@layout/fragment_events_list">
         <action
             android:id="@+id/action_searchFragment_to_eventDetailsFragment"
-            app:destination="@id/eventDetailsFragment" />
+            app:destination="@id/eventDetailsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <argument
             android:name="query"
             app:argType="string" />
