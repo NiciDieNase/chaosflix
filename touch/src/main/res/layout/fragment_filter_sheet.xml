@@ -23,10 +23,11 @@
             app:layout_constraintEnd_toEndOf="parent">
             <ImageButton
                 android:id="@+id/button_close"
-                android:src="@drawable/ic_dialog_close_dark"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:src="@drawable/ic_chevron_down"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginEnd="8dp"
+                android:background="@color/transparent"
                 app:closeIconEnabled="true"
                 android:layout_gravity="end"/>
         </androidx.appcompat.widget.Toolbar>
