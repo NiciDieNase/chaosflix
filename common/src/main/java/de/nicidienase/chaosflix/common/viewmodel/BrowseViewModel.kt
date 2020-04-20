@@ -104,7 +104,7 @@ class BrowseViewModel(
                 ?.filter {
                     text == null
                             || text.isBlank()
-                            || it.getFilteredProperties().any { it.contains(text) }
+                            || it.getFilteredProperties().any { it.contains(text,ignoreCase = true) }
                 }
                 ?.filter {
                     tags.isEmpty()
