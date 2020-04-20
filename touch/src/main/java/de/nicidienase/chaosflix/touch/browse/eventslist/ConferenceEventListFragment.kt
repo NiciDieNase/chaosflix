@@ -53,10 +53,14 @@ class ConferenceEventListFragment : EventsListFragment() {
                             setOnCloseIconClickListener {
                                 viewModel.filterText.postValue("")
                             }
-                            binding.filterChipGroup.addView(this)
                             filterTextChip = this
                         }
-                        textChip.text = filter.text
+                        textChip.text = "Search: ${filter.text}"
+                        binding.filterChipGroup.apply {
+                            if(!contains(textChip)){
+                                addView(textChip)
+                            }
+                        }
                     } else {
                         filterTextChip?.let {
                             binding.filterChipGroup.removeView(it)
@@ -66,7 +70,7 @@ class ConferenceEventListFragment : EventsListFragment() {
                     filterTagChips.values.forEach { binding.filterChipGroup.removeView(it) }
                     for(tag in filter.tags){
                         val chip = filterTagChips[tag] ?: Chip(requireContext()).apply {
-                            text = tag
+                            text = "Tag: $tag"
                             isCloseIconVisible = true
                             setOnCloseIconClickListener {
                                 viewModel.filterTags.postValue(
@@ -95,6 +99,12 @@ class ConferenceEventListFragment : EventsListFragment() {
         binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.updateEventsForConference(args.conference)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        filterTextChip = null
+        filterTagChips.clear()
     }
 
     companion object {
