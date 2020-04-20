@@ -78,6 +78,10 @@ object ChaosflixUtil {
     }
 
     fun areTagsUsefull(events: List<Event>, acronym: String): Boolean {
+        return getUsefullTags(events, acronym).size > 2
+    }
+
+    fun getUsefullTags(events: List<Event>, acronym: String): List<String>{
         val tagList = events.map { it.tags ?: emptyArray() }
                 .toTypedArray()
                 .flatten()
@@ -87,11 +91,10 @@ object ChaosflixUtil {
         for (tag in tagList.filterNotNull()) {
             tagCount[tag] = tagCount[tag]?.plus(1) ?: 1
         }
-        val usefulTags = tagCount.keys
+        return tagCount.keys
                 .filter { tagCount[it]!! < events.size - 1 }
                 .filter { tagCount[it]!! > 1 }
                 .filter { it.length >= 3 }
-        return usefulTags.size > 2
     }
 
     fun getStringForTag(tag: String): String {

@@ -1,5 +1,7 @@
 package de.nicidienase.chaosflix.touch.browse.eventslist
 
+import android.util.Log
+import androidx.core.os.bundleOf
 import androidx.core.view.contains
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -12,14 +14,9 @@ import de.nicidienase.chaosflix.touch.databinding.FragmentEventsListBinding
 class ConferenceEventListFragment : EventsListFragment() {
 
     private val args: ConferenceEventListFragmentArgs by navArgs()
-    private val filterTextChip: Chip by lazy {
-        Chip(requireContext()).apply {
-            isCloseIconVisible = true
-            setOnCloseIconClickListener {
-                viewModel.filterText.postValue("")
-            }
-        }
-    }
+    private var filterTextChip: Chip? = null
+    private val filterTagChips: MutableMap<String, Chip> = mutableMapOf()
+
 
     override fun navigateToDetails(event: Event) {
         findNavController().navigate(ConferenceEventListFragmentDirections.actionEventsListFragmentToEventDetailsFragment(eventGuid = event.guid))
@@ -46,21 +43,61 @@ class ConferenceEventListFragment : EventsListFragment() {
                     showSnackbar(it, binding)
                 }
             })
-            viewModel.filterText.observe(viewLifecycleOwner, Observer { filterText ->
-                val chip = filterTextChip
-                if (filterText.isNullOrBlank()) {
-                    binding.filterChipGroup.removeView(chip)
-                } else {
-                    chip.text = "Filter: $filterText"
-                    if (!binding.filterChipGroup.contains(filterTextChip)) {
-                        binding.filterChipGroup.addView(filterTextChip)
+            viewModel.filter.observe(viewLifecycleOwner, Observer { filter ->
+                Log.d(TAG, "Current filter: $filter")
+                if(filter != null){
+                    val currentFilter = viewModel.filter.value
+                    if(!currentFilter?.text.isNullOrBlank()){
+                        val textChip = filterTextChip ?: Chip(requireContext()).apply {
+                            isCloseIconVisible = true
+                            setOnCloseIconClickListener {
+                                viewModel.filterText.postValue("")
+                            }
+                            binding.filterChipGroup.addView(this)
+                            filterTextChip = this
+                        }
+                        textChip.text = filter.text
+                    } else {
+                        filterTextChip?.let {
+                            binding.filterChipGroup.removeView(it)
+                        }
+                    }
+
+                    filterTagChips.values.forEach { binding.filterChipGroup.removeView(it) }
+                    for(tag in filter.tags){
+                        val chip = filterTagChips[tag] ?: Chip(requireContext()).apply {
+                            text = tag
+                            isCloseIconVisible = true
+                            setOnCloseIconClickListener {
+                                viewModel.filterTags.postValue(
+                                        viewModel.filterTags.value?.minus(tag) ?: emptySet()
+                                )
+                            }
+                            binding.filterChipGroup.addView(this)
+                            filterTagChips[tag] = this
+                        }
+                        if(!binding.filterChipGroup.contains(chip)){
+                            binding.filterChipGroup.addView(chip)
+                        }
                     }
                 }
             })
+
+            binding.filterFab.setOnClickListener {
+                val filterBottomSheet = FilterBottomSheet()
+                filterBottomSheet.arguments = bundleOf(
+                        "conference" to conference
+                )
+                filterBottomSheet.show(childFragmentManager, null)
+            }
         }
         binding.swipeRefreshLayout.isEnabled = true
         binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.updateEventsForConference(args.conference)
         }
+    }
+
+    companion object {
+        private val TAG = ConferenceEventListFragment::class.java.simpleName
     }
 }
