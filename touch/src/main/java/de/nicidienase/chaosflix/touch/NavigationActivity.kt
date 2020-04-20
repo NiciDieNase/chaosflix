@@ -41,11 +41,11 @@ class NavigationActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             if (noToolbarDestinations.contains(destination.id)) {
-                supportActionBar?.hide()
-//                binding.toolbar.visibility = View.GONE
+//                supportActionBar?.hide()
+                binding.toolbar.visibility = View.GONE
             } else {
-                supportActionBar?.show()
-//                binding.toolbar.visibility = View.VISIBLE
+//                supportActionBar?.show()
+                binding.toolbar.visibility = View.VISIBLE
             }
             if (noBottomNavDestinations.contains(destination.id)) {
                 binding.bottomNavigation.visibility = View.GONE
