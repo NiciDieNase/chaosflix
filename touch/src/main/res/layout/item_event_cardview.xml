@@ -21,14 +21,14 @@
 			app:cardCornerRadius="4dp"
 			android:layout_margin="4dp"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
+			android:layout_height="match_parent"
 			android:layout_gravity="center"
 			android:foreground="?android:attr/selectableItemBackground">
 
 			<androidx.constraintlayout.widget.ConstraintLayout
 				android:id="@+id/related_item_layout"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content">
+				android:layout_height="match_parent">
 
 				<androidx.appcompat.widget.AppCompatImageView
 					android:id="@+id/imageView"
@@ -52,11 +52,11 @@
 					android:id="@+id/title_text"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
-					android:maxHeight="100dp"
 					android:layout_marginStart="8dp"
 					android:layout_marginTop="8dp"
 					android:layout_marginEnd="8dp"
 					android:layout_marginBottom="8dp"
+					android:maxHeight="100dp"
 					android:text="@{event.title}"
 					android:textAppearance="@style/TextAppearance.AppCompat.Medium"
 					app:autoSizeMaxTextSize="20sp"
@@ -64,8 +64,10 @@
 					app:layout_constraintBottom_toTopOf="@+id/subtitle_text"
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintHorizontal_bias="1.0"
+					app:layout_constraintVertical_chainStyle="packed"
 					app:layout_constraintStart_toEndOf="@+id/imageView"
 					app:layout_constraintTop_toBottomOf="@+id/conference_name_text"
+					app:layout_constraintVertical_bias="0.0"
 					tools:text="This is a very long title text that propably won't fit in one line, maybe even need three." />
 
 				<androidx.appcompat.widget.AppCompatTextView
@@ -82,6 +84,7 @@
 					android:textStyle="italic"
 					app:autoSizeMaxTextSize="15sp"
 					app:autoSizeTextType="uniform"
+					app:layout_constraintTop_toBottomOf="@id/title_text"
 					app:layout_constraintBottom_toBottomOf="parent"
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintStart_toEndOf="@+id/imageView"
