@@ -81,7 +81,7 @@ object ChaosflixUtil {
         return getUsefullTags(events, acronym).size > 2
     }
 
-    fun getUsefullTags(events: List<Event>, acronym: String): List<String>{
+    fun getUsefullTags(events: List<Event>, acronym: String): List<String> {
         val tagList = events.map { it.tags ?: emptyArray() }
                 .toTypedArray()
                 .flatten()

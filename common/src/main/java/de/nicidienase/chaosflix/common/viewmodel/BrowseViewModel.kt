@@ -39,10 +39,10 @@ class BrowseViewModel(
 
     val filter: LiveData<Filter> by lazy {
         val mld = MediatorLiveData<Filter>()
-        mld.addSource(filterTags){
+        mld.addSource(filterTags) {
             mld.postValue(Filter(text = filterText.value ?: "", tags = it))
         }
-        mld.addSource(filterText){
+        mld.addSource(filterText) {
             mld.postValue(Filter(text = it, tags = filterTags.value ?: emptySet()))
         }
         mld
@@ -89,7 +89,7 @@ class BrowseViewModel(
         val mediator = MediatorLiveData<List<Event>>()
         mediator.addSource(filter) {
             val currentEvents = events.value
-            if(currentEvents != null && it != null){
+            if (currentEvents != null && it != null) {
                 mediator.postValue(filterEvents(currentEvents, text = it.text, tags = it.tags))
             }
         }
@@ -102,13 +102,13 @@ class BrowseViewModel(
     private fun filterEvents(events: List<Event>?, text: String?, tags: Set<String>): List<Event>? {
         return events
                 ?.filter {
-                    text == null
-                            || text.isBlank()
-                            || it.getFilteredProperties().any { it.contains(text,ignoreCase = true) }
+                    text == null ||
+                            text.isBlank() ||
+                            it.getFilteredProperties().any { it.contains(text, ignoreCase = true) }
                 }
                 ?.filter {
-                    tags.isEmpty()
-                            || it.tags?.toHashSet()?.containsAll(tags) ?: false
+                    tags.isEmpty() ||
+                            it.tags?.toHashSet()?.containsAll(tags) ?: false
                 }
     }
 
@@ -208,8 +208,8 @@ class BrowseViewModel(
     }
 
     data class Filter(
-            val text: String,
-            val tags: Set<String>
+        val text: String,
+        val tags: Set<String>
     )
 
     companion object {

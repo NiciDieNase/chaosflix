@@ -39,7 +39,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         conference?.let { conf ->
             viewModel.getUsefullTags(conf).observe(viewLifecycleOwner, Observer { tags ->
                 filterTagChips.forEach {
-                    if(!tags.contains(it.key)){
+                    if (!tags.contains(it.key)) {
                         binding.tagChipGroup.removeView(it.value)
                         filterTagChips.remove(it.key)
                     }
@@ -49,7 +49,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
                         text = tag
                         isCheckable = true
                         setOnCheckedChangeListener { _, isChecked ->
-                            if(isChecked){
+                            if (isChecked) {
                                 val newTags = (viewModel.filterTags.value ?: emptySet()).plus(tag)
                                 viewModel.filterTags.postValue(newTags)
                             } else {
@@ -59,7 +59,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
                         }
                         filterTagChips[tag] = this
                     }
-                    if(!binding.tagChipGroup.contains(chip)){
+                    if (!binding.tagChipGroup.contains(chip)) {
                         binding.tagChipGroup.addView(chip)
                     }
                 }

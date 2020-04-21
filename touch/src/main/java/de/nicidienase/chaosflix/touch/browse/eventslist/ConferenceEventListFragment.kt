@@ -17,7 +17,6 @@ class ConferenceEventListFragment : EventsListFragment() {
     private var filterTextChip: Chip? = null
     private val filterTagChips: MutableMap<String, Chip> = mutableMapOf()
 
-
     override fun navigateToDetails(event: Event) {
         findNavController().navigate(ConferenceEventListFragmentDirections.actionEventsListFragmentToEventDetailsFragment(eventGuid = event.guid))
     }
@@ -45,9 +44,9 @@ class ConferenceEventListFragment : EventsListFragment() {
             })
             viewModel.filter.observe(viewLifecycleOwner, Observer { filter ->
                 Log.d(TAG, "Current filter: $filter")
-                if(filter != null){
+                if (filter != null) {
                     val currentFilter = viewModel.filter.value
-                    if(!currentFilter?.text.isNullOrBlank()){
+                    if (!currentFilter?.text.isNullOrBlank()) {
                         val textChip = filterTextChip ?: Chip(requireContext()).apply {
                             isCloseIconVisible = true
                             setOnCloseIconClickListener {
@@ -57,7 +56,7 @@ class ConferenceEventListFragment : EventsListFragment() {
                         }
                         textChip.text = "Search: ${filter.text}"
                         binding.filterChipGroup.apply {
-                            if(!contains(textChip)){
+                            if (!contains(textChip)) {
                                 addView(textChip)
                             }
                         }
@@ -68,7 +67,7 @@ class ConferenceEventListFragment : EventsListFragment() {
                     }
 
                     filterTagChips.values.forEach { binding.filterChipGroup.removeView(it) }
-                    for(tag in filter.tags){
+                    for (tag in filter.tags) {
                         val chip = filterTagChips[tag] ?: Chip(requireContext()).apply {
                             text = "Tag: $tag"
                             isCloseIconVisible = true
@@ -80,7 +79,7 @@ class ConferenceEventListFragment : EventsListFragment() {
                             binding.filterChipGroup.addView(this)
                             filterTagChips[tag] = this
                         }
-                        if(!binding.filterChipGroup.contains(chip)){
+                        if (!binding.filterChipGroup.contains(chip)) {
                             binding.filterChipGroup.addView(chip)
                         }
                     }
