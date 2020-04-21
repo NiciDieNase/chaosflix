@@ -49,11 +49,10 @@ abstract class EventsListFragment : Fragment() {
         binding.list.layoutManager = layoutManager
         eventAdapter = EventRecyclerViewAdapter { navigateToDetails(it) }
         eventAdapter.setHasStableIds(true)
-        binding.list.adapter = eventAdapter
-//        layoutManager?.let {
-//            val itemDecoration = DividerItemDecoration(binding.list.context, it.orientation)
-//            binding.list.addItemDecoration(itemDecoration)
-//        }
+        binding.list.apply {
+            setHasFixedSize(true)
+            adapter = eventAdapter
+        }
         binding.swipeRefreshLayout.isEnabled = false
         binding.filterFab.hide()
         setupEvents(binding)

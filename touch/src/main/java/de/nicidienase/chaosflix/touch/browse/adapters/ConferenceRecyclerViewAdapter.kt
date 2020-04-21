@@ -2,25 +2,16 @@ package de.nicidienase.chaosflix.touch.browse.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil.ItemCallback
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.touch.databinding.ItemConferenceCardviewBinding
 
-class ConferenceRecyclerViewAdapter(private val mListener: (Conference) -> Unit) :
-        RecyclerView.Adapter<ConferenceRecyclerViewAdapter.ViewHolder>() {
-
-    var conferences: List<Conference> = emptyList()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
-
-    override fun getItemCount() = conferences.size
-
-    class ViewHolder(val binding: ItemConferenceCardviewBinding) : RecyclerView.ViewHolder(binding.root)
+class ConferenceRecyclerViewAdapter(private val mListener: (Conference) -> Unit) : ListAdapter<Conference, ConferenceRecyclerViewAdapter.ViewHolder>(conferenceDiffUtil) {
 
     override fun getItemId(position: Int): Long {
-        return conferences.get(position).id
+        return getItem(position).id
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,10 +20,18 @@ class ConferenceRecyclerViewAdapter(private val mListener: (Conference) -> Unit)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.conference = conferences[position]
-
+        holder.binding.conference = getItem(position)
         holder.binding.root.setOnClickListener { _ ->
-            mListener((conferences[position]))
+            mListener(getItem(position))
+        }
+    }
+
+    class ViewHolder(val binding: ItemConferenceCardviewBinding) : RecyclerView.ViewHolder(binding.root)
+
+    companion object {
+        private val conferenceDiffUtil = object : ItemCallback<Conference>() {
+            override fun areItemsTheSame(oldItem: Conference, newItem: Conference): Boolean = oldItem === newItem
+            override fun areContentsTheSame(oldItem: Conference, newItem: Conference): Boolean = oldItem.url == newItem.url
         }
     }
 }

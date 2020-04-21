@@ -49,7 +49,7 @@ class ConferenceGroupFragment : Fragment() {
             view.adapter = conferencesAdapter
             viewModel.getConferencesByGroup(conferenceGroup.id).observe(viewLifecycleOwner, Observer<List<Conference>> { conferenceList: List<Conference>? ->
                 if (conferenceList != null) {
-                    conferencesAdapter.conferences = conferenceList
+                    conferencesAdapter.submitList(conferenceList)
                     arguments?.getParcelable<Parcelable>(LAYOUTMANAGER_STATE)?.let {
                         layoutManager?.onRestoreInstanceState(it)
                     }
