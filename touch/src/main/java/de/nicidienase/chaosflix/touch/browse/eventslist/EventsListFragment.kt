@@ -29,7 +29,6 @@ abstract class EventsListFragment : Fragment() {
     protected lateinit var eventAdapter: EventRecyclerViewAdapter
     private var layoutManager: LinearLayoutManager? = null
     private var snackbar: Snackbar? = null
-    private var type = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

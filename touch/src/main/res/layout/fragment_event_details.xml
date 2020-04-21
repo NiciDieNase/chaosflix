@@ -138,7 +138,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:orientation="horizontal"
-					tools:listitem="@layout/related_event_cardview_layout"/>
+					tools:listitem="@layout/item_event_cardview"/>
 
 			</LinearLayout>
 		</androidx.core.widget.NestedScrollView>
