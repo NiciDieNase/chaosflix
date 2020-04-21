@@ -101,11 +101,7 @@
         tools:layout="@layout/fragment_exo_player">
         <argument
             android:name="playbackItem"
-            app:argType="de.nicidienase.chaosflix.touch.playback.PlaybackItem"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            app:argType="de.nicidienase.chaosflix.touch.playback.PlaybackItem"/>
     </fragment>
     <fragment
         android:id="@+id/mediathekFragment"
@@ -114,7 +110,11 @@
         tools:layout="@layout/fragment_mediathek">
         <action
             android:id="@+id/action_myChaosflixFragment_to_eventDetailsFragment"
-            app:destination="@id/eventDetailsFragment" />
+            app:destination="@id/eventDetailsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
