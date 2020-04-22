@@ -13,7 +13,7 @@
 
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="150dp">
 
 		<androidx.cardview.widget.CardView
 			android:id="@+id/card"
@@ -34,7 +34,7 @@
 					android:id="@+id/imageView"
 					imageUrl="@{event.thumbUrl}"
 					android:layout_width="0dp"
-					android:layout_height="100dp"
+					android:layout_height="120dp"
 					android:maxWidth="200dp"
 					android:adjustViewBounds="true"
 					android:contentDescription="@string/titleimage"
@@ -64,10 +64,10 @@
 					app:layout_constraintBottom_toTopOf="@+id/subtitle_text"
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintHorizontal_bias="1.0"
-					app:layout_constraintVertical_chainStyle="packed"
 					app:layout_constraintStart_toEndOf="@+id/imageView"
 					app:layout_constraintTop_toBottomOf="@+id/conference_name_text"
 					app:layout_constraintVertical_bias="0.0"
+					app:layout_constraintVertical_chainStyle="packed"
 					tools:text="This is a very long title text that propably won't fit in one line, maybe even need three." />
 
 				<androidx.appcompat.widget.AppCompatTextView
@@ -105,7 +105,7 @@
 					app:layout_constraintStart_toStartOf="@+id/title_text"
 					app:layout_constraintTop_toTopOf="parent"
 					tools:text="42c3: Don't panic"
-					tools:visibility="visible" />
+					tools:visibility="gone" />
 
 				<androidx.appcompat.widget.AppCompatTextView
 					android:id="@+id/duration"
