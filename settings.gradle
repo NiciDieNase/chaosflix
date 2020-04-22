@@ -1,3 +1,4 @@
+include ':app'
 include ':touch'
-include ':common'
 include ':leanback'
+include ':common'
