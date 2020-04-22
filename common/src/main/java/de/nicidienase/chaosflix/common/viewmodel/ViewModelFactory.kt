@@ -15,6 +15,7 @@ import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.StreamingRepository
 import de.nicidienase.chaosflix.common.mediadata.ThumbnailParser
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
+import de.nicidienase.chaosflix.touch.browse.cast.CastService
 
 class ViewModelFactory private constructor(context: Context) : ViewModelProvider.Factory {
 
@@ -23,49 +24,50 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
     private val database by lazy { ChaosflixDatabase.getInstance(context) }
     private val streamingRepository by lazy { StreamingRepository(apiFactory.streamingApi) }
     private val preferencesManager =
-        ChaosflixPreferenceManager(PreferenceManager.getDefaultSharedPreferences(context.applicationContext))
+            ChaosflixPreferenceManager(PreferenceManager.getDefaultSharedPreferences(context.applicationContext))
     private val offlineItemManager =
-        OfflineItemManager(
-            context.applicationContext,
-            database.offlineEventDao(),
-            preferencesManager
-        )
+            OfflineItemManager(
+                    context.applicationContext,
+                    database.offlineEventDao(),
+                    preferencesManager
+            )
     private val externalFilesDir = Environment.getExternalStorageDirectory()
     private val resourcesFacade by lazy { ResourcesFacade(context) }
     private val thumbnailParser by lazy { ThumbnailParser(apiFactory.client) }
+    private val castService: CastService by lazy { CastService() }
     val mediaRepository by lazy { MediaRepository(apiFactory.recordingApi, database) }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when (modelClass) {
             BrowseViewModel::class.java -> BrowseViewModel(
-                offlineItemManager,
-                mediaRepository,
-                database,
-                streamingRepository,
-                preferencesManager,
-                resourcesFacade) as T
+                    offlineItemManager,
+                    mediaRepository,
+                    database,
+                    streamingRepository,
+                    preferencesManager,
+                    resourcesFacade,
+                    castService) as T
             PlayerViewModel::class.java -> PlayerViewModel(database, thumbnailParser) as T
             DetailsViewModel::class.java -> DetailsViewModel(
-                database,
-                offlineItemManager,
-                preferencesManager,
-                mediaRepository
-            ) as T
+                    database,
+                    offlineItemManager,
+                    preferencesManager,
+                    mediaRepository,
+                    castService) as T
             PreferencesViewModel::class.java -> PreferencesViewModel(
-                mediaRepository,
-                database.watchlistItemDao(),
-                database.playbackProgressDao(),
-                externalFilesDir
-            ) as T
+                    mediaRepository,
+                    database.watchlistItemDao(),
+                    database.playbackProgressDao(),
+                    externalFilesDir) as T
             FavoritesImportViewModel::class.java -> FavoritesImportViewModel(
-                mediaRepository
+                    mediaRepository
             ) as T
             SplashViewModel::class.java -> SplashViewModel(mediaRepository) as T
             else -> throw UnsupportedOperationException(
-                "The requested ViewModel is currently unsupported. " +
-                        "Please make sure to implement are correct creation of it. " +
-                        " Request: ${modelClass.canonicalName}"
+                    "The requested ViewModel is currently unsupported. " +
+                            "Please make sure to implement are correct creation of it. " +
+                            " Request: ${modelClass.canonicalName}"
             )
         }
     }

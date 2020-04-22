@@ -159,10 +159,6 @@ dependencies {
     implementation 'androidx.mediarouter:mediarouter:1.1.0'
     implementation 'com.google.android.material:material:1.2.0-alpha05'
 
-    noFreeImplementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
-    noFreeImplementation('pl.droidsonroids:casty:1.0.8') {
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-    }
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0'
     implementation('com.mikepenz:aboutlibraries:6.1.1@aar') {
         transitive = true

@@ -16,19 +16,16 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
-import de.nicidienase.chaosflix.touch.browse.cast.CastService
 import de.nicidienase.chaosflix.touch.databinding.ActivityNavigationBinding
 
 class NavigationActivity : AppCompatActivity() {
 
-    private lateinit var castService: CastService
+    private lateinit var viewModel: BrowseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityNavigationBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        castService = CastService(this)
 
         val navController = findNavController(R.id.nav_host)
         binding.bottomNavigation.setupWithNavController(navController)
@@ -54,7 +51,7 @@ class NavigationActivity : AppCompatActivity() {
             }
         }
 
-        val viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(this)).get(BrowseViewModel::class.java)
+        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(this)).get(BrowseViewModel::class.java)
         viewModel.getLivestreams().observe(this, Observer {
             if (it.isEmpty()) {
                 binding.bottomNavigation.removeBadge(R.id.livestreamListFragment)
@@ -63,6 +60,7 @@ class NavigationActivity : AppCompatActivity() {
                 binding.bottomNavigation.getOrCreateBadge(R.id.livestreamListFragment).number = roomCount
             }
         })
+        viewModel.attachActivityToCastService(this)
 
         if (Intent.ACTION_SEARCH == intent?.action) {
             intent.getStringExtra(SearchManager.QUERY)?.also { query ->
@@ -84,7 +82,7 @@ class NavigationActivity : AppCompatActivity() {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.main, menu)
         menu?.let {
-            castService.addMediaRouteMenuItem(it)
+            viewModel.addMediaRouteMenuItem(it)
         }
         return true
     }

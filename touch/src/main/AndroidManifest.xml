@@ -16,8 +16,8 @@
         android:label="${label}"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:label,android:theme"
         android:fullBackupContent="true"
+        tools:replace="android:label,android:theme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".SplashActivity"

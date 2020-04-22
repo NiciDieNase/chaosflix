@@ -18,6 +18,7 @@ import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
+import de.nicidienase.chaosflix.touch.browse.cast.CastService
 import java.io.File
 import java.util.ArrayList
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +29,8 @@ class DetailsViewModel(
     private val database: ChaosflixDatabase,
     private val offlineItemManager: OfflineItemManager,
     private val preferencesManager: ChaosflixPreferenceManager,
-    private val mediaRepository: MediaRepository
+    private val mediaRepository: MediaRepository,
+    private val castService: CastService
 ) : ViewModel() {
 
     private var eventId = MutableLiveData<Long>(0)
@@ -220,10 +222,18 @@ class DetailsViewModel(
                 putLong(PROGRESS, it.progress)
             }
         }
-        if (preferencesManager.externalPlayer) {
-            state.postValue(LiveEvent(State.PlayExternal, bundle))
-        } else {
-            state.postValue(LiveEvent(State.PlayOnlineItem, bundle))
+        when {
+            castService.connected -> {
+                withContext(Dispatchers.Main) {
+                    castService.loadMediaAndPlay(recording, event)
+                }
+            }
+            preferencesManager.externalPlayer -> {
+                state.postValue(LiveEvent(State.PlayExternal, bundle))
+            }
+            else -> {
+                state.postValue(LiveEvent(State.PlayOnlineItem, bundle))
+            }
         }
     }
 

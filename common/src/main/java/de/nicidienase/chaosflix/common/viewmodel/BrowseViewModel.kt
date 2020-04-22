@@ -1,6 +1,8 @@
 package de.nicidienase.chaosflix.common.viewmodel
 
 import android.util.Log
+import android.view.Menu
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -25,6 +27,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConferen
 import de.nicidienase.chaosflix.common.util.LiveDataMerger
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
+import de.nicidienase.chaosflix.touch.browse.cast.CastService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -34,7 +37,8 @@ class BrowseViewModel(
     private val database: ChaosflixDatabase,
     private val streamingRepository: StreamingRepository,
     private val preferencesManager: ChaosflixPreferenceManager,
-    private val resources: ResourcesFacade
+    private val resources: ResourcesFacade,
+    private val castService: CastService
 ) : ViewModel() {
 
     val filter: LiveData<Filter> by lazy {
@@ -61,6 +65,11 @@ class BrowseViewModel(
             offlineItemManager.addDownloadRefs(downloadRefs)
         }
     }
+
+    fun attachActivityToCastService(activity: AppCompatActivity) {
+        castService.attachToActivity(activity)
+    }
+    fun addMediaRouteMenuItem(menu: Menu) = castService.addMediaRouteMenuItem(menu)
 
     fun getConferenceGroups(): LiveData<List<ConferenceGroup>> =
             database.conferenceGroupDao().getAll()

@@ -12,17 +12,18 @@ import de.nicidienase.chaosflix.touch.browse.streaming.StreamingItem
 import pl.droidsonroids.casty.Casty
 import pl.droidsonroids.casty.MediaData
 
-class CastService(activity: AppCompatActivity, withMiniController: Boolean = true) : LifecycleObserver {
+class CastService() : LifecycleObserver {
 
-    private var casty: Casty? = if (withMiniController) {
-        Casty.create(activity).withMiniController()
-    } else {
-        Casty.create(activity)
-    }
+    private var casty: Casty? = null
     val connected: Boolean
         get() = casty?.isConnected ?: false
 
-    init {
+    fun attachToActivity(activity: AppCompatActivity, withMiniController: Boolean = false) {
+        casty = if (withMiniController) {
+            Casty.create(activity).withMiniController()
+        } else {
+            Casty.create(activity)
+        }
         activity.lifecycle.addObserver(this)
     }
 
@@ -32,24 +33,28 @@ class CastService(activity: AppCompatActivity, withMiniController: Boolean = tru
     }
 
     fun castStream(streamingItem: StreamingItem, streamUrl: StreamUrl, contentKey: String) {
-        val contentType = getContentTypeForKey(contentKey)
-        val mediaData = MediaData.Builder(streamUrl.url)
-            .setStreamType(MediaData.STREAM_TYPE_BUFFERED)
-            .setContentType(contentType)
-            .setTitle(streamingItem.conference.conference)
-            .setSubtitle(streamingItem.room.display)
-            .addPhotoUrl(streamingItem.room.thumb)
-            .build()
-        casty?.let { it.player.loadMediaAndPlay(mediaData) }
+        casty?.let {
+            val contentType = getContentTypeForKey(contentKey)
+            val mediaData = MediaData.Builder(streamUrl.url)
+                    .setStreamType(MediaData.STREAM_TYPE_BUFFERED)
+                    .setContentType(contentType)
+                    .setTitle(streamingItem.conference.conference)
+                    .setSubtitle(streamingItem.room.display)
+                    .addPhotoUrl(streamingItem.room.thumb)
+                    .build()
+            it.player?.loadMediaAndPlay(mediaData)
+        }
     }
 
     fun loadMediaAndPlay(recording: Recording, event: Event) {
-        val mediaData = buildCastMediaData(recording, event)
-        casty?.let { it.player.loadMediaAndPlay(mediaData) }
+        casty?.let {
+            val mediaData = buildCastMediaData(recording, event)
+            it.player?.loadMediaAndPlay(mediaData)
+        }
     }
 
     fun addMediaRouteMenuItem(menu: Menu) {
-        casty?.let { it.addMediaRouteMenuItem(menu) }
+        casty?.addMediaRouteMenuItem(menu)
     }
 
     private fun getContentTypeForKey(s: String): String? {
