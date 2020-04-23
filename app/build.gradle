@@ -1,6 +1,10 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-android-extensions'
+//    id 'com.github.triplet.play' version '2.6.2'
+}
 
 String appName = "Chaosflix"
 String versionString = new File("versionfile").text.trim()
@@ -94,6 +98,7 @@ configurations {
 }
 
 dependencies {
-    implementation project(':touch')
-    implementation project(':leanback')
+//    implementation project(':touch')
+//    implementation project(':leanback')
+    implementation project(':common')
 }
