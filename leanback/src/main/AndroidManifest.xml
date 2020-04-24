@@ -48,6 +48,7 @@
                     android:host="event"/>
             </intent-filter>
         </activity>
+
         <activity
             android:name=".settings.ChaosflixSettingsActivity"
             android:theme="@style/ChaosflixLeanbackPreferences" />

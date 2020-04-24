@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 
 @Dao
 interface PlaybackProgressDao {
@@ -39,6 +40,9 @@ interface PlaybackProgressDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveProgress(progress: PlaybackProgress): Long
+
+    @Update
+    fun updateProgress(progress: PlaybackProgress)
 
     @Query("DELETE from playback_progress WHERE event_guid = :guid")
     fun deleteItem(guid: String)

@@ -19,11 +19,11 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import de.nicidienase.chaosflix.touch.browse.cast.CastService
-import java.io.File
-import java.util.ArrayList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.util.ArrayList
 
 class DetailsViewModel(
     private val database: ChaosflixDatabase,
@@ -225,7 +225,7 @@ class DetailsViewModel(
         when {
             castService.connected -> {
                 withContext(Dispatchers.Main) {
-                    castService.loadMediaAndPlay(recording, event)
+                    castService.loadMediaAndPlay(recording, event, progress)
                 }
             }
             preferencesManager.externalPlayer -> {

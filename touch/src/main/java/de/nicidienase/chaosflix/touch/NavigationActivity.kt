@@ -60,13 +60,18 @@ class NavigationActivity : AppCompatActivity() {
                 binding.bottomNavigation.getOrCreateBadge(R.id.livestreamListFragment).number = roomCount
             }
         })
-        viewModel.attachActivityToCastService(this)
 
         if (Intent.ACTION_SEARCH == intent?.action) {
             intent.getStringExtra(SearchManager.QUERY)?.also { query ->
                 findNavController(R.id.nav_host).navigate(R.id.searchFragment, bundleOf("query" to query))
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.attachActivityToCastService(this)
+
     }
 
     override fun onNewIntent(intent: Intent?) {

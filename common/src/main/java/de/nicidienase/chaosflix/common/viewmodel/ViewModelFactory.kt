@@ -16,10 +16,16 @@ import de.nicidienase.chaosflix.common.mediadata.StreamingRepository
 import de.nicidienase.chaosflix.common.mediadata.ThumbnailParser
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import de.nicidienase.chaosflix.touch.browse.cast.CastService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 class ViewModelFactory private constructor(context: Context) : ViewModelProvider.Factory {
 
     val apiFactory = ApiFactory.getInstance(context.resources.getString(R.string.recording_url), context.cacheDir)
+
+    private val supervisorJob = SupervisorJob()
+    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO + supervisorJob)
 
     private val database by lazy { ChaosflixDatabase.getInstance(context) }
     private val streamingRepository by lazy { StreamingRepository(apiFactory.streamingApi) }
@@ -34,7 +40,7 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
     private val externalFilesDir = Environment.getExternalStorageDirectory()
     private val resourcesFacade by lazy { ResourcesFacade(context) }
     private val thumbnailParser by lazy { ThumbnailParser(apiFactory.client) }
-    private val castService: CastService by lazy { CastService() }
+    private val castService: CastService by lazy { CastService(database.playbackProgressDao(), coroutineScope) }
     val mediaRepository by lazy { MediaRepository(apiFactory.recordingApi, database) }
 
     @Suppress("UNCHECKED_CAST")
