@@ -24,18 +24,18 @@ import kotlinx.coroutines.launch
 import pl.droidsonroids.casty.Casty
 import pl.droidsonroids.casty.MediaData
 
-class CastService(
+class CastServiceImpl(
     private val playbackProgressDao: PlaybackProgressDao,
     private val scope: CoroutineScope
-) : LifecycleObserver {
+) : LifecycleObserver, CastService {
 
     private var currentEvent: Event? = null
 
     private var casty: Casty? = null
-    val connected: Boolean
+    override val connected: Boolean
         get() = casty?.isConnected ?: false
 
-    fun attachToActivity(activity: AppCompatActivity) {
+    override fun attachToActivity(activity: AppCompatActivity) {
         casty = Casty.create(activity)
         activity.lifecycle.addObserver(this)
         currentEvent?.let {
@@ -48,7 +48,7 @@ class CastService(
         casty = null
     }
 
-    fun castStream(streamingItem: StreamingItem, streamUrl: StreamUrl, contentKey: String) {
+    override fun castStream(streamingItem: StreamingItem, streamUrl: StreamUrl, contentKey: String) {
         casty?.let {
             val contentType = getContentTypeForKey(contentKey)
             val mediaData = MediaData.Builder(streamUrl.url)
@@ -62,7 +62,7 @@ class CastService(
         }
     }
 
-    fun loadMediaAndPlay(recording: Recording, event: Event, progress: PlaybackProgress?) {
+    override fun loadMediaAndPlay(recording: Recording, event: Event, progress: PlaybackProgress?) {
         Log.d(TAG, "Casting: ${event.title}")
         currentEvent = event
         casty?.let {
@@ -80,7 +80,7 @@ class CastService(
         sessionManager?.currentCastSession?.let { sessionListener.attachProgressListener(it) }
     }
 
-    fun addMediaRouteMenuItem(menu: Menu) {
+    override fun addMediaRouteMenuItem(menu: Menu) {
         casty?.addMediaRouteMenuItem(menu)
     }
 
@@ -180,6 +180,6 @@ class CastService(
     }
 
     companion object {
-        private val TAG = CastService::class.java.simpleName
+        private val TAG = CastServiceImpl::class.java.simpleName + "NoFree"
     }
 }

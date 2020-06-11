@@ -16,6 +16,7 @@ import de.nicidienase.chaosflix.common.mediadata.StreamingRepository
 import de.nicidienase.chaosflix.common.mediadata.ThumbnailParser
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import de.nicidienase.chaosflix.touch.browse.cast.CastService
+import de.nicidienase.chaosflix.touch.browse.cast.CastServiceImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -40,7 +41,7 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
     private val externalFilesDir = Environment.getExternalStorageDirectory()
     private val resourcesFacade by lazy { ResourcesFacade(context) }
     private val thumbnailParser by lazy { ThumbnailParser(apiFactory.client) }
-    private val castService: CastService by lazy { CastService(database.playbackProgressDao(), coroutineScope) }
+    private val castService: CastService by lazy { CastServiceImpl(database.playbackProgressDao(), coroutineScope) }
     val mediaRepository by lazy { MediaRepository(apiFactory.recordingApi, database) }
 
     @Suppress("UNCHECKED_CAST")
