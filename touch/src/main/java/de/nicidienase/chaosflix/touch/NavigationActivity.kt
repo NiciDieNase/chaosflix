@@ -71,7 +71,6 @@ class NavigationActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         viewModel.attachActivityToCastService(this)
-
     }
 
     override fun onNewIntent(intent: Intent?) {

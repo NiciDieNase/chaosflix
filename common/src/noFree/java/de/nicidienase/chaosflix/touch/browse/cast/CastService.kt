@@ -17,15 +17,17 @@ import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgressDao
 import de.nicidienase.chaosflix.touch.browse.streaming.StreamingItem
+import java.util.Date
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pl.droidsonroids.casty.Casty
 import pl.droidsonroids.casty.MediaData
-import java.util.Date
 
-class CastService(private val playbackProgressDao: PlaybackProgressDao,
-                  private val scope: CoroutineScope) : LifecycleObserver {
+class CastService(
+    private val playbackProgressDao: PlaybackProgressDao,
+    private val scope: CoroutineScope
+) : LifecycleObserver {
 
     private var currentEvent: Event? = null
 
@@ -107,8 +109,9 @@ class CastService(private val playbackProgressDao: PlaybackProgressDao,
     }
 
     private inner class SessionListener(
-            private val guid: String,
-            progress: PlaybackProgress?): SessionManagerListener<CastSession> {
+        private val guid: String,
+        progress: PlaybackProgress?
+    ) : SessionManagerListener<CastSession> {
 
         private lateinit var playbackProgress: PlaybackProgress
         init {
@@ -123,7 +126,6 @@ class CastService(private val playbackProgressDao: PlaybackProgressDao,
                         progress.apply { this.id = id }
                     }
                 }
-
             }
         }
 
@@ -144,7 +146,6 @@ class CastService(private val playbackProgressDao: PlaybackProgressDao,
             castSession.remoteMediaClient?.removeProgressListener(progressListener)
             castSession.remoteMediaClient?.addProgressListener(progressListener, 5000)
         }
-
 
         override fun onSessionStarted(p0: CastSession?, p1: String?) {
             Log.d(TAG, "onSessionStarted")
@@ -176,7 +177,6 @@ class CastService(private val playbackProgressDao: PlaybackProgressDao,
 
         override fun onSessionStartFailed(p0: CastSession?, p1: Int) {
         }
-
     }
 
     companion object {
