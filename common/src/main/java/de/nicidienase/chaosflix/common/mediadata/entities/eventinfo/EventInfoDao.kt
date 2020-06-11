@@ -6,7 +6,7 @@ import androidx.room.Query
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.BaseDao
 
 @Dao
-abstract class EventInfoDao: BaseDao<EventInfo>() {
+abstract class EventInfoDao : BaseDao<EventInfo>() {
 
     @Query("SELECT * FROM event_info")
     abstract fun getAll(): LiveData<List<EventInfo>>

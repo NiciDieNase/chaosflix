@@ -3,7 +3,6 @@ package de.nicidienase.chaosflix.common.mediadata.network
 import android.os.Build
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.BuildConfig
-import de.nicidienase.chaosflix.common.SingletonHolder2
 import de.nicidienase.chaosflix.common.SingletonHolder3
 import java.io.File
 import java.util.concurrent.TimeUnit

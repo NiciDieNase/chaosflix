@@ -2,16 +2,16 @@ package de.nicidienase.chaosflix.common.mediadata
 
 import de.nicidienase.chaosflix.common.mediadata.entities.eventinfo.EventInfo
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
+import java.util.Date
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.Date
 
 class EventInfoServiceTest {
 
-    private val apiFactory = ApiFactory.getInstance("https://api.media.ccc.de","https://c3voc.de", null)
+    private val apiFactory = ApiFactory.getInstance("https://api.media.ccc.de", "https://c3voc.de", null)
     private val api = apiFactory.eventInfoApi
 
     @BeforeEach
@@ -33,6 +33,4 @@ class EventInfoServiceTest {
         val partition = eventInfos.partition { it.startDate.after(now) }
         assertThat(partition.first.size, Matchers.lessThanOrEqualTo(partition.second.size))
     }
-
-
 }

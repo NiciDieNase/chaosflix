@@ -7,7 +7,7 @@
     - [touch] Link for events can be opened from details
 
 # 0.7.0
-    - [debug] im/export also for progess (not only bookmarks)
+    - [debug] im/export also for progress (not only bookmarks)
     - [debug] debug menu disabled by default
     - [touch] navigation rework
     - [touch] global search

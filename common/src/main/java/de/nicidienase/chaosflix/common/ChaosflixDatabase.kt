@@ -145,7 +145,6 @@ abstract class ChaosflixDatabase : RoomDatabase() {
                     `endDate` INTEGER NOT NULL,
                     `description` TEXT)""")
             }
-
         }
     }
 }

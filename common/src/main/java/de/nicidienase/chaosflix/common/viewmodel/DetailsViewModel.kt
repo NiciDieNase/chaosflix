@@ -19,11 +19,11 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import de.nicidienase.chaosflix.touch.browse.cast.CastService
+import java.io.File
+import java.util.ArrayList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.util.ArrayList
 
 class DetailsViewModel(
     private val database: ChaosflixDatabase,
@@ -280,15 +280,15 @@ class DetailsViewModel(
     }
 
     sealed class State {
-        object PlayOfflineItem: State()
-        object PlayOnlineItem: State()
-        object SelectRecording: State()
-        object DownloadRecording: State()
-        data class DisplayEvent(val event: Event): State()
-        object PlayExternal: State()
-        object Error: State()
-        object LoadingRecordings: State()
-        data class OpenCustomTab(val uri: Uri): State()
+        object PlayOfflineItem : State()
+        object PlayOnlineItem : State()
+        object SelectRecording : State()
+        object DownloadRecording : State()
+        data class DisplayEvent(val event: Event) : State()
+        object PlayExternal : State()
+        object Error : State()
+        object LoadingRecordings : State()
+        data class OpenCustomTab(val uri: Uri) : State()
     }
 
     private fun postStateWithEventAndRecordings(s: State, e: Event) {
@@ -301,7 +301,7 @@ class DetailsViewModel(
         }
     }
 
-    fun openLink()  {
+    fun openLink() {
         eventId.value?.let {
             viewModelScope.launch {
                 val eventSync = mediaRepository.getEventSync(it)
@@ -313,7 +313,7 @@ class DetailsViewModel(
     }
 
     private fun openCustomTab(link: String?) {
-        if(link != null) {
+        if (link != null) {
             try {
                 state.postValue(
                         LiveEvent(
@@ -321,7 +321,6 @@ class DetailsViewModel(
                         )
                 )
             } catch (e: Exception) {
-
             }
         }
     }

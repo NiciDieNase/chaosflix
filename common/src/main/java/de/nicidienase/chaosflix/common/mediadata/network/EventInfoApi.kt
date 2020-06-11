@@ -8,4 +8,3 @@ interface EventInfoApi {
     @GET("/eventkalender/events.json")
     suspend fun getVocEvents(): EventInfoWrapperDto
 }
-

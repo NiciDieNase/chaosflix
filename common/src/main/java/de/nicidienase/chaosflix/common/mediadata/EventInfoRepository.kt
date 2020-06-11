@@ -11,14 +11,15 @@ import java.util.Date
 import javax.net.ssl.SSLHandshakeException
 
 class EventInfoRepository(
-        private val api: EventInfoApi,
-        private val dao: EventInfoDao) {
+    private val api: EventInfoApi,
+    private val dao: EventInfoDao
+) {
 
     suspend fun updateMediaInfo() {
         val eventInfoWrapper = withNetworkErrorHandling {
             return@withNetworkErrorHandling api.getVocEvents()
         }
-        if(eventInfoWrapper != null) {
+        if (eventInfoWrapper != null) {
             val eventInfos = eventInfoWrapper.events.values.mapNotNull { EventInfo.fromVocEventDto(it) }
             dao.updateOrInsert(eventInfos)
         }

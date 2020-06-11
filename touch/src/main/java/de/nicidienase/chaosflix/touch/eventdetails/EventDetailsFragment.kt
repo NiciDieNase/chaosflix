@@ -381,10 +381,6 @@ class EventDetailsFragment : Fragment() {
                 viewModel.playInExternalPlayer()
                 return true
             }
-            R.id.action_frontend_link -> {
-                viewModel.openFrontendLink()
-                return true
-            }
             R.id.action_link -> {
                 viewModel.openLink()
                 return true
