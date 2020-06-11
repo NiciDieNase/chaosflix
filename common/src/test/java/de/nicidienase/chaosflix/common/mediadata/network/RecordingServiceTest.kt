@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 
 class RecordingServiceTest {
 
-    private val apiFactory = ApiFactory.getInstance("https://api.media.ccc.de", null)
+    private val apiFactory = ApiFactory.getInstance("https://api.media.ccc.de","https://c3voc.de", null)
     private val api = apiFactory.recordingApi
 
     @BeforeEach

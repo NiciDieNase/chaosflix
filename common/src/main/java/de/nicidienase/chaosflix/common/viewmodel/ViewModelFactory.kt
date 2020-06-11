@@ -23,7 +23,10 @@ import kotlinx.coroutines.SupervisorJob
 
 class ViewModelFactory private constructor(context: Context) : ViewModelProvider.Factory {
 
-    val apiFactory = ApiFactory.getInstance(context.resources.getString(R.string.recording_url), context.cacheDir)
+    val apiFactory = ApiFactory.getInstance(
+            context.resources.getString(R.string.recording_url),
+            context.resources.getString(R.string.event_info_url),
+            context.cacheDir)
 
     private val supervisorJob = SupervisorJob()
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO + supervisorJob)

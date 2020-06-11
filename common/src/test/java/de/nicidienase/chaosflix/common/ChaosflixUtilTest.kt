@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 
 class ChaosflixUtilTest {
 
-    val api = ApiFactory.getInstance("https://api.media.ccc.de", null).recordingApi
+    val api = ApiFactory.getInstance("https://api.media.ccc.de","https://c3voc.de", null).recordingApi
 
     @Test
     fun testGPN19() = genericTest("gpn19", false)
