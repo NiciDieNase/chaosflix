@@ -11,6 +11,7 @@ import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.ResourcesFacade
 import de.nicidienase.chaosflix.common.SingletonHolder
+import de.nicidienase.chaosflix.common.mediadata.EventInfoRepository
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.StreamingRepository
 import de.nicidienase.chaosflix.common.mediadata.ThumbnailParser
@@ -33,6 +34,7 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
 
     private val database by lazy { ChaosflixDatabase.getInstance(context) }
     private val streamingRepository by lazy { StreamingRepository(apiFactory.streamingApi) }
+    private val eventInfoRepository by lazy { EventInfoRepository(api = apiFactory.eventInfoApi, dao = database.eventInfoDao()) }
     private val preferencesManager =
             ChaosflixPreferenceManager(PreferenceManager.getDefaultSharedPreferences(context.applicationContext))
     private val offlineItemManager =
@@ -57,7 +59,8 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
                     streamingRepository,
                     preferencesManager,
                     resourcesFacade,
-                    castService) as T
+                    castService,
+                    eventInfoRepository) as T
             PlayerViewModel::class.java -> PlayerViewModel(database, thumbnailParser) as T
             DetailsViewModel::class.java -> DetailsViewModel(
                     database,
