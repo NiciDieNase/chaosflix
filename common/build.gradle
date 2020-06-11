@@ -22,6 +22,7 @@ android {
         }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'proguard-rules.pro'
 
         buildConfigField "String", "STREAMING_API_BASE_URL", "\"https://streaming.media.ccc.de\""
         buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/streams/v2.json\""

@@ -21,8 +21,7 @@
 #-renamesourcefileattribute SourceFile
 -ignorewarnings
 
--keep @interface androidx.support.annotation.Keep
--keep @interface androidx.room.Entity
+-keep @androidx.room.Entity public class *
 
 ## Start Retrofit-Rules
 # Retrofit does reflection on generic parameters. InnerClasses is required to use Signature and

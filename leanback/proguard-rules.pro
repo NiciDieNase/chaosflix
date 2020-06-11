@@ -53,7 +53,7 @@
 -dontwarn javax.annotation.**
 -dontwarn sun.misc.Unsafe
 -dontwarn okio.**
--keep class de.nicidienase.chaosflix.common.entities.** { *; }
+
 #retrofit
 -dontwarn retrofit2.**
 -keep class retrofit2.** { *; }

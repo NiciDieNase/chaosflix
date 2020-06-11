@@ -2,10 +2,12 @@ package de.nicidienase.chaosflix.touch.playback
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.annotation.Keep
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 
+@Keep
 data class PlaybackItem(val title: String, val subtitle: String, val eventGuid: String, val uri: String) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString() ?: "",
