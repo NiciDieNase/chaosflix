@@ -16,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -172,7 +173,7 @@ class EventDetailsFragment : Fragment() {
             val recording = liveEvent.data?.getParcelable<Recording>(DetailsViewModel.RECORDING)
             val localFile = liveEvent.data?.getString(DetailsViewModel.KEY_LOCAL_PATH)
             val selectItems: List<Recording>? = liveEvent.data?.getParcelableArrayList<Recording>(DetailsViewModel.KEY_SELECT_RECORDINGS)
-            when (liveEvent.state) {
+            when (val state = liveEvent.state) {
                 DetailsViewModel.State.PlayOfflineItem -> {
                     if (event != null && recording != null) {
                         playItem(event, recording, localFile)
@@ -211,10 +212,8 @@ class EventDetailsFragment : Fragment() {
                         }
                     }
                 }
-                DetailsViewModel.State.DisplayEvent -> {
-                    event?.let {
-                        findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentSelf(event.guid))
-                    }
+                is DetailsViewModel.State.DisplayEvent -> {
+                    findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentSelf(state.event.guid))
                 }
                 DetailsViewModel.State.PlayExternal -> {
                     recording?.recordingUrl?.let {
@@ -227,11 +226,16 @@ class EventDetailsFragment : Fragment() {
                 DetailsViewModel.State.LoadingRecordings -> {
                     // TODO: show loading indicator
                 }
+                is DetailsViewModel.State.OpenCustomTab -> {
+                    CustomTabsIntent.Builder()
+                            .setToolbarColor(resources.getColor(R.color.primary))
+                            .setStartAnimations(requireContext(), android.R.anim.fade_in, android.R.anim.fade_out)
+                            .setExitAnimations(requireContext(), android.R.anim.fade_in, android.R.anim.fade_out)
+                            .build()
+                            .launchUrl(requireContext(), state.uri)
+                }
             }
         })
-    }
-
-    private fun updateBookmark() {
     }
 
     private fun play() {
@@ -375,6 +379,14 @@ class EventDetailsFragment : Fragment() {
             }
             R.id.action_external_player -> {
                 viewModel.playInExternalPlayer()
+                return true
+            }
+            R.id.action_frontend_link -> {
+                viewModel.openFrontendLink()
+                return true
+            }
+            R.id.action_link -> {
+                viewModel.openLink()
                 return true
             }
             else -> return super.onOptionsItemSelected(item)

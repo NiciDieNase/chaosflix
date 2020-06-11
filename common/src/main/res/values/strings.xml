@@ -114,4 +114,7 @@
     <string name="delete_item">Delete Item</string>
     <string name="import_activity_label">Fahrplan-Import</string>
     <string name="select_all">Select all</string>
+    <string name="play_in_external_player">Play in external player</string>
+    <string name="open_link">Open Link</string>
+    <string name="share">Share</string>
 </resources>
