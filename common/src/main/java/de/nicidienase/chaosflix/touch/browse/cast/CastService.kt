@@ -11,8 +11,8 @@ import de.nicidienase.chaosflix.touch.browse.streaming.StreamingItem
 import kotlinx.coroutines.CoroutineScope
 
 abstract class CastService(
-        private val playbackProgressDao: PlaybackProgressDao,
-        private val scope: CoroutineScope
+        val playbackProgressDao: PlaybackProgressDao,
+        val scope: CoroutineScope
 ) {
     abstract val connected: Boolean
 
