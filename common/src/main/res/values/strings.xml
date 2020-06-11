@@ -25,6 +25,7 @@
     <string name="conferences">Conferences</string>
     <string name="recommendations">Recommendations</string>
     <string name="bookmarks">Bookmarks</string>
+    <string name="mediaplayer">Media-Player</string>
 
     <!--Watchlist-->
     <string name="watchlist_dialog_needed">new-watchlist</string>

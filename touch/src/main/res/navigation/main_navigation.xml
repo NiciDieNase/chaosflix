@@ -135,15 +135,15 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="de.nicidienase.chaosflix.touch.settings.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="@string/preferences" />
     <fragment
         android:id="@+id/aboutFragment"
         android:name="de.nicidienase.chaosflix.touch.about.AboutFragment"
-        android:label="AboutFragment" />
+        android:label="@string/about" />
     <activity
         android:id="@+id/playerActivity"
         android:name="de.nicidienase.chaosflix.touch.playback.PlayerActivity"
-        android:label="PlayerActivity" >
+        android:label="@string/mediaplayer" >
         <argument
             android:name="playbackItem"
             app:argType="de.nicidienase.chaosflix.touch.playback.PlaybackItem"/>
