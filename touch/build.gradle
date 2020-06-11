@@ -1,14 +1,17 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
+//    id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-android-extensions'
-    id 'com.github.triplet.play' version '2.6.2'
+//    id 'com.github.triplet.play' version '2.6.2'
     id "androidx.navigation.safeargs.kotlin"
 }
+apply from: "${rootProject.projectDir}/flavors.gradle"
 
-String appName = "Chaosflix"
-String versionString = new File("versionfile").text.trim()
+
+//String appName = "Chaosflix"
+//String versionString = new File("versionfile").text.trim()
 
 android {
 
@@ -16,85 +19,85 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "de.nicidienase.chaosflix"
+//        applicationId "de.nicidienase.chaosflix"
         minSdkVersion rootProject.ext.minSDK
         targetSdkVersion rootProject.ext.targetSDK
-        manifestPlaceholders = [label: appName]
+//        manifestPlaceholders = [label: appName]
         // odd for touch, even for leanback
         versionCode 1
-        versionName versionString
+//        versionName versionString
 
-        if(project.hasProperty("versionCode")){
-            versionCode = project.property("versionCode") as int
-            println "Setting VersionCode from property: $versionCode"
-        }
-        if(project.hasProperty("versionName")){
-            versionName = project.property("versionName") as String
-            println "Setting versionName from property: $versionName"
-        }
+//        if(project.hasProperty("versionCode")){
+//            versionCode = project.property("versionCode") as int
+//            println "Setting VersionCode from property: $versionCode"
+//        }
+//        if(project.hasProperty("versionName")){
+//            versionName = project.property("versionName") as String
+//            println "Setting versionName from property: $versionName"
+//        }
     }
 
-    signingConfigs {
-        //noinspection GroovyMissingReturnStatement, GroovyAssignabilityCheck
-        release {
-            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore.trim()).exists() && file(chaosflixKeystore.trim()).isFile()) {
-                println "Release app signing is configured: will sign APK"
-                storeFile file(chaosflixKeystore.trim())
-                storePassword chaosflixStorePassword.trim()
-                keyAlias chaosflixKeyName.trim()
-                keyPassword chaosflixKeyPassword.trim()
-            } else {
-                println "App signing data not found. Will not sign."
-            }
-        }
-    }
+//    signingConfigs {
+//        //noinspection GroovyMissingReturnStatement, GroovyAssignabilityCheck
+//        release {
+//            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore.trim()).exists() && file(chaosflixKeystore.trim()).isFile()) {
+//                println "Release app signing is configured: will sign APK"
+//                storeFile file(chaosflixKeystore.trim())
+//                storePassword chaosflixStorePassword.trim()
+//                keyAlias chaosflixKeyName.trim()
+//                keyPassword chaosflixKeyPassword.trim()
+//            } else {
+//                println "App signing data not found. Will not sign."
+//            }
+//        }
+//    }
 
     buildTypes {
         debug {
-            applicationIdSuffix ".debug"
-            manifestPlaceholders = [label: appName + "-debug"]
+//            applicationIdSuffix ".debug"
+//            manifestPlaceholders = [label: appName + "-debug"]
             minifyEnabled false
         }
         release {
             minifyEnabled true
-            shrinkResources true
+//            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'proguard-rules.pro'
-            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore.trim()).exists() && file(chaosflixKeystore.trim()).isFile()) {
-                signingConfig signingConfigs.release
-            }
+//            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore.trim()).exists() && file(chaosflixKeystore.trim()).isFile()) {
+//                signingConfig signingConfigs.release
+//            }
         }
     }
 
-    flavorDimensions "stage", "libs"
-
-    productFlavors {
-        prod {
-            dimension "stage"
-        }
-        dev {
-            dimension "stage"
-            applicationIdSuffix ".dev"
-            manifestPlaceholders = [label: appName + "-Dev"]
-        }
-        mock {
-            dimension "stage"
-            applicationIdSuffix ".mock"
-            manifestPlaceholders = [label: appName + "-Mock"]
-        }
-        free {
-            dimension "libs"
-        }
-        noFree{
-            dimension "libs"
-        }
-    }
-    variantFilter { variant ->
-        def names = variant.flavors*.name
-        if (name.contains("prod") && name.contains("Debug")){
-            setIgnore(true)
-        }
-    }
+    with flavorConfig
+//    flavorDimensions "stage", "libs"
+//    productFlavors {
+//        prod {
+//            dimension "stage"
+//        }
+//        dev {
+//            dimension "stage"
+////            applicationIdSuffix ".dev"
+////            manifestPlaceholders = [label: appName + "-Dev"]
+//        }
+//        mock {
+//            dimension "stage"
+////            applicationIdSuffix ".mock"
+////            manifestPlaceholders = [label: appName + "-Mock"]
+//        }
+//        free {
+//            dimension "libs"
+//        }
+//        noFree {
+//            dimension "libs"
+//        }
+//    }
+//    variantFilter { variant ->
+//        def names = variant.flavors*.name
+//        if (name.contains("prod") && name.contains("Debug")){
+//            setIgnore(true)
+//        }
+//    }
 
 
     packagingOptions {
@@ -117,11 +120,11 @@ android {
 
     testOptions.unitTests.includeAndroidResources = true
 
-    playConfigs {
-        prodNoFreeRelease {
-            enabled = true
-        }
-    }
+//    playConfigs {
+//        prodNoFreeRelease {
+//            enabled = true
+//        }
+//    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -132,14 +135,19 @@ android {
 
 }
 
-configurations {
-    mockDebugCompile
-    prodDebugCompile
-    prodReleaseCompile
-}
+//configurations {
+//    devFreeDebugCompile
+//    devNoFreeDebugCompile
+//    devFreeReleaseCompile
+//    devNoFreeReleaseCompile
+//    mockDebugCompile
+//    prodDebugCompile
+//    prodReleaseCompile
+//}
 
 dependencies {
     implementation project(':common')
+    implementation project(':leanback')
 
     implementation('com.mikepenz:aboutlibraries:6.1.1@aar') {
         transitive = true
@@ -185,10 +193,10 @@ dependencies {
     }
 }
 
-play {
-    serviceAccountCredentials = file("../chaosflix-d1d09f33cbb2.json")
-    track = "alpha"
-    releaseStatus = "draft"
-    enabled = false
-    artifactDir = file("build/outputs/apk/prodNoFree/release/touch-prod-noFree-release.apk")
-}
+//play {
+//    serviceAccountCredentials = file("../chaosflix-d1d09f33cbb2.json")
+//    track = "alpha"
+//    releaseStatus = "draft"
+//    enabled = false
+//    artifactDir = file("build/outputs/apk/prodNoFree/release/touch-prod-noFree-release.apk")
+//}

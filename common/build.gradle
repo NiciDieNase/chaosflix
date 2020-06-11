@@ -1,7 +1,11 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: "de.mannodermaus.android-junit5"
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id "de.mannodermaus.android-junit5"
+}
+apply from: "${rootProject.projectDir}/flavors.gradle"
+
 
 String versionString = new File("versionfile").text.trim()
 
@@ -48,53 +52,54 @@ android {
         }
     }
 
-    flavorDimensions "stage", "libs"
-
-    productFlavors {
-        prod {
-            dimension "stage"
-        }
-
-        dev {
-            dimension "stage"
-        }
-
-        mock {
-            dimension "stage"
-            buildConfigField "String", "STREAMING_API_BASE_URL", "\"https://gist.githubusercontent.com\""
-            buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/NiciDieNase/1ca017f180242f0ee683a1f592efc4ed/raw/0104592b57f4b29863fd0684a510462af276f30e/example_streams_v2.json\""
-        }
-
-        free {
-            dimension "libs"
-
-            ext {
-                prod = null
-                dev = null
-                mock = null
-            }
-        }
-        noFree {
-            dimension "libs"
-            ext {
-                if (project.hasProperty("appcenterId")) {
-                    prod = appcenterId
-                } else {
-                    prod = null
-                    println "AppcenterId not set"
-                }
-                if (project.hasProperty("appcenterDevId")) {
-                    dev = appcenterDevId
-                    mock = appcenterDevId
-                } else {
-                    dev = null
-                    mock = null
-                    println "AppcenterId not set"
-                }
-
-            }
-        }
-    }
+    with flavorConfig
+//    flavorDimensions "stage", "libs"
+//
+//    productFlavors {
+//        prod {
+//            dimension "stage"
+//        }
+//
+//        dev {
+//            dimension "stage"
+//        }
+//
+//        mock {
+//            dimension "stage"
+//            buildConfigField "String", "STREAMING_API_BASE_URL", "\"https://gist.githubusercontent.com\""
+//            buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/NiciDieNase/1ca017f180242f0ee683a1f592efc4ed/raw/0104592b57f4b29863fd0684a510462af276f30e/example_streams_v2.json\""
+//        }
+//
+//        free {
+//            dimension "libs"
+//
+//            ext {
+//                prod = null
+//                dev = null
+//                mock = null
+//            }
+//        }
+//        noFree {
+//            dimension "libs"
+//            ext {
+//                if (project.hasProperty("appcenterId")) {
+//                    prod = appcenterId
+//                } else {
+//                    prod = null
+//                    println "AppcenterId not set"
+//                }
+//                if (project.hasProperty("appcenterDevId")) {
+//                    dev = appcenterDevId
+//                    mock = appcenterDevId
+//                } else {
+//                    dev = null
+//                    mock = null
+//                    println "AppcenterId not set"
+//                }
+//
+//            }
+//        }
+//    }
 
     libraryVariants.all { variant ->
         def flavors = variant.productFlavors

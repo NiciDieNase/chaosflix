@@ -393,7 +393,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
         private const val DETAIL_THUMB_WIDTH = 254
         private const val DETAIL_THUMB_HEIGHT = 143
-        const val DEFAULT_DRAWABLE = R.drawable.default_background
+        private val DEFAULT_DRAWABLE = R.drawable.default_background
 
         private const val ACTION_PLAY: Long = 0L
         private const val ACTION_ADD_WATCHLIST = 1L

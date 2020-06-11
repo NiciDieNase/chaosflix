@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.BuildConfig
@@ -18,6 +19,7 @@ import de.nicidienase.chaosflix.common.DarkmodeUtil
 import de.nicidienase.chaosflix.common.checkPermission
 import de.nicidienase.chaosflix.common.viewmodel.PreferencesViewModel
 import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import de.nicidienase.chaosflix.leanback.conferences.ConferencesActivity
 import net.rdrei.android.dirchooser.DirectoryChooserActivity
 import net.rdrei.android.dirchooser.DirectoryChooserConfig
 
@@ -77,11 +79,14 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         }
 
         updateSummary()
-        val downloadFolderPref = this.findPreference("download_folder")
-        val cleanCachePref = this.findPreference("delete_data")
-        val exportFavorites = this.findPreference("export_favorites")
-        val importFavorites = this.findPreference("import_favorites")
         val disableAnalytics = this.findPreference("disable_analytics")
+        val downloadFolderPref = this.findPreference("download_folder")
+
+        // debug preferences
+        val cleanCachePref: Preference? = this.findPreference("delete_data")
+        val exportFavorites: Preference? = this.findPreference("export_favorites")
+        val importFavorites: Preference? = this.findPreference("import_favorites")
+        val switchUi: Preference? = this.findPreference("launch_other")
 
         downloadFolderPref?.setOnPreferenceClickListener {
             checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, PERMISSION_REQUEST_CHOOSE_DOWNLOAD_FOLDER) {
@@ -106,6 +111,11 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, PERMISSION_REQUEST_IMPORT_FAVORITES) {
                 importFavorites()
             }
+            return@setOnPreferenceClickListener true
+        }
+
+        switchUi?.setOnPreferenceClickListener {
+            requireContext().startActivity(Intent(requireContext(), ConferencesActivity::class.java))
             return@setOnPreferenceClickListener true
         }
 

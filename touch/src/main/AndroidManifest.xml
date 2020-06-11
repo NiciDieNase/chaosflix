@@ -22,14 +22,16 @@
         <activity
             android:name=".SplashActivity"
             android:label="${label}"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity android:name=".NavigationActivity"
-            android:launchMode="singleInstance">
+            android:launchMode="singleInstance"
+            android:theme="@style/AppTheme">
             <nav-graph android:value="@navigation/main_navigation"/>
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -42,9 +44,11 @@
             android:name=".playback.PlayerActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:launchMode="singleTop"
+            android:theme="@style/AppTheme"
             android:parentActivityName=".NavigationActivity"/>
         <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
-        <activity android:name=".favoritesimport.FavoritesImportActivity" >
+        <activity android:name=".favoritesimport.FavoritesImportActivity"
+            android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />

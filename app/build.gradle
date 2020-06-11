@@ -3,8 +3,10 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-android-extensions'
-//    id 'com.github.triplet.play' version '2.6.2'
+    id 'com.github.triplet.play' version '2.6.2'
 }
+apply from: "${rootProject.projectDir}/flavors.gradle"
+
 
 String appName = "Chaosflix"
 String versionString = new File("versionfile").text.trim()
@@ -22,16 +24,15 @@ android {
         versionCode 1
         versionName versionString
 
-        if(project.hasProperty("versionCode")){
+        if (project.hasProperty("versionCode")) {
             versionCode = project.property("versionCode") as int
             println "Setting VersionCode from property: $versionCode"
         }
-        if(project.hasProperty("versionName")){
+        if (project.hasProperty("versionName")) {
             versionName = project.property("versionName") as String
             println "Setting versionName from property: $versionName"
         }
     }
-
 
     signingConfigs {
         //noinspection GroovyMissingReturnStatement, GroovyAssignabilityCheck
@@ -65,40 +66,67 @@ android {
         }
     }
 
-    flavorDimensions "stage", "libs"
+    with flavorConfig
+//    flavorDimensions "stage", "libs"
+//
+//    productFlavors {
+//        prod {
+//            dimension "stage"
+//        }
+//        dev {
+//            dimension "stage"
+//            applicationIdSuffix ".dev"
+//            manifestPlaceholders = [label: appName + "-Dev"]
+//        }
+//        mock {
+//            dimension "stage"
+//            applicationIdSuffix ".mock"
+//            manifestPlaceholders = [label: appName + "-Mock"]
+//        }
+//        free {
+//            dimension "libs"
+//        }
+//        noFree {
+//            dimension "libs"
+//        }
+//    }
 
-    productFlavors {
-        prod {
-            dimension "stage"
-        }
-        dev {
-            dimension "stage"
-            applicationIdSuffix ".dev"
-            manifestPlaceholders = [label: appName + "-Dev"]
-        }
-        mock {
-            dimension "stage"
-            applicationIdSuffix ".mock"
-            manifestPlaceholders = [label: appName + "-Mock"]
-        }
-        free {
-            dimension "libs"
-        }
-        noFree {
-            dimension "libs"
+    playConfigs {
+        prodNoFree {
+            enabled = true
         }
     }
 
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+    dataBinding.enabled = true
+    viewBinding.enabled = true
+
 }
 
-configurations {
-    mockDebugCompile
-    prodDebugCompile
-    prodReleaseCompile
-}
+//configurations {
+//    devFreeDebugImplementation
+//    devNoFreeDebugImplementation
+//    devFreeReleaseImplementation
+//    devNoFreeReleaseImplementation
+//    mockDebugImplementation
+//    prodDebugImplementation
+//    prodReleaseImplementation
+//}
 
 dependencies {
-//    implementation project(':touch')
-//    implementation project(':leanback')
+    implementation project(':touch')
+    implementation project(':leanback')
     implementation project(':common')
+}
+
+play {
+    serviceAccountCredentials = file("../chaosflix-d1d09f33cbb2.json")
+    track = "alpha"
+    releaseStatus = "draft"
+    enabled = false
+    artifactDir = file("build/outputs/apk/prodNoFree/release/app-prod-noFree-release.apk")
 }

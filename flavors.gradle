@@ -1,0 +1,63 @@
+String appName = "Chaosflix"
+//String versionString = new File("versionfile").text.trim()
+
+ext.flavorConfig = {
+    flavorDimensions "stage", "libs"
+
+    productFlavors {
+        prod {
+            dimension "stage"
+        }
+        dev {
+            dimension "stage"
+//            applicationIdSuffix ".dev"
+            ext.myApplicationIdSuffix = ".dev"
+            manifestPlaceholders = [label: appName + "-Dev"]
+        }
+        mock {
+            dimension "stage"
+            ext.myApplicationIdSuffix = ".mock"
+            manifestPlaceholders = [label: appName + "-Mock"]
+            buildConfigField "String", "STREAMING_API_BASE_URL", "\"https://gist.githubusercontent.com\""
+            buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/NiciDieNase/1ca017f180242f0ee683a1f592efc4ed/raw/0104592b57f4b29863fd0684a510462af276f30e/example_streams_v2.json\""
+        }
+        free {
+            dimension "libs"
+            ext {
+                prod = null
+                dev = null
+                mock = null
+            }
+        }
+        noFree {
+            dimension "libs"
+            ext {
+                if (project.hasProperty("appcenterId")) {
+                    prod = appcenterId
+                } else {
+                    prod = null
+                    println "AppcenterId not set"
+                }
+                if (project.hasProperty("appcenterDevId")) {
+                    dev = appcenterDevId
+                    mock = appcenterDevId
+                } else {
+                    dev = null
+                    mock = null
+                    println "AppcenterId not set"
+                }
+
+            }
+        }
+    }
+
+    productFlavors.all { flavor ->
+        if (flavor.hasProperty('myApplicationIdSuffix') && isApplicationProject()) {
+            flavor.applicationIdSuffix = flavor.myApplicationIdSuffix
+        }
+    }
+}
+
+def isApplicationProject() {
+    return project.android.class.simpleName.startsWith('BaseAppModuleExtension')
+}

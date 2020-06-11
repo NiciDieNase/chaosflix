@@ -23,6 +23,10 @@
             android:id="@+id/import_favorites"
             android:key="import_favorites"
             android:title="@string/import_favorites"/>
+        <Preference
+            android:id="@+id/launch_other_ui"
+            android:key="launch_other"
+            android:title="Launch other UI"/>
 
     </PreferenceCategory>
 </PreferenceScreen>

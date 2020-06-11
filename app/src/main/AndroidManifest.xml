@@ -10,10 +10,40 @@
         android:label="${label}"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:replace="android:label">
 
 
+<!--        <activity-->
+<!--            android:name=".touch.SplashActivity"-->
+<!--            android:label="${label}"-->
+<!--            android:theme="@style/SplashTheme">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN"/>-->
+<!--                <category android:name="android.intent.category.LAUNCHER"/>-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
+
+<!--        <activity-->
+<!--            android:name=".leanback.conferences.ConferencesActivity"-->
+<!--            android:banner="@drawable/banner"-->
+<!--            android:label="${label}"-->
+<!--            android:screenOrientation="landscape"-->
+<!--            android:theme="@style/LeanbackAppTheme"-->
+<!--            tools:ignore="LockedOrientationActivity">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.VIEW" />-->
+<!--                <category android:name="android.intent.category.BROWSABLE"/>-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--                <data-->
+<!--                    android:scheme="de.nicidienase.chaosflix"-->
+<!--                    android:host="main"/>-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
     </application>
 
 </manifest>
