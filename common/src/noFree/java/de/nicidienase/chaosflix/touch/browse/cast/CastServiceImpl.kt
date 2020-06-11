@@ -25,9 +25,9 @@ import pl.droidsonroids.casty.Casty
 import pl.droidsonroids.casty.MediaData
 
 class CastServiceImpl(
-    private val playbackProgressDao: PlaybackProgressDao,
-    private val scope: CoroutineScope
-) : LifecycleObserver, CastService {
+    playbackProgressDao: PlaybackProgressDao,
+    scope: CoroutineScope
+) : LifecycleObserver, CastService(playbackProgressDao, scope) {
 
     private var currentEvent: Event? = null
 
