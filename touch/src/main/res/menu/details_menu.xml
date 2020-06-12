@@ -20,7 +20,7 @@
 	<item
 		android:id="@+id/action_share"
 		android:icon="@drawable/ic_share"
-		android:title="Share"
+		android:title="@string/share"
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_download"
@@ -35,5 +35,9 @@
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_external_player"
-		android:title="Play in external player"/>
+		android:title="@string/play_in_external_player"/>
+
+	<item
+		android:id="@+id/action_link"
+		android:title="@string/open_link"/>
 </menu>

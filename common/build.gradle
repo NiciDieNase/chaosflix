@@ -26,6 +26,7 @@ android {
 
         buildConfigField "String", "STREAMING_API_BASE_URL", "\"https://streaming.media.ccc.de\""
         buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/streams/v2.json\""
+
     }
 
     compileOptions {
@@ -138,12 +139,12 @@ dependencies {
     api "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     api "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
 
-    api "androidx.core:core-ktx:1.2.0"
+    api "androidx.core:core-ktx:1.3.0"
 
     def paging_version = "2.1.2"
     api "androidx.paging:paging-runtime:$paging_version"
 
-    api 'androidx.recyclerview:recyclerview:1.1.0'
+    api "androidx.recyclerview:recyclerview:1.2.0-alpha03"
 
     def roomVersion = "2.2.5"
     api "androidx.room:room-runtime:$roomVersion"

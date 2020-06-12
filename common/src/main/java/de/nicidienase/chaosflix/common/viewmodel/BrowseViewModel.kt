@@ -17,6 +17,7 @@ import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.ResourcesFacade
+import de.nicidienase.chaosflix.common.mediadata.EventInfoRepository
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.SearchResultDataSourceFactory
 import de.nicidienase.chaosflix.common.mediadata.StreamingRepository
@@ -38,7 +39,8 @@ class BrowseViewModel(
     private val streamingRepository: StreamingRepository,
     private val preferencesManager: ChaosflixPreferenceManager,
     private val resources: ResourcesFacade,
-    private val castService: CastService
+    private val castService: CastService,
+    private val eventInfoRepository: EventInfoRepository
 ) : ViewModel() {
 
     val filter: LiveData<Filter> by lazy {
@@ -82,6 +84,12 @@ class BrowseViewModel(
 
     fun getUpdateState() =
             mediaRepository.updateConferencesAndGroups()
+
+    fun getEventInfo() = eventInfoRepository.getEventInfo()
+
+    fun updateEventInfo() = viewModelScope.launch {
+        eventInfoRepository.updateMediaInfo()
+    }
 
     fun updateEventsForConference(conference: Conference): LiveData<LiveEvent<MediaRepository.State, List<Event>, String>> =
             LiveDataMerger<List<Event>, LiveEvent<MediaRepository.State, List<Event>, String>, LiveEvent<MediaRepository.State, List<Event>, String>>()

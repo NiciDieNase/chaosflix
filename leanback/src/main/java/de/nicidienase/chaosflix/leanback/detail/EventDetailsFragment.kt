@@ -222,8 +222,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
                         showError("Sorry, could not load recordings")
                     }
                 }
-                DetailsViewModel.State.DisplayEvent -> {
-                }
                 DetailsViewModel.State.Error -> {
                     showError(state.error)
                 }
@@ -237,6 +235,8 @@ class EventDetailsFragment : DetailsSupportFragment() {
                 }
                 DetailsViewModel.State.PlayOfflineItem -> irrelevantCase()
                 DetailsViewModel.State.DownloadRecording -> irrelevantCase()
+                is DetailsViewModel.State.DisplayEvent -> {}
+                is DetailsViewModel.State.OpenCustomTab -> {}
             }
         })
     }
@@ -393,7 +393,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
         private const val DETAIL_THUMB_WIDTH = 254
         private const val DETAIL_THUMB_HEIGHT = 143
-        const val DEFAULT_DRAWABLE = R.drawable.default_background
+        private val DEFAULT_DRAWABLE = R.drawable.default_background
 
         private const val ACTION_PLAY: Long = 0L
         private const val ACTION_ADD_WATCHLIST = 1L

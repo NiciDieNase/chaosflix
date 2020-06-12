@@ -11,6 +11,7 @@ import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.ResourcesFacade
 import de.nicidienase.chaosflix.common.SingletonHolder
+import de.nicidienase.chaosflix.common.mediadata.EventInfoRepository
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.StreamingRepository
 import de.nicidienase.chaosflix.common.mediadata.ThumbnailParser
@@ -23,13 +24,17 @@ import kotlinx.coroutines.SupervisorJob
 
 class ViewModelFactory private constructor(context: Context) : ViewModelProvider.Factory {
 
-    val apiFactory = ApiFactory.getInstance(context.resources.getString(R.string.recording_url), context.cacheDir)
+    val apiFactory = ApiFactory.getInstance(
+            context.resources.getString(R.string.recording_url),
+            context.resources.getString(R.string.event_info_url),
+            context.cacheDir)
 
     private val supervisorJob = SupervisorJob()
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO + supervisorJob)
 
     private val database by lazy { ChaosflixDatabase.getInstance(context) }
     private val streamingRepository by lazy { StreamingRepository(apiFactory.streamingApi) }
+    private val eventInfoRepository by lazy { EventInfoRepository(api = apiFactory.eventInfoApi, dao = database.eventInfoDao()) }
     private val preferencesManager =
             ChaosflixPreferenceManager(PreferenceManager.getDefaultSharedPreferences(context.applicationContext))
     private val offlineItemManager =
@@ -54,7 +59,8 @@ class ViewModelFactory private constructor(context: Context) : ViewModelProvider
                     streamingRepository,
                     preferencesManager,
                     resourcesFacade,
-                    castService) as T
+                    castService,
+                    eventInfoRepository) as T
             PlayerViewModel::class.java -> PlayerViewModel(database, thumbnailParser) as T
             DetailsViewModel::class.java -> DetailsViewModel(
                     database,

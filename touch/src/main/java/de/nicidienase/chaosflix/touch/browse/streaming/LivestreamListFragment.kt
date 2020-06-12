@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix.touch.browse.streaming
 
 import android.content.DialogInterface
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,12 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.MergeAdapter
 import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
@@ -21,13 +24,14 @@ import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.databinding.FragmentLivestreamsBinding
 import de.nicidienase.chaosflix.touch.playback.PlaybackItem
+import java.lang.Exception
 
 class LivestreamListFragment : Fragment() {
 
     private val viewModel: BrowseViewModel by viewModels { ViewModelFactory.getInstance(requireContext()) }
 
     private lateinit var binding: FragmentLivestreamsBinding
-    lateinit var adapter: LivestreamAdapter
+//    lateinit var livestreamAdapter: LivestreamAdapter
     lateinit var snackbar: Snackbar
 
     private var columnCount = 1
@@ -52,17 +56,30 @@ class LivestreamListFragment : Fragment() {
             binding.list.layoutManager =
                 GridLayoutManager(context, columnCount)
         }
-        adapter = LivestreamAdapter {
-            // TODO navigat to player/livestream-details
+        val livestreamAdapter = LivestreamAdapter {
             selectLivestream(it)
         }
-        binding.list.adapter = adapter
+        val eventInfoAdapter = EventInfoAdapter {
+            try {
+                val uri = Uri.parse(it.description)
+                CustomTabsIntent.Builder()
+                        .setToolbarColor(resources.getColor(R.color.primary))
+                        .setStartAnimations(requireContext(), android.R.anim.fade_in, android.R.anim.fade_out)
+                        .setExitAnimations(requireContext(), android.R.anim.fade_in, android.R.anim.fade_out)
+                        .build()
+                        .launchUrl(requireContext(), uri)
+            } catch (ex: Exception) {
+                Log.e(TAG, ex.message, ex)
+            }
+        }
+
+        binding.list.adapter = MergeAdapter(livestreamAdapter, eventInfoAdapter)
         binding.swipeRefreshLayout.setOnRefreshListener {
             updateList()
         }
         viewModel.getLivestreams().observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                adapter.setContent(it)
+                livestreamAdapter.setContent(it)
                 if (it.isEmpty() && !snackbar.isShown) {
                     snackbar.show()
                 } else {
@@ -71,7 +88,11 @@ class LivestreamListFragment : Fragment() {
             }
             binding.swipeRefreshLayout.isRefreshing = false
         })
+        viewModel.getEventInfo().observe(viewLifecycleOwner, Observer {
+            eventInfoAdapter.submitList(it)
+        })
         viewModel.updateLiveStreams()
+        viewModel.updateEventInfo()
 
         snackbar = Snackbar.make(binding.root, R.string.no_livestreams, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.reload) { this.updateList() }

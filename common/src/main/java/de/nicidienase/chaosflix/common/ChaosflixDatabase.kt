@@ -8,6 +8,8 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import de.nicidienase.chaosflix.common.mediadata.entities.Converters
+import de.nicidienase.chaosflix.common.mediadata.entities.eventinfo.EventInfo
+import de.nicidienase.chaosflix.common.mediadata.entities.eventinfo.EventInfoDao
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceDao
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
@@ -38,9 +40,11 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
             PlaybackProgress::class,
             WatchlistItem::class,
             OfflineEvent::class,
-            Recommendation::class
+            Recommendation::class,
+
+            EventInfo::class
         ],
-        version = 8,
+        version = 9,
         exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class ChaosflixDatabase : RoomDatabase() {
@@ -56,6 +60,8 @@ abstract class ChaosflixDatabase : RoomDatabase() {
     abstract fun offlineEventDao(): OfflineEventDao
     abstract fun recommendationDao(): RecommendationDao
 
+    abstract fun eventInfoDao(): EventInfoDao
+
     companion object : SingletonHolder<ChaosflixDatabase, Context>({
         Room.databaseBuilder(
                 it.applicationContext,
@@ -63,7 +69,8 @@ abstract class ChaosflixDatabase : RoomDatabase() {
                 .addMigrations(
                         ChaosflixDatabase.migration_5_6,
                         ChaosflixDatabase.migration_6_7,
-                        ChaosflixDatabase.migration_7_8
+                        ChaosflixDatabase.migration_7_8,
+                        ChaosflixDatabase.migration_8_9
                 )
                 .fallbackToDestructiveMigrationFrom(1, 2, 3, 4)
                 .build()
@@ -124,6 +131,19 @@ abstract class ChaosflixDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE event ADD COLUMN timelineUrl TEXT NOT NULL DEFAULT ''")
                 database.execSQL("ALTER TABLE event ADD COLUMN thumbnailsUrl TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        private val migration_8_9 = object : Migration(8, 9) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""CREATE TABLE `event_info` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                    `name` TEXT NOT NULL,
+                    `location` TEXT NOT NULL,
+                    `streaming` INTEGER,
+                    `startDate` INTEGER NOT NULL,
+                    `endDate` INTEGER NOT NULL,
+                    `description` TEXT)""")
             }
         }
     }
