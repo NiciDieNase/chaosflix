@@ -6,18 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.contains
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.databinding.FragmentFilterSheetBinding
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class FilterBottomSheet : BottomSheetDialogFragment() {
 
-    private lateinit var viewModel: BrowseViewModel
+    private val viewModel: BrowseViewModel by viewModel()
 
     private val filterTagChips: MutableMap<String, Chip> = mutableMapOf()
 
@@ -25,10 +23,6 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         val conference = arguments?.getParcelable<Conference>("conference")
 
         val binding = FragmentFilterSheetBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(
-                parentFragment as ViewModelStoreOwner,
-                ViewModelFactory.getInstance(requireContext()))
-                .get(BrowseViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         binding.buttonClose.setOnClickListener {

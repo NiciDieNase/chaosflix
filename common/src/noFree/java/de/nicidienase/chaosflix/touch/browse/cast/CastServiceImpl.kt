@@ -20,16 +20,20 @@ import de.nicidienase.chaosflix.touch.browse.streaming.StreamingItem
 import java.util.Date
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import pl.droidsonroids.casty.Casty
 import pl.droidsonroids.casty.MediaData
 
 class CastServiceImpl(
+    playbackProgressDao: PlaybackProgressDao
+) : LifecycleObserver, CastService(playbackProgressDao) {
     playbackProgressDao: PlaybackProgressDao,
     scope: CoroutineScope
 ) : LifecycleObserver, CastService(playbackProgressDao, scope) {
 
     private var currentEvent: Event? = null
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private var casty: Casty? = null
     override val connected: Boolean

@@ -32,8 +32,13 @@ abstract class BaseDao<in T> {
     }
 
     @Transaction
-    open suspend fun updateOrInsert(vararg events: T) {
-        events.map { updateOrInsertInternal(it) }
+    open suspend fun updateOrInsert(vararg items: T) {
+        items.map { updateOrInsertInternal(it) }
+    }
+
+    @Transaction
+    open suspend fun updateOrInsert(items: List<T>) {
+        items.map { updateOrInsertInternal(it) }
     }
 
     protected abstract suspend fun updateOrInsertInternal(item: T): Long

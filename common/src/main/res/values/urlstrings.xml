@@ -2,6 +2,7 @@
 <resources>
     <string name="recording_url" translatable="false">https://api.media.ccc.de</string>
     <string name="streaming_url" translatable="false">https://streaming.media.ccc.de</string>
+    <string name="event_info_url" translatable="false">https://c3voc.de</string>
 
     <string name="about_beta_url" translatable="false">https://play.google.com/apps/testing/de.nicidienase.chaosflix</string>
     <string name="about_voctocat_url" translatable="false">https://morr.cc/voctocat/</string>

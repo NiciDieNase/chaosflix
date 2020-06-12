@@ -13,8 +13,8 @@ import kotlinx.coroutines.CoroutineScope
 
 @SuppressWarnings("unused")
 class CastServiceImpl(
-        playbackProgressDao: PlaybackProgressDao,
-        scope: CoroutineScope) : CastService(playbackProgressDao, scope) {
+    playbackProgressDao: PlaybackProgressDao
+) : CastService(playbackProgressDao) {
 
     override val connected: Boolean = false
 

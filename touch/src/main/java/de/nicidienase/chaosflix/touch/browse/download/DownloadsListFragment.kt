@@ -6,19 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.browse.mediathek.MediathekFragmentDirections
 import de.nicidienase.chaosflix.touch.databinding.FragmentDownloadsBinding
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class DownloadsListFragment : Fragment() {
 
-    private val viewModel: BrowseViewModel by viewModels { ViewModelFactory.getInstance(requireContext()) }
+    private val viewModel: BrowseViewModel by viewModel()
 
     private val handler = Handler()
 

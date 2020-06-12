@@ -8,11 +8,15 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
 import androidx.tvprovider.media.tv.TvContractCompat
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.core.KoinComponent
 
-class RecommendationBroadcastReceiver : BroadcastReceiver() {
+class RecommendationBroadcastReceiver : BroadcastReceiver(), KoinComponent {
+
+    private val mediaRepository: MediaRepository by inject()
 
     override fun onReceive(context: Context?, intent: Intent?) {
         when (intent?.action) {
@@ -37,7 +41,6 @@ class RecommendationBroadcastReceiver : BroadcastReceiver() {
         val id = intent.getLongExtra(TvContractCompat.EXTRA_PREVIEW_PROGRAM_ID, 0)
         Log.d(TAG, "Id: $id")
         GlobalScope.launch {
-            val mediaRepository = ViewModelFactory.getInstance(context).mediaRepository
             mediaRepository.resetRecommendationId(id)
         }
     }

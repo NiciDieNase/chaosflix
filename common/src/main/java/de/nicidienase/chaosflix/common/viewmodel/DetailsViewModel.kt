@@ -140,9 +140,7 @@ class DetailsViewModel(
     }
 
     fun relatedEventSelected(event: Event) {
-        val bundle = Bundle()
-        bundle.putParcelable(EVENT, event)
-        state.postValue(LiveEvent(State.DisplayEvent, data = bundle))
+        state.postValue(LiveEvent(State.DisplayEvent(event)))
     }
 
     fun playEvent(autoselect: Boolean = autoselectRecording) = viewModelScope.launch(Dispatchers.IO) {
@@ -281,15 +279,16 @@ class DetailsViewModel(
         return offlineItem != null && File(offlineItem.localPath).exists()
     }
 
-    enum class State {
-        PlayOfflineItem,
-        PlayOnlineItem,
-        SelectRecording,
-        DownloadRecording,
-        DisplayEvent,
-        PlayExternal,
-        Error,
-        LoadingRecordings
+    sealed class State {
+        object PlayOfflineItem : State()
+        object PlayOnlineItem : State()
+        object SelectRecording : State()
+        object DownloadRecording : State()
+        data class DisplayEvent(val event: Event) : State()
+        object PlayExternal : State()
+        object Error : State()
+        object LoadingRecordings : State()
+        data class OpenCustomTab(val uri: Uri) : State()
     }
 
     private fun postStateWithEventAndRecordings(s: State, e: Event) {
@@ -299,6 +298,30 @@ class DetailsViewModel(
             bundle.putParcelable(EVENT, e)
             bundle.putParcelableArrayList(KEY_SELECT_RECORDINGS, ArrayList(items))
             state.postValue(LiveEvent(s, bundle))
+        }
+    }
+
+    fun openLink() {
+        eventId.value?.let {
+            viewModelScope.launch {
+                val eventSync = mediaRepository.getEventSync(it)
+                eventSync?.link?.let {
+                    openCustomTab(it)
+                }
+            }
+        }
+    }
+
+    private fun openCustomTab(link: String?) {
+        if (link != null) {
+            try {
+                state.postValue(
+                        LiveEvent(
+                                State.OpenCustomTab(Uri.parse(link))
+                        )
+                )
+            } catch (e: Exception) {
+            }
         }
     }
 

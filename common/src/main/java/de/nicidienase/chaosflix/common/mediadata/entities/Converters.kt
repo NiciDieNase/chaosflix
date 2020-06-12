@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix.common.mediadata.entities
 
 import androidx.room.TypeConverter
+import java.util.Date
 
 class Converters {
 
@@ -39,4 +40,10 @@ class Converters {
         }
         return result
     }
+
+    @TypeConverter
+    fun dateToLong(date: Date): Long = date.time
+
+    @TypeConverter
+    fun longToDate(long: Long): Date = Date(long)
 }

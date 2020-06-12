@@ -10,17 +10,16 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.databinding.ActivityNavigationBinding
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class NavigationActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: BrowseViewModel
+    private val browseViewModel: BrowseViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,8 +50,7 @@ class NavigationActivity : AppCompatActivity() {
             }
         }
 
-        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(this)).get(BrowseViewModel::class.java)
-        viewModel.getLivestreams().observe(this, Observer {
+        browseViewModel.getLivestreams().observe(this, Observer {
             if (it.isEmpty()) {
                 binding.bottomNavigation.removeBadge(R.id.livestreamListFragment)
             } else {
@@ -70,7 +68,7 @@ class NavigationActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        viewModel.attachActivityToCastService(this)
+        browseViewModel.attachActivityToCastService(this)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -86,7 +84,7 @@ class NavigationActivity : AppCompatActivity() {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.main, menu)
         menu?.let {
-            viewModel.addMediaRouteMenuItem(it)
+            browseViewModel.addMediaRouteMenuItem(it)
         }
         return true
     }

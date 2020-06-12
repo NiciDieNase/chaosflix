@@ -1,14 +1,12 @@
 package de.nicidienase.chaosflix.touch.settings
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.preference.PreferenceManager
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.snackbar.Snackbar
@@ -22,17 +20,13 @@ import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.conferences.ConferencesActivity
 import net.rdrei.android.dirchooser.DirectoryChooserActivity
 import net.rdrei.android.dirchooser.DirectoryChooserConfig
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private lateinit var viewModel: PreferencesViewModel
+    private val viewModel: PreferencesViewModel by viewModel()
 
     private val chaosflixPreferenceManager: ChaosflixPreferenceManager by lazy { ChaosflixPreferenceManager(preferenceManager.sharedPreferences) }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(context)).get(PreferencesViewModel::class.java)
-    }
 
     override fun onResume() {
         super.onResume()

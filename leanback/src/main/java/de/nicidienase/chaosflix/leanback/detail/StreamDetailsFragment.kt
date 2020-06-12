@@ -23,7 +23,6 @@ import androidx.leanback.widget.FullWidthDetailsOverviewSharedElementHelper
 import androidx.leanback.widget.ListRow
 import androidx.leanback.widget.ListRowPresenter
 import androidx.leanback.widget.OnActionClickedListener
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
@@ -52,16 +51,16 @@ import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.common.viewmodel.PlayerViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
 import de.nicidienase.chaosflix.leanback.R
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class StreamDetailsFragment : DetailsSupportFragment() {
 
     private var selectDialog: AlertDialog? = null
 
-    private lateinit var detailsViewModel: DetailsViewModel
-    private lateinit var playerViewModel: PlayerViewModel
+    private val detailsViewModel: DetailsViewModel by viewModel()
+    private val playerViewModel: PlayerViewModel by viewModel()
 
     private lateinit var room: Room
 
@@ -81,9 +80,6 @@ class StreamDetailsFragment : DetailsSupportFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val viewModelFactory = ViewModelFactory.getInstance(requireContext())
-        detailsViewModel = ViewModelProvider(this, viewModelFactory).get(DetailsViewModel::class.java)
-        playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
 
         room = arguments?.getParcelable(DetailsActivity.ROOM) ?: error("Missing Argument Room")
 

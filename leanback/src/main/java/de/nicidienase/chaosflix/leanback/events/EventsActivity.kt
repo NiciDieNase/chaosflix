@@ -6,19 +6,18 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.BrowseErrorFragment
 import de.nicidienase.chaosflix.leanback.R
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class EventsActivity : androidx.fragment.app.FragmentActivity() {
 
-    lateinit var viewModel: BrowseViewModel
+    private val browseViewModel: BrowseViewModel by viewModel()
 
     private lateinit var conference: Conference
 
@@ -30,12 +29,11 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
         super.onCreate(savedInstanceState)
         conference = intent.getParcelableExtra(CONFERENCE)
         setContentView(R.layout.activity_events_browse)
-        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(this)).get(BrowseViewModel::class.java)
     }
 
     override fun onStart() {
         super.onStart()
-        viewModel.updateEventsForConference(conference).observe(this, Observer { event ->
+        browseViewModel.updateEventsForConference(conference).observe(this, Observer { event ->
             when (event?.state) {
                 MediaRepository.State.RUNNING -> {
                     Log.i(TAG, "Refresh running")
@@ -59,7 +57,7 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
                 }
             }
         })
-        viewModel.getEventsforConference(conference).observe(this, Observer { events ->
+        browseViewModel.getEventsforConference(conference).observe(this, Observer { events ->
             events?.let {
                 if (it.isNotEmpty()) {
                     updateFragment(ChaosflixUtil.areTagsUsefull(events, conference.acronym))
