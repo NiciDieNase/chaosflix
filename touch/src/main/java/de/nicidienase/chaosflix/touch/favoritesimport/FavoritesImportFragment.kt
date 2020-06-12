@@ -12,19 +12,18 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.common.ImportItem
 import de.nicidienase.chaosflix.common.viewmodel.FavoritesImportViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.ImportItemAdapter
 import de.nicidienase.chaosflix.touch.databinding.FragmentFavoritesImportBinding
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class FavoritesImportFragment : Fragment() {
 
-    private lateinit var viewModel: FavoritesImportViewModel
+    private val favoritesImportViewModel: FavoritesImportViewModel by viewModel()
     private lateinit var adapter: ImportItemAdapter
 
     override fun onCreateView(
@@ -35,32 +34,31 @@ class FavoritesImportFragment : Fragment() {
         setHasOptionsMenu(true)
         val binding = FragmentFavoritesImportBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
-        viewModel = ViewModelProviders.of(requireActivity(), ViewModelFactory.getInstance(requireContext())).get(FavoritesImportViewModel::class.java)
-        binding.viewModel = viewModel
+        binding.viewModel = favoritesImportViewModel
 
         binding.importList.layoutManager = LinearLayoutManager(context)
         val onItemClick: (ImportItem) -> Unit = {
-            viewModel.itemChanged(it)
+            favoritesImportViewModel.itemChanged(it)
         }
         val onLectureClick: (ImportItem) -> Unit = {
-            viewModel.unavailableItemClicked(it)
+            favoritesImportViewModel.unavailableItemClicked(it)
         }
         adapter = ImportItemAdapter(onListItemClick = onItemClick, onLectureClick = onLectureClick)
         adapter.setHasStableIds(true)
         binding.importList.setHasFixedSize(true)
         binding.importList.adapter = adapter
 
-        viewModel.items.observe(viewLifecycleOwner, Observer { events ->
+        favoritesImportViewModel.items.observe(viewLifecycleOwner, Observer { events ->
             if (events != null) {
                 adapter.submitList(events.toList())
             }
         })
 
-        viewModel.selectAll.observe(viewLifecycleOwner, Observer {
+        favoritesImportViewModel.selectAll.observe(viewLifecycleOwner, Observer {
             activity?.invalidateOptionsMenu()
         })
 
-        viewModel.state.observe(viewLifecycleOwner, Observer {
+        favoritesImportViewModel.state.observe(viewLifecycleOwner, Observer {
             when (it.state) {
                 FavoritesImportViewModel.State.IMPORT_DONE -> {
                     // TODO navigate to favorites
@@ -69,10 +67,10 @@ class FavoritesImportFragment : Fragment() {
             }
         })
 
-        viewModel.working.observe(viewLifecycleOwner, Observer { working ->
+        favoritesImportViewModel.working.observe(viewLifecycleOwner, Observer { working ->
             binding.incOverlay.loadingOverlay.visibility = if (working) View.VISIBLE else View.GONE
         })
-        viewModel.processCount.observe(viewLifecycleOwner, Observer { pair ->
+        favoritesImportViewModel.processCount.observe(viewLifecycleOwner, Observer { pair ->
             Log.i(TAG, "Progress ${pair.first}/${pair.second}")
             binding.incOverlay.progressbar.apply {
                 if (pair.second != 0) {
@@ -82,7 +80,7 @@ class FavoritesImportFragment : Fragment() {
             }
         })
 
-        viewModel.errorMessage.observe(viewLifecycleOwner, Observer { errorMessage ->
+        favoritesImportViewModel.errorMessage.observe(viewLifecycleOwner, Observer { errorMessage ->
             if (errorMessage != null) {
                 Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_LONG).apply {
                     view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text).maxLines = 5
@@ -90,11 +88,11 @@ class FavoritesImportFragment : Fragment() {
                         this.dismiss()
                     }).show()
                 }
-                viewModel.errorShown()
+                favoritesImportViewModel.errorShown()
             }
         })
 
-        viewModel.importItemCount.observe(viewLifecycleOwner, Observer { count ->
+        favoritesImportViewModel.importItemCount.observe(viewLifecycleOwner, Observer { count ->
             if (count == 0) {
                 binding.buttonImport.hide()
             } else {
@@ -119,7 +117,7 @@ class FavoritesImportFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.import_menu, menu)
-        if (viewModel.selectAll.value != false) {
+        if (favoritesImportViewModel.selectAll.value != false) {
             menu.removeItem(R.id.menu_item_unselect_all)
         } else {
             menu.removeItem(R.id.menu_item_select_all)
@@ -130,13 +128,13 @@ class FavoritesImportFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_item_select_all -> {
-                viewModel.selectAll()
-                viewModel.selectAll.value = false
+                favoritesImportViewModel.selectAll()
+                favoritesImportViewModel.selectAll.value = false
                 true
             }
             R.id.menu_item_unselect_all -> {
-                viewModel.selectNone()
-                viewModel.selectAll.value = true
+                favoritesImportViewModel.selectNone()
+                favoritesImportViewModel.selectAll.value = true
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -146,7 +144,7 @@ class FavoritesImportFragment : Fragment() {
     private fun handleJson(intent: Intent) {
         val extra = intent.getStringExtra(Intent.EXTRA_TEXT)
         if (extra.isNotEmpty()) {
-            viewModel.handleLectures(extra)
+            favoritesImportViewModel.handleLectures(extra)
         }
     }
 

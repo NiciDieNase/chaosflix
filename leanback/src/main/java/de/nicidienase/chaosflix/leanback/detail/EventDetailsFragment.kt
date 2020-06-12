@@ -29,7 +29,6 @@ import androidx.leanback.widget.ListRowPresenter
 import androidx.leanback.widget.OnActionClickedListener
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -60,7 +59,6 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.common.viewmodel.PlayerViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.CardPresenter
 import de.nicidienase.chaosflix.leanback.DiffCallbacks
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
@@ -73,8 +71,8 @@ class EventDetailsFragment : DetailsSupportFragment() {
     private var selectDialog: AlertDialog? = null
     private var loadingDialog: AlertDialog? = null
 
-    private lateinit var detailsViewModel: DetailsViewModel
-    private lateinit var playerViewModel: PlayerViewModel
+    private val detailsViewModel: DetailsViewModel by viewModel()
+    private val playerViewModel: PlayerViewModel by viewModel()
 
     private val detailsBackgroundController = DetailsSupportFragmentBackgroundController(this)
 
@@ -94,9 +92,9 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val viewModelFactory = ViewModelFactory.getInstance(requireContext())
-        detailsViewModel = ViewModelProvider(this, viewModelFactory).get(DetailsViewModel::class.java)
-        playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
+//        val viewModelFactory = ViewModelFactory.getInstance(requireContext())
+//        detailsViewModel = ViewModelProvider(this, viewModelFactory).get(DetailsViewModel::class.java)
+//        playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
 
         val detailsPresenter = FullWidthDetailsOverviewRowPresenter(
                 EventDetailsDescriptionPresenter(requireContext()))

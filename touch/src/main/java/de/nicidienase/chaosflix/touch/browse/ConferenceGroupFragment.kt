@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,12 +14,13 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.ConferenceRecyclerViewAdapter
+import org.koin.android.viewmodel.ext.android.viewModel
+
 class ConferenceGroupFragment : Fragment() {
 
-    private val viewModel: BrowseViewModel by viewModels { ViewModelFactory.getInstance(requireContext()) }
+    private val browseViewModel: BrowseViewModel by viewModel()
 
     private var layoutManager: RecyclerView.LayoutManager? = null
 
@@ -47,7 +47,7 @@ class ConferenceGroupFragment : Fragment() {
             }
             conferencesAdapter.setHasStableIds(true)
             view.adapter = conferencesAdapter
-            viewModel.getConferencesByGroup(conferenceGroup.id).observe(viewLifecycleOwner, Observer<List<Conference>> { conferenceList: List<Conference>? ->
+            browseViewModel.getConferencesByGroup(conferenceGroup.id).observe(viewLifecycleOwner, Observer<List<Conference>> { conferenceList: List<Conference>? ->
                 if (conferenceList != null) {
                     conferencesAdapter.submitList(conferenceList)
                     arguments?.getParcelable<Parcelable>(LAYOUTMANAGER_STATE)?.let {

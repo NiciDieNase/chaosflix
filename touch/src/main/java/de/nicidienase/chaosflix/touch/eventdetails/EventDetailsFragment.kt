@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -36,12 +35,12 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventDetailsBinding
 import de.nicidienase.chaosflix.touch.playback.PlaybackItem
 import kotlinx.coroutines.launch
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class EventDetailsFragment : Fragment() {
 
@@ -50,7 +49,7 @@ class EventDetailsFragment : Fragment() {
 
     private var layout: View? = null
 
-    private lateinit var viewModel: DetailsViewModel
+    private val detailsViewModel: DetailsViewModel by viewModel()
     private var selectDialog: AlertDialog? = null
     private var pendingDownload: Bundle? = null
 
@@ -84,15 +83,12 @@ class EventDetailsFragment : Fragment() {
         (activity as AppCompatActivity).setSupportActionBar(binding.animToolbar)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(requireContext()))
-            .get(DetailsViewModel::class.java)
-
         val eventGuid = args.eventGuid
         val eventName = args.eventName
         lifecycleScope.launch {
             val eventLivedata = when {
-                eventGuid != null -> viewModel.setEventByGuid(eventGuid)
-                eventName != null -> viewModel.setEventFromLink(eventName)
+                eventGuid != null -> detailsViewModel.setEventByGuid(eventGuid)
+                eventName != null -> detailsViewModel.setEventFromLink(eventName)
                 else -> error("neither guid nor event-name set")
             }
             eventLivedata.observe(viewLifecycleOwner, Observer { event ->
@@ -120,7 +116,7 @@ class EventDetailsFragment : Fragment() {
                             .into(binding.thumbImage)
                 }
             })
-            viewModel.getRelatedEvents().observe(viewLifecycleOwner, Observer {
+            detailsViewModel.getRelatedEvents().observe(viewLifecycleOwner, Observer {
                 if (it != null) {
                     Log.d(TAG, "update related events")
                     relatedEventsAdapter.submitList(it)
@@ -131,7 +127,7 @@ class EventDetailsFragment : Fragment() {
                     binding.relatedItemsText.visibility = View.GONE
                 }
             })
-            viewModel.getBookmarkForEvent()
+            detailsViewModel.getBookmarkForEvent()
                     .observe(viewLifecycleOwner, Observer { watchlistItem: WatchlistItem? ->
                         Log.d(TAG, "Update bookmark")
                         val shouldInvalidate = this@EventDetailsFragment.watchlistItem == null || watchlistItem == null
@@ -144,7 +140,7 @@ class EventDetailsFragment : Fragment() {
 
         binding.relatedItemsList.apply {
             relatedEventsAdapter = EventRecyclerViewAdapter {
-                viewModel.relatedEventSelected(it)
+                detailsViewModel.relatedEventSelected(it)
             }
             relatedEventsAdapter.showConferenceName = true
             adapter = relatedEventsAdapter
@@ -165,7 +161,7 @@ class EventDetailsFragment : Fragment() {
             }
         })
 
-        viewModel.state.observe(viewLifecycleOwner, Observer { liveEvent ->
+        detailsViewModel.state.observe(viewLifecycleOwner, Observer { liveEvent ->
             if (liveEvent == null) {
                 return@Observer
             }
@@ -187,14 +183,14 @@ class EventDetailsFragment : Fragment() {
                 DetailsViewModel.State.SelectRecording -> {
                     if (event != null && selectItems != null) {
                         selectRecording(event, selectItems) { e, r ->
-                            viewModel.recordingSelected(e, r)
+                            detailsViewModel.recordingSelected(e, r)
                         }
                     }
                 }
                 DetailsViewModel.State.DownloadRecording -> {
                     if (event != null && selectItems != null) {
                         selectRecording(event, selectItems) { e, r ->
-                            viewModel.download(e, r).observe(viewLifecycleOwner, Observer {
+                            detailsViewModel.download(e, r).observe(viewLifecycleOwner, Observer {
                                 when (it?.state) {
                                     OfflineItemManager.State.Downloading -> {
                                         Snackbar.make(binding.root, "Download started", Snackbar.LENGTH_LONG).show()
@@ -239,7 +235,7 @@ class EventDetailsFragment : Fragment() {
     }
 
     private fun play() {
-        viewModel.playEvent()
+        detailsViewModel.playEvent()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -249,7 +245,7 @@ class EventDetailsFragment : Fragment() {
                     val recording = it.getParcelable<Recording>(DetailsViewModel.RECORDING)
                     val event = it.getParcelable<Event>(DetailsViewModel.EVENT)
                     if (event != null && recording != null) {
-                        viewModel.download(event, recording)
+                        detailsViewModel.download(event, recording)
                     }
                 }
                 pendingDownload = null
@@ -277,7 +273,7 @@ class EventDetailsFragment : Fragment() {
     }
 
     private fun selectRecording(event: Event, recordings: List<Recording>, action: (Event, Recording) -> Unit) {
-        if (viewModel.autoselectRecording) {
+        if (detailsViewModel.autoselectRecording) {
             val optimalRecording = ChaosflixUtil.getOptimalRecording(recordings, event.originalLanguage)
             action.invoke(event, optimalRecording)
         } else {
@@ -340,20 +336,20 @@ class EventDetailsFragment : Fragment() {
                 return true
             }
             R.id.action_bookmark -> {
-                viewModel.createBookmark()
+                detailsViewModel.createBookmark()
                 return true
             }
             R.id.action_unbookmark -> {
-                viewModel.removeBookmark()
+                detailsViewModel.removeBookmark()
 //                activity?.invalidateOptionsMenu()
                 return true
             }
             R.id.action_download -> {
-                viewModel.downloadRecordingForEvent()
+                detailsViewModel.downloadRecordingForEvent()
                 return true
             }
             R.id.action_delete_offline_item -> {
-                viewModel.deleteOfflineItem().observe(viewLifecycleOwner, Observer { success ->
+                detailsViewModel.deleteOfflineItem().observe(viewLifecycleOwner, Observer { success ->
                     if (success != null) {
                         view?.let { Snackbar.make(it, "Deleted Download", Snackbar.LENGTH_SHORT).show() }
                     }
@@ -362,7 +358,7 @@ class EventDetailsFragment : Fragment() {
             }
             R.id.action_share -> {
                 lifecycleScope.launch {
-                    val event = viewModel.event.value
+                    val event = detailsViewModel.event.value
                     if (event != null) {
                         val shareIntent = Intent(Intent.ACTION_SEND, Uri.parse(event.frontendLink))
                         shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_description))
@@ -378,11 +374,11 @@ class EventDetailsFragment : Fragment() {
                 return true
             }
             R.id.action_external_player -> {
-                viewModel.playInExternalPlayer()
+                detailsViewModel.playInExternalPlayer()
                 return true
             }
             R.id.action_link -> {
-                viewModel.openLink()
+                detailsViewModel.openLink()
                 return true
             }
             else -> return super.onOptionsItemSelected(item)

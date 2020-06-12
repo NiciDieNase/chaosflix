@@ -3,7 +3,8 @@ package de.nicidienase.chaosflix.common.mediadata.network
 import android.os.Build
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.BuildConfig
-import de.nicidienase.chaosflix.common.SingletonHolder3
+import de.nicidienase.chaosflix.StageConfiguration
+import de.nicidienase.chaosflix.common.SingletonHolder
 import java.io.File
 import java.util.concurrent.TimeUnit
 import okhttp3.Cache
@@ -12,7 +13,11 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class ApiFactory private constructor(apiUrl: String, eventInfoUrl: String, cache: File? = null) {
+class ApiFactory(stageConfiguration: StageConfiguration) {
+
+    private val apiUrl: String = stageConfiguration.recordingUrl
+    private val eventInfoUrl: String = stageConfiguration.eventInfoUrl
+    private val cache: File? = stageConfiguration.cacheDir
 
     private val chaosflixUserAgent: String by lazy { buildUserAgent() }
     private val gsonConverterFactory: GsonConverterFactory by lazy { GsonConverterFactory.create(Gson()) }
@@ -63,7 +68,7 @@ class ApiFactory private constructor(apiUrl: String, eventInfoUrl: String, cache
             return@Interceptor chain.proceed(requestWithUseragent)
     }
 
-    companion object : SingletonHolder3<ApiFactory, String, String, File?>(::ApiFactory) {
+    companion object : SingletonHolder<ApiFactory, StageConfiguration>(::ApiFactory) {
 
         private const val DEFAULT_TIMEOUT = 30L
         private const val CACHE_SIZE = 1024L * 5 // 5MB

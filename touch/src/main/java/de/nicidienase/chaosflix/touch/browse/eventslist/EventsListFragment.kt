@@ -9,21 +9,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventsListBinding
+import org.koin.android.viewmodel.ext.android.viewModel
 
 abstract class EventsListFragment : Fragment() {
 
-    protected val viewModel: BrowseViewModel by viewModels { ViewModelFactory.getInstance(requireContext()) }
+    protected val viewModel: BrowseViewModel by viewModel()
 
     private var columnCount = 1
     protected lateinit var eventAdapter: EventRecyclerViewAdapter

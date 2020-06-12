@@ -62,19 +62,21 @@ abstract class ChaosflixDatabase : RoomDatabase() {
 
     abstract fun eventInfoDao(): EventInfoDao
 
-    companion object : SingletonHolder<ChaosflixDatabase, Context>({
-        Room.databaseBuilder(
-                it.applicationContext,
-                ChaosflixDatabase::class.java, "mediaccc.de")
-                .addMigrations(
-                        ChaosflixDatabase.migration_5_6,
-                        ChaosflixDatabase.migration_6_7,
-                        ChaosflixDatabase.migration_7_8,
-                        ChaosflixDatabase.migration_8_9
-                )
-                .fallbackToDestructiveMigrationFrom(1, 2, 3, 4)
-                .build()
-    }) {
+    companion object {
+
+        fun getInstance(context: Context): ChaosflixDatabase {
+            return Room.databaseBuilder(
+                    context.applicationContext,
+                    ChaosflixDatabase::class.java, "mediaccc.de")
+                    .addMigrations(
+                            migration_5_6,
+                            migration_6_7,
+                            migration_7_8,
+                            migration_8_9
+                    )
+                    .fallbackToDestructiveMigrationFrom(1, 2, 3, 4)
+                    .build()
+        }
 
         private val migration_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {

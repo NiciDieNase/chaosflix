@@ -12,7 +12,6 @@ import com.bumptech.glide.Glide
 import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.R
 import de.nicidienase.chaosflix.leanback.detail.DetailsActivity
 import java.io.IOException
@@ -20,15 +19,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 class ChaosRecommendationsService : IntentService("ChaosRecommendationService") {
 
     private val ioScope = CoroutineScope(Dispatchers.IO + Job())
+    private val mediaRepository: MediaRepository by inject()
 
     override fun onHandleIntent(intent: Intent?) {
         val preferenceManager = ChaosflixPreferenceManager(PreferenceManager.getDefaultSharedPreferences(applicationContext))
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-        val mediaRepository = ViewModelFactory.getInstance(this).mediaRepository
         if (!preferenceManager.recommendationsEnabled) {
             Log.i(TAG, "recommendations are disabled, returning")
             notificationManager?.cancelAll()
