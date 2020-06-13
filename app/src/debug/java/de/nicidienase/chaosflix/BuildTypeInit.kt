@@ -4,7 +4,7 @@ import android.app.Application
 import com.facebook.stetho.Stetho
 
 object BuildTypeInit : ChaosflixInitializer {
-    override fun init(chaosflixApplication: Application) {
-        Stetho.initializeWithDefaults(chaosflixApplication)
+    override fun init(application: Application) {
+        Stetho.initializeWithDefaults(application)
     }
 }

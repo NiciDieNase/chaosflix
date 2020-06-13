@@ -44,7 +44,7 @@ class ChannelManager(
                     it.second,
                     it.first
             )
-            cleanupChannel(context.contentResolver, it.second, it.first)
+            cleanupChannel(it.second, it.first)
         }
     }
 
@@ -71,7 +71,7 @@ class ChannelManager(
         }.map { it.second }
     }
 
-    private suspend fun cleanupChannel(contentResolver: ContentResolver, activeEvents: List<Event>, channel: Channels) {
+    private suspend fun cleanupChannel(activeEvents: List<Event>, channel: Channels) {
         val activeRecommendation = mediaRepository.getActiveRecommendation(channel.name)
         val activeGuids = activeEvents.map { it.guid }
         activeRecommendation.filter { !activeGuids.contains(it.recommendation.eventGuid) }.forEach {

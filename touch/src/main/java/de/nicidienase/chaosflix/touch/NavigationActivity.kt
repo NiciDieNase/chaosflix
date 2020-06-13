@@ -35,7 +35,7 @@ class NavigationActivity : AppCompatActivity() {
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
         setSupportActionBar(binding.toolbar)
 
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+        navController.addOnDestinationChangedListener { _, destination, _ ->
             if (noToolbarDestinations.contains(destination.id)) {
 //                supportActionBar?.hide()
                 binding.toolbar.visibility = View.GONE

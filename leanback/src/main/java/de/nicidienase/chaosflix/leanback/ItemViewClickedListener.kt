@@ -22,9 +22,9 @@ class ItemViewClickedListener(private val fragment: Fragment, private val seleta
         val activity = fragment.requireActivity()
         when (item) {
             is Conference -> {
-                val transition = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
-                        (itemViewHolder.view as ImageCardView).mainImageView,
-                        EventsActivity.SHARED_ELEMENT_NAME).toBundle()
+//                val transition = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+//                        (itemViewHolder.view as ImageCardView).mainImageView,
+//                        EventsActivity.SHARED_ELEMENT_NAME).toBundle()
                 // 			EventsActivity.start(fragment.requireContext(), conference, transition);
                 start(fragment.requireContext(), item)
             }

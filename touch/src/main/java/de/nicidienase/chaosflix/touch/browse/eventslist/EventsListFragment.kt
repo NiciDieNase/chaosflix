@@ -68,7 +68,7 @@ abstract class EventsListFragment : Fragment() {
     protected fun showSnackbar(message: String, binding: FragmentEventsListBinding) {
         snackbar?.dismiss()
         snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).apply {
-            setAction("Okay") { view: View? -> snackbar?.dismiss() }
+            setAction("Okay") { snackbar?.dismiss() }
             show()
         }
     }

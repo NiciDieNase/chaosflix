@@ -148,9 +148,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
             when (downloaderEvent?.state) {
                 MediaRepository.State.RUNNING -> {
                     Log.i(TAG, "Refresh running")
-                    parentFragmentManager?.let {
-                        errorFragment = BrowseErrorFragment.showErrorFragment(it, R.id.browse_fragment)
-                    }
+                    errorFragment = BrowseErrorFragment.showErrorFragment(parentFragmentManager, R.id.browse_fragment)
                 }
                 MediaRepository.State.DONE -> {
                     if (downloaderEvent.error != null) {

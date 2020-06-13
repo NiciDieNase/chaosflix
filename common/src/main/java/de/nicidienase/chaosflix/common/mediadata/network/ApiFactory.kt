@@ -24,8 +24,8 @@ class ApiFactory(private val stageConfiguration: StageConfiguration) {
                 .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .addInterceptor(useragentInterceptor)
                 .apply {
-                    if (stageConfiguration.cacheDir != null) {
-                        cache(Cache(stageConfiguration.cacheDir, CACHE_SIZE))
+                    stageConfiguration.cacheDir?.let {
+                        cache(Cache(it, CACHE_SIZE))
                     }
                 }
                 .build()

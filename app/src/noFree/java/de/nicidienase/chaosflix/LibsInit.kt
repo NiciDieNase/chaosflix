@@ -6,12 +6,12 @@ import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
 import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 
 object LibsInit : ChaosflixInitializer {
-    override fun init(applicationpplication: Application) {
+    override fun init(application: Application) {
         val preferencesManager =
-            ChaosflixPreferenceManager(PreferenceManager.getDefaultSharedPreferences(applicationpplication.applicationContext))
+            ChaosflixPreferenceManager(PreferenceManager.getDefaultSharedPreferences(application.applicationContext))
 
         if (!preferencesManager.analyticsDisabled) {
-            AnalyticsWrapperImpl.init(applicationpplication)
+            AnalyticsWrapperImpl.init(application)
         }
     }
 }

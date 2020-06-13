@@ -42,9 +42,7 @@ class LivestreamListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            columnCount = arguments!!.getInt(ARG_COLUMN_COUNT)
-        }
+        columnCount = requireArguments().getInt(ARG_COLUMN_COUNT)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

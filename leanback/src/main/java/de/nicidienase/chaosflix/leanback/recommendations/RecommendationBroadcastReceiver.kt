@@ -10,7 +10,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.util.Log
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.tvprovider.media.tv.TvContractCompat
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import kotlinx.coroutines.GlobalScope
@@ -30,8 +29,8 @@ class RecommendationBroadcastReceiver : BroadcastReceiver(), KoinComponent {
                     setupRecommendationUpdates(context)
                     setup(context)
                 }
-                TvContractCompat.ACTION_WATCH_NEXT_PROGRAM_BROWSABLE_DISABLED -> handleRemove(intent, context)
-                TvContractCompat.ACTION_PREVIEW_PROGRAM_BROWSABLE_DISABLED -> handleRemove(intent, context)
+                TvContractCompat.ACTION_WATCH_NEXT_PROGRAM_BROWSABLE_DISABLED -> handleRemove(intent)
+                TvContractCompat.ACTION_PREVIEW_PROGRAM_BROWSABLE_DISABLED -> handleRemove(intent)
                 else -> Log.d(TAG, intent.toString())
             }
         }
@@ -44,7 +43,7 @@ class RecommendationBroadcastReceiver : BroadcastReceiver(), KoinComponent {
         alarmManager?.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, DELAY, AlarmManager.INTERVAL_HALF_HOUR, pendingIntent)
     }
 
-    private fun handleRemove(intent: Intent, context: Context) {
+    private fun handleRemove(intent: Intent) {
         val id = intent.getLongExtra(TvContractCompat.EXTRA_PREVIEW_PROGRAM_ID, 0)
         Log.d(TAG, "Id: $id")
         GlobalScope.launch {
