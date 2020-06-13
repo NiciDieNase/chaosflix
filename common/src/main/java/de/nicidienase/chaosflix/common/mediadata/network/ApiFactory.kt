@@ -68,7 +68,7 @@ class ApiFactory(stageConfiguration: StageConfiguration) {
             return@Interceptor chain.proceed(requestWithUseragent)
     }
 
-    companion object : SingletonHolder<ApiFactory, de.nicidienase.chaosflix.StageConfiguration>(::ApiFactory) {
+    companion object : SingletonHolder<ApiFactory, StageConfiguration>(::ApiFactory) {
 
         private const val DEFAULT_TIMEOUT = 30L
         private const val CACHE_SIZE = 1024L * 5 // 5MB

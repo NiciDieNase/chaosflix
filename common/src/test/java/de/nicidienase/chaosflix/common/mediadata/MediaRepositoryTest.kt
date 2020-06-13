@@ -1,6 +1,6 @@
 package de.nicidienase.chaosflix.common.mediadata
 
-import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
+import de.nicidienase.chaosflix.common.AnalyticsWrapper
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.InstantExecutorExtension
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferenceDto
@@ -15,7 +15,6 @@ import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.mockk.mockkObject
 import io.mockk.slot
 import io.mockk.unmockkAll
 import io.mockk.verify
@@ -39,6 +38,9 @@ internal class MediaRepositoryTest {
     @RelaxedMockK
     private lateinit var recordingApi: RecordingApi
 
+    @RelaxedMockK
+    private lateinit var analyticsWrapper: AnalyticsWrapper
+
     private var database: ChaosflixDatabase = mockk {
         every { conferenceGroupDao() } returns mockk(relaxed = true)
         every { conferenceDao() } returns mockk(relaxed = true)
@@ -57,8 +59,7 @@ internal class MediaRepositoryTest {
 
     @BeforeEach
     fun setup() {
-        mockkObject(AnalyticsWrapperImpl)
-        mediaRepository = MediaRepository(recordingApi, database)
+        mediaRepository = MediaRepository(recordingApi, database, analyticsWrapper)
     }
 
     @AfterEach
@@ -72,7 +73,7 @@ internal class MediaRepositoryTest {
                 Response.error(404, ResponseBody.create(mediaTypeJson, emptyJson))
         mediaRepository.updateSingleEvent("foo")
         coVerify(exactly = 1) { recordingApi.getEventByGUIDSuspending("foo") }
-        verify(exactly = 0) { AnalyticsWrapperImpl.trackException(any()) }
+        verify(exactly = 0) { analyticsWrapper.trackException(any()) }
     }
 
     @Test
@@ -81,7 +82,7 @@ internal class MediaRepositoryTest {
         val result = mediaRepository.updateSingleEvent("foo")
         assertThat(null, equalTo(result))
         coVerify(exactly = 1) { recordingApi.getEventByGUIDSuspending("foo") }
-        verify(exactly = 1) { AnalyticsWrapperImpl.trackException(any()) }
+        verify(exactly = 1) { analyticsWrapper.trackException(any()) }
     }
 
     @Test

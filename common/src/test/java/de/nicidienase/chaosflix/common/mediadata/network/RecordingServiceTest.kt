@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.common.mediadata.network
 
+import de.nicidienase.chaosflix.common.TestStageConfig
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.equalTo
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.Test
 
 class RecordingServiceTest {
 
-    private val apiFactory = ApiFactory.getInstance("https://api.media.ccc.de", "https://c3voc.de", null)
+    private val apiFactory = ApiFactory.getInstance(TestStageConfig)
     private val api = apiFactory.recordingApi
 
     @BeforeEach

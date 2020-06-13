@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.common.mediadata
 
+import de.nicidienase.chaosflix.common.TestStageConfig
 import de.nicidienase.chaosflix.common.mediadata.entities.eventinfo.EventInfo
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import java.util.Date
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.Test
 
 class EventInfoServiceTest {
 
-    private val apiFactory = ApiFactory.getInstance("https://api.media.ccc.de", "https://c3voc.de", null)
+    private val apiFactory = ApiFactory.getInstance(TestStageConfig)
     private val api = apiFactory.eventInfoApi
 
     @BeforeEach

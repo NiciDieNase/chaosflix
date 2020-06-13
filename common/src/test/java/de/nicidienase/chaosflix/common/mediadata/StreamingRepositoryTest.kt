@@ -1,7 +1,7 @@
 package de.nicidienase.chaosflix.common.mediadata
 
 import androidx.lifecycle.MutableLiveData
-import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
+import de.nicidienase.chaosflix.common.AnalyticsWrapper
 import de.nicidienase.chaosflix.common.InstantExecutorExtension
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.common.mediadata.network.StreamingApi
@@ -20,7 +20,6 @@ import okhttp3.ResponseBody
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import retrofit2.Response
@@ -34,13 +33,11 @@ internal class StreamingRepositoryTest {
     @RelaxedMockK
     private lateinit var _streamingConferences: MutableLiveData<List<LiveConference>>
 
+    @RelaxedMockK
+    private lateinit var analyticsWrapper: AnalyticsWrapper
+
     @InjectMockKs
     private lateinit var streamingRepository: StreamingRepository
-
-    @BeforeEach
-    fun setup() {
-        mockkObject(AnalyticsWrapperImpl)
-    }
 
     @AfterEach
     fun cleanup() {
@@ -60,15 +57,15 @@ internal class StreamingRepositoryTest {
         coEvery { streamingApi.getStreamingConferences() } throws SSLHandshakeException("")
         streamingRepository.update()
         coVerify(exactly = 0) { _streamingConferences.postValue(any()) }
-        verify(exactly = 1) { AnalyticsWrapperImpl.trackException(any()) }
+        verify(exactly = 1) { analyticsWrapper.trackException(any()) }
     }
 
     @Test
     fun handle404() = runBlocking {
         coEvery { streamingApi.getStreamingConferences() } returns Response.error(404, ResponseBody.create(MediaType.get("text/plain"), "not found"))
-        mockkObject(AnalyticsWrapperImpl)
+        mockkObject(analyticsWrapper)
         streamingRepository.update()
         coVerify(exactly = 0) { _streamingConferences.postValue(any()) }
-        verify(exactly = 0) { AnalyticsWrapperImpl.trackException(any()) }
+        verify(exactly = 0) { analyticsWrapper.trackException(any()) }
     }
 }
