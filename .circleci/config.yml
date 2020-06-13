@@ -126,7 +126,7 @@ jobs:
             ./gradlew $KEY_CONFIG \
               -PversionCode=$VERSION_CODE_LEANBACK \
               -PversionName=${VERSION_NAME} \
-              common:lint${STAGE}${LIBS}${BUILD_TYPE}
+              common:lint${BUILD_TYPE}
 
       - run:
           name: Lint Touch
@@ -134,7 +134,7 @@ jobs:
             ./gradlew $KEY_CONFIG \
               -PversionCode=$VERSION_CODE_LEANBACK \
               -PversionName=${VERSION_NAME} \
-              touch:lint${STAGE}${LIBS}${BUILD_TYPE}
+              touch:lint${BUILD_TYPE}
 
       - run:
           name: Lint Leanback
@@ -142,7 +142,7 @@ jobs:
             ./gradlew $KEY_CONFIG \
               -PversionCode=$VERSION_CODE_LEANBACK \
               -PversionName=${VERSION_NAME} \
-              leanback:lint${STAGE}${LIBS}${BUILD_TYPE} \
+              leanback:lint${BUILD_TYPE} \
 
       - run:
           name: Lint App
