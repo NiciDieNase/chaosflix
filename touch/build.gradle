@@ -1,14 +1,10 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-android-extensions'
-    id 'com.github.triplet.play' version '2.6.2'
     id "androidx.navigation.safeargs.kotlin"
 }
-
-String appName = "Chaosflix"
-String versionString = new File("versionfile").text.trim()
 
 android {
 
@@ -16,86 +12,20 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "de.nicidienase.chaosflix"
         minSdkVersion rootProject.ext.minSDK
         targetSdkVersion rootProject.ext.targetSDK
-        manifestPlaceholders = [label: appName]
-        // odd for touch, even for leanback
-        versionCode 1
-        versionName versionString
-
-        if(project.hasProperty("versionCode")){
-            versionCode = project.property("versionCode") as int
-            println "Setting VersionCode from property: $versionCode"
-        }
-        if(project.hasProperty("versionName")){
-            versionName = project.property("versionName") as String
-            println "Setting versionName from property: $versionName"
-        }
-    }
-
-    signingConfigs {
-        //noinspection GroovyMissingReturnStatement, GroovyAssignabilityCheck
-        release {
-            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore.trim()).exists() && file(chaosflixKeystore.trim()).isFile()) {
-                println "Release app signing is configured: will sign APK"
-                storeFile file(chaosflixKeystore.trim())
-                storePassword chaosflixStorePassword.trim()
-                keyAlias chaosflixKeyName.trim()
-                keyPassword chaosflixKeyPassword.trim()
-            } else {
-                println "App signing data not found. Will not sign."
-            }
-        }
     }
 
     buildTypes {
         debug {
-            applicationIdSuffix ".debug"
-            manifestPlaceholders = [label: appName + "-debug"]
             minifyEnabled false
         }
         release {
             minifyEnabled true
-            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'proguard-rules.pro'
-            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore.trim()).exists() && file(chaosflixKeystore.trim()).isFile()) {
-                signingConfig signingConfigs.release
-            }
         }
     }
-
-    flavorDimensions "stage", "libs"
-
-    productFlavors {
-        prod {
-            dimension "stage"
-        }
-        dev {
-            dimension "stage"
-            applicationIdSuffix ".dev"
-            manifestPlaceholders = [label: appName + "-Dev"]
-        }
-        mock {
-            dimension "stage"
-            applicationIdSuffix ".mock"
-            manifestPlaceholders = [label: appName + "-Mock"]
-        }
-        free {
-            dimension "libs"
-        }
-        noFree{
-            dimension "libs"
-        }
-    }
-    variantFilter { variant ->
-        def names = variant.flavors*.name
-        if (name.contains("prod") && name.contains("Debug")){
-            setIgnore(true)
-        }
-    }
-
 
     packagingOptions {
         exclude 'META-INF/ASL2.0'
@@ -112,16 +42,14 @@ android {
 
     defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     lintOptions.abortOnError false
-    dataBinding.enabled = true
-    viewBinding.enabled = true
+
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
 
     testOptions.unitTests.includeAndroidResources = true
 
-    playConfigs {
-        prodNoFreeRelease {
-            enabled = true
-        }
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -132,14 +60,9 @@ android {
 
 }
 
-configurations {
-    mockDebugCompile
-    prodDebugCompile
-    prodReleaseCompile
-}
-
 dependencies {
     implementation project(':common')
+    implementation project(':leanback')
 
     implementation('com.mikepenz:aboutlibraries:6.1.1@aar') {
         transitive = true
@@ -154,7 +77,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.2.2'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.2.1'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
     implementation 'androidx.mediarouter:mediarouter:1.1.0'
     implementation 'com.google.android.material:material:1.3.0-alpha01'
@@ -185,12 +108,4 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-}
-
-play {
-    serviceAccountCredentials = file("../chaosflix-d1d09f33cbb2.json")
-    track = "alpha"
-    releaseStatus = "draft"
-    enabled = false
-    artifactDir = file("build/outputs/apk/prodNoFree/release/touch-prod-noFree-release.apk")
 }

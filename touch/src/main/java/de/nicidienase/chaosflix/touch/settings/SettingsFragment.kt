@@ -1,36 +1,31 @@
 package de.nicidienase.chaosflix.touch.settings
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.preference.PreferenceManager
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.snackbar.Snackbar
-import de.nicidienase.chaosflix.BuildConfig
-import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.DarkmodeUtil
 import de.nicidienase.chaosflix.common.checkPermission
 import de.nicidienase.chaosflix.common.viewmodel.PreferencesViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import de.nicidienase.chaosflix.leanback.conferences.ConferencesActivity
+import de.nicidienase.chaosflix.touch.BuildConfig
+import de.nicidienase.chaosflix.touch.R
 import net.rdrei.android.dirchooser.DirectoryChooserActivity
 import net.rdrei.android.dirchooser.DirectoryChooserConfig
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private lateinit var viewModel: PreferencesViewModel
+    private val viewModel: PreferencesViewModel by viewModel()
 
     private val chaosflixPreferenceManager: ChaosflixPreferenceManager by lazy { ChaosflixPreferenceManager(preferenceManager.sharedPreferences) }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(context)).get(PreferencesViewModel::class.java)
-    }
 
     override fun onResume() {
         super.onResume()
@@ -77,11 +72,14 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         }
 
         updateSummary()
-        val downloadFolderPref = this.findPreference("download_folder")
-        val cleanCachePref = this.findPreference("delete_data")
-        val exportFavorites = this.findPreference("export_favorites")
-        val importFavorites = this.findPreference("import_favorites")
         val disableAnalytics = this.findPreference("disable_analytics")
+        val downloadFolderPref = this.findPreference("download_folder")
+
+        // debug preferences
+        val cleanCachePref: Preference? = this.findPreference("delete_data")
+        val exportFavorites: Preference? = this.findPreference("export_favorites")
+        val importFavorites: Preference? = this.findPreference("import_favorites")
+        val switchUi: Preference? = this.findPreference("launch_other")
 
         downloadFolderPref?.setOnPreferenceClickListener {
             checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, PERMISSION_REQUEST_CHOOSE_DOWNLOAD_FOLDER) {
@@ -109,16 +107,21 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             return@setOnPreferenceClickListener true
         }
 
+        switchUi?.setOnPreferenceClickListener {
+            requireContext().startActivity(Intent(requireContext(), ConferencesActivity::class.java))
+            return@setOnPreferenceClickListener true
+        }
+
         disableAnalytics.setOnPreferenceChangeListener { _, state ->
             when (state) {
                 true -> {
                     viewModel.stopAnalytics()
-                    Snackbar.make(this.view!!, "Analytics disabled", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(this.requireView(), "Analytics disabled", Snackbar.LENGTH_SHORT).show()
                     true
                 }
                 false -> {
                     viewModel.startAnalytics()
-                    Snackbar.make(this.view!!, "Analytics started", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(this.requireView(), "Analytics started", Snackbar.LENGTH_SHORT).show()
                     true
                 }
                 else -> true

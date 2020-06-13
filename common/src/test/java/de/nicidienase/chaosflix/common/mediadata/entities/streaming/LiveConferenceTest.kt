@@ -3,7 +3,7 @@ package de.nicidienase.chaosflix.common.mediadata.entities.streaming
 import java.util.Date
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 internal class LiveConferenceTest {
 

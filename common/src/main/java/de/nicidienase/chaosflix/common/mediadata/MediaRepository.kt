@@ -4,7 +4,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
-import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
+import de.nicidienase.chaosflix.common.AnalyticsWrapper
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferenceDto
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.ConferencesWrapper
@@ -41,7 +41,8 @@ import retrofit2.Response
 
 class MediaRepository(
     private val recordingApi: RecordingApi,
-    database: ChaosflixDatabase
+    database: ChaosflixDatabase,
+    private val analyticsWrapper: AnalyticsWrapper
 ) {
 
     private val supervisorJob = SupervisorJob()
@@ -204,11 +205,11 @@ class MediaRepository(
                 block.invoke()
             } catch (e: SSLHandshakeException) {
                 Log.e(TAG, e.message, e)
-                AnalyticsWrapperImpl.trackException(e)
+                analyticsWrapper.trackException(e)
                 null
             } catch (e: IOException) {
                 Log.e(TAG, e.message, e)
-                AnalyticsWrapperImpl.trackException(e)
+                analyticsWrapper.trackException(e)
                 null
             }
         }

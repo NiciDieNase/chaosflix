@@ -13,7 +13,6 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
 import de.nicidienase.chaosflix.leanback.detail.DetailsActivity
 import de.nicidienase.chaosflix.leanback.detail.DetailsActivity.Companion.start
-import de.nicidienase.chaosflix.leanback.events.EventsActivity
 import de.nicidienase.chaosflix.leanback.events.EventsActivity.Companion.start
 
 class ItemViewClickedListener(private val fragment: Fragment, private val seletableItemHandler: ((SelectableContentItem) -> Unit)? = null) : OnItemViewClickedListener {
@@ -22,9 +21,9 @@ class ItemViewClickedListener(private val fragment: Fragment, private val seleta
         val activity = fragment.requireActivity()
         when (item) {
             is Conference -> {
-                val transition = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
-                        (itemViewHolder.view as ImageCardView).mainImageView,
-                        EventsActivity.SHARED_ELEMENT_NAME).toBundle()
+//                val transition = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+//                        (itemViewHolder.view as ImageCardView).mainImageView,
+//                        EventsActivity.SHARED_ELEMENT_NAME).toBundle()
                 // 			EventsActivity.start(fragment.requireContext(), conference, transition);
                 start(fragment.requireContext(), item)
             }

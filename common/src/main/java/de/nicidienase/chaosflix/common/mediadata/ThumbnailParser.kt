@@ -33,11 +33,11 @@ class ThumbnailParser(private val okHttpClient: OkHttpClient) {
         val baseUri = uri.substringBeforeLast("/")
         return input.map {
             val split = it.first.split(" --> ")
-            val uri = "$baseUri/${it.second}"
+            val thumbUri = "$baseUri/${it.second}"
             ThumbnailInfo(
                     timestampToMillis(split.first()),
                     timestampToMillis(split.last()),
-                    uri
+                    thumbUri
             )
         }
     }

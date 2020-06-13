@@ -8,48 +8,4 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <application
-        android:name="de.nicidienase.chaosflix.ChaosflixApplication"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:label="${label}"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:fullBackupContent="true"
-        tools:replace="android:label,android:theme"
-        tools:ignore="GoogleAppIndexingWarning">
-        <activity
-            android:name=".SplashActivity"
-            android:label="${label}"
-            android:theme="@style/SplashTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-        <activity android:name=".NavigationActivity"
-            android:launchMode="singleInstance">
-            <nav-graph android:value="@navigation/main_navigation"/>
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
-        </activity>
-        <activity
-            android:name=".playback.PlayerActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:launchMode="singleTop"
-            android:parentActivityName=".NavigationActivity"/>
-        <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
-        <activity android:name=".favoritesimport.FavoritesImportActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/json" />
-            </intent-filter>
-        </activity>
-    </application>
 </manifest>

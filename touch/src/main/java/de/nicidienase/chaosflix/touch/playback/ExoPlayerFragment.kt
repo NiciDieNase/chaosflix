@@ -14,7 +14,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.DefaultRenderersFactory
@@ -40,10 +39,10 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
 import de.nicidienase.chaosflix.common.viewmodel.PlayerViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.databinding.FragmentExoPlayerBinding
 import de.nicidienase.chaosflix.touch.playback.PlayerEventListener.PlayerStateChangeListener
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class ExoPlayerFragment : Fragment(), PlayerStateChangeListener {
     private val BANDWIDTH_METER = DefaultBandwidthMeter()
@@ -51,7 +50,8 @@ class ExoPlayerFragment : Fragment(), PlayerStateChangeListener {
     private val mainHandler = Handler()
     private var playbackState = true
     private var exoPlayer: SimpleExoPlayer? = null
-    private lateinit var viewModel: PlayerViewModel
+
+    private val viewModel: PlayerViewModel by viewModel()
 
     private var binding: FragmentExoPlayerBinding? = null
 
@@ -66,7 +66,6 @@ class ExoPlayerFragment : Fragment(), PlayerStateChangeListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding: FragmentExoPlayerBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_exo_player, container, false)
-        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(requireContext())).get(PlayerViewModel::class.java)
         viewModel.setEvent(args.playbackItem.eventGuid)
         val toolbar: Toolbar = binding.root.findViewById(R.id.toolbar)
         toolbar.title = args.playbackItem.title

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="de.nicidienase.chaosflix">
+
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
+    <application
+        android:name="de.nicidienase.chaosflix.ChaosflixApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="${label}"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:replace="android:label">
+        <!-- Touch -->
+        <activity
+            android:name=".touch.SplashActivity"
+            android:label="${label}"
+            android:theme="@style/SplashTheme"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".touch.NavigationActivity"
+            android:launchMode="singleInstance"
+            android:theme="@style/AppTheme">
+            <nav-graph android:value="@navigation/main_navigation"/>
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+        </activity>
+        <activity
+            android:name=".touch.playback.PlayerActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".touch.NavigationActivity"/>
+        <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
+        <activity android:name=".touch.favoritesimport.FavoritesImportActivity"
+            android:theme="@style/AppTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/json" />
+            </intent-filter>
+        </activity>
+        <!-- Leanback -->
+        <activity
+            android:name=".leanback.conferences.ConferencesActivity"
+            android:banner="@drawable/banner"
+            android:label="${label}"
+            android:screenOrientation="landscape"
+            android:theme="@style/LeanbackAppTheme"
+            tools:ignore="LockedOrientationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:scheme="de.nicidienase.chaosflix.leanback"
+                    android:host="main"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".leanback.events.EventsActivity"
+            android:parentActivityName=".leanback.conferences.ConferencesActivity"
+            android:theme="@style/LeanbackAppTheme"/>
+        <activity
+            android:name=".leanback.detail.DetailsActivity"
+            android:exported="true"
+            android:parentActivityName=".leanback.conferences.ConferencesActivity"
+            android:theme="@style/LeanbackAppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:scheme="de.nicidienase.chaosflix.leanback"
+                    android:host="event"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".leanback.settings.ChaosflixSettingsActivity"
+            android:theme="@style/ChaosflixLeanbackPreferences" />
+
+        <service android:name=".leanback.recommendations.ChaosRecommendationsService"
+            android:enabled="true"/>
+
+        <receiver
+            android:name=".leanback.recommendations.RecommendationBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.media.tv.ACTION_WATCH_NEXT_PROGRAM_BROWSABLE_DISABLED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.media.tv.ACTION_PREVIEW_PROGRAM_BROWSABLE_DISABLED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

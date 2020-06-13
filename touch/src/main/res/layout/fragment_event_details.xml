@@ -26,7 +26,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="@dimen/appbar_header_height"
 			android:fitsSystemWindows="true"
-			android:theme="@style/AppTheme">
+			android:theme="@style/LeanbackAppTheme">
 
 			<net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout
 				android:id="@+id/collapsing_toolbar"
@@ -67,7 +67,7 @@
 					app:subtitleTextColor="@color/white"
 					app:layout_collapseMode="pin"
 					app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-					app:popupTheme="@style/AppTheme"/>
+					app:popupTheme="@style/LeanbackAppTheme"/>
 
 			</net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout>
 

@@ -1,0 +1,171 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-android-extensions'
+    id 'com.github.triplet.play' version '2.6.2'
+}
+
+
+String appName = "Chaosflix"
+String versionString = new File("versionfile").text.trim()
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId "de.nicidienase.chaosflix"
+        minSdkVersion rootProject.ext.minSDK
+        targetSdkVersion rootProject.ext.targetSDK
+        manifestPlaceholders = [label: appName]
+        // odd for touch, even for leanback
+        versionCode 1
+        versionName versionString
+
+        if (project.hasProperty("versionCode")) {
+            versionCode = project.property("versionCode") as int
+            println "Setting VersionCode from property: $versionCode"
+        }
+        if (project.hasProperty("versionName")) {
+            versionName = project.property("versionName") as String
+            println "Setting versionName from property: $versionName"
+        }
+    }
+
+    signingConfigs {
+        //noinspection GroovyMissingReturnStatement, GroovyAssignabilityCheck
+        release {
+            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore.trim()).exists() && file(chaosflixKeystore.trim()).isFile()) {
+                println "Release app signing is configured: will sign APK"
+                storeFile file(chaosflixKeystore.trim())
+                storePassword chaosflixStorePassword.trim()
+                keyAlias chaosflixKeyName.trim()
+                keyPassword chaosflixKeyPassword.trim()
+            } else {
+                println "App signing data not found. Will not sign."
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            manifestPlaceholders = [label: appName + "-debug"]
+            minifyEnabled false
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro'
+            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore.trim()).exists() && file(chaosflixKeystore.trim()).isFile()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    flavorDimensions "stage", "libs"
+
+    productFlavors {
+        prod {
+            dimension "stage"
+        }
+        dev {
+            dimension "stage"
+            applicationIdSuffix ".dev"
+            manifestPlaceholders = [label: appName + "-Dev"]
+        }
+        mock {
+            dimension "stage"
+            applicationIdSuffix ".mock"
+            manifestPlaceholders = [label: appName + "-Mock"]
+        }
+
+        free {
+            dimension "libs"
+
+            ext {
+                prod = null
+                dev = null
+                mock = null
+            }
+        }
+        noFree {
+            dimension "libs"
+            ext {
+                if (project.hasProperty("appcenterId")) {
+                    prod = appcenterId
+                } else {
+                    prod = null
+                    println "AppcenterId not set"
+                }
+                if (project.hasProperty("appcenterDevId")) {
+                    dev = appcenterDevId
+                    mock = appcenterDevId
+                } else {
+                    dev = null
+                    mock = null
+                    println "AppcenterId not set"
+                }
+
+            }
+        }
+
+    }
+
+    applicationVariants.all { variant ->
+        def flavors = variant.productFlavors
+        // flavorDimensions "stage" -> 0, "libs" -> 1
+        def stage = flavors[0]
+        def libs = flavors[1]
+
+        variant.buildConfigField "String", "APPCENTER_ID", "${libs[stage.name]}"
+    }
+
+    playConfigs {
+        prodNoFree {
+            enabled = true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
+
+}
+
+dependencies {
+    implementation project(':touch')
+    implementation project(':leanback')
+    implementation project(':common')
+
+    noFreeImplementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
+    noFreeImplementation('pl.droidsonroids:casty:1.0.8') {
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+    }
+
+    def appCenterSdkVersion = '2.5.1'
+    noFreeImplementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
+    noFreeImplementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
+    noFreeImplementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
+
+    debugImplementation 'com.facebook.stetho:stetho:1.5.1'
+    debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.4.2'
+    debugImplementation 'com.facebook.stetho:stetho-okhttp:1.4.2'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
+}
+
+play {
+    serviceAccountCredentials = file("../chaosflix-d1d09f33cbb2.json")
+    track = "alpha"
+    releaseStatus = "draft"
+    enabled = false
+    artifactDir = file("build/outputs/apk/prodNoFree/release/app-prod-noFree-release.apk")
+}

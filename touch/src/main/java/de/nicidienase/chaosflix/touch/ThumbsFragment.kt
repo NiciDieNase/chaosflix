@@ -16,22 +16,23 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import de.nicidienase.chaosflix.common.mediadata.ThumbnailParser
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.databinding.FragmentThumbsTestBinding
 import de.nicidienase.chaosflix.touch.databinding.ItemThumbBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import org.koin.android.ext.android.inject
 
 class ThumbsFragment : Fragment(R.layout.fragment_thumbs_test) {
 
     private var uri: String = ""
+    private val client: OkHttpClient by inject()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentThumbsTestBinding.bind(view)
 
-        val client = ViewModelFactory.getInstance(requireContext()).apiFactory.client
         binding.thumbList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val thumbsAdapter = ThumbsAdapter()
         binding.thumbList.adapter = thumbsAdapter

@@ -40,7 +40,7 @@ class OfflineEventAdapter(
             buttonDelete.setOnClickListener {
                 eventDeleteListener(item.eventGuid)
             }
-            content?.setOnClickListener { _ ->
+            content.setOnClickListener { _ ->
                 eventSelectedListener(item.eventGuid)
             }
         }

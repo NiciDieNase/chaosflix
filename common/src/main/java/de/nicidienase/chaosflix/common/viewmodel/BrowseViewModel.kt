@@ -11,11 +11,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.OfflineItemManager
+import de.nicidienase.chaosflix.common.R
 import de.nicidienase.chaosflix.common.ResourcesFacade
 import de.nicidienase.chaosflix.common.mediadata.EventInfoRepository
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository

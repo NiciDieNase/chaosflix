@@ -12,7 +12,7 @@ import org.robolectric.RobolectricTestRunner
 class ParcelableTest {
 
     @Test
-    fun PlaybackItemParcelableTest() {
+    fun playbackItemParcelableTest() {
         val playbackItem = PlaybackItem("title", "subtitle", "asdlökfjasd", "http://foo.bar/test")
         assertTrue(playbackItem.equals(PlaybackItem.createFromParcel(writeToParcel(playbackItem))))
     }

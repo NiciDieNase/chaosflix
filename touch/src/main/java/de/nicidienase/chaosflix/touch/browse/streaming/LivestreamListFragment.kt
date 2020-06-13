@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -20,15 +19,15 @@ import androidx.recyclerview.widget.MergeAdapter
 import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.databinding.FragmentLivestreamsBinding
 import de.nicidienase.chaosflix.touch.playback.PlaybackItem
 import java.lang.Exception
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class LivestreamListFragment : Fragment() {
 
-    private val viewModel: BrowseViewModel by viewModels { ViewModelFactory.getInstance(requireContext()) }
+    private val viewModel: BrowseViewModel by viewModel()
 
     private lateinit var binding: FragmentLivestreamsBinding
 //    lateinit var livestreamAdapter: LivestreamAdapter
@@ -43,9 +42,7 @@ class LivestreamListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            columnCount = arguments!!.getInt(ARG_COLUMN_COUNT)
-        }
+        columnCount = requireArguments().getInt(ARG_COLUMN_COUNT)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -177,6 +174,7 @@ class LivestreamListFragment : Fragment() {
         binding.swipeRefreshLayout.isRefreshing = true
         Log.d(TAG, "Refresh starting")
         viewModel.updateLiveStreams()
+        viewModel.updateEventInfo()
     }
 
     companion object {

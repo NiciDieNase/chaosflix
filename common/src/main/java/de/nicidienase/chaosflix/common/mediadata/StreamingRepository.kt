@@ -3,7 +3,7 @@ package de.nicidienase.chaosflix.common.mediadata
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
+import de.nicidienase.chaosflix.common.AnalyticsWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
 import de.nicidienase.chaosflix.common.mediadata.network.StreamingApi
 import java.io.IOException
@@ -11,7 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class StreamingRepository(
-    private val streamingApi: StreamingApi
+    private val streamingApi: StreamingApi,
+    private val analyticsWrapper: AnalyticsWrapper
 ) {
     private val _streamingConferences: MutableLiveData<List<LiveConference>> = MutableLiveData()
     val streamingConferences: LiveData<List<LiveConference>> = _streamingConferences
@@ -24,7 +25,7 @@ class StreamingRepository(
             }
         } catch (e: IOException) {
             Log.e(TAG, e.message, e)
-            AnalyticsWrapperImpl.trackException(e)
+            analyticsWrapper.trackException(e)
         }
         return@withContext
     }

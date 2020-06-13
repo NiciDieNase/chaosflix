@@ -1,14 +1,21 @@
 package de.nicidienase.chaosflix.common
 
+import de.nicidienase.chaosflix.StageConfiguration
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.dsl.module
+import org.koin.test.KoinTest
 
-class ChaosflixUtilTest {
+class ChaosflixUtilTest : KoinTest {
 
-    val api = ApiFactory.getInstance("https://api.media.ccc.de", "https://c3voc.de", null).recordingApi
+    val api = ApiFactory.getInstance(TestStageConfig).recordingApi
 
     @Test
     fun testGPN19() = genericTest("gpn19", false)
@@ -57,6 +64,27 @@ class ChaosflixUtilTest {
         val map = conference?.events?.map { Event(it) }
         if (map != null) {
             assertTrue(expResult == ChaosflixUtil.areTagsUsefull(map, conference.acronym))
+        }
+    }
+
+    companion object {
+
+        @BeforeAll
+        @JvmStatic
+        fun setup() {
+            startKoin {
+                modules(
+                        module {
+                            single<StageConfiguration> { TestStageConfig }
+                        }
+                )
+            }
+        }
+
+        @AfterAll
+        @JvmStatic
+        fun teardown() {
+            stopKoin()
         }
     }
 }

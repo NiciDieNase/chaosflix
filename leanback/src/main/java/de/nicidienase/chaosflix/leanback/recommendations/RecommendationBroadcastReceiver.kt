@@ -2,27 +2,37 @@ package de.nicidienase.chaosflix.leanback.recommendations
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.app.UiModeManager
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Context.UI_MODE_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import android.util.Log
 import androidx.tvprovider.media.tv.TvContractCompat
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
+import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
-class RecommendationBroadcastReceiver : BroadcastReceiver() {
+class RecommendationBroadcastReceiver : BroadcastReceiver(), KoinComponent {
+
+    private val mediaRepository: MediaRepository by inject()
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        when (intent?.action) {
-            Intent.ACTION_BOOT_COMPLETED -> {
-                setupRecommendationUpdates(context)
-                context?.let { setup(it) }
+        val uiModeManager = context?.getSystemService(UI_MODE_SERVICE) as UiModeManager
+        if (uiModeManager.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION) {
+            when (intent?.action) {
+                Intent.ACTION_BOOT_COMPLETED -> {
+                    setupRecommendationUpdates(context)
+                    setup(context)
+                }
+                TvContractCompat.ACTION_WATCH_NEXT_PROGRAM_BROWSABLE_DISABLED -> handleRemove(intent)
+                TvContractCompat.ACTION_PREVIEW_PROGRAM_BROWSABLE_DISABLED -> handleRemove(intent)
+                else -> Log.d(TAG, intent.toString())
             }
-            TvContractCompat.ACTION_WATCH_NEXT_PROGRAM_BROWSABLE_DISABLED -> if (context != null) handleRemove(intent, context)
-            TvContractCompat.ACTION_PREVIEW_PROGRAM_BROWSABLE_DISABLED -> if (context != null) handleRemove(intent, context)
-            else -> Log.d(TAG, intent.toString())
         }
     }
 
@@ -33,11 +43,10 @@ class RecommendationBroadcastReceiver : BroadcastReceiver() {
         alarmManager?.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, DELAY, AlarmManager.INTERVAL_HALF_HOUR, pendingIntent)
     }
 
-    private fun handleRemove(intent: Intent, context: Context) {
+    private fun handleRemove(intent: Intent) {
         val id = intent.getLongExtra(TvContractCompat.EXTRA_PREVIEW_PROGRAM_ID, 0)
         Log.d(TAG, "Id: $id")
         GlobalScope.launch {
-            val mediaRepository = ViewModelFactory.getInstance(context).mediaRepository
             mediaRepository.resetRecommendationId(id)
         }
     }

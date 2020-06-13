@@ -1,91 +1,27 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-android-extensions'
-    id 'com.github.triplet.play' version '2.6.2'
 }
-
-String appName = "Chaosflix"
-String versionString = new File("versionfile").text.trim()
 
 android {
     buildToolsVersion '27.0.3'
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
-        applicationId "de.nicidienase.chaosflix"
-        manifestPlaceholders = [label: appName]
         minSdkVersion rootProject.ext.minSDK
         targetSdkVersion rootProject.ext.targetSDK
-        // odd for touch, even for leanback
-        versionCode 1
-        versionName versionString
-        if(project.hasProperty("versionCode")){
-            versionCode = project.property("versionCode") as int
-            println "Setting VersionCode from property: $versionCode"
-        }
-    }
-    signingConfigs {
-        //noinspection GroovyMissingReturnStatement, GroovyAssignabilityCheck
-        release {
-            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore).exists() && file(chaosflixKeystore).isFile()) {
-                println "Release app signing is configured: will sign APK"
-                storeFile file(chaosflixKeystore)
-                storePassword chaosflixStorePassword
-                keyAlias chaosflixKeyName
-                keyPassword chaosflixKeyPassword
-            } else {
-                println "App signing data not found. Will not sign."
-            }
-        }
     }
     buildTypes {
         debug {
-            applicationIdSuffix ".debug"
-            manifestPlaceholders = [label: appName + "-debug"]
             minifyEnabled false
         }
         release {
             minifyEnabled true
-            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'),'proguard-rules.pro'
-            if (project.hasProperty("chaosflixKeystore") && file(chaosflixKeystore).exists() && file(chaosflixKeystore).isFile()) {
-                signingConfig signingConfigs.release
-            }
         }
     }
-
-    flavorDimensions "stage", "libs"
-
-    productFlavors {
-        prod {
-            dimension "stage"
-        }
-        dev {
-            dimension "stage"
-            applicationIdSuffix ".dev"
-            manifestPlaceholders = [label: appName + "-Dev"]
-        }
-        mock {
-            dimension "stage"
-            applicationIdSuffix ".mock"
-            manifestPlaceholders = [label: appName + "-Mock"]
-        }
-        free {
-            dimension "libs"
-        }
-        noFree{
-            dimension "libs"
-        }
-    }
-    variantFilter { variant ->
-        def names = variant.flavors*.name
-        if (name.contains("prod") && name.contains("Debug")){
-            setIgnore(true)
-        }
-    }
-
 
     packagingOptions {
         exclude 'META-INF/ASL2.0'
@@ -101,22 +37,15 @@ android {
     }
 
     defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
     lintOptions.abortOnError = false
-    dataBinding.enabled = true
-    buildToolsVersion rootProject.ext.buildToolsVersion
-    playConfigs {
-        prodNoFree {
-            enabled = true
-        }
+
+    buildFeatures {
+        dataBinding = true
     }
-}
 
-configurations {
-    mockDebugCompile
-    prodDebugCompile
-    prodReleaseCompile
+    buildToolsVersion rootProject.ext.buildToolsVersion
 }
-
 
 dependencies {
     implementation project(':common')
@@ -141,10 +70,3 @@ dependencies {
     androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
     androidTestImplementation 'com.squareup.okhttp3:mockwebserver:3.6.0'
 }
-
-play {
-    serviceAccountCredentials = file("../chaosflix-d1d09f33cbb2.json")
-    track = "Alpha"
-    enabled = false
-}
-

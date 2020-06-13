@@ -5,8 +5,8 @@ import okhttp3.OkHttpClient
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import org.hamcrest.number.OrderingComparison.greaterThan
-import org.junit.Test
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 
 internal class ThumbnailParserTest {
 
