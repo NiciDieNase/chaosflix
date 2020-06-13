@@ -3,13 +3,14 @@ package de.nicidienase.chaosflix.common.mediadata.network
 import android.os.Build
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.StageConfiguration
-import de.nicidienase.chaosflix.common.BuildConfig
 import de.nicidienase.chaosflix.common.SingletonHolder
 import java.io.File
 import java.util.concurrent.TimeUnit
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import org.koin.core.KoinComponent
+import org.koin.core.get
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -68,13 +69,13 @@ class ApiFactory(stageConfiguration: StageConfiguration) {
             return@Interceptor chain.proceed(requestWithUseragent)
     }
 
-    companion object : SingletonHolder<ApiFactory, StageConfiguration>(::ApiFactory) {
+    companion object : SingletonHolder<ApiFactory, StageConfiguration>(::ApiFactory), KoinComponent {
 
         private const val DEFAULT_TIMEOUT = 30L
         private const val CACHE_SIZE = 1024L * 5 // 5MB
 
         fun buildUserAgent(): String {
-            val versionName = BuildConfig.VERSION_NAME
+            val versionName = get<StageConfiguration>().versionName
             val device = "${Build.BRAND} ${Build.MODEL}"
             val osVersion = "Android/${Build.VERSION.RELEASE}"
             return "chaosflix/$versionName $osVersion ($device)"
