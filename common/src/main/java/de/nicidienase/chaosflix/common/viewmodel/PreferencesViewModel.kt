@@ -29,7 +29,6 @@ class PreferencesViewModel(
 ) : ViewModel() {
     private val gson = Gson()
 
-
     fun cleanNonUserData() {
         viewModelScope.launch(Dispatchers.IO) {
             mediaRepository.deleteNonUserData()

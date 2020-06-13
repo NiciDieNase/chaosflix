@@ -9,7 +9,6 @@ import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgressDao
 import de.nicidienase.chaosflix.touch.browse.streaming.StreamingItem
-import kotlinx.coroutines.CoroutineScope
 
 @SuppressWarnings("unused")
 class CastServiceImpl(

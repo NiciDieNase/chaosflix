@@ -14,7 +14,7 @@ import androidx.leanback.widget.ListRowPresenter
 import androidx.leanback.widget.Row
 import androidx.leanback.widget.SectionRow
 import androidx.lifecycle.Observer
-//import de.nicidienase.chaosflix.LeakCanaryLauncher
+// import de.nicidienase.chaosflix.LeakCanaryLauncher
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup

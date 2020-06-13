@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import de.nicidienase.chaosflix.StageConfiguration
 import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
-import de.nicidienase.chaosflix.touch.BuildConfig
 import de.nicidienase.chaosflix.touch.R
 import mehdi.sakout.aboutpage.AboutPage
 import mehdi.sakout.aboutpage.Element

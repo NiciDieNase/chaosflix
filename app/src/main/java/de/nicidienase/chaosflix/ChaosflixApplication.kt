@@ -73,7 +73,7 @@ class ChaosflixApplication : Application() {
             single<CastService> { CastServiceImpl(get()) }
             single { MediaRepository(get(), get(), get()) }
 
-            single<AnalyticsWrapper>{ AnalyticsWrapperImpl }
+            single<AnalyticsWrapper> { AnalyticsWrapperImpl }
 
             viewModel { BrowseViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
             viewModel { PlayerViewModel(get(), get()) }
@@ -84,4 +84,3 @@ class ChaosflixApplication : Application() {
         }
     }
 }
-
