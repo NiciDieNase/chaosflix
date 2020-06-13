@@ -40,11 +40,6 @@ class LivestreamListFragment : Fragment() {
         fun castStream(streamingItem: StreamingItem, streamUrl: StreamUrl, s: String) {}
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        columnCount = requireArguments().getInt(ARG_COLUMN_COUNT)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentLivestreamsBinding.inflate(inflater, container, false)
         if (columnCount <= 1) {
