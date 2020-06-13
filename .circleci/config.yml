@@ -86,26 +86,15 @@ jobs:
               androidDependencies
 
       - run:
-          name: Build Touch
+          name: Build App
           command: |
             ./gradlew $SIGN_CONFIG $KEY_CONFIG \
               -PversionCode=$VERSION_CODE_TOUCH \
               -PversionName=${VERSION_NAME} \
-              touch:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
+              app:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
       - store_artifacts:
-          path: touch/build/outputs
-          destination: touch
-
-      - run:
-          name: Build Leanback
-          command: |
-            ./gradlew $KEY_CONFIG $SIGN_CONFIG \
-              -PversionCode=$VERSION_CODE_LEANBACK \
-              -PversionName=${VERSION_NAME} \
-            leanback:assemble${STAGE_LOWER}${LIBS}${BUILD_TYPE}
-      - store_artifacts:
-          path: leanback/build/outputs
-          destination: leanback
+          path: app/build/outputs
+          destination: app
 
       - save_cache:
           <<: *general_cache_key
@@ -156,6 +145,14 @@ jobs:
               leanback:lint${STAGE}${LIBS}${BUILD_TYPE} \
 
       - run:
+          name: Lint App
+          command: |
+            ./gradlew $KEY_CONFIG \
+              -PversionCode=$VERSION_CODE_TOUCH \
+              -PversionName=${VERSION_NAME} \
+              app:lint${STAGE}${LIBS}${BUILD_TYPE}
+
+      - run:
           name: Ktlint
           command: |
             ./gradlew $KEY_CONFIG \
@@ -187,7 +184,7 @@ jobs:
       - run:
           name: Test Common
           command: |
-            ./gradlew $KEY_CONFIG common:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest
+            ./gradlew $KEY_CONFIG common:test${BUILD_TYPE}UnitTest
 
       - run:
           name: Test Touch
@@ -195,7 +192,7 @@ jobs:
             ./gradlew $KEY_CONFIG \
               -PversionCode=$VERSION_CODE_TOUCH \
               -PversionName=${VERSION_NAME} \
-              touch:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest
+              touch:test${BUILD_TYPE}UnitTest
 
       - run:
           name: Test Leanback
@@ -203,7 +200,16 @@ jobs:
             ./gradlew $KEY_CONFIG \
               -PversionCode=$VERSION_CODE_LEANBACK \
               -PversionName=${VERSION_NAME} \
-              leanback:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest \
+              leanback:test${BUILD_TYPE}UnitTest \
+
+
+      - run:
+          name: Test Touch
+          command: |
+            ./gradlew $KEY_CONFIG \
+              -PversionCode=$VERSION_CODE_TOUCH \
+              -PversionName=${VERSION_NAME} \
+              app:test${STAGE}${LIBS}${BUILD_TYPE}UnitTest
 
       - store_test_results:
           path: common/build/test-results
@@ -211,6 +217,8 @@ jobs:
           path: touch/build/test-results
       - store_test_results:
           path: leanback/build/test-results
+      - store_test_results:
+          path: app/build/test-results
 
   publish-appcenter:
     <<: *container_config
@@ -224,31 +232,17 @@ jobs:
           <<: *setup_env
 
       - run:
-          name: Touch Appcenter Upload
+          name: Appcenter Upload
           command: |
             git log --format="%h %s" master..HEAD > $RELEASENOTES_FILE
             .circleci/appCenterUpload.sh \
               $APPCENTER_OWNER \
               $APPCENTER_TOKEN \
-              "touch/build/outputs/apk/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/touch-${STAGE_LOWER}-${LIBS_LOWER}-${BUILD_TYPE_LOWER}.apk" \
+              "app/build/outputs/apk/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/app-${STAGE_LOWER}-${LIBS_LOWER}-${BUILD_TYPE_LOWER}.apk" \
               $RELEASENOTES_FILE \
               $APPCENTER_GROUP \
-              "touch/build/outputs/mapping/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/mapping.txt" \
+              "app/build/outputs/mapping/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/mapping.txt" \
               "$VERSION_CODE_TOUCH" \
-              "$VERSION_NAME"
-
-      - run:
-          name: Leanback Appcenter Upload
-          command: |
-            git log --format="%h %s" master..HEAD > $RELEASENOTES_FILE
-            .circleci/appCenterUpload.sh \
-              $APPCENTER_OWNER \
-              $APPCENTER_TOKEN \
-              "leanback/build/outputs/apk/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/touch-${STAGE_LOWER}-${LIBS_LOWER}-${BUILD_TYPE_LOWER}.apk" \
-              $RELEASENOTES_FILE \
-              $APPCENTER_GROUP \
-              "leanback/build/outputs/mapping/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/mapping.txt" \
-              "$VERSION_CODE_LEANBACK" \
               "$VERSION_NAME"
 
   publish-play:
@@ -272,7 +266,7 @@ jobs:
             ./gradlew $KEY_CONFIG \
               -PversionCode=$VERSION_CODE_TOUCH \
               -PversionName=${VERSION_NAME} \
-              touch:publishApk
+              app:publishApk
 
 
 workflows:
