@@ -42,8 +42,11 @@ android {
 
     defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     lintOptions.abortOnError false
-    dataBinding.enabled = true
-    viewBinding.enabled = true
+
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
 
     testOptions.unitTests.includeAndroidResources = true
 

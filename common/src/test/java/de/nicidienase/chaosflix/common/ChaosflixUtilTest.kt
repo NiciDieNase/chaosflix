@@ -4,16 +4,14 @@ import de.nicidienase.chaosflix.StageConfiguration
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import kotlinx.coroutines.runBlocking
-import org.junit.Before
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 
-class ChaosflixUtilTest: KoinTest {
+class ChaosflixUtilTest : KoinTest {
 
     val api = ApiFactory.getInstance(TestStageConfig).recordingApi
 

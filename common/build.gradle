@@ -45,7 +45,10 @@ android {
     }
 
     lintOptions.abortOnError = false
-    dataBinding.enabled = true
+
+    buildFeatures {
+        dataBinding = true
+    }
 
     testOptions {
         unitTests {

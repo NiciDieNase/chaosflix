@@ -37,8 +37,13 @@ android {
     }
 
     defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
     lintOptions.abortOnError = false
-    dataBinding.enabled = true
+
+    buildFeatures {
+        dataBinding = true
+    }
+
     buildToolsVersion rootProject.ext.buildToolsVersion
 }
 
