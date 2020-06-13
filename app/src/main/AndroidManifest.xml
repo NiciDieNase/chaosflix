@@ -73,7 +73,7 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.DEFAULT" />
                 <data
-                    android:scheme="de.nicidienase.chaosflix"
+                    android:scheme="de.nicidienase.chaosflix.leanback"
                     android:host="main"/>
             </intent-filter>
         </activity>
@@ -92,7 +92,7 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.DEFAULT" />
                 <data
-                    android:scheme="de.nicidienase.chaosflix"
+                    android:scheme="de.nicidienase.chaosflix.leanback"
                     android:host="event"/>
             </intent-filter>
         </activity>

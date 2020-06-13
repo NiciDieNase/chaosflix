@@ -101,14 +101,14 @@ class ChannelManager(
                 .setLive(false)
                 .setLastPlaybackPositionMillis(event.progress.toInt())
                 .setReleaseDate(event.releaseDate)
-                .setIntentUri(Uri.parse("de.nicidienase.chaosflix://event/${event.guid}"))
+                .setIntentUri(Uri.parse("$deeplinkUriSchema://event/${event.guid}"))
     }
 
     private fun setupChannel(context: Context, @StringRes titleRes: Int): Long? {
         val builder = Channel.Builder()
         builder.setType(TvContractCompat.Channels.TYPE_PREVIEW)
                 .setDisplayName(context.resources.getString(titleRes))
-                .setAppLinkIntentUri(Uri.parse("de.nicidienase.chaosflix://main"))
+                .setAppLinkIntentUri(Uri.parse("$deeplinkUriSchema://main"))
 
         val channelUri: Uri? = context.contentResolver.insert(
                 TvContractCompat.Channels.CONTENT_URI,
@@ -126,5 +126,8 @@ class ChannelManager(
         }
     }
 
-    private val TAG = ChannelManager::class.java.simpleName
+    companion object {
+        private val TAG = ChannelManager::class.java.simpleName
+        private const val deeplinkUriSchema = "de.nicidienase.chaosflix.leanback"
+    }
 }
