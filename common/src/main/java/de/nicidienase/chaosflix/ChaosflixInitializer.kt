@@ -1,5 +1,7 @@
 package de.nicidienase.chaosflix
 
+import android.app.Application
+
 interface ChaosflixInitializer {
-    fun init(chaosflixApplication: de.nicidienase.chaosflix.ChaosflixApplication)
+    fun init(application: Application)
 }

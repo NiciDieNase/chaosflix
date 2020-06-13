@@ -1,4 +1,4 @@
-<manifest package="de.nicidienase.chaosflix"
+<manifest package="de.nicidienase.chaosflix.common"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
     <meta-data android:name="DATABASE" android:value="mediaccc.db" />

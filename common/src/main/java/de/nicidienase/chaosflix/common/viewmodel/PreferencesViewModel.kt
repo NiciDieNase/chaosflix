@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.common.AnalyticsWrapper
-import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgressDao
@@ -25,11 +24,11 @@ class PreferencesViewModel(
     private val mediaRepository: MediaRepository,
     private val watchlistItemDao: WatchlistItemDao,
     private val progressItemDao: PlaybackProgressDao,
-    private val exportDir: File
+    private val exportDir: File,
+    private val analyticsWrapper: AnalyticsWrapper
 ) : ViewModel() {
     private val gson = Gson()
 
-    private val analyticsWrapper: AnalyticsWrapper = AnalyticsWrapperImpl
 
     fun cleanNonUserData() {
         viewModelScope.launch(Dispatchers.IO) {

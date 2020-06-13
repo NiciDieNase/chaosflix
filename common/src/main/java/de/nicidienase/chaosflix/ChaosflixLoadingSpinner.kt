@@ -6,6 +6,7 @@ import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import android.widget.ImageView
+import de.nicidienase.chaosflix.common.R
 
 class ChaosflixLoadingSpinner(context: Context, attributeSet: AttributeSet) : ImageView(context, attributeSet) {
     init {

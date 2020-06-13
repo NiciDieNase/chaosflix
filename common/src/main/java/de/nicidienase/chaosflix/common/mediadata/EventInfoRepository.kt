@@ -2,7 +2,7 @@ package de.nicidienase.chaosflix.common.mediadata
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
+import de.nicidienase.chaosflix.common.AnalyticsWrapper
 import de.nicidienase.chaosflix.common.mediadata.entities.eventinfo.EventInfo
 import de.nicidienase.chaosflix.common.mediadata.entities.eventinfo.EventInfoDao
 import de.nicidienase.chaosflix.common.mediadata.network.EventInfoApi
@@ -12,7 +12,8 @@ import javax.net.ssl.SSLHandshakeException
 
 class EventInfoRepository(
     private val api: EventInfoApi,
-    private val dao: EventInfoDao
+    private val dao: EventInfoDao,
+    private val analyticsWrapper: AnalyticsWrapper
 ) {
 
     suspend fun updateMediaInfo() {
@@ -30,11 +31,11 @@ class EventInfoRepository(
             block.invoke()
         } catch (e: SSLHandshakeException) {
             Log.e(TAG, e.message, e)
-            AnalyticsWrapperImpl.trackException(e)
+            analyticsWrapper.trackException(e)
             null
         } catch (e: IOException) {
             Log.e(TAG, e.message, e)
-            AnalyticsWrapperImpl.trackException(e)
+            analyticsWrapper.trackException(e)
             null
         }
     }

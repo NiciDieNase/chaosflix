@@ -1,8 +1,9 @@
 package de.nicidienase.chaosflix
 
 import android.app.Application
-import android.content.Context
 import android.preference.PreferenceManager
+import de.nicidienase.chaosflix.common.AnalyticsWrapper
+import de.nicidienase.chaosflix.common.AnalyticsWrapperImpl
 import de.nicidienase.chaosflix.common.ChaosflixDatabase
 import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.DarkmodeUtil
@@ -27,7 +28,6 @@ import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import org.koin.dsl.module
-import java.io.File
 
 class ChaosflixApplication : Application() {
 
@@ -64,43 +64,24 @@ class ChaosflixApplication : Application() {
             single { get<ChaosflixDatabase>().recordingDao() }
             single { get<ChaosflixDatabase>().relatedEventDao() }
             single { get<ChaosflixDatabase>().watchlistItemDao() }
-            single { StreamingRepository(get()) }
-            single { EventInfoRepository(get(), get()) }
+            single { StreamingRepository(get(), get()) }
+            single { EventInfoRepository(get(), get(), get()) }
             single { ChaosflixPreferenceManager(PreferenceManager.getDefaultSharedPreferences(androidContext())) }
             single { OfflineItemManager(get(), get(), get()) }
             single { ResourcesFacade(get()) }
             single { ThumbnailParser(get()) }
             single<CastService> { CastServiceImpl(get()) }
-            single { MediaRepository(get(), get()) }
+            single { MediaRepository(get(), get(), get()) }
+
+            single<AnalyticsWrapper>{ AnalyticsWrapperImpl }
 
             viewModel { BrowseViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
             viewModel { PlayerViewModel(get(), get()) }
             viewModel { DetailsViewModel(get(), get(), get(), get(), get()) }
-            viewModel { PreferencesViewModel(get(), get(), get(), get()) }
+            viewModel { PreferencesViewModel(get(), get(), get(), get(), get()) }
             viewModel { FavoritesImportViewModel(get()) }
             viewModel { SplashViewModel(get()) }
         }
     }
 }
 
-interface StageConfiguration {
-    val recordingUrl: String
-    val eventInfoUrl: String
-    val cacheDir: File?
-    val externalFilesDir: File?
-    val streamingApiBaseUrl: String
-    val streamingApiPath: String
-    val appcenterId: String?
-}
-
-class ChaosflixStageConfiguration(context: Context) : StageConfiguration {
-    override val recordingUrl = context.resources.getString(R.string.recording_url)
-            ?: throw error("Recording Url not definded")
-    override val eventInfoUrl = context.resources.getString(R.string.event_info_url)
-            ?: throw error("EventInfo Url not definded")
-    override val cacheDir: File? = context.cacheDir
-    override val streamingApiBaseUrl = BuildConfig.STREAMING_API_BASE_URL
-    override val streamingApiPath = BuildConfig.STREAMING_API_OFFERS_PATH
-    override val appcenterId: String? = BuildConfig.APPCENTER_ID
-    override val externalFilesDir: File? = android.os.Environment.getExternalStorageDirectory()
-}

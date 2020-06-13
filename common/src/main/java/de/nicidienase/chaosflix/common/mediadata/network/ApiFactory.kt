@@ -2,8 +2,8 @@ package de.nicidienase.chaosflix.common.mediadata.network
 
 import android.os.Build
 import com.google.gson.Gson
-import de.nicidienase.chaosflix.BuildConfig
 import de.nicidienase.chaosflix.StageConfiguration
+import de.nicidienase.chaosflix.common.BuildConfig
 import de.nicidienase.chaosflix.common.SingletonHolder
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -13,7 +13,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class ApiFactory(stageConfiguration: de.nicidienase.chaosflix.StageConfiguration) {
+class ApiFactory(stageConfiguration: StageConfiguration) {
 
     private val apiUrl: String = stageConfiguration.recordingUrl
     private val eventInfoUrl: String = stageConfiguration.eventInfoUrl
@@ -46,7 +46,7 @@ class ApiFactory(stageConfiguration: de.nicidienase.chaosflix.StageConfiguration
 
     val streamingApi: StreamingApi by lazy {
         Retrofit.Builder()
-        .baseUrl(BuildConfig.STREAMING_API_BASE_URL)
+        .baseUrl(stageConfiguration.streamingApiBaseUrl)
         .client(client)
         .addConverterFactory(gsonConverterFactory)
         .build()

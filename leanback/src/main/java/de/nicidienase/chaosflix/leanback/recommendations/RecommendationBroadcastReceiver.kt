@@ -11,8 +11,8 @@ import androidx.tvprovider.media.tv.TvContractCompat
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 class RecommendationBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 

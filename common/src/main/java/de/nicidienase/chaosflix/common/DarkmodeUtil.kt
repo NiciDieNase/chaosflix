@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatDelegate
-import de.nicidienase.chaosflix.R
 
 object DarkmodeUtil {
 

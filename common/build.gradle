@@ -4,10 +4,6 @@ plugins {
     id 'kotlin-kapt'
     id "de.mannodermaus.android-junit5"
 }
-apply from: "${rootProject.projectDir}/flavors.gradle"
-
-
-String versionString = new File("versionfile").text.trim()
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -16,8 +12,6 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSDK
         targetSdkVersion rootProject.ext.targetSDK
-        versionCode 1
-        versionName versionString
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -27,9 +21,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'proguard-rules.pro'
-
-        buildConfigField "String", "STREAMING_API_BASE_URL", "\"https://streaming.media.ccc.de\""
-        buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/streams/v2.json\""
 
     }
 
@@ -50,70 +41,6 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    with flavorConfig
-//    flavorDimensions "stage", "libs"
-//
-//    productFlavors {
-//        prod {
-//            dimension "stage"
-//        }
-//
-//        dev {
-//            dimension "stage"
-//        }
-//
-//        mock {
-//            dimension "stage"
-//            buildConfigField "String", "STREAMING_API_BASE_URL", "\"https://gist.githubusercontent.com\""
-//            buildConfigField "String", "STREAMING_API_OFFERS_PATH", "\"/NiciDieNase/1ca017f180242f0ee683a1f592efc4ed/raw/0104592b57f4b29863fd0684a510462af276f30e/example_streams_v2.json\""
-//        }
-//
-//        free {
-//            dimension "libs"
-//
-//            ext {
-//                prod = null
-//                dev = null
-//                mock = null
-//            }
-//        }
-//        noFree {
-//            dimension "libs"
-//            ext {
-//                if (project.hasProperty("appcenterId")) {
-//                    prod = appcenterId
-//                } else {
-//                    prod = null
-//                    println "AppcenterId not set"
-//                }
-//                if (project.hasProperty("appcenterDevId")) {
-//                    dev = appcenterDevId
-//                    mock = appcenterDevId
-//                } else {
-//                    dev = null
-//                    mock = null
-//                    println "AppcenterId not set"
-//                }
-//
-//            }
-//        }
-//    }
-
-    libraryVariants.all { variant ->
-        def flavors = variant.productFlavors
-        // flavorDimensions "stage" -> 0, "libs" -> 1
-        def stage = flavors[0]
-        def libs = flavors[1]
-
-        variant.buildConfigField "String", "APPCENTER_ID", "${libs[stage.name]}"
-    }
-
-    variantFilter { variant ->
-        if (name.contains("prod") && name.contains("Debug")) {
-            setIgnore(true)
         }
     }
 
@@ -139,7 +66,6 @@ dependencies {
 
     def lifecycle_version = "2.2.0"
     api "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
-//    api "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     api "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     api "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
@@ -157,8 +83,6 @@ dependencies {
     api "androidx.room:room-ktx:$roomVersion"
 
     def koin_version = "2.1.5"
-//    api "org.koin:koin-android:$koin_version"
-//    api "org.koin:koin-android-scope:$koin_version"
     api "org.koin:koin-android-viewmodel:$koin_version"
 
     api 'com.squareup.retrofit2:retrofit:2.6.4'
@@ -172,24 +96,6 @@ dependencies {
     api 'commons-io:commons-io:2.4'
 
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0'
-
-    noFreeImplementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
-    noFreeImplementation('pl.droidsonroids:casty:1.0.8') {
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-    }
-
-    def appCenterSdkVersion = '2.5.1'
-    noFreeImplementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
-    noFreeImplementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
-    noFreeImplementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
-
-    debugImplementation 'com.facebook.stetho:stetho:1.5.1'
-    debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.4.2'
-    debugImplementation 'com.facebook.stetho:stetho-okhttp:1.4.2'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
-
-//    testImplementation "org.mockito:mockito-core:2.11.0"
-//    testImplementation 'junit:junit:4.12'
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.0"

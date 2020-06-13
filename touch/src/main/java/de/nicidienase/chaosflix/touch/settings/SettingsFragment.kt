@@ -10,14 +10,13 @@ import androidx.lifecycle.Observer
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.snackbar.Snackbar
-import de.nicidienase.chaosflix.BuildConfig
-import de.nicidienase.chaosflix.R
 import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.DarkmodeUtil
 import de.nicidienase.chaosflix.common.checkPermission
 import de.nicidienase.chaosflix.common.viewmodel.PreferencesViewModel
-import de.nicidienase.chaosflix.common.viewmodel.ViewModelFactory
 import de.nicidienase.chaosflix.leanback.conferences.ConferencesActivity
+import de.nicidienase.chaosflix.touch.BuildConfig
+import de.nicidienase.chaosflix.touch.R
 import net.rdrei.android.dirchooser.DirectoryChooserActivity
 import net.rdrei.android.dirchooser.DirectoryChooserConfig
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -117,12 +116,12 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             when (state) {
                 true -> {
                     viewModel.stopAnalytics()
-                    Snackbar.make(this.view!!, "Analytics disabled", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(this.requireView(), "Analytics disabled", Snackbar.LENGTH_SHORT).show()
                     true
                 }
                 false -> {
                     viewModel.startAnalytics()
-                    Snackbar.make(this.view!!, "Analytics started", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(this.requireView(), "Analytics started", Snackbar.LENGTH_SHORT).show()
                     true
                 }
                 else -> true
