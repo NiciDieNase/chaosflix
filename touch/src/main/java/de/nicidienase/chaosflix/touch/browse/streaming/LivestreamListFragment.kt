@@ -176,6 +176,7 @@ class LivestreamListFragment : Fragment() {
         binding.swipeRefreshLayout.isRefreshing = true
         Log.d(TAG, "Refresh starting")
         viewModel.updateLiveStreams()
+        viewModel.updateEventInfo()
     }
 
     companion object {
