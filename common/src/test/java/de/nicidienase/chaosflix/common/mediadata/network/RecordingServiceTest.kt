@@ -1,22 +1,23 @@
 package de.nicidienase.chaosflix.common.mediadata.network
 
+import de.nicidienase.chaosflix.StageConfiguration
 import de.nicidienase.chaosflix.common.TestStageConfig
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.greaterThanOrEqualTo
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.dsl.module
 
 class RecordingServiceTest {
 
     private val apiFactory = ApiFactory.getInstance(TestStageConfig)
     private val api = apiFactory.recordingApi
-
-    @BeforeEach
-    fun setup() {
-    }
 
     @Test
     fun search() = runBlocking {
@@ -43,5 +44,26 @@ class RecordingServiceTest {
             }
         }
         println(result)
+    }
+
+    companion object {
+
+        @BeforeAll
+        @JvmStatic
+        fun setup() {
+            startKoin {
+                modules(
+                        module {
+                            single<StageConfiguration> { TestStageConfig }
+                        }
+                )
+            }
+        }
+
+        @AfterAll
+        @JvmStatic
+        fun teardown() {
+            stopKoin()
+        }
     }
 }
