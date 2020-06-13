@@ -4,7 +4,6 @@ import android.os.Build
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.StageConfiguration
 import de.nicidienase.chaosflix.common.SingletonHolder
-import java.io.File
 import java.util.concurrent.TimeUnit
 import okhttp3.Cache
 import okhttp3.Interceptor
@@ -14,48 +13,45 @@ import org.koin.core.get
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class ApiFactory(stageConfiguration: StageConfiguration) {
-
-    private val apiUrl: String = stageConfiguration.recordingUrl
-    private val eventInfoUrl: String = stageConfiguration.eventInfoUrl
-    private val cache: File? = stageConfiguration.cacheDir
+class ApiFactory(private val stageConfiguration: StageConfiguration) {
 
     private val chaosflixUserAgent: String by lazy { buildUserAgent() }
     private val gsonConverterFactory: GsonConverterFactory by lazy { GsonConverterFactory.create(Gson()) }
 
     val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
-            .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
-            .addInterceptor(useragentInterceptor)
-            .apply {
-                if (cache != null) {
-                    cache(Cache(cache, CACHE_SIZE))
+                .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                .addInterceptor(useragentInterceptor)
+                .apply {
+                    if (stageConfiguration.cacheDir != null) {
+                        cache(Cache(stageConfiguration.cacheDir, CACHE_SIZE))
+                    }
                 }
-            }
-            .build()
+                .build()
     }
 
     val recordingApi: RecordingApi by lazy {
         Retrofit.Builder()
-            .baseUrl(apiUrl)
-            .client(client)
-            .addConverterFactory(gsonConverterFactory)
-            .build()
-            .create(RecordingApi::class.java)
+                .baseUrl(stageConfiguration.recordingUrl)
+                .client(client)
+                .addConverterFactory(gsonConverterFactory)
+                .build()
+                .create(RecordingApi::class.java)
     }
 
     val streamingApi: StreamingApi by lazy {
         Retrofit.Builder()
-        .baseUrl(stageConfiguration.streamingApiBaseUrl)
-        .client(client)
-        .addConverterFactory(gsonConverterFactory)
-        .build()
-        .create(StreamingApi::class.java) }
+                .baseUrl(stageConfiguration.streamingApiBaseUrl)
+                .client(client)
+                .addConverterFactory(gsonConverterFactory)
+                .build()
+                .create(StreamingApi::class.java)
+    }
 
     val eventInfoApi: EventInfoApi by lazy {
         Retrofit.Builder()
-                .baseUrl(eventInfoUrl)
+                .baseUrl(stageConfiguration.eventInfoUrl)
                 .client(client)
                 .addConverterFactory(gsonConverterFactory)
                 .build()
@@ -64,9 +60,9 @@ class ApiFactory(stageConfiguration: StageConfiguration) {
 
     private val useragentInterceptor: Interceptor = Interceptor { chain ->
         val requestWithUseragent = chain.request().newBuilder()
-            .header("User-Agent", chaosflixUserAgent)
-            .build()
-            return@Interceptor chain.proceed(requestWithUseragent)
+                .header("User-Agent", chaosflixUserAgent)
+                .build()
+        return@Interceptor chain.proceed(requestWithUseragent)
     }
 
     companion object : SingletonHolder<ApiFactory, StageConfiguration>(::ApiFactory), KoinComponent {
