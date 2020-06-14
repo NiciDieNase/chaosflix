@@ -23,7 +23,7 @@ class EventInfoServiceTest {
     @Test
     fun checkRequestWorks() = runBlocking {
         val vocEvents = api.getVocEvents()
-        assertThat(vocEvents.events.values.size, Matchers.greaterThanOrEqualTo(300))
+        assertThat(vocEvents.events.values.size, Matchers.greaterThanOrEqualTo(1))
     }
 
     @Test
@@ -33,7 +33,8 @@ class EventInfoServiceTest {
         val now = Date()
         assertThat(eventInfos.size, Matchers.equalTo(vocEvents.events.values.size))
         val partition = eventInfos.partition { it.startDate.after(now) }
-        assertThat(partition.first.size, Matchers.lessThanOrEqualTo(partition.second.size))
+        assertThat(partition.first.size, Matchers.equalTo(eventInfos.size))
+        assertThat(partition.second.size, Matchers.equalTo(0))
     }
 
     companion object {
