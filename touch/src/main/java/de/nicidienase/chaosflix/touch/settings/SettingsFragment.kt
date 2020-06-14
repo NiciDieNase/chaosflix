@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
 import androidx.lifecycle.Observer
@@ -14,7 +15,6 @@ import de.nicidienase.chaosflix.common.ChaosflixPreferenceManager
 import de.nicidienase.chaosflix.common.DarkmodeUtil
 import de.nicidienase.chaosflix.common.checkPermission
 import de.nicidienase.chaosflix.common.viewmodel.PreferencesViewModel
-import de.nicidienase.chaosflix.leanback.conferences.ConferencesActivity
 import de.nicidienase.chaosflix.touch.BuildConfig
 import de.nicidienase.chaosflix.touch.R
 import net.rdrei.android.dirchooser.DirectoryChooserActivity
@@ -108,7 +108,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         }
 
         switchUi?.setOnPreferenceClickListener {
-            requireContext().startActivity(Intent(requireContext(), ConferencesActivity::class.java))
+            requireContext().startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("de.nicidienase.chaosflix.leanback://main")))
             return@setOnPreferenceClickListener true
         }
 

@@ -62,7 +62,6 @@ android {
 
 dependencies {
     implementation project(':common')
-    implementation project(':leanback')
 
     implementation('com.mikepenz:aboutlibraries:6.1.1@aar') {
         transitive = true

@@ -14,7 +14,10 @@ class BrowseErrorFragment : ErrorSupportFragment() {
         super.onCreate(savedInstanceState)
         val fragmentId = arguments?.getInt(FRAGMENT) ?: throw IllegalStateException("missing fragmentID")
         spinnerFragment = SpinnerFragment().apply {
-            parentFragmentManager.beginTransaction().add(fragmentId, this).commit()
+            try {
+                parentFragmentManager.beginTransaction().add(fragmentId, this).commit()
+            } catch (ex: IllegalStateException) {
+            }
         }
     }
 
