@@ -1,6 +1,7 @@
 package de.nicidienase.chaosflix
 
 import android.content.Context
+import android.os.Build
 import java.io.File
 
 class ChaosflixStageConfiguration(context: Context) : StageConfiguration {
@@ -12,5 +13,8 @@ class ChaosflixStageConfiguration(context: Context) : StageConfiguration {
     override val streamingApiBaseUrl = StageInit.streamingApiBaseUrl
     override val streamingApiPath = StageInit.streamingApiPath
     override val appcenterId: String? = BuildConfig.APPCENTER_ID
+    override val deviceBrand: String = Build.BRAND
+    override val deviceModel: String = Build.DEVICE
+    override val osReleaseVersion: String = Build.VERSION.RELEASE
     override val externalFilesDir: File? = android.os.Environment.getExternalStorageDirectory()
 }

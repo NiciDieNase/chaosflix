@@ -12,4 +12,14 @@ interface StageConfiguration {
     val streamingApiBaseUrl: String
     val streamingApiPath: String
     val appcenterId: String?
+    val deviceBrand: String
+    val deviceModel: String
+    val osReleaseVersion: String
+
+    fun buildUserAgent(): String {
+        val versionName = this.versionName
+        val device = "${this.deviceBrand} ${this.deviceModel}"
+        val osVersion = "Android/${this.osReleaseVersion}"
+        return "chaosflix/$versionName $osVersion ($device)"
+    }
 }

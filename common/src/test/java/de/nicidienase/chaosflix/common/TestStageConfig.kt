@@ -13,4 +13,7 @@ object TestStageConfig : StageConfiguration {
     override val streamingApiBaseUrl: String = "https://streaming.media.ccc.de"
     override val streamingApiPath: String = "/streams/v2.json"
     override val appcenterId: String? = null
+    override val deviceBrand: String = "TestRunner"
+    override val deviceModel: String = "Test"
+    override val osReleaseVersion: String = "0.0"
 }

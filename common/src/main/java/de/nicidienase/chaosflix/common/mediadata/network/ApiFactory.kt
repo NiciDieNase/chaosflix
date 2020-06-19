@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiFactory(private val stageConfiguration: StageConfiguration) {
 
-    private val chaosflixUserAgent: String by lazy { buildUserAgent() }
+    private val chaosflixUserAgent: String by lazy { stageConfiguration.buildUserAgent() }
     private val gsonConverterFactory: GsonConverterFactory by lazy { GsonConverterFactory.create(Gson()) }
 
     val client: OkHttpClient by lazy {
@@ -70,11 +70,5 @@ class ApiFactory(private val stageConfiguration: StageConfiguration) {
         private const val DEFAULT_TIMEOUT = 30L
         private const val CACHE_SIZE = 1024L * 5 // 5MB
 
-        fun buildUserAgent(): String {
-            val versionName = get<StageConfiguration>().versionName
-            val device = "${Build.BRAND} ${Build.MODEL}"
-            val osVersion = "Android/${Build.VERSION.RELEASE}"
-            return "chaosflix/$versionName $osVersion ($device)"
-        }
     }
 }

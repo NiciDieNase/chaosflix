@@ -53,6 +53,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.Util
+import de.nicidienase.chaosflix.StageConfiguration
 import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
@@ -65,6 +66,7 @@ import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
 import de.nicidienase.chaosflix.leanback.R
 import de.nicidienase.chaosflix.leanback.conferences.ConferencesActivity
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class EventDetailsFragment : DetailsSupportFragment() {
@@ -379,7 +381,7 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
     private fun buildHttpDataSourceFactory(bandwidthMeter: DefaultBandwidthMeter?): HttpDataSource.Factory {
         return DefaultHttpDataSourceFactory(
-                ApiFactory.buildUserAgent(),
+                get<StageConfiguration>().buildUserAgent(),
                 bandwidthMeter,
                 DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
                 DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
