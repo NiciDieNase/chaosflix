@@ -8,7 +8,7 @@ interface EventInfoApi {
 
     @GET("/eventkalender/events.json")
     suspend fun getVocEvents(
-            @Query("filter") filter: String = "upcoming", // {past|upcoming|today|2013}
-            @Query("streaming") streaming: String = "true" // {true|false|undefined}
+        @Query("filter") filter: String = "upcoming", // {past|upcoming|today|2013}
+        @Query("streaming") streaming: String = "true" // {true|false|undefined}
     ): EventInfoWrapperDto
 }
