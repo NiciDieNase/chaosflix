@@ -1,19 +1,19 @@
 # 0.8.0
+    - [debug] debug menu disabled by default
+    - [debug] im/export also for progress (not only bookmarks)
+    - [leanback] homescreen recommendations
+    - [leanback] seek thumbnails from backend
     - [touch] complete overhaul of navigation
-    - refactoring of details-page (play-handling, etc.)
+    - [touch] darkmode configurable
     - [touch] Global Search
+    - [touch] global search
+    - [touch] Link for events can be opened from details
+    - [touch] navigation rework
     - [touch] new search/filtering for events
     - [touch] Streams view shows list of upcoming streamed events
-    - [touch] Link for events can be opened from details
+    - refactoring of details-page (play-handling, etc.)
 
-# 0.7.0
-    - [debug] im/export also for progress (not only bookmarks)
-    - [debug] debug menu disabled by default
-    - [touch] navigation rework
-    - [touch] global search
-    - [leanback] homescreen recommendations
-    - [touch] darkmode configurable
-    - [leanback] seek thumbnails from backend
+# 0.7.1
 
 # 0.6.0
     - Fahrplan-Import
