@@ -50,7 +50,7 @@
 
     <!--About-->
     <string name="about_chaosflix">About Chaosflix</string>
-    <string name="about">About</string>
+    <string name="about">About Chaosflix</string>
     <string name="privacy_policy">Chaosflix does not collect or transmit any personalized data.</string>
     <string name="about_description">Chaosflix was developed, because the developer was annoyed
 	that there was an app for Apple-TV but not Android- and Fire-TV. So now, after the

@@ -5,14 +5,15 @@
         <item name="android:background">@color/primary</item>
         <item name="android:textColorPrimary">?android:attr/textColorPrimaryInverse</item>
         <item name="android:textColorSecondary">?android:attr/textColorSecondaryInverse</item>
+        <item name="actionMenuTextColor">?android:attr/textColorPrimaryInverse</item>
         <item name="background">@color/primary</item>
     </style>
 
+    <style name="SettingsStyle" parent="@style/PreferenceThemeOverlay.v14.Material">
+        <item name="colorControlNormal">@android:color/darker_gray</item>
+    </style>
 
-<!--    <style name="ColoredTabLayout" parent="@style/Widget.MaterialComponents.TabLayout.Colored">-->
-<!--        <item name="android:textColor">?android:attr/textColorPrimary</item>-->
-<!--        <item name="android:textColorPrimary">?android:attr/textColorPrimary</item>-->
-<!--        <item name="android:textColorSecondary">?android:attr/textColorPrimary</item>-->
+    <style name="CollapsableToolbarPopupStyle" parent="@style/ThemeOverlay.AppCompat.Dark">
 
-<!--    </style>-->
+    </style>
 </resources>

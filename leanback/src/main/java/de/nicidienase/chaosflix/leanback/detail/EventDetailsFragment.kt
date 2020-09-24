@@ -57,7 +57,6 @@ import de.nicidienase.chaosflix.StageConfiguration
 import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
-import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.common.viewmodel.PlayerViewModel
 import de.nicidienase.chaosflix.leanback.CardPresenter

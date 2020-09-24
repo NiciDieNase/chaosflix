@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="AppTheme" parent="@style/Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowContentTransitions">true</item>
@@ -15,17 +15,33 @@
         <item name="actionBarStyle">@style/ToolbarStyle</item>
         <item name="android:windowEnterAnimation">@transition/fade</item>
         <item name="android:windowExitAnimation">@transition/fade</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="CollapsableToolbarStyle" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="titleTextColor">@color/white</item>
+        <item name="subtitleTextColor">@color/white</item>
+<!--        <item name="android:popupTheme"></item>-->
+    </style>
+
+    <style name="CollapsableToolbarPopupStyle" parent="@style/ThemeOverlay.AppCompat.Light">
+
     </style>
 
     <style name="ToolbarStyle" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:background">@color/primary</item>
 		<item name="android:textColorPrimary">?android:attr/textColorPrimary</item>
         <item name="android:textColorSecondary">?android:attr/textColorSecondary</item>
-		<item name="background">@color/primary</item>
+        <item name="android:actionMenuTextColor">?android:attr/textColorPrimary</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
-    <style name="SettingsStyle" parent="@style/PreferenceThemeOverlay.v14.Material">
-        <item name="colorControlNormal">@android:color/darker_gray</item>
+    <style name="ExpandableToolbarStyle" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:background">@color/primary</item>
+        <item name="android:textColorPrimary">?android:attr/textColorPrimary</item>
+        <item name="android:textColorSecondary">?android:attr/textColorSecondary</item>
+        <item name="android:actionMenuTextColor">?android:attr/textColorPrimary</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
     <style name="TabsStyle" parent="@style/ThemeOverlay.MaterialComponents">
@@ -41,7 +57,7 @@
     </style>
 
     <style name="DetailsTitleStyleCollapsed" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:textColorPrimary">?android:attr/textColorPrimary</item>
         <item name="android:textColorSecondary">?android:attr/textColorPrimary</item>
     </style>

@@ -1,6 +1,5 @@
 package de.nicidienase.chaosflix.common.mediadata.network
 
-import android.os.Build
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.StageConfiguration
 import de.nicidienase.chaosflix.common.SingletonHolder
@@ -9,7 +8,6 @@ import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.koin.core.KoinComponent
-import org.koin.core.get
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -69,6 +67,5 @@ class ApiFactory(private val stageConfiguration: StageConfiguration) {
 
         private const val DEFAULT_TIMEOUT = 30L
         private const val CACHE_SIZE = 1024L * 5 // 5MB
-
     }
 }

@@ -49,7 +49,6 @@ import de.nicidienase.chaosflix.StageConfiguration
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Room
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.Stream
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
-import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
 import de.nicidienase.chaosflix.common.viewmodel.PlayerViewModel
 import de.nicidienase.chaosflix.leanback.ItemViewClickedListener
