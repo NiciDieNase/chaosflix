@@ -146,7 +146,7 @@ dependencies {
     implementation project(':leanback')
     implementation project(':common')
 
-    noFreeImplementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
+    noFreeImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
     noFreeImplementation('pl.droidsonroids:casty:1.0.8') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
     }
