@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.contains
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
@@ -15,13 +16,12 @@ import org.koin.android.viewmodel.ext.android.viewModel
 
 class FilterBottomSheet : BottomSheetDialogFragment() {
 
-    private val viewModel: BrowseViewModel by viewModel()
-
     private val filterTagChips: MutableMap<String, Chip> = mutableMapOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val conference = arguments?.getParcelable<Conference>("conference")
 
+        val viewModel: BrowseViewModel = ViewModelProvider(requireParentFragment())[BrowseViewModel::class.java]
         val binding = FragmentFilterSheetBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
