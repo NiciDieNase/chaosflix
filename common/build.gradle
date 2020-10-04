@@ -155,7 +155,6 @@ dependencies {
     def appCenterSdkVersion = '2.5.1'
     noFreeImplementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
     noFreeImplementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
-    noFreeImplementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
 
     debugImplementation 'com.facebook.stetho:stetho:1.5.1'
     debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.4.2'
