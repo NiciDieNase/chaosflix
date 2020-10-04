@@ -300,7 +300,7 @@ workflows:
               only:
                 - master
                 - develop
-                - hotfix/*
+                - /^hotfix.*/
       - publish-play:
           requires:
             - build
