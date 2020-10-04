@@ -12,7 +12,6 @@ import com.google.android.material.chip.Chip
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.touch.databinding.FragmentFilterSheetBinding
-import org.koin.android.viewmodel.ext.android.viewModel
 
 class FilterBottomSheet : BottomSheetDialogFragment() {
 
@@ -30,6 +29,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         }
         binding.root
 
+        val currentFilter = viewModel.filter
         conference?.let { conf ->
             viewModel.getUsefullTags(conf).observe(viewLifecycleOwner, Observer { tags ->
                 filterTagChips.forEach {
@@ -42,6 +42,9 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
                     val chip: Chip = filterTagChips[tag] ?: Chip(requireContext()).apply {
                         text = tag
                         isCheckable = true
+                        if (currentFilter.value?.tags?.contains(tag) == true) {
+                            this.isChecked = true
+                        }
                         setOnCheckedChangeListener { _, isChecked ->
                             if (isChecked) {
                                 val newTags = (viewModel.filterTags.value ?: emptySet()).plus(tag)
@@ -59,7 +62,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
                 }
             })
         }
-        viewModel.filter.observe(viewLifecycleOwner, Observer {
+        currentFilter.observe(viewLifecycleOwner, Observer {
             it.tags.forEach {
                 filterTagChips[it]?.isChecked = true
             }
