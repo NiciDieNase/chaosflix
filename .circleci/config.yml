@@ -234,7 +234,7 @@ jobs:
       - run:
           name: Appcenter Upload
           command: |
-            git log --format="%h %s" master..HEAD > $RELEASENOTES_FILE
+            echo "[$CIRCLE_BRANCH]\n" > $RELEASENOTES_FILE \
             .circleci/appCenterUpload.sh \
               $APPCENTER_OWNER \
               $APPCENTER_TOKEN \

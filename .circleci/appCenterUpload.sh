@@ -51,6 +51,8 @@ done < "${release_notes_file}"
 release_notes="$(tr '"' "'" <<< $release_notes)"
 release_notes=${release_notes::5000}
 
+printf "RELEASE NOTES:\n===\n$release_notes\n===\n"
+
 # Step 4: Distribute the uploaded release to a distribution group"
 release_url="https://api.appcenter.ms/v0.1/apps/${owner_name}/${app_name}/releases/${release_id}"
 data="{ \"destination_name\": \"${destination_name}\", \"release_notes\": \"${release_notes}\" }"
