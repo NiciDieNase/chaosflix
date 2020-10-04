@@ -6,22 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.contains
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Conference
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.touch.databinding.FragmentFilterSheetBinding
-import org.koin.android.viewmodel.ext.android.viewModel
 
 class FilterBottomSheet : BottomSheetDialogFragment() {
-
-    private val viewModel: BrowseViewModel by viewModel()
 
     private val filterTagChips: MutableMap<String, Chip> = mutableMapOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val conference = arguments?.getParcelable<Conference>("conference")
 
+        val viewModel: BrowseViewModel = ViewModelProvider(requireParentFragment())[BrowseViewModel::class.java]
         val binding = FragmentFilterSheetBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -30,6 +29,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
         }
         binding.root
 
+        val currentFilter = viewModel.filter
         conference?.let { conf ->
             viewModel.getUsefullTags(conf).observe(viewLifecycleOwner, Observer { tags ->
                 filterTagChips.forEach {
@@ -42,6 +42,9 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
                     val chip: Chip = filterTagChips[tag] ?: Chip(requireContext()).apply {
                         text = tag
                         isCheckable = true
+                        if (currentFilter.value?.tags?.contains(tag) == true) {
+                            this.isChecked = true
+                        }
                         setOnCheckedChangeListener { _, isChecked ->
                             if (isChecked) {
                                 val newTags = (viewModel.filterTags.value ?: emptySet()).plus(tag)
@@ -59,7 +62,7 @@ class FilterBottomSheet : BottomSheetDialogFragment() {
                 }
             })
         }
-        viewModel.filter.observe(viewLifecycleOwner, Observer {
+        currentFilter.observe(viewLifecycleOwner, Observer {
             it.tags.forEach {
                 filterTagChips[it]?.isChecked = true
             }
