@@ -285,7 +285,6 @@ jobs:
       - run:
           name: Amazon Upload
           command: |
-            pip3 install requests
             python3 .circleci/amazon_upload.py \
               $AMAZON_CLIENTID \
               $AMAZON_CLIENTSECRET \
