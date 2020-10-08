@@ -57,14 +57,18 @@ print(edit_id)
 
 # File-Upload
 print("Uploading APK (%s)" % apk_location)
-add_apk_path = '/v1/applications/%s/edits/%s/apks/upload' % (app_id, edit_id)
-add_apk_url = BASE_URL + add_apk_path
-local_apk = open(apk_location, 'rb').read()
-all_headers = {
-    'Content-Type': 'application/vnd.android.package-archive'
-}
-all_headers.update(auth_token_header)
-add_apk_request = urllib.request.Request(url=add_apk_url, headers=all_headers, data=local_apk)
-add_apk_response = urllib.request.urlopen(add_apk_request)
+try:
+	add_apk_path = '/v1/applications/%s/edits/%s/apks/upload' % (app_id, edit_id)
+	add_apk_url = BASE_URL + add_apk_path
+	local_apk = open(apk_location, 'rb').read()
+	all_headers = {
+	    'Content-Type': 'application/vnd.android.package-archive'
+	}
+	all_headers.update(auth_token_header)
+	add_apk_request = urllib.request.Request(url=add_apk_url, headers=all_headers, data=local_apk)
+	add_apk_response = urllib.request.urlopen(add_apk_request)
 
-print("Response: %s" % add_apk_response.status)
+	print("Response {}: {}".format(add_apk_response.status, add_apk_response.msg))
+except urllib.error.HTTPError as e:
+	print("HTTPError {}: {}".format(e.code, e.reason))
+	exit(1)
