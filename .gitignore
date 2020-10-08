@@ -64,3 +64,4 @@ common/release
 touch/release
 leanback/release
 chaosflix-d1d09f33cbb2.json
+.circleci/amazon.sh
