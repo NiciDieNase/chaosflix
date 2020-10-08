@@ -6,6 +6,7 @@ import requests
 client_id = sys.argv[1]
 client_secret = sys.argv[2]
 app_id = sys.argv[3]
+apk_location = sys.argv[4]
 
 BASE_URL = 'https://developer.amazon.com/api/appstore'
 
@@ -47,3 +48,15 @@ else:
 edit_id = current_edit['id']
 
 print(edit_id)
+
+add_apk_path = '/v1/applications/%s/edits/%s/apks/upload' % (app_id, edit_id)
+add_apk_url = BASE_URL + add_apk_path
+local_apk = open(apk_location, 'rb').read()
+all_headers = {
+    'Content-Type': 'application/vnd.android.package-archive'
+}
+all_headers.update(auth_token_header)
+add_apk_response = requests.post(add_apk_url, headers=all_headers, data=local_apk)
+response = add_apk_response.json()
+
+print(response)
