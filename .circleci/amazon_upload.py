@@ -55,6 +55,30 @@ else:
 edit_id = current_edit['id']
 print(edit_id)
 
+
+#get_apks_path = '/v1/applications/%s/edits/%s/apks' % ( app_id, edit_id )
+#get_apks_url = BASE_URL + get_apks_path
+#get_apks_request = urllib.request.Request(get_apks_url, headers=auth_token_header)
+#get_apks_response = urllib.request.urlopen(get_apks_request)
+#current_apks = json.load(get_apks_response)
+#
+#print(current_apks)
+#
+#if len(current_apks) > 0:
+##for apk in current_apks:
+#	print("replacing apk")
+#	apk = current_apks[0]
+#	replace_apk_path = '/v1/applications/%s/edits/%s/apks/%s/replace' % ( app_id, edit_id, apk['id'] )
+#	replace_apk_url = BASE_URL + replace_apk_path
+#	print(replace_apk_url)
+#
+#	local_apk = open(apk_location, 'rb').read()
+#
+#	replace_apk_request = urllib.request.Request(replace_apk_url, headers=auth_token_header, method='PUT', data=local_apk)
+#	replace_apk_response = urllib.request.urlopen(replace_apk_request)
+#	print(replace_apk_response.status)
+#	print(json.load(replace_apk_response))
+
 # File-Upload
 print("Uploading APK (%s)" % apk_location)
 try:
