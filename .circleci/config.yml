@@ -268,6 +268,30 @@ jobs:
               -PversionName=${VERSION_NAME} \
               app:publishApk
 
+  publish-amazon:
+    <<: *container_config
+    steps:
+      - *attach_workspace
+
+      - restore_cache:
+          <<: *general_cache_key
+
+      - run:
+          <<: *setup_env
+
+      - run:
+          name: Setup environment
+          command: .circleci/setup_env.sh >> $BASH_ENV
+      - run:
+          name: Amazon Upload
+          command: |
+            python3 .circleci/amazon_upload.py \
+              $AMAZON_CLIENTID \
+              $AMAZON_CLIENTSECRET \
+              $AMAZON_APPID \
+              "app/build/outputs/apk/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/app-${STAGE_LOWER}-${LIBS_LOWER}-${BUILD_TYPE_LOWER}.apk"
+
+
 
 workflows:
   version: 2
@@ -296,6 +320,13 @@ workflows:
       - publish-play:
           requires:
             - build
+          filters:
+            branches:
+              only:
+                - master
+      - publish-amazon:
+          requires:
+            - build 
           filters:
             branches:
               only:
