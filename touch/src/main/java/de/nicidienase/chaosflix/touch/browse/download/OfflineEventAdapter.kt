@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -36,7 +37,8 @@ class OfflineEventAdapter(
                 .into(holder.thumbnail)
 
         with(holder.binding) {
-            downloadStatus = offlineItemManager.downloadStatus[item.downloadReference]
+            val drawable = ResourcesCompat.getDrawable(holder.view.context.resources, item.statusIcon, null)
+            holder.binding.downloadStatusIcon.setImageDrawable(drawable)
             buttonDelete.setOnClickListener {
                 eventDeleteListener(item.eventGuid)
             }

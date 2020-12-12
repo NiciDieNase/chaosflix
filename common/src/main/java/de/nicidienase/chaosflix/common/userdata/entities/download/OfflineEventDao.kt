@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface OfflineEventDao {
@@ -30,7 +31,7 @@ interface OfflineEventDao {
     fun getAll(): LiveData<List<OfflineEvent>>
 
     @Query("SELECT * FROM offline_event")
-    fun getAllSync(): List<OfflineEvent>
+    suspend fun getAllSync(): List<OfflineEvent>
 
     @Query("SELECT download_reference FROM offline_event")
     suspend fun getAllDownloadReferences(): List<Long>
@@ -38,6 +39,9 @@ interface OfflineEventDao {
     @Query("DELETE FROM offline_event WHERE id=:id")
     fun deleteById(id: Long)
 
-    @Query("SELECT o.event_guid,o.recording_id,o.download_reference,o.local_path,e.title,e.subtitle,e.length,e.thumbUrl FROM offline_event o JOIN event e WHERE o.event_guid = e.guid")
+    @Query("SELECT o.event_guid,o.recording_id,o.download_reference,o.local_path,e.title,e.subtitle,e.length,e.thumbUrl,o.status,o.status_icon,o.current_bytes,o.total_bytes FROM offline_event o JOIN event e WHERE o.event_guid = e.guid")
     fun getOfflineEventsDisplay(): LiveData<List<OfflineEventView>>
+
+    @Update
+    fun update(offlineEvent: OfflineEvent)
 }

@@ -44,7 +44,7 @@ import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 
             EventInfo::class
         ],
-        version = 9,
+        version = 10,
         exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class ChaosflixDatabase : RoomDatabase() {
@@ -72,7 +72,8 @@ abstract class ChaosflixDatabase : RoomDatabase() {
                             migration_5_6,
                             migration_6_7,
                             migration_7_8,
-                            migration_8_9
+                            migration_8_9,
+                            migration_9_10
                     )
                     .fallbackToDestructiveMigrationFrom(1, 2, 3, 4)
                     .build()
@@ -146,6 +147,15 @@ abstract class ChaosflixDatabase : RoomDatabase() {
                     `startDate` INTEGER NOT NULL,
                     `endDate` INTEGER NOT NULL,
                     `description` TEXT)""")
+            }
+        }
+
+        private val migration_9_10 = object : Migration(9, 10) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE offline_event ADD COLUMN status Integer NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE offline_event ADD COLUMN status_icon Integer NOT NULL DEFAULT ${R.drawable.ic_download}")
+                database.execSQL("ALTER TABLE offline_event ADD COLUMN current_bytes Integer NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE offline_event ADD COLUMN total_bytes Integer NOT NULL DEFAULT 0")
             }
         }
     }

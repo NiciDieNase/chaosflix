@@ -35,19 +35,19 @@ class OfflineItemManager(
     private val preferencesManager: ChaosflixPreferenceManager
 ) {
 
-    val downloadStatus: MutableMap<Long, DownloadStatus> = HashMap()
+    val downloadStatus: MutableMap<Long, OfflineEvent> = HashMap()
 
     private val applicationContext: Context = context.applicationContext
 
-    private val resources = applicationContext.resources
+    private val resources = context.applicationContext.resources
 
-    private val downloadManager: DownloadManager = applicationContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+    private val downloadManager: DownloadManager = context.applicationContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
     private val supervisorJob = SupervisorJob()
     private val downloadScope: CoroutineScope = CoroutineScope(Dispatchers.IO + supervisorJob)
 
-    fun addDownloadRefs(refs: List<Long>) {
-        refs.map { downloadStatus.put(it, DownloadStatus()) }
+    fun addDownloadRefs(refs: List<OfflineEvent>) {
+        refs.map { downloadStatus.put(it.downloadReference, it) }
     }
 
     fun updateDownloadStatus() {
@@ -56,6 +56,7 @@ class OfflineItemManager(
 
     fun updateDownloadStatus(offlineEvents: List<OfflineEvent>) {
         if (offlineEvents.isNotEmpty()) {
+            Log.d(TAG, "updating downloads (Refs: $offlineEvents")
             val downloadRef = offlineEvents.map { it.downloadReference }.toTypedArray().toLongArray()
             updateDownloads(downloadRef)
         }
@@ -84,9 +85,18 @@ class OfflineItemManager(
                             DownloadManager.STATUS_PENDING -> R.drawable.ic_download
                             else -> R.drawable.ic_error
                         }
-                val statusIcon = resources.getDrawable(statusIconRes, null)
 
-                downloadStatus[id] = DownloadStatus(status, statusIcon, bytesSoFar, bytesTotal)
+                val offlineEvent = downloadStatus[id]
+                if (offlineEvent != null) {
+                    offlineEvent.status = status
+                    offlineEvent.statusIcon = statusIconRes
+                    offlineEvent.currentBytes = bytesSoFar
+                    offlineEvent.totalBytes = bytesTotal
+
+                    offlineEventDao.update(offlineEvent)
+                }
+
+                Log.d(TAG, "updated download $offlineEvent")
             } while (cursor.moveToNext())
         }
     }
@@ -132,7 +142,12 @@ class OfflineItemManager(
                                 OfflineEvent(eventGuid = event.guid,
                                         recordingId = recording.id,
                                         localPath = getDownloadDir() + recording.filename,
-                                        downloadReference = downloadReference))
+                                        downloadReference = downloadReference,
+                                        status = DownloadManager.STATUS_PENDING,
+                                        statusIcon = R.drawable.ic_download,
+                                        currentBytes = 0,
+                                        totalBytes = 1
+                                ))
                     } catch (ex: SQLiteConstraintException) {
                         Log.d(DetailsViewModel.TAG, ex.message)
                     }
@@ -176,8 +191,11 @@ class OfflineItemManager(
             val downloadId = p1?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0)
             if (downloadId != null && downloadId == id) {
                 val offlineItemManager = OfflineItemManager(context, offlineEventDao, preferencesManager)
-                offlineItemManager.addDownloadRefs(listOf(downloadId))
-                offlineItemManager.updateDownloadStatus()
+                val offlineEvent = offlineEventDao.getByDownloadReferenceSync(downloadId)
+                if (offlineEvent != null) {
+                    offlineItemManager.addDownloadRefs(listOf(offlineEvent))
+                    offlineItemManager.updateDownloadStatus()
+                }
                 val downloadStatus = offlineItemManager.downloadStatus[downloadId]
                 if (downloadStatus?.status == DownloadManager.STATUS_FAILED) {
                     Log.d(TAG, "Deleting item")
@@ -210,6 +228,7 @@ class OfflineItemManager(
 
     companion object {
         const val DOWNLOAD_DIR = "/chaosflix/"
+        private val TAG = OfflineItemManager::class.java.simpleName
     }
 
     enum class State {

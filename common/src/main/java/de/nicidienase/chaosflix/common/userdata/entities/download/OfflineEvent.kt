@@ -11,13 +11,17 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Recording
 
 @Entity(tableName = "offline_event",
-        indices = arrayOf(Index(value = ["event_guid"], unique = true)))
+        indices = [Index(value = ["event_guid"], unique = true)])
 data class OfflineEvent(
     @PrimaryKey(autoGenerate = true) var id: Long = 0,
     @ColumnInfo(name = "event_guid") var eventGuid: String,
     @ColumnInfo(name = "recording_id") var recordingId: Long,
     @ColumnInfo(name = "download_reference") var downloadReference: Long,
-    @ColumnInfo(name = "local_path") var localPath: String
+    @ColumnInfo(name = "local_path") var localPath: String,
+    var status: Int,
+    @ColumnInfo(name = "status_icon") var statusIcon: Int,
+    @ColumnInfo(name = "current_bytes") var currentBytes: Int,
+    @ColumnInfo(name = "total_bytes") var totalBytes: Int
 ) : Parcelable {
 
     @Ignore var event: Event? = null
@@ -28,7 +32,11 @@ data class OfflineEvent(
             parcel.readString() ?: "",
             parcel.readLong(),
             parcel.readLong(),
-            parcel.readString() ?: "") {
+            parcel.readString() ?: "",
+            parcel.readInt(),
+            parcel.readInt(),
+            parcel.readInt(),
+            parcel.readInt()) {
         event = parcel.readParcelable(Event::class.java.classLoader)
         recording = parcel.readParcelable(Recording::class.java.classLoader)
     }
@@ -39,6 +47,10 @@ data class OfflineEvent(
         parcel.writeLong(recordingId)
         parcel.writeLong(downloadReference)
         parcel.writeString(localPath)
+        parcel.writeInt(status)
+        parcel.writeInt(statusIcon)
+        parcel.writeInt(currentBytes)
+        parcel.writeInt(totalBytes)
         parcel.writeParcelable(event, flags)
         parcel.writeParcelable(recording, flags)
     }

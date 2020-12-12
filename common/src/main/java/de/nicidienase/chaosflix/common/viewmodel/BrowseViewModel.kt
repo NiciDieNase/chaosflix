@@ -25,6 +25,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
+import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.util.LiveDataMerger
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
@@ -63,7 +64,7 @@ class BrowseViewModel(
 
     init {
         viewModelScope.launch {
-            val downloadRefs: List<Long> = mediaRepository.getAllOfflineEvents()
+            val downloadRefs: List<OfflineEvent> = mediaRepository.getAllOfflineEvents()
             offlineItemManager.addDownloadRefs(downloadRefs)
         }
     }

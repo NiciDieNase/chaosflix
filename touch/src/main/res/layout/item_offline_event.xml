@@ -10,10 +10,6 @@
 		<variable
 			name="item"
 			type="de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventView" />
-
-		<variable
-			name="downloadStatus"
-			type="de.nicidienase.chaosflix.common.OfflineItemManager.DownloadStatus" />
 	</data>
 
 	<FrameLayout
@@ -86,12 +82,11 @@
 
 
 				<androidx.appcompat.widget.AppCompatImageView
-					android:id="@+id/conference_name_text"
+					android:id="@+id/download_status_icon"
 					android:layout_width="0dp"
 					android:layout_height="0dp"
 					android:background="@color/transparent_white_70"
 					android:gravity="bottom|end"
-					android:src="@{downloadStatus.statusIcon}"
 					android:tint="@color/download_icon_tint"
 					app:layout_constraintBottom_toBottomOf="@+id/imageView"
 					app:layout_constraintEnd_toEndOf="@+id/imageView"
@@ -119,8 +114,8 @@
 					style="?android:attr/progressBarStyleHorizontal"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
-					android:max="@{safeUnbox(downloadStatus.totalBytes)}"
-					android:progress="@{safeUnbox(downloadStatus.currentBytes)}"
+					android:max="@{safeUnbox(item.totalBytes)}"
+					android:progress="@{safeUnbox(item.currentBytes)}"
 					app:layout_constraintEnd_toEndOf="@+id/imageView"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toBottomOf="@+id/imageView"

@@ -19,6 +19,7 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RelatedEvent
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.RelatedEventDao
 import de.nicidienase.chaosflix.common.mediadata.network.RecordingApi
+import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventDao
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgressDao
 import de.nicidienase.chaosflix.common.userdata.entities.progress.ProgressEventView
@@ -249,7 +250,7 @@ class MediaRepository(
             watchlistItemDao.deleteItem(guid)
         }
 
-        suspend fun getAllOfflineEvents(): List<Long> = offlineEventDao.getAllDownloadReferences()
+        suspend fun getAllOfflineEvents(): List<OfflineEvent> = offlineEventDao.getAllSync()
 
         suspend fun saveConferenceGroup(conferencesWrapper: ConferencesWrapper): List<Conference> {
             val conferences = conferencesWrapper.conferencesMap.map { entry ->
@@ -358,7 +359,7 @@ class MediaRepository(
     fun getBookmark(guid: String): LiveData<WatchlistItem?> = databaseOperations.getBookmark(guid)
     suspend fun addBookmark(guid: String) = databaseOperations.addBookmark(guid)
     suspend fun deleteBookmark(guid: String) = databaseOperations.deleteBookmark(guid)
-    suspend fun getAllOfflineEvents(): List<Long> = databaseOperations.getAllOfflineEvents()
+    suspend fun getAllOfflineEvents(): List<OfflineEvent> = databaseOperations.getAllOfflineEvents()
 
     @WorkerThread
     suspend fun saveConferenceGroup(conferencesWrapper: ConferencesWrapper): List<Conference> = databaseOperations.saveConferenceGroup(conferencesWrapper)
