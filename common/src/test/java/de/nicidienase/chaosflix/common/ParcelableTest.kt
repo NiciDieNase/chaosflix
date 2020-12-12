@@ -162,8 +162,8 @@ class ParcelableTest {
     @Test
     fun offlineEventParcelableTest() {
         val offlineEvent = OfflineEvent(12, "asdflkjasdf",
-                34, 56, "/path/to/file.mp4")
-        assertTrue(offlineEvent.equals(OfflineEvent.createFromParcel(writeToParcel(offlineEvent))))
+                34, 56, "/path/to/file.mp4", 0, 0, 0, 0)
+        assertTrue(offlineEvent == OfflineEvent.createFromParcel(writeToParcel(offlineEvent)))
     }
 
     private fun writeToParcel(parcelable: Parcelable): Parcel {
