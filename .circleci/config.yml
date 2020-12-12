@@ -7,7 +7,8 @@ references:
 
   container_config: &container_config
     docker:
-      - image: circleci/android:api-28
+#      - image: circleci/android:api-28
+      - image: circleci/android@sha256:061e2535826cc3fe4c4a440e716bf06c36c80401ee635c339c6803b3e427ebb3
 
     working_directory: *workspace_root
 
@@ -317,6 +318,7 @@ workflows:
               only:
                 - master
                 - develop
+                - /^hotfix.*/
       - publish-play:
           requires:
             - build
