@@ -117,4 +117,9 @@
     <string name="play_in_external_player">Play in external player</string>
     <string name="open_link">Open Link</string>
     <string name="share">Share</string>
+
+    <string name="download_started">Download started</string>
+    <string name="storage_permission_required">Storage access is required to download videos</string>
+    <string name="share_info_error">Could not find share information</string>
+    <string name="generic_error">An Error occured</string>
 </resources>

@@ -215,7 +215,7 @@ class EventDetailsFragment : Fragment() {
                     }
                 }
                 DetailsViewModel.State.Error -> {
-                    Snackbar.make(binding.root, liveEvent.error ?: "An Error occured", Snackbar.LENGTH_LONG)
+                    Snackbar.make(binding.root, liveEvent.error ?: resources.getString(R.string.generic_error), Snackbar.LENGTH_LONG)
                 }
                 DetailsViewModel.State.LoadingRecordings -> {
                     // TODO: show loading indicator
@@ -237,10 +237,13 @@ class EventDetailsFragment : Fragment() {
     }
 
     private fun download(event: Event, recording: Recording) {
+        this.
         detailsViewModel.download(event, recording).observe(viewLifecycleOwner, Observer {
             when (it?.state) {
                 OfflineItemManager.State.Downloading -> {
-                    Snackbar.make(layout!!, "Download started", Snackbar.LENGTH_LONG).show()
+                    layout?.let{
+                        Snackbar.make(it, resources.getString(R.string.download_started), Snackbar.LENGTH_LONG).show()
+                    }
                 }
                 OfflineItemManager.State.Done -> {}
             }
@@ -254,6 +257,10 @@ class EventDetailsFragment : Fragment() {
                     Log.d(TAG, "starting download after permission request")
                     download(it.first, it.second)
                     pendingDownload = null
+                }
+            } else {
+                layout?.let{
+                    Snackbar.make(it,resources.getString(R.string.storage_permission_required), Snackbar.LENGTH_LONG).show()
                 }
             }
         } else {
@@ -366,7 +373,7 @@ class EventDetailsFragment : Fragment() {
                         startActivity(shareIntent)
                     } else {
                         view?.let {
-                            Snackbar.make(it, "Could not find share information", Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(it, resources.getString(R.string.share_info_error), Snackbar.LENGTH_SHORT).show()
                         }
                     }
                 }
