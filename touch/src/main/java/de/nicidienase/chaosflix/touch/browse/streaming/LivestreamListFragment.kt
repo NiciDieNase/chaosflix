@@ -30,15 +30,9 @@ class LivestreamListFragment : Fragment() {
     private val viewModel: BrowseViewModel by viewModel()
 
     private lateinit var binding: FragmentLivestreamsBinding
-//    lateinit var livestreamAdapter: LivestreamAdapter
     lateinit var snackbar: Snackbar
 
     private var columnCount = 1
-
-    private var castService = object {
-        val connected = false
-        fun castStream(streamingItem: StreamingItem, streamUrl: StreamUrl, s: String) {}
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentLivestreamsBinding.inflate(inflater, container, false)
@@ -94,7 +88,7 @@ class LivestreamListFragment : Fragment() {
     private fun selectLivestream(streamingItem: StreamingItem) {
         val entries = HashMap<String, StreamUrl>()
 
-        if (castService.connected) {
+        if (viewModel.isCastServiceConnected()) {
             val hdStreams = streamingItem.room.streams // .filter { it.slug.startsWith("hd-") }
             Log.i(TAG, "found ${hdStreams.size} suitable streams, starting selection")
             if (hdStreams.size > 1) {
@@ -108,7 +102,7 @@ class LivestreamListFragment : Fragment() {
                                     .setItems(keys) { _: DialogInterface?, which: Int ->
                                         val streamUrl = stream.urls[keys[which]]
                                         if (streamUrl != null) {
-                                            castService.castStream(streamingItem, streamUrl, keys[which])
+                                            viewModel.castStream(streamingItem, streamUrl, keys[which])
                                         } else {
                                             Snackbar.make(binding.root, "could not play stream", Snackbar.LENGTH_SHORT).show()
                                         }
