@@ -1,18 +1,15 @@
 package de.nicidienase.chaosflix.common
 
-import android.Manifest
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.database.sqlite.SQLiteConstraintException
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
@@ -21,13 +18,13 @@ import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEventDao
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.viewmodel.DetailsViewModel
-import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 
 class OfflineItemManager(
     context: Context,
@@ -108,51 +105,46 @@ class OfflineItemManager(
         val result = MutableLiveData<LiveEvent<State, String, Exception>>()
         result.postValue(LiveEvent(State.Downloading))
         downloadScope.launch(Dispatchers.IO) {
-            if (ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                result.postValue(LiveEvent(State.PermissionRequired))
-            } else {
-                val offlineEvent = offlineEventDao.getByEventGuidSuspend(event.guid)
-                if (offlineEvent == null) {
+            val offlineEvent = offlineEventDao.getByEventGuidSuspend(event.guid)
+            if (offlineEvent == null) {
 
-                    val request = DownloadManager.Request(Uri.parse(recording.recordingUrl))
-                    request.setTitle(event.title)
+                val request = DownloadManager.Request(Uri.parse(recording.recordingUrl))
+                request.setTitle(event.title)
 
-                    request.setDestinationUri(
-                            Uri.withAppendedPath(Uri.fromFile(
-                                    File(getDownloadDir())), recording.filename))
+                request.setDestinationUri(
+                        Uri.withAppendedPath(Uri.fromFile(
+                                File(getDownloadDir())), recording.filename))
 
-                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-                    request.setVisibleInDownloadsUi(true)
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                request.setVisibleInDownloadsUi(true)
 
-                    if (!preferencesManager.getMetered()) {
-                        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
-                        request.setAllowedOverMetered(false)
-                    }
-
-                    val downloadReference = downloadManager.enqueue(request)
-                    Log.d(DetailsViewModel.TAG, "download started $downloadReference")
-
-                    val cancelHandler = DownloadCancelHandler(applicationContext, downloadReference, offlineEventDao, preferencesManager)
-                    val intentFilter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-                    applicationContext.registerReceiver(cancelHandler, intentFilter)
-
-                    try {
-                        offlineEventDao.insert(
-                                OfflineEvent(eventGuid = event.guid,
-                                        recordingId = recording.id,
-                                        localPath = getDownloadDir() + recording.filename,
-                                        downloadReference = downloadReference,
-                                        status = DownloadManager.STATUS_PENDING,
-                                        statusIcon = R.drawable.ic_download,
-                                        currentBytes = 0,
-                                        totalBytes = 1
-                                ))
-                    } catch (ex: SQLiteConstraintException) {
-                        Log.d(DetailsViewModel.TAG, ex.message)
-                    }
-                    result.postValue(LiveEvent(State.Done))
+                if (!preferencesManager.getMetered()) {
+                    request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
+                    request.setAllowedOverMetered(false)
                 }
+
+                val downloadReference = downloadManager.enqueue(request)
+                Log.d(DetailsViewModel.TAG, "download started $downloadReference")
+
+                val cancelHandler = DownloadCancelHandler(applicationContext, downloadReference, offlineEventDao, preferencesManager)
+                val intentFilter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+                applicationContext.registerReceiver(cancelHandler, intentFilter)
+
+                try {
+                    offlineEventDao.insert(
+                            OfflineEvent(eventGuid = event.guid,
+                                    recordingId = recording.id,
+                                    localPath = getDownloadDir() + recording.filename,
+                                    downloadReference = downloadReference,
+                                    status = DownloadManager.STATUS_PENDING,
+                                    statusIcon = R.drawable.ic_download,
+                                    currentBytes = 0,
+                                    totalBytes = 1
+                            ))
+                } catch (ex: SQLiteConstraintException) {
+                    Log.d(DetailsViewModel.TAG, ex.message)
+                }
+                result.postValue(LiveEvent(State.Done))
             }
         }
         return result
@@ -191,10 +183,12 @@ class OfflineItemManager(
             val downloadId = p1?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0)
             if (downloadId != null && downloadId == id) {
                 val offlineItemManager = OfflineItemManager(context, offlineEventDao, preferencesManager)
-                val offlineEvent = offlineEventDao.getByDownloadReferenceSync(downloadId)
-                if (offlineEvent != null) {
-                    offlineItemManager.addDownloadRefs(listOf(offlineEvent))
-                    offlineItemManager.updateDownloadStatus()
+                GlobalScope.launch {
+                    val offlineEvent = offlineEventDao.getByDownloadReferenceSync(downloadId)
+                    if (offlineEvent != null) {
+                        offlineItemManager.addDownloadRefs(listOf(offlineEvent))
+                        offlineItemManager.updateDownloadStatus()
+                    }
                 }
                 val downloadStatus = offlineItemManager.downloadStatus[downloadId]
                 if (downloadStatus?.status == DownloadManager.STATUS_FAILED) {
@@ -232,6 +226,6 @@ class OfflineItemManager(
     }
 
     enum class State {
-        Downloading, Done, PermissionRequired
+        Downloading, Done
     }
 }
