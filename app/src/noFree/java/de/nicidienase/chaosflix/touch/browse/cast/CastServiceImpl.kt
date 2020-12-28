@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import com.google.android.gms.cast.CastStatusCodes
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.Session
@@ -42,6 +43,7 @@ class CastServiceImpl(
         currentEvent?.let {
             setupSessionListener(it)
         }
+
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
@@ -55,6 +57,7 @@ class CastServiceImpl(
             val mediaData = MediaData.Builder(streamUrl.url)
                     .setStreamType(MediaData.STREAM_TYPE_BUFFERED)
                     .setContentType(contentType)
+                    .setStreamDuration(MediaData.UNKNOWN_DURATION)
                     .setTitle(streamingItem.conference.conference)
                     .setSubtitle(streamingItem.room.display)
                     .addPhotoUrl(streamingItem.room.thumb)
@@ -149,34 +152,41 @@ class CastServiceImpl(
         }
 
         override fun onSessionStarted(p0: CastSession?, p1: String?) {
-            Log.d(TAG, "onSessionStarted")
+            Log.d(TAG, "Cast session started")
             p0?.let { attachProgressListener(it) }
         }
 
+        override fun onSessionStartFailed(p0: CastSession?, p1: Int) {
+            Log.d(TAG, "Cast session start failed: ${CastStatusCodes.getStatusCodeString(p1)}")
+        }
+
         override fun onSessionResumeFailed(p0: CastSession?, p1: Int) {
+            Log.d(TAG, "Cast session resume failed: ${CastStatusCodes.getStatusCodeString(p1)}")
         }
 
         override fun onSessionSuspended(p0: CastSession?, p1: Int) {
+            Log.d(TAG, "Cast session suspended")
         }
 
         override fun onSessionEnded(p0: CastSession?, p1: Int) {
+            Log.d(TAG, "Cast session ended")
         }
 
         override fun onSessionResumed(p0: CastSession?, p1: Boolean) {
-            Log.d(TAG, "onSessionResumed")
+            Log.d(TAG, "Cast session resumed")
             p0?.let { attachProgressListener(it) }
         }
 
         override fun onSessionStarting(p0: CastSession?) {
+            Log.d(TAG, "Cast session starting")
         }
 
         override fun onSessionResuming(p0: CastSession?, p1: String?) {
+            Log.d(TAG, "Cast session resuming")
         }
 
         override fun onSessionEnding(p0: CastSession?) {
-        }
-
-        override fun onSessionStartFailed(p0: CastSession?, p1: Int) {
+            Log.d(TAG, "Cast session ending")
         }
     }
 
