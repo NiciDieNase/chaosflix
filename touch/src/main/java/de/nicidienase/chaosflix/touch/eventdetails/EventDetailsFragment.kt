@@ -29,6 +29,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
+import androidx.core.content.ContextCompat
 import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
@@ -47,13 +48,13 @@ class EventDetailsFragment : Fragment() {
     private var appBarExpanded: Boolean = false
     private var watchlistItem: WatchlistItem? = null
 
-    private var layout: View? = null
-
     private val detailsViewModel: DetailsViewModel by viewModel()
     private var selectDialog: AlertDialog? = null
-    private var pendingDownload: Bundle? = null
+    private var pendingDownload: Pair<Event, Recording>? = null
 
     private lateinit var relatedEventsAdapter: EventRecyclerViewAdapter
+
+    private var layout: View? = null
 
     private val args: EventDetailsFragmentArgs by navArgs()
 
@@ -190,21 +191,18 @@ class EventDetailsFragment : Fragment() {
                 DetailsViewModel.State.DownloadRecording -> {
                     if (event != null && selectItems != null) {
                         selectRecording(event, selectItems) { e, r ->
-                            detailsViewModel.download(e, r).observe(viewLifecycleOwner, Observer {
-                                when (it?.state) {
-                                    OfflineItemManager.State.Downloading -> {
-                                        Snackbar.make(binding.root, "Download started", Snackbar.LENGTH_LONG).show()
-                                    }
-                                    OfflineItemManager.State.PermissionRequired -> {
-                                        pendingDownload = liveEvent.data
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                                                    WRITE_PERMISSION_REQUEST)
-                                        }
-                                    }
-                                    OfflineItemManager.State.Done -> {}
+                            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                    != PackageManager.PERMISSION_GRANTED) {
+                                pendingDownload = Pair(e,r)
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    requestPermissions(
+                                            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                                            WRITE_PERMISSION_REQUEST
+                                    )
                                 }
-                            })
+                            } else {
+                                download(e,r)
+                            }
                         }
                     }
                 }
@@ -217,7 +215,7 @@ class EventDetailsFragment : Fragment() {
                     }
                 }
                 DetailsViewModel.State.Error -> {
-                    Snackbar.make(binding.root, liveEvent.error ?: "An Error occured", Snackbar.LENGTH_LONG)
+                    Snackbar.make(binding.root, liveEvent.error ?: resources.getString(R.string.generic_error), Snackbar.LENGTH_LONG)
                 }
                 DetailsViewModel.State.LoadingRecordings -> {
                     // TODO: show loading indicator
@@ -238,17 +236,32 @@ class EventDetailsFragment : Fragment() {
         detailsViewModel.playEvent()
     }
 
+    private fun download(event: Event, recording: Recording) {
+        this.
+        detailsViewModel.download(event, recording).observe(viewLifecycleOwner, Observer {
+            when (it?.state) {
+                OfflineItemManager.State.Downloading -> {
+                    layout?.let{
+                        Snackbar.make(it, resources.getString(R.string.download_started), Snackbar.LENGTH_LONG).show()
+                    }
+                }
+                OfflineItemManager.State.Done -> {}
+            }
+        })
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == WRITE_PERMISSION_REQUEST) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 pendingDownload?.let {
-                    val recording = it.getParcelable<Recording>(DetailsViewModel.RECORDING)
-                    val event = it.getParcelable<Event>(DetailsViewModel.EVENT)
-                    if (event != null && recording != null) {
-                        detailsViewModel.download(event, recording)
-                    }
+                    Log.d(TAG, "starting download after permission request")
+                    download(it.first, it.second)
+                    pendingDownload = null
                 }
-                pendingDownload = null
+            } else {
+                layout?.let{
+                    Snackbar.make(it,resources.getString(R.string.storage_permission_required), Snackbar.LENGTH_LONG).show()
+                }
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -256,20 +269,13 @@ class EventDetailsFragment : Fragment() {
     }
 
     private fun playItem(event: Event, recording: Recording, localFile: String? = null) {
-//        if (castService.connected) {
-//            castService.loadMediaAndPlay(recording, event)
-//        } else {
         if (localFile != null) {
             findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentToPlayerActivity(PlaybackItem.fromEvent(event,
                     recordingUri = localFile)))
-//                PlayerActivity.launch(requireContext(), event, localFile)
         } else {
-//                PlayerActivity.launch(requireContext(), event, recording)
-
             findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentToPlayerActivity(PlaybackItem.fromEvent(event,
                     recording.recordingUrl)))
         }
-//        }
     }
 
     private fun selectRecording(event: Event, recordings: List<Recording>, action: (Event, Recording) -> Unit) {
@@ -367,7 +373,7 @@ class EventDetailsFragment : Fragment() {
                         startActivity(shareIntent)
                     } else {
                         view?.let {
-                            Snackbar.make(it, "Could not find share information", Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(it, resources.getString(R.string.share_info_error), Snackbar.LENGTH_SHORT).show()
                         }
                     }
                 }
