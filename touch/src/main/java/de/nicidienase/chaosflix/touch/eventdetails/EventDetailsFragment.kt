@@ -86,6 +86,7 @@ class EventDetailsFragment : Fragment() {
 
         val eventGuid = args.eventGuid
         val eventName = args.eventName
+        Log.d(TAG,"View created for Event $eventName ($eventGuid)")
         lifecycleScope.launch {
             val eventLivedata = when {
                 eventGuid != null -> detailsViewModel.setEventByGuid(eventGuid)
@@ -207,7 +208,7 @@ class EventDetailsFragment : Fragment() {
                     }
                 }
                 is DetailsViewModel.State.DisplayEvent -> {
-                    findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentSelf(state.event.guid))
+                    findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentSelf(eventGuid = state.event.guid))
                 }
                 DetailsViewModel.State.PlayExternal -> {
                     recording?.recordingUrl?.let {
