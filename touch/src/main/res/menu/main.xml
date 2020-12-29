@@ -6,11 +6,11 @@
         android:id="@+id/menus_item_settings"
         android:title="@string/preferences"
         android:icon="@drawable/ic_settings"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/menu_item_about"
         android:title="@string/about"
         android:icon="@drawable/ic_info"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"/>
 </menu>
