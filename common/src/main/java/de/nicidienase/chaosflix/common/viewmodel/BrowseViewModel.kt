@@ -232,7 +232,7 @@ class BrowseViewModel(
     }
 
     fun castStream(item: StreamingItem, url: StreamUrl, contentKey: String) =
-            castService.castStream(item,url,contentKey)
+            castService.castStream(item, url, contentKey)
 
     data class Filter(
         val text: String,

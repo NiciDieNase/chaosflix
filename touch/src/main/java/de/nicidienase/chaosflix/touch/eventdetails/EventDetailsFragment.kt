@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -29,7 +30,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
-import androidx.core.content.ContextCompat
 import de.nicidienase.chaosflix.common.ChaosflixUtil
 import de.nicidienase.chaosflix.common.OfflineItemManager
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
@@ -86,7 +86,7 @@ class EventDetailsFragment : Fragment() {
 
         val eventGuid = args.eventGuid
         val eventName = args.eventName
-        Log.d(TAG,"View created for Event $eventName ($eventGuid)")
+        Log.d(TAG, "View created for Event $eventName ($eventGuid)")
         lifecycleScope.launch {
             val eventLivedata = when {
                 eventGuid != null -> detailsViewModel.setEventByGuid(eventGuid)
@@ -194,7 +194,7 @@ class EventDetailsFragment : Fragment() {
                         selectRecording(event, selectItems) { e, r ->
                             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                     != PackageManager.PERMISSION_GRANTED) {
-                                pendingDownload = Pair(e,r)
+                                pendingDownload = Pair(e, r)
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                     requestPermissions(
                                             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
@@ -202,7 +202,7 @@ class EventDetailsFragment : Fragment() {
                                     )
                                 }
                             } else {
-                                download(e,r)
+                                download(e, r)
                             }
                         }
                     }
@@ -238,11 +238,11 @@ class EventDetailsFragment : Fragment() {
     }
 
     private fun download(event: Event, recording: Recording) {
-        this.
-        detailsViewModel.download(event, recording).observe(viewLifecycleOwner, Observer {
+        this
+        .detailsViewModel.download(event, recording).observe(viewLifecycleOwner, Observer {
             when (it?.state) {
                 OfflineItemManager.State.Downloading -> {
-                    layout?.let{
+                    layout?.let {
                         Snackbar.make(it, resources.getString(R.string.download_started), Snackbar.LENGTH_LONG).show()
                     }
                 }
@@ -260,8 +260,8 @@ class EventDetailsFragment : Fragment() {
                     pendingDownload = null
                 }
             } else {
-                layout?.let{
-                    Snackbar.make(it,resources.getString(R.string.storage_permission_required), Snackbar.LENGTH_LONG).show()
+                layout?.let {
+                    Snackbar.make(it, resources.getString(R.string.storage_permission_required), Snackbar.LENGTH_LONG).show()
                 }
             }
         } else {
