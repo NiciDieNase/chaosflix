@@ -43,7 +43,6 @@ class CastServiceImpl(
         currentEvent?.let {
             setupSessionListener(it)
         }
-
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
