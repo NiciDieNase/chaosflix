@@ -22,12 +22,16 @@ import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
 import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.databinding.FragmentLivestreamsBinding
 import de.nicidienase.chaosflix.touch.playback.PlaybackItem
+import de.nicidienase.chaosflix.touch.browse.cast.CastService
+import org.koin.android.ext.android.inject
 import java.lang.Exception
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class LivestreamListFragment : Fragment() {
 
     private val viewModel: BrowseViewModel by viewModel()
+
+    private val castService: CastService by inject()
 
     private lateinit var binding: FragmentLivestreamsBinding
     lateinit var snackbar: Snackbar
@@ -88,7 +92,7 @@ class LivestreamListFragment : Fragment() {
     private fun selectLivestream(streamingItem: StreamingItem) {
         val entries = HashMap<String, StreamUrl>()
 
-        if (viewModel.isCastServiceConnected()) {
+        if (castService.connected) {
             val hdStreams = streamingItem.room.streams // .filter { it.slug.startsWith("hd-") }
             Log.i(TAG, "found ${hdStreams.size} suitable streams, starting selection")
             if (hdStreams.size > 1) {
@@ -102,7 +106,7 @@ class LivestreamListFragment : Fragment() {
                                     .setItems(keys) { _: DialogInterface?, which: Int ->
                                         val streamUrl = stream.urls[keys[which]]
                                         if (streamUrl != null) {
-                                            viewModel.castStream(streamingItem, streamUrl, keys[which])
+                                            castService.castStream(streamingItem, streamUrl, keys[which])
                                         } else {
                                             Snackbar.make(binding.root, "could not play stream", Snackbar.LENGTH_SHORT).show()
                                         }

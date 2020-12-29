@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.touch.browse.cast
 
+import android.app.Activity
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
@@ -17,5 +18,5 @@ abstract class CastService(
     abstract fun attachToActivity(activity: AppCompatActivity)
     abstract fun castStream(streamingItem: StreamingItem, streamUrl: StreamUrl, contentKey: String)
     abstract fun loadMediaAndPlay(recording: Recording, event: Event, progress: PlaybackProgress?)
-    abstract fun addMediaRouteMenuItem(menu: Menu)
+    abstract fun addMediaRouteMenuItem(activity: Activity, menu: Menu)
 }

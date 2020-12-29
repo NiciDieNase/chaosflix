@@ -1,8 +1,6 @@
 package de.nicidienase.chaosflix.common.viewmodel
 
 import android.util.Log
-import android.view.Menu
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -25,13 +23,10 @@ import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.ConferenceGroup
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.persistence.Event
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.LiveConference
-import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.util.LiveDataMerger
 import de.nicidienase.chaosflix.common.util.LiveEvent
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
-import de.nicidienase.chaosflix.touch.browse.cast.CastService
-import de.nicidienase.chaosflix.touch.browse.streaming.StreamingItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -42,7 +37,6 @@ class BrowseViewModel(
     private val streamingRepository: StreamingRepository,
     private val preferencesManager: ChaosflixPreferenceManager,
     private val resources: ResourcesFacade,
-    private val castService: CastService,
     private val eventInfoRepository: EventInfoRepository
 ) : ViewModel() {
 
@@ -70,11 +64,6 @@ class BrowseViewModel(
             offlineItemManager.addDownloadRefs(downloadRefs)
         }
     }
-
-    fun attachActivityToCastService(activity: AppCompatActivity) {
-        castService.attachToActivity(activity)
-    }
-    fun addMediaRouteMenuItem(menu: Menu) = castService.addMediaRouteMenuItem(menu)
 
     fun getConferenceGroups(): LiveData<List<ConferenceGroup>> =
             database.conferenceGroupDao().getAll()
@@ -226,13 +215,6 @@ class BrowseViewModel(
             ChaosflixUtil.getUsefullTags(it, conference.acronym)
         }
     }
-
-    fun isCastServiceConnected(): Boolean {
-        return castService.connected
-    }
-
-    fun castStream(item: StreamingItem, url: StreamUrl, contentKey: String) =
-            castService.castStream(item, url, contentKey)
 
     data class Filter(
         val text: String,
