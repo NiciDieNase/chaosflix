@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.DividerRow
@@ -43,11 +44,13 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
     private lateinit var promotedRow: ListRow
     private lateinit var watchlistRow: ListRow
     private lateinit var inProgressRow: ListRow
+    private lateinit var latestEventsRow: ListRow
+    private lateinit var latestConferencesRow: ListRow
     private lateinit var settingsRow: ListRow
     private lateinit var promotedAdapter: ChaosflixEventAdapter
     private lateinit var watchListAdapter: ChaosflixEventAdapter
     private lateinit var inProgressAdapter: ChaosflixEventAdapter
-    private lateinit var latestConferencesRow: ListRow
+    private lateinit var latestEventsAdapter: ChaosflixEventAdapter
 
     private var errorFragment: BrowseErrorFragment? = null
 
@@ -69,16 +72,19 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         title = resources.getString(R.string.app_name)
-        badgeDrawable = resources.getDrawable(R.drawable.chaosflix_icon, null)
+        badgeDrawable = ResourcesCompat.getDrawable(resources, R.drawable.chaosflix_icon, null)
 
         // Recomendation Rows and Adapter
         watchListAdapter = ChaosflixEventAdapter(eventPresenter)
         inProgressAdapter = ChaosflixEventAdapter(eventPresenter)
         promotedAdapter = ChaosflixEventAdapter(eventPresenter)
+        latestEventsAdapter = ChaosflixEventAdapter(eventPresenter)
+
         promotedRow = ListRow(HeaderItem(getString(R.string.recommendations)), promotedAdapter)
         watchlistRow = ListRow(HeaderItem(getString(R.string.watchlist)), watchListAdapter)
         inProgressRow = ListRow(HeaderItem(getString(R.string.continue_watching)), inProgressAdapter)
-        latestConferencesRow = buildRow(ArrayList(), conferencePresenter, "Latest")
+        latestConferencesRow = buildRow(ArrayList(), conferencePresenter, getString(R.string.latest_releases))
+        latestEventsRow = ListRow(HeaderItem(getString(R.string.latest_events)), latestEventsAdapter)
 
         // Sections and Divider
         streamingSection = SectionRow(HeaderItem(getString(R.string.livestreams)))
@@ -194,11 +200,21 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
         })
 
         browseViewModel.getLatestConferences().observe(viewLifecycleOwner, Observer { conferences ->
-            if(conferences != null){
+            if (conferences != null) {
                 val adapter = latestConferencesRow.adapter as ArrayObjectAdapter
                 adapter.setItems(conferences, DiffCallbacks.conferenceDiffCallback)
                 adapter.notifyItemRangeChanged(0, conferences.size)
-                if (rowsAdapter.indexOf(latestConferencesRow) == -1){
+                if (rowsAdapter.indexOf(latestConferencesRow) == -1) {
+                    updateSectionRecomendations()
+                }
+            }
+        })
+
+        browseViewModel.getLatestReleases().observe(viewLifecycleOwner, Observer { events ->
+            if (events != null) {
+                latestEventsAdapter.setItems(events, DiffCallbacks.eventDiffCallback)
+                latestEventsAdapter.notifyItemRangeChanged(0, events.size)
+                if (rowsAdapter.indexOf(latestEventsRow) == -1) {
                     updateSectionRecomendations()
                 }
             }
@@ -225,7 +241,8 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
                         promotedRow,
                         watchlistRow,
                         inProgressRow,
-                        latestConferencesRow
+                        latestConferencesRow,
+                        latestEventsRow
                     ).filter { it.adapter.size() > 0 } },
                     recomendationsDivider)
 

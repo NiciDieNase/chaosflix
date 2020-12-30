@@ -168,6 +168,8 @@ class BrowseViewModel(
 
     fun getLivestreams(): LiveData<List<LiveConference>> = streamingRepository.streamingConferences
 
+    fun getLatestReleases(): LiveData<List<Event>> = mediaRepository.getLatestEvents(10)
+
     fun updateLiveStreams() = viewModelScope.launch {
         streamingRepository.update()
     }

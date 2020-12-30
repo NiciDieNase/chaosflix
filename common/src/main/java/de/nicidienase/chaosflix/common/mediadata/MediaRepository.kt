@@ -415,6 +415,8 @@ class MediaRepository(
         return eventDao.getTopViewedEvents(count)
     }
 
+    fun getLatestEvents(count: Int): LiveData<List<Event>> = eventDao.getLatest(count)
+
     fun getNewestConferences(count: Int): LiveData<List<Conference>> {
         return conferenceDao.getLatestConferences(count)
     }
