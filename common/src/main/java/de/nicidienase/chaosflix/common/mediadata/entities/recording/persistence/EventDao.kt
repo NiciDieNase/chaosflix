@@ -82,6 +82,9 @@ abstract class EventDao : BaseDao<Event>() {
     @Query("SELECT * FROM event WHERE title LIKE :title LIMIT 1")
     abstract fun findSingleEventByTitle(title: String): LiveData<Event?>
 
+    @Query("SELECT * FROM EVENT ORDER BY releaseDate DESC LIMIT :count")
+    abstract fun getLatest(count: Int): LiveData<List<Event>>
+
     // 	@Query("SELECT * FROM event JOIN conference ON event.conferenceId=conference.id")
 // 	abstract suspend fun getEventWithConference(eventId: Long): List<EventWithConference>
 //

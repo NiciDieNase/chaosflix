@@ -25,8 +25,8 @@ abstract class ConferenceDao : BaseDao<Conference>() {
     @Query("SELECT * FROM conference WHERE conferenceGroupId = :id ORDER BY acronym DESC")
     abstract fun findConferenceByGroup(id: Long): LiveData<List<Conference>>
 
-    @Query("SELECT * FROM conference ORDER BY updatedAt DESC LIMIT :count")
-    abstract fun getLatestConferences(count: Int): List<Conference>
+    @Query("SELECT * FROM conference ORDER BY lastReleasedAt DESC LIMIT :count")
+    abstract fun getLatestConferences(count: Int): LiveData<List<Conference>>
 
     @Query("DELETE FROM conference")
     abstract fun delete()

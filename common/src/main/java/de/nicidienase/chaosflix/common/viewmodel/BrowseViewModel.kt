@@ -164,7 +164,11 @@ class BrowseViewModel(
 
     fun getPromotedEvents(): LiveData<List<Event>> = database.eventDao().findPromotedEvents()
 
+    fun getLatestConferences(): LiveData<List<Conference>> = mediaRepository.getNewestConferences(10)
+
     fun getLivestreams(): LiveData<List<LiveConference>> = streamingRepository.streamingConferences
+
+    fun getLatestReleases(): LiveData<List<Event>> = mediaRepository.getLatestEvents(10)
 
     fun updateLiveStreams() = viewModelScope.launch {
         streamingRepository.update()
