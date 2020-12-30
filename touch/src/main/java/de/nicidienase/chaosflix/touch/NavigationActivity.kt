@@ -70,7 +70,7 @@ class NavigationActivity : AppCompatActivity() {
             }
         }
         castService.state.observe(this, Observer {
-            when(it){
+            when (it) {
                 is CastService.CastState.Error -> {
                     val errorMessage = resources.getString(R.string.cast_error, it.errorCode)
                     Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()

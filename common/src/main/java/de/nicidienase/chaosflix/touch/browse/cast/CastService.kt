@@ -23,6 +23,6 @@ abstract class CastService(
     abstract fun addMediaRouteMenuItem(activity: Activity, menu: Menu)
 
     sealed class CastState {
-        data class Error(val errorCode: Int): CastState()
+        data class Error(val errorCode: Int) : CastState()
     }
 }

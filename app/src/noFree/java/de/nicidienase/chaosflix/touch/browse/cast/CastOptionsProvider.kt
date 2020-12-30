@@ -9,7 +9,7 @@ import com.google.android.gms.cast.framework.media.CastMediaOptions
 import com.google.android.gms.cast.framework.media.NotificationOptions
 import de.nicidienase.chaosflix.ExpandedControllsActivity
 
-class CastOptionsProvider: OptionsProvider {
+class CastOptionsProvider : OptionsProvider {
     override fun getCastOptions(p0: Context?): CastOptions {
         val notificationOptions = NotificationOptions.Builder()
                 .setTargetActivityClassName(ExpandedControllsActivity::class.java.name)

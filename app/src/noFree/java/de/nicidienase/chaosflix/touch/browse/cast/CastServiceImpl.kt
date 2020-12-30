@@ -9,7 +9,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.gms.cast.CastStatusCodes
-import com.google.android.gms.cast.MediaError
 import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaLoadRequestData
 import com.google.android.gms.cast.MediaMetadata
@@ -104,11 +103,11 @@ class CastServiceImpl(
         setupSessionListener(event, progress)
     }
 
-    private fun launchMediaLoadRequest(requestData: MediaLoadRequestData){
+    private fun launchMediaLoadRequest(requestData: MediaLoadRequestData) {
         val load = currentSession?.remoteMediaClient?.load(requestData)
         load?.setResultCallback {
             Log.d(TAG, "Playing ${requestData.toJson()}")
-            if (it.mediaError != null){
+            if (it.mediaError != null) {
                 Log.d(TAG, "${it.mediaError.toJson()}")
                 state.postValue(CastState.Error(it.mediaError.detailedErrorCode))
             }
@@ -141,7 +140,7 @@ class CastServiceImpl(
         return MediaInfo.Builder(streamUrl.url)
                 .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
                 .setContentType(getContentTypeForKey(contentKey))
-                .setMetadata(buildMetaData(streamingItem.room.display,streamingItem.conference.conference, streamingItem.room.thumb))
+                .setMetadata(buildMetaData(streamingItem.room.display, streamingItem.conference.conference, streamingItem.room.thumb))
                 .build()
     }
 
@@ -164,7 +163,7 @@ class CastServiceImpl(
         }
     }
 
-    private inner class SessionListener(): SessionManagerListener<CastSession> {
+    private inner class SessionListener() : SessionManagerListener<CastSession> {
         override fun onSessionStarting(p0: CastSession?) {
         }
 
@@ -177,7 +176,6 @@ class CastServiceImpl(
         }
 
         override fun onSessionEnding(p0: CastSession?) {
-
         }
 
         override fun onSessionEnded(p0: CastSession?, p1: Int) {
@@ -185,7 +183,6 @@ class CastServiceImpl(
         }
 
         override fun onSessionResuming(p0: CastSession?, p1: String?) {
-
         }
 
         override fun onSessionResumed(p0: CastSession?, p1: Boolean) {
@@ -199,7 +196,6 @@ class CastServiceImpl(
         override fun onSessionSuspended(p0: CastSession?, p1: Int) {
             currentSession = null
         }
-
     }
 
     private inner class ProgressListener(
