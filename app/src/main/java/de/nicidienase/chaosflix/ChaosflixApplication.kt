@@ -75,7 +75,7 @@ class ChaosflixApplication : Application() {
 
             single<AnalyticsWrapper> { AnalyticsWrapperImpl }
 
-            viewModel { BrowseViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+            viewModel { BrowseViewModel(get(), get(), get(), get(), get(), get(), get()) }
             viewModel { PlayerViewModel(get(), get()) }
             viewModel { DetailsViewModel(get(), get(), get(), get(), get()) }
             viewModel { PreferencesViewModel(get(), get(), get(), get(), get()) }

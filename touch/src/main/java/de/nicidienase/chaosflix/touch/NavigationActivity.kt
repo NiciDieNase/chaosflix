@@ -13,13 +13,18 @@ import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
+import de.nicidienase.chaosflix.touch.browse.cast.CastService
 import de.nicidienase.chaosflix.touch.databinding.ActivityNavigationBinding
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class NavigationActivity : AppCompatActivity() {
 
     private val browseViewModel: BrowseViewModel by viewModel()
+
+    private val castService: CastService by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,11 +69,19 @@ class NavigationActivity : AppCompatActivity() {
                 findNavController(R.id.nav_host).navigate(R.id.searchFragment, bundleOf("query" to query))
             }
         }
+        castService.state.observe(this, Observer {
+            when (it) {
+                is CastService.CastState.Error -> {
+                    val errorMessage = resources.getString(R.string.cast_error, it.errorCode)
+                    Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        })
+        castService.attachToActivity(this)
     }
 
     override fun onStart() {
         super.onStart()
-        browseViewModel.attachActivityToCastService(this)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -80,12 +93,10 @@ class NavigationActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         super.onCreateOptionsMenu(menu)
+        castService.addMediaRouteMenuItem(this, menu)
         menuInflater.inflate(R.menu.main, menu)
-        menu?.let {
-            browseViewModel.addMediaRouteMenuItem(it)
-        }
         return true
     }
 

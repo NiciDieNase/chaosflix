@@ -102,6 +102,19 @@
             android:name=".leanback.settings.ChaosflixSettingsActivity"
             android:theme="@style/ChaosflixLeanbackPreferences" />
 
+        <activity android:name=".ExpandedControllsActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.CastVideosDark"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARTENT_ACITIVTY"
+                android:value="de.nicidienase.chaosflix.touch.NavigationActivity"/>
+        </activity>
+
         <service android:name=".leanback.recommendations.ChaosRecommendationsService"
             android:enabled="true"/>
 
@@ -119,6 +132,10 @@
                 <action android:name="android.media.tv.ACTION_PREVIEW_PROGRAM_BROWSABLE_DISABLED" />
             </intent-filter>
         </receiver>
+
+        <meta-data
+            android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+            android:value="de.nicidienase.chaosflix.touch.browse.cast.CastOptionsProvider"/>
     </application>
 
 </manifest>

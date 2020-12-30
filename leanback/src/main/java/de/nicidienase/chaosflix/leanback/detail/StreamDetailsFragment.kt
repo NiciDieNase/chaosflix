@@ -173,7 +173,9 @@ class StreamDetailsFragment : DetailsSupportFragment() {
 
     private fun getAutoselectedStream(room: Room): StreamUrl? {
         val dashStreams = room.streams.filter { it.slug == "dash-native" }
-        return dashStreams.first().urls["dash"]
+        return if (dashStreams.isNotEmpty()) {
+            dashStreams.first().urls["dash"]
+        } else null
     }
 
     override fun onPause() {
