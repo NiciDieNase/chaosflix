@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.touch.browse.cast
 
+import android.app.Activity
 import android.util.Log
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
@@ -25,7 +26,7 @@ class CastServiceImpl(
         Log.e(TAG, "No Cast Support")
     }
 
-    override fun addMediaRouteMenuItem(menu: Menu) {
+    override fun addMediaRouteMenuItem(activity: Activity, menu: Menu) {
         Log.i(TAG, "No Cast Support, adding no Menu item")
     }
 
