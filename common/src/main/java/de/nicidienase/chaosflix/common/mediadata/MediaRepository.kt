@@ -415,7 +415,7 @@ class MediaRepository(
         return eventDao.getTopViewedEvents(count)
     }
 
-    suspend fun getNewestConferences(count: Int): List<Conference> {
+    fun getNewestConferences(count: Int): LiveData<List<Conference>> {
         return conferenceDao.getLatestConferences(count)
     }
 

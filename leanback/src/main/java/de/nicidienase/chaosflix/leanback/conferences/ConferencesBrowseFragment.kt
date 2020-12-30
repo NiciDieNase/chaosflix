@@ -47,6 +47,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
     private lateinit var promotedAdapter: ChaosflixEventAdapter
     private lateinit var watchListAdapter: ChaosflixEventAdapter
     private lateinit var inProgressAdapter: ChaosflixEventAdapter
+    private lateinit var latestConferencesRow: ListRow
 
     private var errorFragment: BrowseErrorFragment? = null
 
@@ -77,6 +78,7 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
         promotedRow = ListRow(HeaderItem(getString(R.string.recommendations)), promotedAdapter)
         watchlistRow = ListRow(HeaderItem(getString(R.string.watchlist)), watchListAdapter)
         inProgressRow = ListRow(HeaderItem(getString(R.string.continue_watching)), inProgressAdapter)
+        latestConferencesRow = buildRow(ArrayList(), conferencePresenter, "Latest")
 
         // Sections and Divider
         streamingSection = SectionRow(HeaderItem(getString(R.string.livestreams)))
@@ -191,6 +193,17 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
             }
         })
 
+        browseViewModel.getLatestConferences().observe(viewLifecycleOwner, Observer { conferences ->
+            if(conferences != null){
+                val adapter = latestConferencesRow.adapter as ArrayObjectAdapter
+                adapter.setItems(conferences, DiffCallbacks.conferenceDiffCallback)
+                adapter.notifyItemRangeChanged(0, conferences.size)
+                if (rowsAdapter.indexOf(latestConferencesRow) == -1){
+                    updateSectionRecomendations()
+                }
+            }
+        })
+
         browseViewModel.getLivestreams().observe(viewLifecycleOwner, Observer { liveConferences ->
             if (liveConferences != null && liveConferences.isNotEmpty()) {
                 val streamRows = buildStreamRows(eventPresenter, liveConferences)
@@ -211,7 +224,8 @@ class ConferencesBrowseFragment : BrowseSupportFragment() {
                     { listOf(
                         promotedRow,
                         watchlistRow,
-                        inProgressRow
+                        inProgressRow,
+                        latestConferencesRow
                     ).filter { it.adapter.size() > 0 } },
                     recomendationsDivider)
 
