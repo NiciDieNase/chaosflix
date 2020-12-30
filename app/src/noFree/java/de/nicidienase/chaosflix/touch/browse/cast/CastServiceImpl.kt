@@ -110,6 +110,7 @@ class CastServiceImpl(
             Log.d(TAG, "Playing ${requestData.toJson()}")
             if (it.mediaError != null){
                 Log.d(TAG, "${it.mediaError.toJson()}")
+                state.postValue(CastState.Error(it.mediaError.detailedErrorCode))
             }
         }
     }

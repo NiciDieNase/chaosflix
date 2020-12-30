@@ -23,8 +23,6 @@ class LivestreamAdapter(val listener: (StreamingItem) -> Unit) : androidx.recycl
         }
     }
 
-    private val TAG = LivestreamAdapter::class.simpleName
-
     fun setContent(liveConferences: List<LiveConference>) {
         items = ArrayList()
         convertToStreamingItemList(liveConferences)
@@ -55,4 +53,8 @@ class LivestreamAdapter(val listener: (StreamingItem) -> Unit) : androidx.recycl
     }
 
     inner class ViewHolder(val binding: ItemLiveeventCardviewBinding) : androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root)
+
+    companion object {
+        private val TAG = LivestreamAdapter::class.simpleName
+    }
 }

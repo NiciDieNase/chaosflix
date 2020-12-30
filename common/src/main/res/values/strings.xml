@@ -121,5 +121,7 @@
     <string name="download_started">Download started</string>
     <string name="storage_permission_required">Storage access is required to download videos</string>
     <string name="share_info_error">Could not find share information</string>
-    <string name="generic_error">An Error occured</string>
+    <string name="generic_error">An Error occurred</string>
+
+    <string name="cast_error">Error casting (Code: %d)</string>
 </resources>
