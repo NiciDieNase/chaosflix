@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import com.google.android.material.snackbar.Snackbar
 import de.nicidienase.chaosflix.common.mediadata.entities.streaming.StreamUrl
 import de.nicidienase.chaosflix.common.viewmodel.BrowseViewModel
@@ -63,7 +64,8 @@ class LivestreamListFragment : Fragment() {
             }
         }
 
-        binding.list.adapter = ConcatAdapter(livestreamAdapter, eventInfoAdapter)
+//        binding.list.adapter = ConcatAdapter(livestreamAdapter, eventInfoAdapter)
+        binding.list.adapter = livestreamAdapter
         binding.swipeRefreshLayout.setOnRefreshListener {
             updateList()
         }
