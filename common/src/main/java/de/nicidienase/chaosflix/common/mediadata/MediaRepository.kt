@@ -405,6 +405,10 @@ class MediaRepository(
         return recordingDao.findRecordingByEvent(eventId)
     }
 
+    suspend fun findRecordingsForEventSync(eventId: Long): List<Recording>{
+        return recordingDao.findRecordingByEventSync(eventId)
+    }
+
     suspend fun getEventsInProgress(): List<ProgressEventView> {
         val progress = playbackProgressDao.getAllWithEventSync()
         progress.forEach { it.event?.progress = it.progress.progress }
