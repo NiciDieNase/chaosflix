@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -40,6 +41,7 @@ import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventDetailsBinding
 import de.nicidienase.chaosflix.touch.playback.PlaybackItem
+import kotlin.math.abs
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -155,7 +157,7 @@ class EventDetailsFragment : Fragment() {
         }
 
         binding.appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-            val v = Math.abs(verticalOffset).toDouble() / appBarLayout.totalScrollRange
+            val v = abs(verticalOffset).toDouble() / appBarLayout.totalScrollRange
             if (appBarExpanded xor (v > 0.8)) {
                 requireActivity().invalidateOptionsMenu()
                 appBarExpanded = v > 0.8
@@ -163,36 +165,25 @@ class EventDetailsFragment : Fragment() {
             }
         })
 
-        detailsViewModel.state.observe(viewLifecycleOwner, Observer { liveEvent ->
-            if (liveEvent == null) {
+        detailsViewModel.state.observe(viewLifecycleOwner, Observer { state ->
+            if (state == null) {
                 return@Observer
             }
-            val event = liveEvent.data?.getParcelable<Event>(DetailsViewModel.EVENT)
-            val recording = liveEvent.data?.getParcelable<Recording>(DetailsViewModel.RECORDING)
-            val localFile = liveEvent.data?.getString(DetailsViewModel.KEY_LOCAL_PATH)
-            val selectItems: List<Recording>? = liveEvent.data?.getParcelableArrayList<Recording>(DetailsViewModel.KEY_SELECT_RECORDINGS)
-            when (val state = liveEvent.state) {
-                DetailsViewModel.State.PlayOfflineItem -> {
-                    if (event != null && recording != null) {
-                        playItem(event, recording, localFile)
+            when (state) {
+                is DetailsViewModel.State.PlayOfflineItem -> {
+                    playItem(state.event, state.recording, state.localFile)
+                }
+                is DetailsViewModel.State.PlayOnlineItem -> {
+                    playItem(state.event, state.recording)
+                }
+                is DetailsViewModel.State.SelectRecording -> {
+                    selectRecording(state.event, state.recordings) { e, r ->
+                        detailsViewModel.recordingSelected(e, r)
                     }
                 }
-                DetailsViewModel.State.PlayOnlineItem -> {
-                    if (event != null && recording != null) {
-                        playItem(event, recording)
-                    }
-                }
-                DetailsViewModel.State.SelectRecording -> {
-                    if (event != null && selectItems != null) {
-                        selectRecording(event, selectItems) { e, r ->
-                            detailsViewModel.recordingSelected(e, r)
-                        }
-                    }
-                }
-                DetailsViewModel.State.DownloadRecording -> {
-                    if (event != null && selectItems != null) {
-                        selectRecording(event, selectItems) { e, r ->
-                            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                is DetailsViewModel.State.DownloadRecording -> {
+                    selectRecording(state.event, state.recordings) { e, r ->
+                        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                     != PackageManager.PERMISSION_GRANTED) {
                                 pendingDownload = Pair(e, r)
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -204,26 +195,27 @@ class EventDetailsFragment : Fragment() {
                             } else {
                                 download(e, r)
                             }
-                        }
                     }
                 }
                 is DetailsViewModel.State.DisplayEvent -> {
                     findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentSelf(eventGuid = state.event.guid))
                 }
-                DetailsViewModel.State.PlayExternal -> {
-                    recording?.recordingUrl?.let {
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
+                is DetailsViewModel.State.PlayExternal -> {
+                    if (state.recordings.size > 1) {
+                        selectRecording(state.event, state.recordings) { event, recording ->
+                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(recording.recordingUrl)))
+                        }
                     }
                 }
-                DetailsViewModel.State.Error -> {
-                    Snackbar.make(binding.root, liveEvent.error ?: resources.getString(R.string.generic_error), Snackbar.LENGTH_LONG)
+                is DetailsViewModel.State.Error -> {
+                    Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
                 }
                 DetailsViewModel.State.LoadingRecordings -> {
                     // TODO: show loading indicator
                 }
                 is DetailsViewModel.State.OpenCustomTab -> {
                     CustomTabsIntent.Builder()
-                            .setToolbarColor(resources.getColor(R.color.primary))
+                            .setToolbarColor(ResourcesCompat.getColor(resources, R.color.primary, null))
                             .setStartAnimations(requireContext(), android.R.anim.fade_in, android.R.anim.fade_out)
                             .setExitAnimations(requireContext(), android.R.anim.fade_in, android.R.anim.fade_out)
                             .build()
@@ -238,12 +230,11 @@ class EventDetailsFragment : Fragment() {
     }
 
     private fun download(event: Event, recording: Recording) {
-        this
-        .detailsViewModel.download(event, recording).observe(viewLifecycleOwner, Observer {
+        this.detailsViewModel.download(event, recording).observe(viewLifecycleOwner, Observer {
             when (it?.state) {
                 OfflineItemManager.State.Downloading -> {
-                    layout?.let {
-                        Snackbar.make(it, resources.getString(R.string.download_started), Snackbar.LENGTH_LONG).show()
+                    layout?.let { view ->
+                        Snackbar.make(view, resources.getString(R.string.download_started), Snackbar.LENGTH_LONG).show()
                     }
                 }
                 OfflineItemManager.State.Done -> {}

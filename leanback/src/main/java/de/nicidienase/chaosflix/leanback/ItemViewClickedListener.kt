@@ -28,10 +28,10 @@ class ItemViewClickedListener(private val fragment: Fragment, private val seleta
                 start(fragment.requireContext(), item)
             }
             is Event -> {
-                val transistion = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+                val transition = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
                         (itemViewHolder.view as ImageCardView).mainImageView,
                         DetailsActivity.SHARED_ELEMENT_NAME).toBundle()
-                start(fragment.requireContext(), item, transistion)
+                start(fragment.requireContext(), item, transition)
             }
             is Room -> {
                 val transition = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,

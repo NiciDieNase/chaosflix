@@ -405,6 +405,10 @@ class MediaRepository(
         return recordingDao.findRecordingByEvent(eventId)
     }
 
+    suspend fun findRecordingsForEventSync(eventId: Long): List<Recording> {
+        return recordingDao.findRecordingByEventSync(eventId)
+    }
+
     suspend fun getEventsInProgress(): List<ProgressEventView> {
         val progress = playbackProgressDao.getAllWithEventSync()
         progress.forEach { it.event?.progress = it.progress.progress }
@@ -451,6 +455,10 @@ class MediaRepository(
             null
         }
     }
+
+    suspend fun getCachedEventCount(): Long = eventDao.getCount()
+    suspend fun getCachedConferencesCount(): Long = conferenceDao.getCount()
+    suspend fun getCachedRecordingCount(): Long = recordingDao.getCount()
 
     data class SearchResponse(val events: List<Event>, val total: Int, val links: Map<String, String>) {
         val hasNext: Boolean = hasLink("next")

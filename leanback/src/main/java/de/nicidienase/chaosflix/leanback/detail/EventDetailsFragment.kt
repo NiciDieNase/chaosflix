@@ -94,9 +94,6 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        val viewModelFactory = ViewModelFactory.getInstance(requireContext())
-//        detailsViewModel = ViewModelProvider(this, viewModelFactory).get(DetailsViewModel::class.java)
-//        playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
 
         val detailsPresenter = FullWidthDetailsOverviewRowPresenter(
                 EventDetailsDescriptionPresenter(requireContext()))
@@ -187,56 +184,51 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
     private fun setupObserver(detailsViewModel: DetailsViewModel) {
         detailsViewModel.state.observe(viewLifecycleOwner, Observer { state ->
-            when (state.state) {
-                DetailsViewModel.State.PlayOnlineItem -> {
+            when (state) {
+                is DetailsViewModel.State.PlayOnlineItem -> {
                     detailsBackgroundController.switchToVideo()
-                    val recording: Recording? = state.data?.getParcelable(DetailsViewModel.RECORDING)
-                    val parcelable: Event? = state.data?.getParcelable(DetailsViewModel.EVENT)
-                    val url = state.data?.getString(DetailsViewModel.THUMBS_URL)
-                    val progress: Long? = state.data?.getLong(DetailsViewModel.PROGRESS)
-                    if (recording != null) {
-                        if (parcelable != null) {
-                            prepareSeekProvider(parcelable.length)
-                        }
-                        preparePlayer(recording.recordingUrl)
-                        playerAdapter.play()
-                        if (progress != null && progress > 10_000L) {
-                            playerAdapter.seekTo(progress - 5_000)
-                        }
+                    prepareSeekProvider(state.event.length)
+                    preparePlayer(state.recording.recordingUrl)
+                    playerAdapter.play()
+                    val progress = state.progress
+                    if (progress != null && progress > 10_000L) {
+                        playerAdapter.seekTo(progress - 5_000)
                     }
                 }
-                DetailsViewModel.State.SelectRecording -> {
+                is DetailsViewModel.State.SelectRecording -> {
                     loadingDialog?.dismiss()
                     loadingDialog = null
-                    val event: Event? = state.data?.getParcelable(DetailsViewModel.EVENT)
-                    val recordings: List<Recording>? = state.data?.getParcelableArrayList<Recording>(DetailsViewModel.KEY_SELECT_RECORDINGS)
-                            ?.filterNot { it.mimeType.startsWith("audio") }
-                    if (event != null && recordings != null && recordings.isNotEmpty()) {
-//                        RecordingSelectDialog.create(recordings) {
-//                            detailsViewModel.recordingSelected(event, it)
-//                        }.show(childFragmentManager)
-                        selectRecordingFromList(event, recordings) {
-                            detailsViewModel.recordingSelected(event, it)
+                    val recordings: List<Recording> = state.recordings
+                            .filterNot { it.mimeType.startsWith("audio") }
+                    if (recordings.isNotEmpty()) {
+                        selectRecordingFromList(state.event, recordings) {
+                            detailsViewModel.recordingSelected(state.event, it)
                         }
                     } else {
                         showError("Sorry, could not load recordings")
                     }
                 }
-                DetailsViewModel.State.Error -> {
-                    showError(state.error)
+                is DetailsViewModel.State.Error -> {
+                    showError(state.message)
                 }
                 DetailsViewModel.State.LoadingRecordings -> {
                     showLoadingDialog()
                 }
-                DetailsViewModel.State.PlayExternal -> {
-                    state.data?.getParcelable<Recording>(DetailsViewModel.RECORDING)?.let { recording ->
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(recording.recordingUrl)))
+                is DetailsViewModel.State.PlayExternal -> {
+                    if (state.recordings.size == 1) {
+                        val recordingUrl = state.recordings.first().recordingUrl
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(recordingUrl)))
+                    } else {
+                        selectRecordingFromList(state.event, state.recordings) {
+                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it.recordingUrl)))
+                        }
                     }
                 }
-                DetailsViewModel.State.PlayOfflineItem -> irrelevantCase()
-                DetailsViewModel.State.DownloadRecording -> irrelevantCase()
                 is DetailsViewModel.State.DisplayEvent -> {}
                 is DetailsViewModel.State.OpenCustomTab -> {}
+                is DetailsViewModel.State.PlayOfflineItem -> irrelevantCase()
+                is DetailsViewModel.State.DownloadRecording -> irrelevantCase()
+                is DetailsViewModel.State.PlayLocalFileExternal -> irrelevantCase()
             }
         })
     }

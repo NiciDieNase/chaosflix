@@ -31,6 +31,9 @@ abstract class RecordingDao : BaseDao<Recording>() {
     @Query("DElETE FROM recording")
     abstract fun delete()
 
+    @Query("SELECT count(id) FROM recording")
+    abstract suspend fun getCount(): Long
+
     override suspend fun updateOrInsertInternal(item: Recording): Long {
         if (item.id != 0L) {
             update(item)

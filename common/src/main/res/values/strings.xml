@@ -71,7 +71,7 @@
     <string name="download_folder">Download folder</string>
     <string name="pref_autoselect_recording">Don\'t show selection dialog, just use HD-mp4</string>
     <string name="pref_autoselect_stream">Don\'t show selection dialog, just use DASH</string>
-    <string name="pref_mobile_downloads">Enable downloads over mobile or payed networks</string>
+    <string name="pref_mobile_downloads">Enable downloads over mobile or paid networks</string>
     <string name="export_favorites">Export Favorites</string>
     <string name="import_favorites">Import to Favorites</string>
     <string name="pref_external_player">Always use external player</string>
@@ -126,4 +126,6 @@
 
     <string name="latest_releases">Conferences with recent releases</string>
     <string name="latest_events">Most recent releases</string>
+
+    <string name="cache_stats">Conferences: %d \nEvents: %d \nRecordings: %d</string>
 </resources>

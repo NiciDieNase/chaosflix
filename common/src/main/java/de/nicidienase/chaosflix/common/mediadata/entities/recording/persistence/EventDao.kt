@@ -115,4 +115,7 @@ abstract class EventDao : BaseDao<Event>() {
         }
         return item.id
     }
+
+    @Query("SELECT count(id) FROM event")
+    abstract suspend fun getCount(): Long
 }
