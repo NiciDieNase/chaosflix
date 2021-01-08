@@ -235,14 +235,14 @@ jobs:
       - run:
           name: Appcenter Upload
           command: |
-            echo "[$CIRCLE_BRANCH]\n" > $RELEASENOTES_FILE \
+            echo "[$CIRCLE_BRANCH]\nCIRCLE_BUILD_NUM\n" > $RELEASENOTES_FILE \
             .circleci/appCenterUpload.sh \
               $APPCENTER_OWNER \
               $APPCENTER_TOKEN \
               "app/build/outputs/apk/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/app-${STAGE_LOWER}-${LIBS_LOWER}-${BUILD_TYPE_LOWER}.apk" \
               $RELEASENOTES_FILE \
               $APPCENTER_GROUP \
-              "app/build/outputs/mapping/${STAGE_LOWER}${LIBS}/${BUILD_TYPE_LOWER}/mapping.txt" \
+              "app/build/outputs/mapping/${STAGE_LOWER}${LIBS}${BUILD_TYPE_LOWER}/mapping.txt" \
               "$VERSION_CODE_TOUCH" \
               "$VERSION_NAME"
 
