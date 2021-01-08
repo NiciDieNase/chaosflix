@@ -14,10 +14,12 @@ if [ "$CIRCLE_BRANCH" = "master" ] ; then
 elif [ "$CIRCLE_BRANCH" = "develop" ] ; then
 	app_name=Chaosflix-Dev
 else
-	exit 0
+	printf "Wrong branch.\n"
+	exit 1
 fi
 
 # Step 1: Create an upload resource and get an upload_url (good for 24 hours)
+printf "## Create upload resource ##\n"
 request_url="https://api.appcenter.ms/v0.1/apps/${owner_name}/${app_name}/release_uploads"
 upload_json=$(curl -X POST \
 	--header "Content-Type: application/json" \
@@ -31,9 +33,11 @@ upload_url=$(echo ${upload_json} | \
 echo ${upload_json}
 
 # Step 2: Upload ipa
+printf "## Upload APK ##\n"
 curl -F "ipa=@${build_path}" ${upload_url}
 
 # Step 3: Upload resource's status to committed and get a release_url
+printf "## set status to commited and get release_url ##\n"
 release_json=$(curl -X PATCH \
 --header 'Content-Type: application/json' \
 --header 'Accept: application/json' \
@@ -55,7 +59,7 @@ printf "RELEASE NOTES:\n===\n$release_notes\n===\n"
 
 # Step 4: Distribute the uploaded release to a distribution group"
 release_url="https://api.appcenter.ms/v0.1/apps/${owner_name}/${app_name}/releases/${release_id}"
-data="{ \"destination_name\": \"${destination_name}\", \"release_notes\": \"${release_notes}\" }"
+data="{ \"destination_name\": \"${destination_name}\", \"release_notes\": \"${release_notes}\", \"distribution_group_name\": \"Collaborators\" , \"distribution_group_id\": \"00000000-0000-0000-0000-000000000000\"}"
 echo ${data}
 response_json=$(curl -X PATCH --header 'Content-Type: application/json' --header 'Accept: application/json' --header "X-API-Token: ${token}" -d "${data}" ${release_url})
 echo ${response_json}

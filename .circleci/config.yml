@@ -235,7 +235,7 @@ jobs:
       - run:
           name: Appcenter Upload
           command: |
-            echo "[$CIRCLE_BRANCH]\n" > $RELEASENOTES_FILE \
+            echo "[$CIRCLE_BRANCH]\nCIRCLE_BUILD_NUM\n" > $RELEASENOTES_FILE \
             .circleci/appCenterUpload.sh \
               $APPCENTER_OWNER \
               $APPCENTER_TOKEN \
