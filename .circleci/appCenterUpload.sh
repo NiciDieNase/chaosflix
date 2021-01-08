@@ -95,4 +95,6 @@ if [ -n "$mapping_path"  ]; then
 		--header "X-API-Token: ${token}" \
 		-d "${data}" \
 		${confirm_url} 2> /dev/null)
+else
+	printf "Mapping path does not exists"
 fi
