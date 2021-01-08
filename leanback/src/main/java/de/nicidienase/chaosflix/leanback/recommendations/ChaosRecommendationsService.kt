@@ -45,6 +45,9 @@ class ChaosRecommendationsService : IntentService("ChaosRecommendationService") 
         }
     }
 
+    /*
+    Recommendations for API < 26 (includes FireTV)
+     */
     private suspend fun setupRecommendationNotifications(mediaRepository: MediaRepository, notificationManager: NotificationManager) {
         notificationManager.cancelAll()
         val recommendations = mediaRepository.getHomescreenRecommendations()

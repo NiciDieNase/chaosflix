@@ -429,7 +429,7 @@ class MediaRepository(
     suspend fun getBookmarkedEvents(): List<Event> = eventDao.findBookmarkedEventsSync()
 
     suspend fun getHomescreenRecommendations(): List<Event> {
-        return getTopEvents(10)
+        return eventDao.getLatestSync(10)
     }
 
     suspend fun getActiveRecommendation(channel: String): List<RecommendationEventView> {

@@ -18,6 +18,10 @@ import de.nicidienase.chaosflix.leanback.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+/*
+Recommendations for Oreo and above
+ */
+
 class ChannelManager(
     private val context: Context,
     private val mediaRepository: MediaRepository,
