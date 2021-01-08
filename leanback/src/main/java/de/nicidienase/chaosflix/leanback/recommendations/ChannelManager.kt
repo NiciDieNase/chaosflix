@@ -27,7 +27,9 @@ class ChannelManager(
     enum class Channels(val channelId: String, @StringRes val title: Int) {
         MAIN("main", R.string.popular),
         IN_PROGRESS("in_progress", R.string.continue_watching),
-        WATCHLIST("watchlist", R.string.bookmarks)
+        WATCHLIST("watchlist", R.string.bookmarks),
+//        RECENT_CONFERENCES("recent_conferences", R.string.latest_releases),
+        RECENT_EVENTS("recent_events", R.string.latest_events)
     }
 
     suspend fun updateRecommendations() {
@@ -36,7 +38,9 @@ class ChannelManager(
         listOf(
                 Channels.MAIN to mediaRepository.getTopEvents(5),
                 Channels.WATCHLIST to mediaRepository.getBookmarkedEvents(),
-                Channels.IN_PROGRESS to mediaRepository.getEventsInProgress().mapNotNull { it.event }
+                Channels.IN_PROGRESS to mediaRepository.getEventsInProgress().mapNotNull { it.event },
+//                Channels.RECENT_CONFERENCES to mediaRepository.getNewestConferences(10),
+                Channels.RECENT_EVENTS to mediaRepository.getLatestEventsSync(10)
         ).forEach {
             publishEvents(
                     context.contentResolver,

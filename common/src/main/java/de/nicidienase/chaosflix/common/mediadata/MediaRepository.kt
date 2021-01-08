@@ -420,6 +420,7 @@ class MediaRepository(
     }
 
     fun getLatestEvents(count: Int): LiveData<List<Event>> = eventDao.getLatest(count)
+    suspend fun getLatestEventsSync(count: Int): List<Event> = eventDao.getLatestSync(count)
 
     fun getNewestConferences(count: Int): LiveData<List<Conference>> {
         return conferenceDao.getLatestConferences(count)
