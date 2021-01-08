@@ -45,4 +45,7 @@ abstract class ConferenceDao : BaseDao<Conference>() {
         }
         return item.id
     }
+
+    @Query("SELECT count(id) FROM conference")
+    abstract suspend fun getCount(): Long
 }

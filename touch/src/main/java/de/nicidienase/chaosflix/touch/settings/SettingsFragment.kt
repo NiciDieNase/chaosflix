@@ -6,7 +6,9 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.preference.PreferenceManager
+import android.view.View
 import androidx.lifecycle.Observer
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -95,7 +97,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
         exportFavorites?.setOnPreferenceClickListener {
             checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, PERMISSION_REQUEST_EXPORT_FAVORITES) {
-                viewModel.exportFavorites()
+                viewModel.exportFavorites(Environment.getExternalStorageDirectory())
             }
             return@setOnPreferenceClickListener true
         }
@@ -125,7 +127,16 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                     true
                 }
                 else -> true
-            } }
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val stats: Preference? = this.findPreference("stats")
+        viewModel.cachSummary.observe(viewLifecycleOwner, Observer {
+            stats?.summary = resources.getString(R.string.cache_stats, it.first, it.second, it.third)
+        })
     }
 
     private fun chooseDownloadFolder() {
@@ -152,7 +163,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             }
             PERMISSION_REQUEST_EXPORT_FAVORITES -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    viewModel.exportFavorites()
+                    viewModel.exportFavorites(Environment.getExternalStorageDirectory())
                 } else {
                     Snackbar.make(listView, "Cannot export without Storage Permission.", Snackbar.LENGTH_SHORT).show()
                 }
@@ -170,7 +181,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     private fun importFavorites() {
         var snackbar: Snackbar? = null
-        viewModel.importFavorites().observe(viewLifecycleOwner, Observer { event ->
+        viewModel.importFavorites(Environment.getExternalStorageDirectory()).observe(viewLifecycleOwner, Observer { event ->
             when {
                 event?.state == PreferencesViewModel.State.Loading -> {
                     snackbar?.dismiss()
@@ -196,8 +207,10 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         const val REQUEST_DIRECTORY: Int = 0
         const val PERMISSION_REQUEST_EXPORT_FAVORITES = 23
         const val PERMISSION_REQUEST_IMPORT_FAVORITES = 24
-
         const val PERMISSION_REQUEST_CHOOSE_DOWNLOAD_FOLDER = 25
+
+        private val TAG = SettingsFragment::class.java.simpleName
+
         fun getInstance(): SettingsFragment {
             val fragment = SettingsFragment()
             val args = Bundle()

@@ -12,6 +12,10 @@
             android:title="@string/setting_debug"/>
 
         <Preference
+            android:id="@+id/stats"
+            android:key="stats"
+            android:title="Cache Statistics"/>
+        <Preference
             android:id="@+id/deleteData"
             android:key="delete_data"
             android:title="@string/clean_cache"/>
@@ -27,6 +31,7 @@
             android:id="@+id/launch_other_ui"
             android:key="launch_other"
             android:title="Launch other UI"/>
+
 
     </PreferenceCategory>
 </PreferenceScreen>

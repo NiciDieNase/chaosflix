@@ -41,9 +41,9 @@ import de.nicidienase.chaosflix.touch.R
 import de.nicidienase.chaosflix.touch.browse.adapters.EventRecyclerViewAdapter
 import de.nicidienase.chaosflix.touch.databinding.FragmentEventDetailsBinding
 import de.nicidienase.chaosflix.touch.playback.PlaybackItem
+import kotlin.math.abs
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
-import kotlin.math.abs
 
 class EventDetailsFragment : Fragment() {
 
@@ -174,15 +174,15 @@ class EventDetailsFragment : Fragment() {
                     playItem(state.event, state.recording, state.localFile)
                 }
                 is DetailsViewModel.State.PlayOnlineItem -> {
-                    playItem(state.event,state.recording)
+                    playItem(state.event, state.recording)
                 }
                 is DetailsViewModel.State.SelectRecording -> {
-                    selectRecording(state.event, state.recordings){ e, r ->
+                    selectRecording(state.event, state.recordings) { e, r ->
                         detailsViewModel.recordingSelected(e, r)
                     }
                 }
                 is DetailsViewModel.State.DownloadRecording -> {
-                    selectRecording(state.event, state.recordings) { e,r ->
+                    selectRecording(state.event, state.recordings) { e, r ->
                         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                     != PackageManager.PERMISSION_GRANTED) {
                                 pendingDownload = Pair(e, r)
@@ -201,8 +201,8 @@ class EventDetailsFragment : Fragment() {
                     findNavController().navigate(EventDetailsFragmentDirections.actionEventDetailsFragmentSelf(eventGuid = state.event.guid))
                 }
                 is DetailsViewModel.State.PlayExternal -> {
-                    if (state.recordings.size > 1){
-                        selectRecording(state.event, state.recordings) {event, recording ->
+                    if (state.recordings.size > 1) {
+                        selectRecording(state.event, state.recordings) { event, recording ->
                             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(recording.recordingUrl)))
                         }
                     }

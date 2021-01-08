@@ -1,11 +1,14 @@
 package de.nicidienase.chaosflix.common.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import de.nicidienase.chaosflix.common.AnalyticsWrapper
+import de.nicidienase.chaosflix.common.ResourcesFacade
 import de.nicidienase.chaosflix.common.mediadata.MediaRepository
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgress
 import de.nicidienase.chaosflix.common.userdata.entities.progress.PlaybackProgressDao
@@ -24,8 +27,8 @@ class PreferencesViewModel(
     private val mediaRepository: MediaRepository,
     private val watchlistItemDao: WatchlistItemDao,
     private val progressItemDao: PlaybackProgressDao,
-    private val exportDir: File,
-    private val analyticsWrapper: AnalyticsWrapper
+    private val analyticsWrapper: AnalyticsWrapper,
+    private val resourcesFacade: ResourcesFacade
 ) : ViewModel() {
     private val gson = Gson()
 
@@ -39,11 +42,12 @@ class PreferencesViewModel(
 
     fun stopAnalytics() = analyticsWrapper.stopAnalytics()
 
-    fun exportFavorites() {
+    fun exportFavorites(exportDir: File) {
         viewModelScope.launch(Dispatchers.IO) {
             val favorites = watchlistItemDao.getAllSync()
             val json = gson.toJson(favorites)
             Log.d(TAG, json)
+
             writeJsonToFile(json, exportDir, FAVORITES_FILENAME)
 
             val progress = progressItemDao.getAllSync()
@@ -89,7 +93,7 @@ class PreferencesViewModel(
         }
     }
 
-    fun importFavorites(): MutableLiveData<LiveEvent<State, List<WatchlistItem>, Exception>> {
+    fun importFavorites(exportDir: File): MutableLiveData<LiveEvent<State, List<WatchlistItem>, Exception>> {
         val mutableLiveData = MutableLiveData<LiveEvent<State, List<WatchlistItem>, Exception>>()
         mutableLiveData.postValue(LiveEvent(State.Loading, null, null))
         viewModelScope.launch(Dispatchers.IO) {
@@ -118,6 +122,16 @@ class PreferencesViewModel(
             }
         }
         return mutableLiveData
+    }
+
+    val cachSummary: LiveData<Triple<Long, Long, Long>> = liveData(Dispatchers.IO) {
+        emit(
+            Triple(
+                mediaRepository.getCachedConferencesCount(),
+                mediaRepository.getCachedEventCount(),
+                mediaRepository.getCachedRecordingCount()
+            )
+        )
     }
 
     enum class State {

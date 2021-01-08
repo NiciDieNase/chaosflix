@@ -215,11 +215,11 @@ class EventDetailsFragment : DetailsSupportFragment() {
                     showLoadingDialog()
                 }
                 is DetailsViewModel.State.PlayExternal -> {
-                    if(state.recordings.size == 1){
+                    if (state.recordings.size == 1) {
                         val recordingUrl = state.recordings.first().recordingUrl
                         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(recordingUrl)))
                     } else {
-                        selectRecordingFromList(state.event, state.recordings){
+                        selectRecordingFromList(state.event, state.recordings) {
                             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it.recordingUrl)))
                         }
                     }

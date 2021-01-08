@@ -17,17 +17,17 @@ import de.nicidienase.chaosflix.common.userdata.entities.download.OfflineEvent
 import de.nicidienase.chaosflix.common.userdata.entities.watchlist.WatchlistItem
 import de.nicidienase.chaosflix.common.util.SingleLiveEvent
 import de.nicidienase.chaosflix.touch.browse.cast.CastService
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 
 class DetailsViewModel(
-        private val database: ChaosflixDatabase,
-        private val offlineItemManager: OfflineItemManager,
-        private val preferencesManager: ChaosflixPreferenceManager,
-        private val mediaRepository: MediaRepository,
-        private val castService: CastService
+    private val database: ChaosflixDatabase,
+    private val offlineItemManager: OfflineItemManager,
+    private val preferencesManager: ChaosflixPreferenceManager,
+    private val mediaRepository: MediaRepository,
+    private val castService: CastService
 ) : ViewModel() {
 
     private var eventId = MutableLiveData<Long>(0)
@@ -227,12 +227,12 @@ class DetailsViewModel(
 
     fun playInExternalPlayer() = viewModelScope.launch {
         val id = eventId.value
-        if(id != null){
+        if (id != null) {
             val event = mediaRepository.getEventSync(id)
             val recordings = mediaRepository.findRecordingsForEventSync(id!!)
-            if(event != null){
+            if (event != null) {
                 state.postValue(State.PlayExternal(event, recordings))
-            }else {
+            } else {
                 error("Event should not be null")
             }
         } else {
@@ -242,9 +242,9 @@ class DetailsViewModel(
 
     fun downloadRecordingForEvent() = viewModelScope.launch {
         val id = eventId.value
-        if(id != null){
+        if (id != null) {
             val event = database.eventDao().findEventByIdSync(id)
-            if(event != null){
+            if (event != null) {
                 val recordings = mediaRepository.findRecordingsForEventSync(id)
                 state.postValue(State.DownloadRecording(event, recordings))
             } else {
@@ -305,7 +305,6 @@ class DetailsViewModel(
             try {
                 state.postValue(State.OpenCustomTab(Uri.parse(link)))
             } catch (e: Exception) {
-
             }
         }
     }
