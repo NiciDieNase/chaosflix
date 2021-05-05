@@ -12,7 +12,6 @@ String versionString = new File("versionfile").text.trim()
 android {
     buildToolsVersion '27.0.3'
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
         applicationId "de.nicidienase.chaosflix"
         manifestPlaceholders = [label: appName]
@@ -103,7 +102,6 @@ android {
     defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     lintOptions.abortOnError = false
     dataBinding.enabled = true
-    buildToolsVersion rootProject.ext.buildToolsVersion
     playConfigs {
         prodNoFree {
             enabled = true
