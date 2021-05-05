@@ -25,7 +25,7 @@ data class Room(
             link = input.readString() ?: "",
             display = input.readString() ?: "",
             talks = readMap(input),
-            streams = input.createTypedArrayList<Stream>(Stream.CREATOR).filterNotNull())
+            streams = input.createTypedArrayList<Stream>(Stream.CREATOR)?.filterNotNull() ?: emptyList())
 
     override fun describeContents(): Int {
         return 0
