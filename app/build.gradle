@@ -12,7 +12,6 @@ String versionString = new File("versionfile").text.trim()
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         applicationId "de.nicidienase.chaosflix"

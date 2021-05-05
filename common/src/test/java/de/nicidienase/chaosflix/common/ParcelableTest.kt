@@ -1,5 +1,6 @@
 package de.nicidienase.chaosflix.common
 
+import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import de.nicidienase.chaosflix.common.mediadata.entities.recording.RelatedEventDto
@@ -17,8 +18,10 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Build.VERSION_CODES.P])
 class ParcelableTest {
 
     @Test
@@ -27,7 +30,7 @@ class ParcelableTest {
                 42,
                 "GPN42",
                 "16:9",
-                "Gulaschprogramiernach 42",
+                "Gulaschprogrammiernacht 42",
                 "GPN42",
                 "http://example/com",
                 "http://example/com",

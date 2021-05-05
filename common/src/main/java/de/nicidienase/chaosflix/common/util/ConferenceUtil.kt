@@ -29,6 +29,7 @@ object ConferenceUtil {
     @JvmStatic
     val orderedConferencesList: List<String> = listOf(
             "congress",
+            "divoc",
             "gpn",
             "mrmcd",
             "broadcast/chaosradio",
