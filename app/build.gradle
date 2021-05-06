@@ -163,7 +163,7 @@ dependencies {
 
 play {
     serviceAccountCredentials = file("../chaosflix-d1d09f33cbb2.json")
-    track = "alpha"
+    track = "beta"
     releaseStatus = "draft"
     enabled = false
     artifactDir = file("build/outputs/apk/prodNoFree/release/app-prod-noFree-release.apk")
