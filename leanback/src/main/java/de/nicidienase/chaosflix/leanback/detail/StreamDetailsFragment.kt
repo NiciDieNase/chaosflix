@@ -71,7 +71,7 @@ class StreamDetailsFragment : DetailsSupportFragment() {
 
     private val playerDelegate = lazy {
         ExoPlayerFactory.newSimpleInstance(
-                activity,
+                requireContext(),
                 DefaultTrackSelector(
                         AdaptiveTrackSelection.Factory()))
     }
@@ -223,7 +223,7 @@ class StreamDetailsFragment : DetailsSupportFragment() {
     }
 
     private fun buildPlayerGlue(): ChaosMediaPlayerGlue {
-        playerAdapter = LeanbackPlayerAdapter(context, player, 16)
+        playerAdapter = LeanbackPlayerAdapter(requireContext(), player, 16)
         return ChaosMediaPlayerGlue(requireContext(), playerAdapter)
     }
 

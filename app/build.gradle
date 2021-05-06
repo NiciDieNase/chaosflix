@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'kotlin-android-extensions'
+    id 'kotlin-parcelize'
     id 'com.github.triplet.play' version '2.6.2'
 }
 
@@ -149,7 +149,7 @@ dependencies {
     implementation project(':leanback')
     implementation project(':common')
 
-    noFreeImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
+    noFreeImplementation 'com.google.android.gms:play-services-cast-framework:20.0.0'
 
     def appCenterSdkVersion = '2.5.1'
     noFreeImplementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"

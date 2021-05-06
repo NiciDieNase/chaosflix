@@ -80,12 +80,12 @@ class EventDetailsFragment : DetailsSupportFragment() {
 
     private val playerDelegate = lazy {
         ExoPlayerFactory.newSimpleInstance(
-                activity,
+                requireContext(),
                 DefaultTrackSelector(
                         AdaptiveTrackSelection.Factory()))
     }
     private val player: SimpleExoPlayer by playerDelegate
-    private val playerAdapter: LeanbackPlayerAdapter by lazy { LeanbackPlayerAdapter(context, player, 16) }
+    private val playerAdapter: LeanbackPlayerAdapter by lazy { LeanbackPlayerAdapter(requireContext(), player, 16) }
     private val playerGlue: ChaosMediaPlayerGlue by lazy {
         ChaosMediaPlayerGlue(requireContext(), playerAdapter) {
             detailsViewModel.createBookmark()

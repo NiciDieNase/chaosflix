@@ -24,7 +24,7 @@ class DetailsActivity : androidx.fragment.app.FragmentActivity() {
         setContentView(R.layout.activity_event_details)
         lifecycleScope.launch {
             val fragment = if (intent.action == Intent.ACTION_VIEW) {
-                val guid = intent.data.lastPathSegment
+                val guid = intent.data?.lastPathSegment
                 EventDetailsFragment().apply {
                     arguments = bundleOf(EventDetailsFragment.ARG_EVENT_GUID to guid)
                 }
