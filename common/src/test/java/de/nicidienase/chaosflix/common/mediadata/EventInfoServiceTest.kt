@@ -4,6 +4,8 @@ import de.nicidienase.chaosflix.StageConfiguration
 import de.nicidienase.chaosflix.common.TestStageConfig
 import de.nicidienase.chaosflix.common.mediadata.entities.eventinfo.EventInfo
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
+import java.util.Calendar
+import java.util.Date
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
@@ -13,8 +15,6 @@ import org.junit.jupiter.api.Test
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
-import java.util.Calendar
-import java.util.Date
 
 class EventInfoServiceTest {
 
