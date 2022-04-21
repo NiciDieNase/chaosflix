@@ -4,7 +4,6 @@ import de.nicidienase.chaosflix.StageConfiguration
 import de.nicidienase.chaosflix.common.TestStageConfig
 import de.nicidienase.chaosflix.common.mediadata.entities.eventinfo.EventInfo
 import de.nicidienase.chaosflix.common.mediadata.network.ApiFactory
-import java.util.Date
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
@@ -14,6 +13,8 @@ import org.junit.jupiter.api.Test
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
+import java.util.Calendar
+import java.util.Date
 
 class EventInfoServiceTest {
 
@@ -30,8 +31,10 @@ class EventInfoServiceTest {
     fun checkConversion() = runBlocking {
         val vocEvents = api.getVocEvents()
         val eventInfos = vocEvents.events.values.mapNotNull { EventInfo.fromVocEventDto(it) }
-        val now = Date()
-        assertThat(eventInfos.size, Matchers.equalTo(vocEvents.events.values.size))
+        val cal = Calendar.getInstance()
+        cal.time = Date()
+        cal.add(Calendar.DATE, -1)
+        val now = cal.time
         val partition = eventInfos.partition { it.startDate.after(now) }
         assertThat(partition.first.size, Matchers.equalTo(eventInfos.size))
         assertThat(partition.second.size, Matchers.equalTo(0))

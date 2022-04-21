@@ -119,4 +119,5 @@ dependencies {
     testImplementation "junit:junit:4.13"
     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.5.2"
 
+    testImplementation("org.hamcrest:hamcrest:2.2")
 }
