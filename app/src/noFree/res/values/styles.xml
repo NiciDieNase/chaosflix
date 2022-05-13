@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="CustomCastMiniController" parent="CastMiniController">
+        <item name="castShowImageThumbnail">true</item>
+        <item name="castTitleTextAppearance">@style/TextAppearance.AppCompat.Subhead</item>
+        <item name="castSubtitleTextAppearance">@style/TextAppearance.AppCompat.Caption</item>
+    </style>
+
+    <style name="CustomCastExpandedController" parent="CastExpandedController" />
+
+    <style name="CustomCastIntroOverlay" parent="CastIntroOverlay">
+        <item name="castButtonTextAppearance">@style/TextAppearance.CustomCastIntroOverlay.Button
+        </item>
+        <item name="castTitleTextAppearance">@style/TextAppearance.CustomCastIntroOverlay.Title
+        </item>
+    </style>
+
+    <style name="Theme.CastVideosDark" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="castMiniControllerStyle">@style/CustomCastMiniController</item>
+        <item name="castIntroOverlayStyle">@style/CustomCastIntroOverlay</item>
+        <item name="castExpandedControllerStyle">@style/CustomCastExpandedController</item>
+        <item name="castExpandedControllerToolbarStyle">
+            @style/ThemeOverlay.AppCompat.Dark.ActionBar
+        </item>
+    </style>
+</resources>
