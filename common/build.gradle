@@ -28,9 +28,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    lintOptions {
-        abortOnError false
-    }
 
     buildTypes {
         debug {
@@ -43,7 +40,6 @@ android {
         }
     }
 
-    lintOptions.abortOnError = false
 
     buildFeatures {
         dataBinding = true
@@ -54,6 +50,9 @@ android {
             returnDefaultValues = true
             includeAndroidResources = true
         }
+    }
+    lint {
+        abortOnError false
     }
 }
 
