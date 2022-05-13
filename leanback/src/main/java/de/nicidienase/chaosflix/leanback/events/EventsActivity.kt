@@ -28,7 +28,7 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val conf = intent.getParcelableExtra<Conference>(CONFERENCE)
-        if(conf != null){
+        if( conf != null ){
             conference = conf
         } else {
             finish()
