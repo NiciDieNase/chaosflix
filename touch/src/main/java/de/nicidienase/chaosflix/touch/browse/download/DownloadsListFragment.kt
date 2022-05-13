@@ -54,17 +54,18 @@ class DownloadsListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        updateRunnable = object : Runnable {
+        val runnable = object : Runnable {
             override fun run() {
                 viewModel.updateDownloadStatus()
                 handler.postDelayed(this, UPDATE_DELAY)
             }
         }
-        handler.post(updateRunnable)
+        handler.post(runnable)
+        updateRunnable = runnable
     }
 
     override fun onPause() {
-        handler.removeCallbacks(updateRunnable)
+        updateRunnable?.let { handler.removeCallbacks(it) }
         super.onPause()
     }
 

@@ -143,7 +143,7 @@ class FavoritesImportFragment : Fragment() {
 
     private fun handleJson(intent: Intent) {
         val extra = intent.getStringExtra(Intent.EXTRA_TEXT)
-        if (extra.isNotEmpty()) {
+        if (extra?.isNotEmpty() == true) {
             favoritesImportViewModel.handleLectures(extra)
         }
     }

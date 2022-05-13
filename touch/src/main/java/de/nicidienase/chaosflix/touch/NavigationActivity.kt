@@ -100,9 +100,9 @@ class NavigationActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val navController = findNavController(R.id.nav_host)
-        return when (item?.itemId) {
+        return when (item.itemId) {
             android.R.id.home -> navController.navigateUp()
             R.id.menus_item_settings -> {
                 navController.navigate(R.id.settingsFragment)

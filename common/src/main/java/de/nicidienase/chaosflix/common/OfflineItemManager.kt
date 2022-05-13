@@ -142,7 +142,7 @@ class OfflineItemManager(
                                     totalBytes = 1
                             ))
                 } catch (ex: SQLiteConstraintException) {
-                    Log.d(DetailsViewModel.TAG, ex.message)
+                    Log.d(DetailsViewModel.TAG, ex.message ?: "")
                 }
                 result.postValue(LiveEvent(State.Done))
             }

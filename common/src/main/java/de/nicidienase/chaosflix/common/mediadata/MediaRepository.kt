@@ -120,7 +120,7 @@ class MediaRepository(
                     emptyList()
                 }
             } else {
-                Log.e(TAG, response?.message())
+                Log.e(TAG, response?.message() ?: "")
                 emptyList()
             }
         }
