@@ -27,7 +27,12 @@ class EventsActivity : androidx.fragment.app.FragmentActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        conference = intent.getParcelableExtra(CONFERENCE)
+        val conf = intent.getParcelableExtra<Conference>(CONFERENCE)
+        if(conf != null){
+            conference = conf
+        } else {
+            finish()
+        }
         setContentView(R.layout.activity_events_browse)
     }
 

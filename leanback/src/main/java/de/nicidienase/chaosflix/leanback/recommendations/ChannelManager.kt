@@ -74,9 +74,12 @@ class ChannelManager(
 
         return events.filterNot { activeOrDismissedRecommendations.contains(it.guid) }.map {
             publishEvent(channelId, it, contentResolver).apply {
-                mediaRepository.setRecommendationIdForEvent(this.first, this.second, channel.name)
+                val sec = this.second
+                if(sec != null){
+                    mediaRepository.setRecommendationIdForEvent(this.first, sec, channel.name)
+                }
             }
-        }.map { it.second }
+        }.map { it.second ?: 0 }
     }
 
     private suspend fun cleanupChannel(activeEvents: List<Event>, channel: Channels) {
@@ -87,11 +90,11 @@ class ChannelManager(
         }
     }
 
-    private fun publishEvent(channelId: Long, event: Event, contentResolver: ContentResolver): Pair<Event, Long> {
+    private fun publishEvent(channelId: Long, event: Event, contentResolver: ContentResolver): Pair<Event, Long?> {
         val toContentValues = eventToBuilder(channelId, event)
                 .build().toContentValues()
         val programUri: Uri? = contentResolver.insert(TvContractCompat.PreviewPrograms.CONTENT_URI, toContentValues)
-        return event to ContentUris.parseId(programUri)
+        return event to programUri?.let { ContentUris.parseId(it) }
     }
 
     private fun eventToBuilder(channelId: Long, event: Event): PreviewProgram.Builder {
