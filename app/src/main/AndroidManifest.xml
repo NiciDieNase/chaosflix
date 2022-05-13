@@ -33,7 +33,8 @@
         </activity>
         <activity android:name=".touch.NavigationActivity"
             android:launchMode="singleInstance"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:exported="true">
             <nav-graph android:value="@navigation/main_navigation"/>
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -50,7 +51,8 @@
             android:parentActivityName=".touch.NavigationActivity"/>
         <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
         <activity android:name=".touch.favoritesimport.FavoritesImportActivity"
-            android:theme="@style/AppTheme" >
+            android:theme="@style/AppTheme"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -64,7 +66,8 @@
             android:label="${label}"
             android:screenOrientation="landscape"
             android:theme="@style/LeanbackAppTheme"
-            tools:ignore="LockedOrientationActivity">
+            tools:ignore="LockedOrientationActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
@@ -106,7 +109,7 @@
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:theme="@style/Theme.CastVideosDark"
-            android:screenOrientation="portrait">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
