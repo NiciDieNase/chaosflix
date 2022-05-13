@@ -149,7 +149,7 @@ dependencies {
     implementation project(':leanback')
     implementation project(':common')
 
-    noFreeImplementation 'com.google.android.gms:play-services-cast-framework:20.0.0'
+    noFreeImplementation 'com.google.android.gms:play-services-cast-framework:21.0.1'
 
     def appCenterSdkVersion = '2.5.1'
     noFreeImplementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
