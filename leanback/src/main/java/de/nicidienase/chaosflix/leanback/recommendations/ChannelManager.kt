@@ -76,7 +76,7 @@ class ChannelManager(
         return events.filterNot { activeOrDismissedRecommendations.contains(it.guid) }.map {
             publishEvent(channelId, it, contentResolver).apply {
                 val sec = this.second
-                if( sec != null ){
+                if (sec != null) {
                     mediaRepository.setRecommendationIdForEvent(this.first, sec, channel.name)
                 }
             }
