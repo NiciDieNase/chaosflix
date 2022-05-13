@@ -39,8 +39,8 @@ allprojects {
 
 ext{
     minSDK = 22
-    targetSDK = 29
-    compileSdkVersion = 29
+    targetSDK = 31
+    compileSdkVersion = 31
     supportLibraryVersion = "30.0.2"
     constraintLayoutVersion = "1.1.3"
 }
