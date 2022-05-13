@@ -10,7 +10,7 @@ import com.google.android.gms.cast.framework.media.NotificationOptions
 import de.nicidienase.chaosflix.ExpandedControllsActivity
 
 class CastOptionsProvider : OptionsProvider {
-    override fun getCastOptions(p0: Context?): CastOptions {
+    override fun getCastOptions(p0: Context): CastOptions {
         val notificationOptions = NotificationOptions.Builder()
                 .setTargetActivityClassName(ExpandedControllsActivity::class.java.name)
                 .build()
@@ -25,7 +25,7 @@ class CastOptionsProvider : OptionsProvider {
                 .build()
     }
 
-    override fun getAdditionalSessionProviders(p0: Context?): MutableList<SessionProvider> {
+    override fun getAdditionalSessionProviders(p0: Context): MutableList<SessionProvider> {
         return emptyList<SessionProvider>().toMutableList()
     }
 }

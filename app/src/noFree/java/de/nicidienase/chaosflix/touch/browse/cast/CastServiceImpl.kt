@@ -72,11 +72,19 @@ class CastServiceImpl(
     }
 
     private fun registerSessionManagerListener() {
-        sessionManager?.addSessionManagerListener(sessionManagerListener as? SessionManagerListener<Session>)
+        (sessionManagerListener as? SessionManagerListener<Session>)?.let {
+            sessionManager?.addSessionManagerListener(
+                it
+            )
+        }
     }
 
     private fun unregisterSessionManagerListener() {
-        sessionManager?.removeSessionManagerListener(sessionManagerListener as? SessionManagerListener<Session>)
+        (sessionManagerListener as? SessionManagerListener<Session>)?.let {
+            sessionManager?.removeSessionManagerListener(
+                it
+            )
+        }
     }
 
     override fun castStream(streamingItem: StreamingItem, streamUrl: StreamUrl, contentKey: String) {
@@ -107,9 +115,10 @@ class CastServiceImpl(
         val load = currentSession?.remoteMediaClient?.load(requestData)
         load?.setResultCallback {
             Log.d(TAG, "Playing ${requestData.toJson()}")
-            if (it.mediaError != null) {
-                Log.d(TAG, "${it.mediaError.toJson()}")
-                state.postValue(CastState.Error(it.mediaError.detailedErrorCode))
+            val mediaError = it.mediaError
+            if (mediaError != null) {
+                Log.d(TAG, "${mediaError.toJson()}")
+                state.postValue(CastState.Error(mediaError.detailedErrorCode ?: 0))
             }
         }
     }
@@ -118,7 +127,11 @@ class CastServiceImpl(
         val sessionListener = ProgressListener(event.guid, progress)
         val sharedInstance = CastContext.getSharedInstance()
         val sessionManager = sharedInstance?.sessionManager
-        sessionManager?.addSessionManagerListener(sessionListener as? SessionManagerListener<Session>)
+        (sessionListener as? SessionManagerListener<Session>)?.let {
+            sessionManager?.addSessionManagerListener(
+                it
+            )
+        }
         sessionManager?.currentCastSession?.let { sessionListener.attachProgressListener(it) }
     }
 
@@ -152,7 +165,7 @@ class CastServiceImpl(
         }
     }
 
-    private fun getContentTypeForKey(s: String): String? {
+    private fun getContentTypeForKey(s: String): String {
         return when (s) {
             "hls" -> "application/x-mpegurl"
             "webm" -> "video/webm"
@@ -164,36 +177,36 @@ class CastServiceImpl(
     }
 
     private inner class SessionListener() : SessionManagerListener<CastSession> {
-        override fun onSessionStarting(p0: CastSession?) {
+        override fun onSessionStarting(p0: CastSession) {
         }
 
-        override fun onSessionStarted(p0: CastSession?, p1: String?) {
+        override fun onSessionStarted(p0: CastSession, p1: String) {
             currentSession = p0
         }
 
-        override fun onSessionStartFailed(p0: CastSession?, p1: Int) {
+        override fun onSessionStartFailed(p0: CastSession, p1: Int) {
             currentSession = null
         }
 
-        override fun onSessionEnding(p0: CastSession?) {
+        override fun onSessionEnding(p0: CastSession) {
         }
 
-        override fun onSessionEnded(p0: CastSession?, p1: Int) {
+        override fun onSessionEnded(p0: CastSession, p1: Int) {
             currentSession = null
         }
 
-        override fun onSessionResuming(p0: CastSession?, p1: String?) {
+        override fun onSessionResuming(p0: CastSession, p1: String) {
         }
 
-        override fun onSessionResumed(p0: CastSession?, p1: Boolean) {
+        override fun onSessionResumed(p0: CastSession, p1: Boolean) {
             currentSession = p0
         }
 
-        override fun onSessionResumeFailed(p0: CastSession?, p1: Int) {
+        override fun onSessionResumeFailed(p0: CastSession, p1: Int) {
             currentSession = null
         }
 
-        override fun onSessionSuspended(p0: CastSession?, p1: Int) {
+        override fun onSessionSuspended(p0: CastSession, p1: Int) {
             currentSession = null
         }
     }
@@ -237,41 +250,41 @@ class CastServiceImpl(
             castSession.remoteMediaClient?.addProgressListener(progressListener, 5000)
         }
 
-        override fun onSessionStarted(p0: CastSession?, p1: String?) {
+        override fun onSessionStarted(p0: CastSession, p1: String) {
             Log.d(TAG, "Cast session started")
             p0?.let { attachProgressListener(it) }
         }
 
-        override fun onSessionStartFailed(p0: CastSession?, p1: Int) {
+        override fun onSessionStartFailed(p0: CastSession, p1: Int) {
             Log.d(TAG, "Cast session start failed: ${CastStatusCodes.getStatusCodeString(p1)}")
         }
 
-        override fun onSessionResumeFailed(p0: CastSession?, p1: Int) {
+        override fun onSessionResumeFailed(p0: CastSession, p1: Int) {
             Log.d(TAG, "Cast session resume failed: ${CastStatusCodes.getStatusCodeString(p1)}")
         }
 
-        override fun onSessionSuspended(p0: CastSession?, p1: Int) {
+        override fun onSessionSuspended(p0: CastSession, p1: Int) {
             Log.d(TAG, "Cast session suspended")
         }
 
-        override fun onSessionEnded(p0: CastSession?, p1: Int) {
+        override fun onSessionEnded(p0: CastSession, p1: Int) {
             Log.d(TAG, "Cast session ended")
         }
 
-        override fun onSessionResumed(p0: CastSession?, p1: Boolean) {
+        override fun onSessionResumed(p0: CastSession, p1: Boolean) {
             Log.d(TAG, "Cast session resumed")
             p0?.let { attachProgressListener(it) }
         }
 
-        override fun onSessionStarting(p0: CastSession?) {
+        override fun onSessionStarting(p0: CastSession) {
             Log.d(TAG, "Cast session starting")
         }
 
-        override fun onSessionResuming(p0: CastSession?, p1: String?) {
+        override fun onSessionResuming(p0: CastSession, p1: String) {
             Log.d(TAG, "Cast session resuming")
         }
 
-        override fun onSessionEnding(p0: CastSession?) {
+        override fun onSessionEnding(p0: CastSession) {
             Log.d(TAG, "Cast session ending")
         }
     }
